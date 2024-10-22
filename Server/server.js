@@ -15,7 +15,7 @@ app.use(express.json());
 
 // MOUNTS ROUTES
 const defaultRoute = require('./routes/productRoute')
-app.use('/', defaultRoute);
+app.use('/', defaultRoute); 
 
 // error handling
 app.use((err, req, res, next) => {

@@ -1,6 +1,6 @@
 const mysql = require('mysql2');
 
-const connection = mysql.createConnection(process.env.MYSQL_CONFIG);
+const connection = mysql.createConnection(process.env.MYSQL_URI);
 // Connect
 connection.connect((err) => {
     if (err) {
@@ -19,9 +19,12 @@ process.on('SIGINT', () => {
       process.exit(0);
     });
 });
-module.exports = connection;
 
-// More Encapsulated
-const dbQuery = connection.query;
-module.exports = dbQuery;
 
+const execute = connection.execute;
+const query = connection.query;
+module.exports = {
+  connection,
+  execute,
+  query
+}
