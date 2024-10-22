@@ -14,10 +14,8 @@ app.use(express.json());
 
 
 // MOUNTS ROUTES
-const defaultRoute = require('./routes/defaultRoute')
+const defaultRoute = require('./routes/productRoute')
 app.use('/', defaultRoute);
-
-
 
 // error handling
 app.use((err, req, res, next) => {
@@ -26,5 +24,5 @@ app.use((err, req, res, next) => {
   })
 
 // Start Listening
-app.listen(PORT, () => {console.log(`listening on ${PORT}`)}) 
+app.listen(PORT, () => {console.log(`listening on ${PORT}`)})
 
