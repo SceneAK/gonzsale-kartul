@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Catalog</title>
+    <style>
+        /* Body and general styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .catalog {
+            padding: 20px;
+        }
+
+        /* Tab links */
+        .tablink {
+            background-color: #f9f9f9;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .tablink:hover {
+            background-color: #ddd;
+        }
+
+        /* Tab content */
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .item {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+
+        .item img {
+            width: 150px;
+            height: 150px;
+        }
+
+        .item p {
+            font-size: 16px;
+        }
+
+        /* Active class for the selected tablink */
+        .active {
+            background-color: #ff9900;
+            color: white;
+        }
+
+        /* Header styling */
+        header {
+            background-color: #ffffff;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-bottom {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            background-color: #f9f9f9;
+            padding: 10px 0;
+        }
+
+        .header-bottom a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .header-bottom a:hover {
+            color: #ff9900;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header section -->
+    <header>
+        <div class="header-top">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="assets/images/logo_placeholder.svg" alt="GonzSale Logo">
+                    GonzSale 2024
+                </a>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search for items">
+            </div>
+            <div class="user-options">
+                <a href="#">Sign In</a>
+                <a href="#">My Cart</a>
+            </div>
+        </div>
+
+        <!-- Categories as TabLinks -->
+        <div class="header-bottom">
+            <a href="#" class="tablink" onclick="openCategory(event, 'Shirts')">Clothing</a>
+            <a href="#" class="tablink" onclick="openCategory(event, 'Accessories')">Accessories</a>
+            <a href="#" class="tablink" onclick="openCategory(event, 'Food')">Food & Beverages</a>
+            <a href="#" class="tablink" onclick="openCategory(event, 'Stickers')">Stickers</a>
+            <a href="#" class="tablink" onclick="openCategory(event, 'Bundles')">Bundles</a>
+            <a href="#" class="tablink" onclick="openCategory(event, 'All')">All Items</a>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <div class="catalog">
+        <h1>Item Catalog</h1>
+
+        <!-- Category Contents -->
+        <div id="Shirts" class="tabcontent">
+            <h2>Shirts</h2>
+            <!-- Add Shirt Items here -->
+            <div class="item">
+                <img src="assets/images/shirt1.jpg" alt="Shirt 1">
+                <p>Shirt 1 - $20</p>
+            </div>
+        </div>
+
+        <div id="Accessories" class="tabcontent">
+            <h2>Accessories</h2>
+            <!-- Add Accessories Items here -->
+            <div class="item">
+                <img src="assets/images/accessory1.jpg" alt="Accessory 1">
+                <p>Accessory 1 - $15</p>
+            </div>
+        </div>
+
+        <div id="Food" class="tabcontent">
+            <h2>Food & Beverages</h2>
+            <!-- Add Food Items here -->
+            <div class="item">
+                <img src="assets/images/food1.jpg" alt="Food Item 1">
+                <p>Food Item 1 - $10</p>
+            </div>
+        </div>
+
+        <div id="Stickers" class="tabcontent">
+            <h2>Stickers</h2>
+            <!-- Add Sticker Items here -->
+            <div class="item">
+                <img src="assets/images/sticker1.jpg" alt="Sticker 1">
+                <p>Sticker 1 - $5</p>
+            </div>
+        </div>
+
+        <div id="Bundles" class="tabcontent">
+            <h2>Bundles</h2>
+            <!-- Add Bundle Items here -->
+            <div class="item">
+                <img src="assets/images/bundle1.jpg" alt="Bundle 1">
+                <p>Bundle 1 - $30</p>
+            </div>
+        </div>
+
+        <div id="All" class="tabcontent">
+            <h2>All Items</h2>
+            <!-- This section can include all items from all categories -->
+        </div>
+    </div>
+
+    <!-- Footer section -->
+    <div id="footer"></div>
+
+    <script>
+        // Function to switch between categories
+        function openCategory(evt, categoryName) {
+            var i, tabcontent, tablink;
+
+            // Hide all tabcontent elements
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Remove active class from all tablinks
+            tablink = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablink.length; i++) {
+                tablink[i].className = tablink[i].className.replace(" active", "");
+            }
+
+            // Show the selected category's tabcontent
+            document.getElementById(categoryName).style.display = "block";
+
+            // If evt exists, add an "active" class to the clicked tablink
+            if (evt) {
+                evt.currentTarget.className += " active";
+            }
+        }
+
+        // Function to open the category based on the URL hash or default to Shirts
+        function openCategoryByHash() {
+            var hash = window.location.hash.substring(1); // Get the hash, remove the '#' character
+
+            if (hash) {
+                // Open the category based on the hash
+                openCategory(null, hash);
+            } else {
+                // Default to 'Shirts' if no hash is provided
+                openCategory(null, 'Shirts');
+            }
+        }
+
+        // Call the function when the page loads
+        document.addEventListener("DOMContentLoaded", function () {
+            // Automatically open the category by the hash, or default to Shirts
+            openCategoryByHash();
+
+            // Optionally, set the active tab based on the current hash
+            var hash = window.location.hash.substring(1);
+            if (hash) {
+                var tablink = document.querySelector(`a[href="#${hash}"]`);
+                if (tablink) {
+                    tablink.className += " active";
+                }
+            } else {
+                document.querySelector('.tablink').className += " active";
+            }
+        });
+    </script>
+</body>
+
+</html>
