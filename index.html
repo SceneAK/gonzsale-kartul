@@ -1,10 +1,73 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>GonzSale 2024</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .featured-products {
+            padding: 20px;
+            background-color: #fff;
+        }
+        .featured-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #fafafa;
+        }
+        .featured-item h2 {
+            margin-top: 0;
+        }
+        .preorder-btn {
+            padding: 10px 15px;
+            background-color: #ff9900;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    
+
+    <!-- Header placeholder -->
+    <div id="header"></div>
+
+    <!-- Main content -->
+    <div class="featured-products">
+        <div class="featured-item">
+            <h2>Coilover Workshirt</h2>
+            <p>Immediate to Preorder</p>
+            <button class="preorder-btn">Preorder Now</button>
+        </div>
+        <div class="featured-item">
+            <h2>"Praise The Lord" Bundle</h2>
+            <p>Featured Bundle by Ignatius Pius Binawan</p>
+            <button class="preorder-btn">Preorder Now</button>
+        </div>
+    </div>
+
+    <!-- Footer placeholder -->
+    <div id="footer"></div>
+
+    <script>
+        // Load external HTML file into a div
+        function loadHTML(file, elementId) {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById(elementId).innerHTML = data;
+                });
+        }
+
+        // Load header and footer
+        loadHTML('header.html', 'header');
+        loadHTML('footer.html', 'footer');
+    </script>
 </body>
 </html>
