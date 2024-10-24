@@ -3,13 +3,16 @@ CREATE DATABASE GonzSale;
 CREATE TABLE User(
    user_id int(3) AUTO_INCREMENT PRIMARY KEY, 
    user_name varchar(35),
-   user_contact varchar(30)                         -- email or phone
+   user_phone varchar(10),
+   user_email varchar(30),
+   user_password varchar(256)
 );
 
 CREATE TABLE Store(
    store_id int(3) AUTO_INCREMENT PRIMARY KEY,
-   owner_user_id int(3),
-   store_imgSrc = text
+   owner_user_id_fk int(3),
+   store_imgSrc text,
+   FOREIGN KEY (owner_user_id_fk) REFERENCES User(user_id);
 );
 
 CREATE TABLE Product(
@@ -17,8 +20,9 @@ CREATE TABLE Product(
    product_name varchar(200),
    product_description varchar(600),
    product_imgSrc json,                             -- URL Array
-   product_category json,                           -- string array
-   vendor_id int(3)
+   product_category varchar(150),                   -- One Category Path. Maybe add "tags" if needed
+   store_id_fk int(3),
+   FOREIGN KEY (store_id_fk) REFERENCES Store(store_id);
 );
 
 CREATE TABLE Transaction(
