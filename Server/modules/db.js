@@ -16,9 +16,11 @@ let connectionPromise = mysql.createConnection(process.env.MYSQL_URI);;
   // End if Interrupted 
   process.on('SIGINT',() => {
     try {
-      connection.end().then( ()=>console.log('Connection closed'));
+      connection.end().then( ()=> { console.log('Connection closed'); process.exit(0)});
+      
     } catch (err) {
       console.error('Error closing connection:', err)
+      process.exit(1);
     }
   });
 })(); // call
