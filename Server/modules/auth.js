@@ -1,9 +1,12 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
-const { execute } = require('./db');
+let connection;
+(async () => { 
+    connection = await require("../modules/db")
+})()
 
 const authenticate = async (authInfo) => {
-    const [rows] = execute('SELECT * FROM user WHERE user_email = ?', [authInfo.email]);
+    const [rows] = connection.execute('SELECT * FROM user WHERE user_email = ?', [authInfo.email]);
     const result = await bcrypt.compare(authInfo.password, rows[0].user_password);
     if(result) { 
         return jwt.sign(row[0].user_id, process.env.SECRET_KEY, { expiresIn: '1h' }); // token

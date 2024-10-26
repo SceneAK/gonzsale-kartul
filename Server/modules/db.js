@@ -1,30 +1,26 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 
-const connection = mysql.createConnection(process.env.MYSQL_URI);
-// Connect
-connection.connect((err) => {
-    if (err) {
-        throw err;
+let connectionPromise = mysql.createConnection(process.env.MYSQL_URI);;
+
+// SETUP CONNECTION
+(async () => { 
+  // Connect
+  const connection = await connectionPromise;
+  try {
+    await connection.connect();
+    console.log('Connected as id ' + connection.threadId)
+  } catch (err) {
+    console.log('Could not connect: ' + err);
+  }
+  
+  // End if Interrupted 
+  process.on('SIGINT',() => {
+    try {
+      connection.end().then( ()=>console.log('Connection closed'));
+    } catch (err) {
+      console.error('Error closing connection:', err)
     }
-    console.log('Connected as id ' + connection.threadId);
-});
-// End if Interrupted
-process.on('SIGINT', () => {
-    connection.end((err) => {
-      if (err) {
-        console.error('Error closing connection:', err.stack);
-      } else {
-        console.log('Connection closed.');
-      }
-      process.exit(0);
-    });
-});
+  });
+})(); // call
 
-
-const execute = connection.execute;
-const query = connection.query;
-module.exports = {
-  connection,
-  execute,
-  query
-}
+module.exports = connectionPromise;

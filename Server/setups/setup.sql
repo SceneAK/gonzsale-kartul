@@ -10,6 +10,7 @@ CREATE TABLE User(
 
 CREATE TABLE Store(
    store_id int(3) AUTO_INCREMENT PRIMARY KEY,
+   store_name varchar(35),
    owner_user_id_fk int(3),
    store_imgSrc text,
    FOREIGN KEY (owner_user_id_fk) REFERENCES User(user_id);
@@ -23,6 +24,7 @@ CREATE TABLE Product(
    product_category varchar(150),                   -- One Category Path. Maybe add "tags" if needed
    store_id_fk int(3),
    FOREIGN KEY (store_id_fk) REFERENCES Store(store_id);
+   -- have not added price yet
 );
 
 CREATE TABLE Transaction(
