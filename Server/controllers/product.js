@@ -31,14 +31,13 @@ async function executeFiltered(filter)
 }
 
 const getProduct = async (req, res) => {
-    console.log("getProduct");
     const {id} = req.params;
     const [rows] = await connection.execute('SELECT * FROM Product WHERE product_id = ?', [id]);
     res.json(rows[0]);
 }
 
 const createProduct = async (req, res) => {
-    const [rows] = await connection.execute("SELECT * FROM Store WHERE owner_user_id_fk = ?", [req.authenticated_id]);
+    const [rows] = await connection.execute("SELECT * FROM Store WHERE owner_user_id_fk = ?", [req.authenticatedUserId]);
     
     if(rows.length == 0) {
         res.status(400).send("Create a store!");
@@ -75,3 +74,5 @@ module.exports = {
     getProducts,
     createProduct
 }
+
+// TODO: Update Product, Delete Product

@@ -1,14 +1,11 @@
 const router = require('express').Router();
-const { checkAuthToken_middle } = require('../modules/auth')
+const { verifyAuthToken_middle } = require('../modules/tokenAuth')
 const { getProduct, getProducts, createProduct} = require('../controllers/product')
 
-// general
 router.get('/', getProducts)
 
-// single
 router.get('/:id', getProduct);
 
-// create 
-router.post('/create/', checkAuthToken_middle, createProduct);
+router.post('/create/', verifyAuthToken_middle, createProduct);
 
 module.exports = router;

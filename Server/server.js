@@ -1,3 +1,5 @@
+const path = require('path');
+
 // Create express app
 const express = require('express'); 
 const app = express()
@@ -10,12 +12,18 @@ const PORT = process.env.PORT;
 app.use((req, res, next) => {console.log(req.path, req.method); next();})
 
 // parses req.json and puts it into req.body
-app.use(express.json());
+app.use(express.json({limit: '1mb'}));
 
 
 // MOUNTS ROUTES
-const defaultRoute = require('./routes/productRoute')
-app.use('/', defaultRoute); 
+const productRoute = require('./routes/productRoute')
+app.use('/', productRoute); 
+const userRoute = require('./routes/userRoute')
+app.use('/user/', userRoute);
+const storeRoute = require('./routes/storeRoute')
+app.use('/store/', storeRoute);
+const uploadRoute = require('./routes/uploadRoute')
+app.use('/upload/', uploadRoute);
 
 // error handling
 app.use((err, req, res, next) => {
