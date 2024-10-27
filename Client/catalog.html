@@ -66,12 +66,47 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+        /* First Row: Logo, Search Bar, Sign In, Cart */
         .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 10px 0;
         }
 
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo a {
+            text-decoration: none;
+            color: inherit;
+            /* Ensure the text retains its default color */
+            display: flex;
+            align-items: center;
+            /* Keep the logo and text aligned */
+        }
+
+        .logo img {
+            width: 40px;
+            margin-right: 10px;
+        }   
+
+        .search-bar input {
+            padding: 5px;
+            width: 250px;
+        }
+
+        .user-options a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        /* Second Row: Categories */
         .header-bottom {
             display: flex;
             justify-content: center;
@@ -89,6 +124,7 @@
         .header-bottom a:hover {
             color: #ff9900;
         }
+
     </style>
 </head>
 
@@ -131,7 +167,7 @@
             <h2>Shirts</h2>
             <!-- Add Shirt Items here -->
             <div class="item">
-                <img src="assets/images/shirt1.jpg" alt="Shirt 1">
+                <img src="https://i.ibb.co.com/gJxGT63/epic-bmw-e30.jpg" alt="epic-bmw-e30" />
                 <p>Shirt 1 - $20</p>
             </div>
         </div>
@@ -182,7 +218,6 @@
     <div id="footer"></div>
 
     <script>
-        // Function to switch between categories
         function openCategory(evt, categoryName) {
             var i, tabcontent, tablink;
 
@@ -204,38 +239,41 @@
             // If evt exists, add an "active" class to the clicked tablink
             if (evt) {
                 evt.currentTarget.className += " active";
+            } else {
+                // Set the active class on the corresponding tablink if opened via hash
+                var tablink = document.querySelector(`a[href="#${categoryName}"]`);
+                if (tablink) {
+                    tablink.className += " active";
+                }
             }
         }
 
-        // Function to open the category based on the URL hash or default to Shirts
         function openCategoryByHash() {
             var hash = window.location.hash.substring(1); // Get the hash, remove the '#' character
 
             if (hash) {
-                // Open the category based on the hash
                 openCategory(null, hash);
             } else {
-                // Default to 'Shirts' if no hash is provided
                 openCategory(null, 'Shirts');
             }
         }
 
-        // Call the function when the page loads
         document.addEventListener("DOMContentLoaded", function () {
             // Automatically open the category by the hash, or default to Shirts
             openCategoryByHash();
-
-            // Optionally, set the active tab based on the current hash
-            var hash = window.location.hash.substring(1);
-            if (hash) {
-                var tablink = document.querySelector(`a[href="#${hash}"]`);
-                if (tablink) {
-                    tablink.className += " active";
-                }
-            } else {
-                document.querySelector('.tablink').className += " active";
-            }
         });
+
+        function loadHTML(file, elementId) {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById(elementId).innerHTML = data;
+                });
+        }
+
+        // Load header and footer
+        loadHTML('header.html', 'header');
+        loadHTML('footer.html', 'footer');
     </script>
 </body>
 
