@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,19 +12,31 @@
             padding: 0;
             background-color: #f4f4f4;
         }
+
+        /* Wrapper to hold content and footer */
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 35vh;
+        }
+
         .featured-products {
             padding: 20px;
             background-color: #fff;
         }
+
         .featured-item {
             border: 1px solid #ddd;
             padding: 10px;
             margin-bottom: 20px;
             background-color: #fafafa;
         }
+
         .featured-item h2 {
             margin-top: 0;
         }
+
         .preorder-btn {
             padding: 10px 15px;
             background-color: #ff9900;
@@ -33,41 +46,66 @@
         }
     </style>
 </head>
+
 <body>
 
-    <!-- Header placeholder -->
-    <div id="header"></div>
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+        <!-- Header placeholder -->
+        <div id="header"></div>
 
-    <!-- Main content -->
-    <div class="featured-products">
-        <div class="featured-item">
-            <h2>Coilover Workshirt</h2>
-            <p>Immediate to Preorder</p>
-            <button class="preorder-btn">Preorder Now</button>
+        <!-- Main content -->
+        <div class="featured-products">
+            <div class="featured-item">
+                <h2>Coilover Workshirt</h2>
+                <p>Immediate to Preorder</p>
+                <button class="preorder-btn">Preorder Now</button>
+            </div>
+            <div class="featured-item">
+                <h2>"Praise The Lord" Bundle</h2>
+                <p>Featured Bundle by Ignatius Pio Binawan</p>
+                <button class="preorder-btn">Preorder Now</button>
+            </div>
         </div>
-        <div class="featured-item">
-            <h2>"Praise The Lord" Bundle</h2>
-            <p>Featured Bundle by Ignatius Pius Binawan</p>
-            <button class="preorder-btn">Preorder Now</button>
-        </div>
+
+        <!-- Footer placeholder -->
+        <div id="footer"></div>
     </div>
 
-    <!-- Footer placeholder -->
-    <div id="footer"></div>
 
     <script>
         // Load external HTML file into a div
-        function loadHTML(file, elementId) {
+        function loadHTML(file, elementId, callback) {
             fetch(file)
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById(elementId).innerHTML = data;
+                    if (callback) callback(); // Call the callback after loading
                 });
         }
 
-        // Load header and footer
-        loadHTML('header.html', 'header');
+        // Load header with dropdown functionality
+        loadHTML('header.html', 'header', function () {
+            // Add dropdown toggle functionality
+            const dropdownLink = document.querySelector('.dropdown a');
+            const dropdownContent = document.getElementById("dropdown-content");
+
+            dropdownLink.addEventListener('click', function (event) {
+                event.preventDefault();
+                dropdownContent.classList.toggle("show");
+            });
+
+            // Close dropdown if clicked outside
+            window.addEventListener('click', function (event) {
+                if (!event.target.closest('.dropdown')) {
+                    dropdownContent.classList.remove('show');
+                }
+            });
+        });
+
+        // Load footer if needed
         loadHTML('footer.html', 'footer');
     </script>
 </body>
+
 </html>
