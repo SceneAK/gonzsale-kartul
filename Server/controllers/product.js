@@ -36,14 +36,14 @@ const getProduct = async (req, res) => {
     res.json(rows[0]);
 }
 
-const createProduct = async (req, res) => {
+const createProduct = async (req, res) => { // Expects upload
     const [rows] = await connection.execute("SELECT * FROM Store WHERE owner_user_id_fk = ?", [req.authenticatedUserId]);
     
     if(rows.length == 0) {
-        res.status(400).send("Create a store!");
+        res.status(400).send("Create a store!"); return;
     }
-    if(!isValid(req.body)) { 
-        res.status(400).send("Bad Request!");
+    if(!isValid(req.body)) {
+        res.status(400).send("Bad Request!"); return;
     }
 
     try{
@@ -51,7 +51,7 @@ const createProduct = async (req, res) => {
             [
             req.body.product_name,
             req.body.product_description,
-            req.body.product_imgSrc,
+            req.urls,
             req.body.product_category,
             rows[0].store_id
             ]
@@ -61,11 +61,10 @@ const createProduct = async (req, res) => {
         res.status(400).send(err.message); 
     }
 
-
     function isValid(body)
     {
         const defined = (value) => value in body;
-        return defined('product_name') && defined('product_description') && defined('product_imgSrc') && defined('product_category');
+        return defined('product_name') && defined('product_description') && defined('product_category');
     }
 }
 

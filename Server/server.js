@@ -1,4 +1,4 @@
-const path = require('path');
+const upath = require('upath');
 
 // Create express app
 const express = require('express'); 
@@ -14,6 +14,13 @@ app.use((req, res, next) => {console.log(req.path, req.method); next();})
 // parses req.json and puts it into req.body
 app.use(express.json({limit: '1mb'}));
 
+const PUBLIC_DIR = upath.join(__dirname, '/public/');
+const SOURCE_ROUTE_NAME = 'source';
+module.exports = {
+  SOURCE_ROUTE_NAME,
+  PUBLIC_DIR
+};
+app.use(`/${SOURCE_ROUTE_NAME}/`, express.static(PUBLIC_DIR));
 
 // MOUNTS ROUTES
 const productRoute = require('./routes/productRoute')
@@ -22,8 +29,6 @@ const userRoute = require('./routes/userRoute')
 app.use('/user/', userRoute);
 const storeRoute = require('./routes/storeRoute')
 app.use('/store/', storeRoute);
-const uploadRoute = require('./routes/uploadRoute')
-app.use('/upload/', uploadRoute);
 
 // error handling
 app.use((err, req, res, next) => {
@@ -33,4 +38,3 @@ app.use((err, req, res, next) => {
 
 // Start Listening
 app.listen(PORT, () => {console.log(`listening on ${PORT}`)})
-

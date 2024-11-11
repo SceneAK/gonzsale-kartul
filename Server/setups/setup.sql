@@ -5,7 +5,8 @@ CREATE TABLE User(
    user_name varchar(35),
    user_phone varchar(10),
    user_email varchar(30),
-   user_password varchar(256)
+   user_password varchar(256),
+   user_used_storage int                           -- in megabytes
 );
 
 CREATE TABLE Store(
