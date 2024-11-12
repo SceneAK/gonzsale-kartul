@@ -36,7 +36,7 @@ const getProduct = async (req, res) => {
     res.json(rows[0]);
 }
 
-const createProduct = async (req, res) => { // Expects upload
+const createProduct = async (req, res) => { // Expects upload to process form-data into req.body and req.urls
     const [rows] = await connection.execute("SELECT * FROM Store WHERE owner_user_id_fk = ?", [req.authenticatedUserId]);
     
     if(rows.length == 0) {

@@ -11,8 +11,17 @@ const PORT = process.env.PORT;
 // request logging
 app.use((req, res, next) => {console.log(req.path, req.method); next();})
 
-// parses req.json and puts it into req.body
-app.use(express.json({limit: '1mb'}));
+// parses req.json and puts it into req.body if it's a json type
+app.use(
+  (req, res, next) => {
+    if(req.headers['content-type'] == 'application/json')
+    {
+      express.json({limit: '1mb'})(req, res, next);
+    }else{
+      next();
+    }
+  }
+);
 
 const PUBLIC_DIR = upath.join(__dirname, '/public/');
 const SOURCE_ROUTE_NAME = 'source';
