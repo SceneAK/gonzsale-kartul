@@ -32,11 +32,11 @@ module.exports = {
 app.use(`/${SOURCE_ROUTE_NAME}/`, express.static(PUBLIC_DIR));
 
 // MOUNTS ROUTES
-const productRoute = require('./routes/productRoute')
+const productRoute = require('./src/routes/productRoute')
 app.use('/', productRoute); 
-const userRoute = require('./routes/userRoute')
+const userRoute = require('./src/routes/userRoute')
 app.use('/user/', userRoute);
-const storeRoute = require('./routes/storeRoute')
+const storeRoute = require('./src/routes/storeRoute')
 app.use('/store/', storeRoute);
 
 // error handling

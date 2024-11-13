@@ -1,6 +1,6 @@
 const upath = require('upath');
 const multer = require("multer");
-const { SOURCE_ROUTE_NAME, PUBLIC_DIR } = require('../server');
+const { SOURCE_ROUTE_NAME, PUBLIC_DIR } = require('../../server');
 let connection;
 (async () => { 
     connection = await require("./db")
@@ -10,6 +10,12 @@ function buildURL(protocol, host, fullFilePath)
 {
     const path = upath.relative(PUBLIC_DIR, fullFilePath);
     return `${protocol}://${host}/${SOURCE_ROUTE_NAME}/${path}`;
+}
+function getFilePath(url)
+{
+    const start = url.indexOf(SOURCE_ROUTE_NAME) + SOURCE_ROUTE_NAME.length + 1; // +1 for the backslash after  
+    const relative = url.substring(start);
+    return upath.join(PUBLIC_DIR, relative);
 }
 function addUsedStorage(amount, id)
 {
@@ -57,5 +63,7 @@ const images = async (req, res, next) => {
 
 module.exports = {
     image,
-    images
+    images,
+    buildURL,
+    getFilePath
 };

@@ -28,6 +28,10 @@ CREATE TABLE Product(
    -- have not added price yet
 );
 
+CREATE TABLE Order(
+
+);
+
 CREATE TABLE Transaction(
    transaction_id int(6) AUTO_INCREMENT PRIMARY KEY, 
    buyer_user_id int(3),
