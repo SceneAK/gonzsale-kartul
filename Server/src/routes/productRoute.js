@@ -1,8 +1,9 @@
-const router = require('express').Router();
+import express from 'express';
+const router = express.Router();
 
-const { verifyAuthToken_middle } = require('../modules/tokenAuth')
-const { getProduct, getProducts, createProduct} = require('../controllers/product')
-const { images } = require('../modules/upload');
+import { verifyAuthToken_middle } from '../modules/tokenAuth.js';
+import { getProduct, getProducts, createProduct} from '../controllers/product.js'
+import { images } from '../modules/upload.js';
 
 router.get('/', getProducts)
 
@@ -10,4 +11,4 @@ router.get('/:id', getProduct);
 
 router.post('/create/', verifyAuthToken_middle, images, createProduct);
 
-module.exports = router;
+export default router;

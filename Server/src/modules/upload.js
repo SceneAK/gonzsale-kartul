@@ -1,19 +1,17 @@
-const upath = require('upath');
-const multer = require("multer");
-const { SOURCE_ROUTE_NAME, PUBLIC_DIR } = require('../../server');
-let connection;
-(async () => { 
-    connection = await require("./db")
-})()
-console.log(SOURCE_ROUTE_NAME, PUBLIC_DIR);
+import upath from  'upath';
+import multer from 'multer';
+import { STATIC_ROUTE_NAME, PUBLIC_DIR } from '../modules/directoryData.js';
+import connectionPromise from '../modules/db.js'
+const connection = await connectionPromise;
+
 function buildURL(protocol, host, fullFilePath)
 {
     const path = upath.relative(PUBLIC_DIR, fullFilePath);
-    return `${protocol}://${host}/${SOURCE_ROUTE_NAME}/${path}`;
+    return `${protocol}://${host}/${STATIC_ROUTE_NAME}/${path}`;
 }
 function getFilePath(url)
 {
-    const start = url.indexOf(SOURCE_ROUTE_NAME) + SOURCE_ROUTE_NAME.length + 1; // +1 for the backslash after  
+    const start = url.indexOf(STATIC_ROUTE_NAME) + STATIC_ROUTE_NAME.length + 1; // +1 for the backslash after  
     const relative = url.substring(start);
     return upath.join(PUBLIC_DIR, relative);
 }
@@ -61,7 +59,7 @@ const images = async (req, res, next) => {
     }) 
 }
 
-module.exports = {
+export {
     image,
     images,
     buildURL,

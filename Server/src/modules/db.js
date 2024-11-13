@@ -1,4 +1,4 @@
-const mysql = require('mysql2/promise');
+import mysql from 'mysql2/promise';
 
 let connectionPromise = mysql.createConnection(process.env.MYSQL_URI);;
 
@@ -24,4 +24,4 @@ let connectionPromise = mysql.createConnection(process.env.MYSQL_URI);;
   });
 })(); // call
 
-module.exports = connectionPromise;
+export default connectionPromise;

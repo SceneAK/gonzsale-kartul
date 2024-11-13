@@ -1,8 +1,5 @@
-let connection;
-(async () => { 
-    connection = await require("../modules/db")
-})()
-
+import connectionPromise from '../modules/db.js'
+const connection = await connectionPromise;
 
 const getProducts = async (req, res) => {
     const [rows, fields] = await executeFiltered(req.body);
@@ -68,10 +65,10 @@ const createProduct = async (req, res) => { // Expects upload to process form-da
     }
 }
 
-module.exports = {
+export {
     getProduct,
     getProducts,
     createProduct
-}
+};
 
 // TODO: Update Product, Delete Product

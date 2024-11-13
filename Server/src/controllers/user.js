@@ -1,10 +1,8 @@
-const {signUser} = require('../modules/tokenAuth');
-const bcrypt = require('bcrypt'); const SALT_ROUNDS = 8;
-const dns = require('dns');
-let connection;
-(async () => { 
-    connection = await require("../modules/db")
-})()
+import {signUser}from '../modules/tokenAuth.js';
+import bcrypt from 'bcrypt'; const SALT_ROUNDS = 8;
+import dns from 'dns';
+import connectionPromise from '../modules/db.js'
+const connection = await connectionPromise;
 
 const getUser = async (req, res) => {
     const {id} = req.params;
@@ -33,7 +31,7 @@ const signIn = async (req, res) => {
 
 
 function isValidName(name) { return !name.includes(' '); } // Anything more?
-function isValidEmail(email) { 
+async function isValidEmail(email) { 
     // Test format. Got the regex from copilot
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if(!emailRegex.test(email)) { return false;}
@@ -81,10 +79,10 @@ const signUp = async (req, res) => {
     
 }
 
-module.exports = {
+export {
     getUser,
     signIn,
     signUp
-}
+};
 
 // TODO: Get User, Update Password, Password Forgot

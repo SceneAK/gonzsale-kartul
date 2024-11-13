@@ -1,8 +1,6 @@
-const fs = require('fs');
-let connection;
-(async () => { 
-    connection = await require("../modules/db")
-})()
+import fs from 'fs';
+import connectionPromise from '../modules/db.js'
+const connection = await connectionPromise;
 
 const getStore = async (req, res) =>
 {
@@ -46,4 +44,4 @@ const updateStore = async (req, res) =>
     }
 }
 
-module.exports = { getStore, createStore, updateStore }
+export { getStore, createStore, updateStore }

@@ -1,7 +1,7 @@
-const { expect } = require('chai');
-const { getFilePath } = require('../src/modules/upload');
-const { PUBLIC_DIR } = require('../src/server')
-const upath = require('upath');
+import {expect} from 'chai';
+import { getFilePath } from '../src/modules/upload';
+import { PUBLIC_DIR } from '../src/server';
+import upath from 'upath';
 
 describe('File Path Test', ()=>{
     it('should return paths correctly', ()=>{

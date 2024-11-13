@@ -1,11 +1,12 @@
-const upath = require('upath');
+import express from 'express'; 
+import dotenv from 'dotenv';
+import { STATIC_ROUTE_NAME, PUBLIC_DIR } from './src/modules/directoryData.js';
 
 // Create express app
-const express = require('express'); 
 const app = express()
 
 // load .env file to process.env
-require('dotenv').config();
+dotenv.config();
 const PORT = process.env.PORT;
 
 // request logging
@@ -23,21 +24,13 @@ app.use(
   }
 );
 
-const PUBLIC_DIR = upath.join(__dirname, '/public/');
-const SOURCE_ROUTE_NAME = 'source';
-module.exports = {
-  SOURCE_ROUTE_NAME,
-  PUBLIC_DIR
-};
-app.use(`/${SOURCE_ROUTE_NAME}/`, express.static(PUBLIC_DIR));
+
+app.use(`/${STATIC_ROUTE_NAME}/`, express.static(PUBLIC_DIR));
 
 // MOUNTS ROUTES
-const productRoute = require('./src/routes/productRoute')
-app.use('/', productRoute); 
-const userRoute = require('./src/routes/userRoute')
-app.use('/user/', userRoute);
-const storeRoute = require('./src/routes/storeRoute')
-app.use('/store/', storeRoute);
+app.use('/', (await import('./src/routes/productRoute.js')).default);
+app.use('/user/', (await import('./src/routes/userRoute.js')).default);
+app.use('/store/', (await import('./src/routes/storeRoute.js')).default);
 
 // error handling
 app.use((err, req, res, next) => {
