@@ -1,12 +1,9 @@
+import { STATIC_ROUTE_NAME, PUBLIC_DIR } from './initialize.js';
 import express from 'express'; 
-import dotenv from 'dotenv';
-import { STATIC_ROUTE_NAME, PUBLIC_DIR } from './src/modules/directoryData.js';
 
 // Create express app
 const app = express()
 
-// load .env file to process.env
-dotenv.config();
 const PORT = process.env.PORT;
 
 // request logging

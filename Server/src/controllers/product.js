@@ -2,12 +2,12 @@ import connectionPromise from '../modules/db.js'
 const connection = await connectionPromise;
 
 const getProducts = async (req, res) => {
-    const [rows, fields] = await executeFiltered(req.body);
+    const [rows, fields] = await executeFiltered(req.params);
     res.json(rows);
 }
 async function executeFiltered(filter)
 {
-    let query = `SELECT * FROM Product WHERE 1=1`;
+    let query = `SELECT * FROM product WHERE 1=1`;
     let params = [];
     if(filter.product_name != undefined)
     {
@@ -21,20 +21,25 @@ async function executeFiltered(filter)
     }
     if(filter.store_id != undefined)
     {
-        query += ` AND store_id_fk LIKE ?`;
+        query += ` AND store_id LIKE ?`;
         params.push(`${filter.store_id}%`);
+    }
+    if(filter.store_name != undefined)
+    {
+        query += ` AND store_name LIKE ? COLLATE utf8mb4_general_ci`;
+        params.push(`${filter.store_name}%`);
     }
     return connection.execute(query, params);
 }
 
 const getProduct = async (req, res) => {
     const {id} = req.params;
-    const [rows] = await connection.execute('SELECT * FROM Product WHERE product_id = ?', [id]);
+    const [rows] = await connection.execute('SELECT * FROM product WHERE product_id = ?', [id]);
     res.json(rows[0]);
 }
 
 const createProduct = async (req, res) => { // Expects upload to process form-data into req.body and req.urls
-    const [rows] = await connection.execute("SELECT * FROM Store WHERE owner_user_id_fk = ?", [req.authenticatedUserId]);
+    const [rows] = await connection.execute("SELECT * FROM store WHERE owner_user_id = ?", [req.authenticatedUserId]);
     
     if(rows.length == 0) {
         res.status(400).send("Create a store!"); return;
@@ -44,7 +49,7 @@ const createProduct = async (req, res) => { // Expects upload to process form-da
     }
 
     try{
-        const [result] = await connection.execute("INSERT INTO Product (product_name, product_description, product_imgSrc, product_category, store_id_fk) VALUES (?, ?, ?, ?, ?)",
+        const [result] = await connection.execute("INSERT INTO product (product_name, product_description, product_imgSrc, product_category, store_id) VALUES (?, ?, ?, ?, ?)",
             [
             req.body.product_name,
             req.body.product_description,
