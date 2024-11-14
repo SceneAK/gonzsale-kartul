@@ -87,7 +87,6 @@
         .user-options a {
             text-decoration: none;
             color: #333;
-            font-weight: bold;
             cursor: pointer;
         }
 
@@ -159,17 +158,16 @@
         </div>
         <div class="user-options">
             <div class="dropdown">
-                <a href="#" onclick="toggleDropdown()">Sign In</a>
+                <a href="#">Sign In</a>
                 <div id="dropdown-content" class="dropdown-content">
                     <input type="text" placeholder="Email">
                     <input type="password" placeholder="Password">
                     <p>Don't have an account?</p>
-                    <button>Sign Up</button>
+                    <button onclick="window.location.href='signup.html';">Sign Up</button>
                 </div>
             </div>
-            <a href="#">My Cart</a>
+            <a href="mycart.html">My Cart</a>
         </div>
-
     </div>
 
     <!-- Second Row: Categories -->
@@ -183,24 +181,22 @@
     </div>
 
     <script>
-        function toggleDropdown() {
-            var dropdown = document.getElementById("dropdown-content");
-            dropdown.classList.toggle("show");
-        }
+        document.addEventListener("DOMContentLoaded", function () {
+            // Dropdown toggle functionality
+            const dropdownLink = document.querySelector('.dropdown a');
+            const dropdownContent = document.getElementById("dropdown-content");
 
-        // Close dropdown if clicked outside
-        window.onclick = function (event) {
-            if (!event.target.matches('.dropdown a')) {
-                var dropdowns = document.getElementsByClassName("dropdown-content");
-                for (var i = 0; i < dropdowns.length; i++) {
-                    var openDropdown = dropdowns[i];
-                    if (openDropdown.classList.contains('show')) {
-                        openDropdown.classList.remove('show');
-                    }
+            dropdownLink.addEventListener('click', function (event) {
+                event.preventDefault();
+                dropdownContent.classList.toggle("show");
+            });
+
+            // Close dropdown if clicked outside
+            window.addEventListener('click', function (event) {
+                if (!event.target.closest('.dropdown')) {
+                    dropdownContent.classList.remove('show');
                 }
-            }
-        }
+            });
+        });
     </script>
-
-
 </header>

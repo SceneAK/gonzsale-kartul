@@ -58,105 +58,12 @@
             background-color: #ff9900;
             color: white;
         }
-
-        /* Header styling */
-        header {
-            background-color: #ffffff;
-            padding: 10px 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* First Row: Logo, Search Bar, Sign In, Cart */
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-        }
-
-        .logo {
-            font-size: 1.5em;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-        }
-
-        .logo a {
-            text-decoration: none;
-            color: inherit;
-            /* Ensure the text retains its default color */
-            display: flex;
-            align-items: center;
-            /* Keep the logo and text aligned */
-        }
-
-        .logo img {
-            width: 40px;
-            margin-right: 10px;
-        }   
-
-        .search-bar input {
-            padding: 5px;
-            width: 250px;
-        }
-
-        .user-options a {
-            margin-left: 20px;
-            text-decoration: none;
-            color: #333;
-        }
-
-        /* Second Row: Categories */
-        .header-bottom {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            background-color: #f9f9f9;
-            padding: 10px 0;
-        }
-
-        .header-bottom a {
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-        }
-
-        .header-bottom a:hover {
-            color: #ff9900;
-        }
-
     </style>
 </head>
 
 <body>
     <!-- Header section -->
-    <header>
-        <div class="header-top">
-            <div class="logo">
-                <a href="index.html">
-                    <img src="assets/images/logo_placeholder.svg" alt="GonzSale Logo">
-                    GonzSale 2024
-                </a>
-            </div>
-            <div class="search-bar">
-                <input type="text" placeholder="Search for items">
-            </div>
-            <div class="user-options">
-                <a href="#">Sign In</a>
-                <a href="#">My Cart</a>
-            </div>
-        </div>
-
-        <!-- Categories as TabLinks -->
-        <div class="header-bottom">
-            <a href="#" class="tablink" onclick="openCategory(event, 'Shirts')">Clothing</a>
-            <a href="#" class="tablink" onclick="openCategory(event, 'Accessories')">Accessories</a>
-            <a href="#" class="tablink" onclick="openCategory(event, 'Food')">Food & Beverages</a>
-            <a href="#" class="tablink" onclick="openCategory(event, 'Stickers')">Stickers</a>
-            <a href="#" class="tablink" onclick="openCategory(event, 'Bundles')">Bundles</a>
-            <a href="#" class="tablink" onclick="openCategory(event, 'All')">All Items</a>
-        </div>
-    </header>
+    <div id="header"></div>
 
     <!-- Main content -->
     <div class="catalog">
@@ -271,9 +178,46 @@
                 });
         }
 
+        // Call openCategoryByHash when the page loads
+        document.addEventListener("DOMContentLoaded", openCategoryByHash);
+
+        // Listen for hash changes to handle category changes without reloading
+        window.addEventListener("hashchange", openCategoryByHash);
+
+        function openCategory(evt, categoryName) {
+            var i, tabcontent, tablink;
+
+            // Hide all tabcontent elements
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Remove active class from all tablinks
+            tablink = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablink.length; i++) {
+                tablink[i].classList.remove("active");
+            }
+
+            // Show the selected category's content
+            document.getElementById(categoryName).style.display = "block";
+
+            // If evt exists, add "active" to the clicked tablink
+            if (evt) {
+                evt.currentTarget.classList.add("active");
+            }
+        }
+
+        function openCategoryByHash() {
+            const hash = window.location.hash.substring(1) || 'Shirts'; // Default to 'Shirts' if no hash
+            openCategory(null, hash);
+        }
+
         // Load header and footer
         loadHTML('header.html', 'header');
         loadHTML('footer.html', 'footer');
+
+
     </script>
 </body>
 
