@@ -1,0 +1,135 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f9f9f9;
+        }
+
+        .cart-container {
+            width: 100%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        #cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .cart-item {
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        .empty-message {
+            font-size: 1.2em;
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content-wrapper">
+        <!-- Header placeholder -->
+        <div id="header"></div>
+
+        <!-- Main content -->
+        <!DOCTYPE html>
+        <html lang="en">
+
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>My Cart</title>
+            <link rel="stylesheet" href="style.css">
+        </head>
+
+        <body>
+            <div class="cart-container">
+                <h1>My Cart</h1>
+
+                <div id="cart-items"></div>
+
+                <p id="empty-message" class="empty-message">Nothing yet</p>
+            </div>
+
+            <script>
+                // Example of cart items (replace this with real data as needed)
+                const cart = []; // Empty array represents an empty cart
+
+                const cartItemsContainer = document.getElementById("cart-items");
+                const emptyMessage = document.getElementById("empty-message");
+
+                function displayCartItems() {
+                    if (cart.length === 0) {
+                        emptyMessage.style.display = "block";
+                        cartItemsContainer.style.display = "none";
+                    } else {
+                        emptyMessage.style.display = "none";
+                        cartItemsContainer.style.display = "block";
+                        cart.forEach(item => {
+                            const itemDiv = document.createElement("div");
+                            itemDiv.classList.add("cart-item");
+                            itemDiv.innerHTML = `
+                                <p><strong>${item.name}</strong></p>
+                                <p>Price: $${item.price}</p>
+                            `;
+                            cartItemsContainer.appendChild(itemDiv);
+                        });
+                    }
+                }
+
+                // Call the function to display items
+                displayCartItems();
+            </script>
+        </body>
+
+        </html>
+        <!-- Footer placeholder -->
+        <div id="footer"></div>
+    </div>
+
+
+    <script>
+        // Load external HTML file into a div
+        function loadHTML(file, elementId) {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById(elementId).innerHTML = data;
+                });
+        }
+
+        // Load header and footer
+        loadHTML('header.html', 'header');
+        loadHTML('footer.html', 'footer');
+    </script>
+
+</body>
+
+</html>
