@@ -1,0 +1,113 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* Reset default padding and margin for all elements */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            text-align: justify;
+            padding: 100px 150px;
+            word-spacing: 1px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content-wrapper">
+        <!-- Header placeholder -->
+        <div id="header"></div>
+
+        <!-- Main content -->
+        <!DOCTYPE html>
+        <html lang="en">
+
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Register</title>
+            <link rel="stylesheet" href="style.css">
+        </head>
+
+        <body>
+            <div class="container">
+                <p>Once upon a time in the bustling halls of Gonzaga High School, three talented students, Evan Kue,
+                    Ignatius Pio, and Dionisius Abiyasa, found themselves brought together by their passion for creative
+                    writing. They had noticed that their peers were full of stories, poems, essays, and articles
+                    brimming with unique perspectives—but without a proper platform to showcase them. That’s when the
+                    idea for GonzSale was born, a website dedicated to hosting and celebrating the literary works of
+                    their school.
+
+                    Evan, the tech whiz of the group, immediately took on the role of lead developer. He had been
+                    experimenting with web design and coding for years and knew exactly what it would take to bring
+                    their vision to life. He started by drafting a sleek, user-friendly layout for the site, emphasizing
+                    easy navigation, clean visuals, and a sense of elegance that would mirror the sophistication of the
+                    written work they’d be displaying. Evan envisioned GonzSale as a digital library where each piece of
+                    writing would have its own space to shine.
+
+                    Ignatius, the wordsmith, and editor, had a keen eye for detail and was known for his ability to
+                    refine and elevate any piece of writing. He took charge of the editorial side of things, creating
+                    submission guidelines and brainstorming content categories. Together, he and Evan planned sections
+                    like "Essays & Articles," "Fiction," and "Poetry" to ensure every genre had its own space. Ignatius
+                    also made it his mission to reach out to classmates, encouraging them to submit their works and
+                    offering gentle guidance to those unsure about the quality of their pieces.
+
+                    Finally, Dionisius, who possessed a flair for marketing and a knack for visuals, managed the
+                    promotional side of GonzSale. He created a launch plan, designing eye-catching posters and social
+                    media teasers to get the word out around school and among the alumni network. Dionisius envisioned
+                    GonzSale as more than just a website; he wanted it to become a community. To achieve that, he
+                    implemented interactive features such as comment sections, author profiles, and even a “Spotlight
+                    Writer of the Month” feature to keep readers engaged.
+
+                    Despite their enthusiasm, the three encountered challenges along the way. Testing the website
+                    revealed some technical bugs, particularly with user submissions. Evan spent long nights
+                    troubleshooting code and ensuring that every piece uploaded would display seamlessly. Ignatius had
+                    his hands full with editing and organizing the massive influx of submissions, which sometimes
+                    arrived in formats that were tough to work with. And Dionisius worked tirelessly to address concerns
+                    from teachers and students alike who were worried about privacy and content moderation.
+
+                    Through persistence and teamwork, however, they brought GonzSale to life. The launch was a
+                    resounding success. Gonzaga students, teachers, and even alumni visited the site, amazed by the
+                    quality and diversity of the work displayed. GonzSale quickly became a cornerstone of the school’s
+                    literary community, and the three founders, Evan, Ignatius, and Dionisius, became legends within
+                    their school for their dedication to the arts.
+
+                    Their website didn’t just showcase writing; it nurtured creativity, celebrated diverse voices, and
+                    brought their school’s literary talent to a wider audience. And who knows? Perhaps one day, GonzSale
+                    would inspire others to launch similar projects, sparking a movement of young writers empowered to
+                    share their work with the world.</p>
+            </div>
+        </body>
+
+        </html>
+
+        <!-- Footer placeholder -->
+        <div id="footer"></div>
+    </div>
+
+
+    <script>
+        // Load external HTML file into a div
+        function loadHTML(file, elementId) {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById(elementId).innerHTML = data;
+                });
+        }
+
+        // Load header and footer
+        loadHTML('header.html', 'header');
+        loadHTML('footer.html', 'footer');
+    </script>
+
+</body>
+
+</html>

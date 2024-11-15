@@ -1,5 +1,5 @@
 import express from 'express'; 
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'
 import { STATIC_ROUTE_NAME, PUBLIC_DIR } from './src/modules/directoryData.js';
 
 // Create express app

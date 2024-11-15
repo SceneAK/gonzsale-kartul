@@ -170,14 +170,6 @@
             openCategoryByHash();
         });
 
-        function loadHTML(file, elementId) {
-            fetch(file)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById(elementId).innerHTML = data;
-                });
-        }
-
         // Call openCategoryByHash when the page loads
         document.addEventListener("DOMContentLoaded", openCategoryByHash);
 
@@ -213,10 +205,37 @@
             openCategory(null, hash);
         }
 
-        // Load header and footer
-        loadHTML('header.html', 'header');
-        loadHTML('footer.html', 'footer');
+        // Load external HTML file into a div
+        function loadHTML(file, elementId, callback) {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById(elementId).innerHTML = data;
+                    if (callback) callback(); // Call the callback after loading
+                });
+        }
 
+        // Load header with dropdown functionality
+        loadHTML('header.html', 'header', function () {
+            // Add dropdown toggle functionality
+            const dropdownLink = document.querySelector('.dropdown a');
+            const dropdownContent = document.getElementById("dropdown-content");
+
+            dropdownLink.addEventListener('click', function (event) {
+                event.preventDefault();
+                dropdownContent.classList.toggle("show");
+            });
+
+            // Close dropdown if clicked outside
+            window.addEventListener('click', function (event) {
+                if (!event.target.closest('.dropdown')) {
+                    dropdownContent.classList.remove('show');
+                }
+            });
+        });
+
+        // Load footer if needed
+        loadHTML('footer.html', 'footer');
 
     </script>
 </body>
