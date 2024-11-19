@@ -145,6 +145,7 @@
             display: block;
         }
     </style>
+
     <!-- First Row: Logo, Search Bar, Sign In, My Cart -->
     <div class="header-top">
         <div class="logo">
@@ -158,12 +159,18 @@
         </div>
         <div class="user-options">
             <div class="dropdown">
-                <a href="#">Sign In</a>
+                <a href="#" id="userLink">Sign In</a>
                 <div id="dropdown-content" class="dropdown-content">
-                    <input type="text" placeholder="Email">
-                    <input type="password" placeholder="Password">
-                    <p>Don't have an account?</p>
-                    <button onclick="window.location.href='signup.html';">Sign Up</button>
+                    <div id="loginForm">
+                        <input type="text" placeholder="Email">
+                        <input type="password" placeholder="Password">
+                        <p>Don't have an account?</p>
+                        <button onclick="window.location.href='signup.html';">Sign Up</button>
+                    </div>
+                    <button id="manageProductsBtn" style="display: none;"
+                        onclick="window.location.href='manage_products.html';">
+                        Manage Products
+                    </button>
                 </div>
             </div>
             <a href="mycart.html">My Cart</a>
@@ -183,9 +190,16 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Dropdown toggle functionality
-            const dropdownLink = document.querySelector('.dropdown a');
+            const dropdownLink = document.getElementById("userLink");
             const dropdownContent = document.getElementById("dropdown-content");
+            const loginForm = document.getElementById("loginForm");
+            const manageProductsBtn = document.getElementById("manageProductsBtn");
 
+            // Simulate user login state and username
+            const isLoggedIn = true; // Change to false if user is not logged in
+            const username = "JohnDoe"; // Replace with actual username
+
+            // Toggle dropdown visibility
             dropdownLink.addEventListener('click', function (event) {
                 event.preventDefault();
                 dropdownContent.classList.toggle("show");
@@ -197,6 +211,13 @@
                     dropdownContent.classList.remove('show');
                 }
             });
+
+            // Update UI based on login state
+            // if (isLoggedIn) {
+                dropdownLink.textContent = username; // Show username instead of "Sign In"
+                loginForm.style.display = "none"; // Hide login form
+                manageProductsBtn.style.display = "block"; // Show "Manage Products" button
+            // }
         });
     </script>
 </header>

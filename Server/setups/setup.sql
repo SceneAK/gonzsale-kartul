@@ -1,4 +1,4 @@
-CREATE DATABASE GonzSale;
+      CREATE DATABASE GonzSale;
 
 CREATE TABLE user(
    user_id int(3) AUTO_INCREMENT PRIMARY KEY, 
