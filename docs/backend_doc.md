@@ -16,6 +16,7 @@
 - Each User has a specified limit, which is tracked every upload and deletion of files. 
 - Key name for image uploads is _image_, and _images_
 ### product.js
+- when creating, expect formdata, res.body = {product_name, product_description, product_category}
 - create product expects imagesRouter from upload.js., and calling create product expects form-data
 ### tokenAuth.jS
 - auth.js exports a middleware (verifyAuthToken_mid) which authenticates the header authtoken, then fills the *authenticatedUserId* in req. This is intended to be run before an operation requiring user_id and authentication, returning an error if unauthorized.

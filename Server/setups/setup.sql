@@ -15,6 +15,7 @@ CREATE TABLE store(
    owner_user_id int(3),
    store_name varchar(35),
    store_imgSrc text,
+   store_paymentMethods json,
    FOREIGN KEY (owner_user_id) REFERENCES user(user_id)
 );
 

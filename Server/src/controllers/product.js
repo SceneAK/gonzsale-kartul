@@ -49,12 +49,16 @@ const createProduct = async (req, res) => { // Expects upload to process form-da
     }
 
     try{
-        const [result] = await connection.execute("INSERT INTO product (product_name, product_description, product_imgSrc, product_category, store_id) VALUES (?, ?, ?, ?, ?)",
+        const {product_name, product_description, product_category, product_price, product_unit, product_canOrder} = req.body;
+        const [result] = await connection.execute("INSERT INTO product (product_name, product_description, product_imgSrc, product_category, product_price, product_unit, product_canOrder, store_id) VALUES (?, ?, ?, ?, ?)",
             [
-            req.body.product_name,
-            req.body.product_description,
+            product_name,
+            product_description,
             req.urls,
-            req.body.product_category,
+            product_category,
+            product_price,
+            product_unit,
+            product_canOrder,
             rows[0].store_id
             ]
         )

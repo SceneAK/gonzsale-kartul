@@ -18,6 +18,10 @@ const getStore = async (req, res) =>
     res.json(rows[0]);
 }
 
+async function checkVerified() 
+{
+    
+}
 const createStore = async (req, res) =>
 {
     const result = await connection.execute("INSERT INTO store (owner_user_id, store_name, store_imgSrc) VALUES (?, ?, ?)", [

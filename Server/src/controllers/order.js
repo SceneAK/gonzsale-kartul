@@ -49,10 +49,10 @@ async function placeOrder(customer_id, body, res)
 {
     try
     {
-        const {transactionDetail, product_id, order_qty, order_variant} = body; 
+        const {product_id, order_qty, order_variant, payment_method, transaction_proof} = body; 
         if(!canOrder(product_id)){res.send('Product Unavailable for Order'); return;}
 
-        const transactionId = processTransaction(transactionDetail);
+        const transactionId = processTransaction();
         const result = await connection.execute('INSERT INTO order (product_id, customer_user_id, order_qty, order_variant, transaction_id) VALUES (?, ?, ?, ?, ?)', [
             product_id,
             customer_id,
