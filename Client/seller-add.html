@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product Penjual</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        select,
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .price-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .price-group span {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Add Product Penjual</h1>
+    <form action="/submit-product" method="POST">
+        <!-- Nama Produk -->
+        <div class="form-group">
+            <label for="nama-produk">Nama Produk</label>
+            <input type="text" id="nama-produk" name="nama-produk" placeholder="Masukkan nama produk" required>
+        </div>
+
+        <!-- Kategori -->
+        <div class="form-group">
+            <label for="kategori">Kategori</label>
+            <select id="kategori" name="kategori" required>
+                <option value="blank"></option>
+                <option value="makanan">Makanan</option>
+                <option value="minuman">Minuman</option>
+                <option value="baju-bekas">Baju Bekas</option>
+                <option value="celana-bekas">Celana Bekas</option>
+                <option value="lain-lain">Lain-lain</option>
+            </select>
+        </div>
+
+        <!-- Deskripsi -->
+        <div class="form-group">
+            <label for="deskripsi">Deskripsi</label>
+            <textarea id="deskripsi" name="deskripsi" rows="4" placeholder="Deskripsi produk" required></textarea>
+        </div>
+
+        <!-- Harga -->
+        <div class="form-group price-group">
+            <span>RP</span>
+            <input type="text" id="harga" name="harga" placeholder="Masukkan harga" required>
+        </div>
+
+        <!-- Add Image -->
+        <div class="form-group">
+            <label for="image">Tambah Gambar</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit">Tambah Produk</button>
+    </form>
+</body>
+
+</html>

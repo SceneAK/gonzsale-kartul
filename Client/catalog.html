@@ -71,53 +71,27 @@
 
         <!-- Category Contents -->
         <div id="Shirts" class="tabcontent">
-            <h2>Shirts</h2>
-            <!-- Add Shirt Items here -->
-            <div class="item">
-                <img src="https://i.ibb.co.com/gJxGT63/epic-bmw-e30.jpg" alt="epic-bmw-e30" />
-                <p>Shirt 1 - $20</p>
-            </div>
-        </div>
-
-        <div id="Accessories" class="tabcontent">
-            <h2>Accessories</h2>
-            <!-- Add Accessories Items here -->
-            <div class="item">
-                <img src="assets/images/accessory1.jpg" alt="Accessory 1">
-                <p>Accessory 1 - $15</p>
-            </div>
-        </div>
-
-        <div id="Food" class="tabcontent">
-            <h2>Food & Beverages</h2>
-            <!-- Add Food Items here -->
-            <div class="item">
-                <img src="assets/images/food1.jpg" alt="Food Item 1">
-                <p>Food Item 1 - $10</p>
-            </div>
-        </div>
-
-        <div id="Stickers" class="tabcontent">
-            <h2>Stickers</h2>
-            <!-- Add Sticker Items here -->
-            <div class="item">
-                <img src="assets/images/sticker1.jpg" alt="Sticker 1">
-                <p>Sticker 1 - $5</p>
-            </div>
+            <div id="shirt-items-container"></div>
         </div>
 
         <div id="Bundles" class="tabcontent">
-            <h2>Bundles</h2>
-            <!-- Add Bundle Items here -->
-            <div class="item">
-                <img src="assets/images/bundle1.jpg" alt="Bundle 1">
-                <p>Bundle 1 - $30</p>
-            </div>
+            <div id="bundle-items-container"></div>
+        </div>
+
+        <div id="Accessories" class="tabcontent">
+            <div id="accessory-items-container"></div>
+        </div>
+
+        <div id="Food" class="tabcontent">
+            <div id="food-items-container"></div>
+        </div>
+
+        <div id="Stickers" class="tabcontent">
+            <div id="sticker-items-container"></div>
         </div>
 
         <div id="All" class="tabcontent">
-            <h2>All Items</h2>
-            <!-- This section can include all items from all categories -->
+            <div id="all-items-container"></div>
         </div>
     </div>
 
@@ -125,118 +99,86 @@
     <div id="footer"></div>
 
     <script>
+        // Handle switching between tabs
         function openCategory(evt, categoryName) {
-            var i, tabcontent, tablink;
+            const tabcontents = document.getElementsByClassName("tabcontent");
+            const tablinks = document.getElementsByClassName("tablink");
 
-            // Hide all tabcontent elements
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
+            // Hide all tab contents
+            for (const tab of tabcontents) {
+                tab.style.display = "none";
             }
 
-            // Remove active class from all tablinks
-            tablink = document.getElementsByClassName("tablink");
-            for (i = 0; i < tablink.length; i++) {
-                tablink[i].className = tablink[i].className.replace(" active", "");
-            }
-
-            // Show the selected category's tabcontent
-            document.getElementById(categoryName).style.display = "block";
-
-            // If evt exists, add an "active" class to the clicked tablink
-            if (evt) {
-                evt.currentTarget.className += " active";
-            } else {
-                // Set the active class on the corresponding tablink if opened via hash
-                var tablink = document.querySelector(`a[href="#${categoryName}"]`);
-                if (tablink) {
-                    tablink.className += " active";
-                }
-            }
-        }
-
-        function openCategoryByHash() {
-            var hash = window.location.hash.substring(1); // Get the hash, remove the '#' character
-
-            if (hash) {
-                openCategory(null, hash);
-            } else {
-                openCategory(null, 'Shirts');
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            // Automatically open the category by the hash, or default to Shirts
-            openCategoryByHash();
-        });
-
-        // Call openCategoryByHash when the page loads
-        document.addEventListener("DOMContentLoaded", openCategoryByHash);
-
-        // Listen for hash changes to handle category changes without reloading
-        window.addEventListener("hashchange", openCategoryByHash);
-
-        function openCategory(evt, categoryName) {
-            var i, tabcontent, tablink;
-
-            // Hide all tabcontent elements
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-
-            // Remove active class from all tablinks
-            tablink = document.getElementsByClassName("tablink");
-            for (i = 0; i < tablink.length; i++) {
-                tablink[i].classList.remove("active");
+            // Remove active class from all tab links
+            for (const link of tablinks) {
+                link.classList.remove("active");
             }
 
             // Show the selected category's content
             document.getElementById(categoryName).style.display = "block";
+            if (evt) evt.currentTarget.classList.add("active");
+        }
 
-            // If evt exists, add "active" to the clicked tablink
-            if (evt) {
-                evt.currentTarget.classList.add("active");
+        // Function to fetch items from API
+        async function fetchItems(category, containerId) {
+            try {
+                const url = `${window.location.protocol}://${window.location.host}`;
+                console.log(url);
+                const response = await fetch(`http://localhost:3000/product_category=${category}`); // Replace with actual API endpoint
+   //             if (!response.ok) throw new Error(`Failed to fetch ${category} items`);
+
+                const items = await response.json();
+                const container = document.getElementById(containerId);
+
+                // Clear container and populate items
+                container.innerHTML = '';
+                items.forEach(item => {
+                    const itemDiv = document.createElement("div");
+                    itemDiv.classList.add("item");
+
+                    itemDiv.innerHTML = `
+                        <img src="${item.imageUrl}" alt="${item.name}" />
+                        <p>${item.name} - $${item.price}</p>
+                    `;
+                    container.appendChild(itemDiv);
+                });
+            } catch (error) {
+                console.error(`Error fetching ${category} items:`, error);
+                document.getElementById(containerId).innerHTML = `<p>Failed to load ${category} items. Please try again later.</p>`;
             }
         }
 
-        function openCategoryByHash() {
-            const hash = window.location.hash.substring(1) || 'Shirts'; // Default to 'Shirts' if no hash
-            openCategory(null, hash);
-        }
+        // Automatically load content for all categories
+        document.addEventListener("DOMContentLoaded", function () {
+            const categories = {
+                Shirts: "shirt-items-container",
+                Bundles: "bundle-items-container",
+                Accessories: "accessory-items-container",
+                Food: "food-items-container",
+                Stickers: "sticker-items-container",
+                All: "all-items-container",
+            };
 
-        // Load external HTML file into a div
-        function loadHTML(file, elementId, callback) {
+            // Fetch items for each category
+            for (const [category, containerId] of Object.entries(categories)) {
+                fetchItems(category.toLowerCase(), containerId);
+            }
+
+            // Default open Shirts tab
+            openCategory(null, "Shirts");
+        });
+
+        // Load external header and footer
+        function loadHTML(file, elementId) {
             fetch(file)
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById(elementId).innerHTML = data;
-                    if (callback) callback(); // Call the callback after loading
                 });
         }
 
-        // Load header with dropdown functionality
-        loadHTML('header.html', 'header', function () {
-            // Add dropdown toggle functionality
-            const dropdownLink = document.querySelector('.dropdown a');
-            const dropdownContent = document.getElementById("dropdown-content");
-
-            dropdownLink.addEventListener('click', function (event) {
-                event.preventDefault();
-                dropdownContent.classList.toggle("show");
-            });
-
-            // Close dropdown if clicked outside
-            window.addEventListener('click', function (event) {
-                if (!event.target.closest('.dropdown')) {
-                    dropdownContent.classList.remove('show');
-                }
-            });
-        });
-
-        // Load footer if needed
-        loadHTML('footer.html', 'footer');
-
+        loadHTML("header.html", "header");
+        loadHTML("footer.html", "footer");
     </script>
 </body>
 
