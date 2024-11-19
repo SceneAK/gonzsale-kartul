@@ -1,5 +1,7 @@
 import processTransaction from '../modules/transaction.js';
 import connectionPromise from '../modules/db.js'
+import { verifyAuthToken, getCleanAuthToken } from '../modules/tokenAuth.js';
+import { formatAndRegexCheck } from '../modules/userDataValidator.js';
 const connection = await connectionPromise;
 
 
@@ -36,23 +38,58 @@ const getOrders = async (req, res) => {
     }
 };
 
-
-const placeOrder = async (req, res) => {
+async function canOrder(productId)
+{
+    const [rows] = await connection.execute("SELECT product_canOrder FROM product WHERE product_id = ?", [productId]);
+    if(rows.length == 0) { throw new Error('invalid product_id');}
+    
+    return rows[0].product_canOrder;
+}
+async function placeOrder(customer_id, body, res)
+{
     try
     {
-        const transactionId = processTransaction(req.body.transactionDetail);
-        const orderDetail = req.body.orderDetail;
+        const {transactionDetail, product_id, order_qty, order_variant} = body; 
+        if(!canOrder(product_id)){res.send('Product Unavailable for Order'); return;}
+
+        const transactionId = processTransaction(transactionDetail);
         const result = await connection.execute('INSERT INTO order (product_id, customer_user_id, order_qty, order_variant, transaction_id) VALUES (?, ?, ?, ?, ?)', [
-            orderDetail.product_id,
-            orderDetail.customer_user_id,
-            orderDetail.order_qty,
-            orderDetail.order_variant,
+            product_id,
+            customer_id,
+            order_qty,
+            order_variant,
             transactionId
         ])
-        res.json(result.insertedId);
-    }catch(err){
-        res.status(400).send(err);
-    }
+        const insertedId = result.insertedId;
+        res.json({insertedId});
+    }catch(err) {res.status(400).send(err);}
+}
+
+
+const placeOrderAccount = async(req, res) => {
+    const token = getCleanAuthToken(req);
+    const customer_id = await verifyAuthToken(token);
+    placeOrder(customer_id, req.body, res);
+}
+
+function validCustomerDetail(body)
+{
+    const { email } = body;
+    if(email == undefined) return false;
+
+    return formatAndRegexCheck(email);
+}
+const placeOrderGuest = async (req, res) => {
+    
+    if(!validCustomerDetail(req.body)) {res.status(400).send("Incorrect customer details");return;}
+
+    // create new user or get user with email.
+    const [result] = await connection.execute(
+        'INSERT INTO users (email, password) VALUES (?, ?, NULL) ON DUPLICATE KEY UPDATE user_id=LAST_INSERT_ID(user_id)',
+        [user_phone, user_email]
+    );
+    const customer_id = result.insertedId;
+    placeOrder(customer_id, req.body, res);
 }
 
 const updateOrderStatus = async (req, res) => { // which order to update, to what status. 
@@ -68,7 +105,4 @@ const updateOrderStatus = async (req, res) => { // which order to update, to wha
 }
 
 
-export {getOrders, placeOrder, updateOrderStatus}
-
-// get order
-// place order
+export {getOrders, placeOrderGuest, placeOrderAccount, updateOrderStatus}

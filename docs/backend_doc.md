@@ -2,6 +2,7 @@
 ## General
 - Refer to setup.sql for database design and field names accessed in controllers
 - Run Node Server/setups/secretKey.js to generate a secret key in console
+- Users with NULL passwords are considered guest users. They are users who have put their email for an order, but have yet to register.
 
 ## Modules
 ### Interactions
@@ -27,7 +28,6 @@
 
 
 
-
 # BACKLOG
 ## Tests
 > Write Tests! All route & API calls. 
@@ -37,20 +37,29 @@
 
 ## product variant handling
 - Limit number of variants
+- code up the variants
+- 
 
-## user.js
-- Edit Profile
-- Change Password, maybe use mailer?
 ## store.js
 .Edit store details (Untested)
 - Delete Store
+- User is verified to make a store. 
 
 ## order.js
-.Create Order
+.Place Order Account
+.Place Order Guest
 .Get Orders (only orders w/ auth-ed user_id as buyer/seller)
-.Update Order (only for auth-ed sellers, to update the order status etc)
+//.Update Order (only for auth-ed sellers, to update the order status etc)
+- Mailing Customers when order status changes.
 
 ## Transaction System
 > (Proof based)
 - (Payment Gateway Integration)
 .ProcessTransaction
+
+Email Validator instead of isValidEmail. 
+Product has field CanOrder-> order implementation
+
+## user.js
+- Edit Profile
+- Change Password, maybe use mailer?

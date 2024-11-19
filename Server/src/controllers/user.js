@@ -1,7 +1,7 @@
 import {signUser}from '../modules/tokenAuth.js';
 import bcrypt from 'bcrypt'; const SALT_ROUNDS = 8;
-import dns from 'dns';
 import connectionPromise from '../modules/db.js'
+import { isValidEmail, isValidName } from '../modules/userDataValidator.js';
 const connection = await connectionPromise;
 
 const getUser = async (req, res) => {
@@ -30,33 +30,10 @@ const signIn = async (req, res) => {
 }
 
 
-function isValidName(name) { return !name.includes(' '); } // Anything more?
-async function isValidEmail(email) { 
-    // Test format. Got the regex from copilot
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if(!emailRegex.test(email)) { return false;}
-    
-    const validDomain = await (() => {
-        const domain = email.split('@')[1];
-        return new Promise((resolve) =>{
-            dns.resolveMx(domain, (err, addresses) => {
-                resolve(err || addresses.length === 0)
-            })
-        });
-    })()
-    if(!validDomain) { return false; }
-
-    return true;
-}
 const signUp = async (req, res) => {
-    if(!isValidName(req.body.user_name))
-    {
-        return res.status(400).send("Invalid Username");
-    }
-    if(!isValidEmail(req.body.user_name))
-    {
-        return res.status(400).send("Invalid Email");
-    }
+    if(!isValidName(req.body.user_name)) return res.status(400).send("Invalid Username");
+    if(!isValidEmail(req.body.user_email)) return res.status(400).send("Invalid Email");
+
 
     const hashed = await bcrypt.hash(req.body.user_password, SALT_ROUNDS);
 

@@ -4,9 +4,13 @@ const signUser = (userId) => {
     return jwt.sign({ id: userId}, process.env.SECRET_KEY, { expiresIn: '1h' });
 }
 
-const verifyAuthToken_mid = async (req, res, next) => {
+const  getCleanAuthToken = (req) =>
+{
     const token = req.headers['authorization'];
-    const cleanToken = token.startsWith("Bearer ") ? token.slice(7, token.length) : token; // remove "Bearer ..." 
+    return token.startsWith("Bearer ") ? token.slice(7, token.length) : token; // remove "Bearer ..." 
+}
+const verifyAuthToken_mid = async (req, res, next) => {
+    const cleanToken = getCleanAuthToken(req);
     try {
         const {id} = await verifyAuthToken(cleanToken);
         req.authenticatedUserId = id; // pass in the request
@@ -29,13 +33,13 @@ const verifyAuthToken = (authToken) => // async
             }
         }   
         );
-
     });
 }  
 
 
 export {
     signUser,
+    getCleanAuthToken,
     verifyAuthToken,
     verifyAuthToken_mid
 };

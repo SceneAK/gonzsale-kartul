@@ -4,9 +4,10 @@ CREATE TABLE user(
    user_id int(3) AUTO_INCREMENT PRIMARY KEY, 
    user_name varchar(35),
    user_phone varchar(10),
-   user_email varchar(30),
+   user_email varchar(30) NOT NULL UNIQUE,
    user_password varchar(256),
-   user_used_storage int DEFAULT 0                  -- in megabytes
+   user_verified boolean,
+   user_used_storage int DEFAULT 0
 );
 
 CREATE TABLE store(
@@ -18,15 +19,16 @@ CREATE TABLE store(
 );
 
 CREATE TABLE product(
-   product_id int(4) AUTO_INCREMENT PRIMARY KEY,    --All product will be visible anyways
+   product_id int(4) AUTO_INCREMENT PRIMARY KEY,
    product_name varchar(200),
    product_description varchar(600),
-   product_category varchar(150),                   -- One Category Path. Maybe add "tags" if needed
+   product_category varchar(150),
    product_variants json,
-   product_imgSrc json,                             -- URL Array
+   product_imgSrc json,
    product_price int,
    product_unit varchar(50),
    store_id int(3),
+   product_canOrder boolean,
    FOREIGN KEY (store_id) REFERENCES store(store_id)
 );
 
