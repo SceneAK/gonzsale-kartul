@@ -17,7 +17,7 @@
 ### product.js
 - create product expects imagesRouter from upload.js., and calling create product expects form-data
 ### tokenAuth.jS
-- auth.js exports a middleware (verifyAuthToken_middle) which authenticates the header authtoken, then fills the *authenticatedUserId* in req. This is intended to be run before an operation requiring user_id and authentication, returning an error if unauthorized.
+- auth.js exports a middleware (verifyAuthToken_mid) which authenticates the header authtoken, then fills the *authenticatedUserId* in req. This is intended to be run before an operation requiring user_id and authentication, returning an error if unauthorized.
 - *Some route controllers expects this middleware to run right before and depends on authenticatedUserId.*
 - The normal checkAuthToken returns the ID or an error. Used for Logins and such
 ### user.js
@@ -29,24 +29,28 @@
 
 
 # BACKLOG
+## Tests
+> Write Tests! All route & API calls. 
+
+## file uploads
+- Product, Store, and Upload.js. Store filenames/relative paths only, reconstruct urls when sending to client.
+
+## product variant handling
+- Limit number of variants
+
 ## user.js
 - Edit Profile
 - Change Password, maybe use mailer?
 ## store.js
->> Edit store details
+.Edit store details (Untested)
+- Delete Store
 
-Write Tests for general API calls, and then temporary test for getFile(url)
-
-> Delete Store
 ## order.js
-> Create Order
-> Get Orders (only orders w/ auth-ed user_id as buyer/seller)
-- Cancel Order maybe
-- Update Order (only for auth-ed sellers, to update the order status etc)
+.Create Order
+.Get Orders (only orders w/ auth-ed user_id as buyer/seller)
+.Update Order (only for auth-ed sellers, to update the order status etc)
+
 ## Transaction System
-- (Proof based)
+> (Proof based)
 - (Payment Gateway Integration)
-> Note Transaction
-- Get Transaction
-## Product Pricing
-> Set up multiple pricing models?
+.ProcessTransaction

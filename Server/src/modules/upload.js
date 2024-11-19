@@ -1,6 +1,6 @@
 import upath from  'upath';
 import multer from 'multer';
-import { STATIC_ROUTE_NAME, PUBLIC_DIR } from '../modules/directoryData.js';
+import { STATIC_ROUTE_NAME, PUBLIC_DIR } from '../../initialize.js';
 import connectionPromise from '../modules/db.js'
 const connection = await connectionPromise;
 

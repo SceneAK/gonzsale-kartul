@@ -1,3 +1,4 @@
+import '../../initialize.js'; // ensure process.env is up
 import mysql from 'mysql2/promise';
 
 let connectionPromise = mysql.createConnection(process.env.MYSQL_URI);;
@@ -16,7 +17,7 @@ let connectionPromise = mysql.createConnection(process.env.MYSQL_URI);;
   // End if Interrupted 
   process.on('SIGINT',() => {
     try {
-      connection.end().then( ()=> { console.log('Connection closed'); process.exit(0)});
+      connection.end().then( () => { console.log('Connection closed'); process.exit(0)});
     } catch (err) {
       console.error('Error closing connection:', err)
       process.exit(1);

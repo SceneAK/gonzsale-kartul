@@ -1,6 +1,6 @@
 import {expect} from 'chai';
-import { getFilePath } from '../src/modules/upload';
-import { PUBLIC_DIR } from '../src/server';
+import { getFilePath } from '../src/modules/upload.js';
+import { PUBLIC_DIR } from '../initialize.js';
 import upath from 'upath';
 
 describe('File Path Test', ()=>{

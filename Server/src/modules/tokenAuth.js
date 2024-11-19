@@ -4,7 +4,7 @@ const signUser = (userId) => {
     return jwt.sign({ id: userId}, process.env.SECRET_KEY, { expiresIn: '1h' });
 }
 
-const verifyAuthToken_middle = async (req, res, next) => {
+const verifyAuthToken_mid = async (req, res, next) => {
     const token = req.headers['authorization'];
     const cleanToken = token.startsWith("Bearer ") ? token.slice(7, token.length) : token; // remove "Bearer ..." 
     try {
@@ -37,5 +37,5 @@ const verifyAuthToken = (authToken) => // async
 export {
     signUser,
     verifyAuthToken,
-    verifyAuthToken_middle
+    verifyAuthToken_mid
 };
