@@ -1,9 +1,20 @@
 import connectionPromise from '../modules/db.js'
 const connection = await connectionPromise;
 
+function includeCategoryInBody(req, category)
+{
+    if(req.body != undefined) {
+        req.body.product_category = category; 
+    }else{
+        req.body = {product_category: category};
+    }
+    
+    return req;
+}
 const getProducts = async (req, res) => {
-    const [rows, fields] = await executeFiltered(req.params);
-    res.json(rows);
+    req = includeCategoryInBody(req, req.params.product_category);
+    const [rows] = await executeFiltered(req.body);
+    res.status(200).json(rows);
 }
 async function executeFiltered(filter)
 {
@@ -16,7 +27,7 @@ async function executeFiltered(filter)
     }
     if(filter.product_category != undefined)
     {
-        query += ` AND product_category LIKE ?`;
+        query += ` AND product_category LIKE ? COLLATE utf8mb4_general_ci`;
         params.push(`${filter.product_category}%`);
     }
     if(filter.store_id != undefined)
@@ -29,6 +40,7 @@ async function executeFiltered(filter)
         query += ` AND store_name LIKE ? COLLATE utf8mb4_general_ci`;
         params.push(`${filter.store_name}%`);
     }
+    
     return connection.execute(query, params);
 }
 
