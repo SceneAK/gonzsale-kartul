@@ -47,6 +47,14 @@
             background-color: #ddd;
         }
 
+        .tab-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            /* Adds spacing between the icon and text */
+            vertical-align: middle;
+            /* Aligns the icon with the text */
+        }
 
         .search-bar input {
             padding: 5px;
@@ -144,6 +152,13 @@
         .show {
             display: block;
         }
+
+        .user-options img {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            /* Add spacing between the icon and text */
+        }
     </style>
 
     <!-- First Row: Logo, Search Bar, Sign In, My Cart -->
@@ -159,7 +174,10 @@
         </div>
         <div class="user-options">
             <div class="dropdown">
-                <a href="#" id="userLink">Sign In</a>
+                <a href="#" id="userLink">
+                    <img src="assets/images/sign_in_icon.svg">
+                    Sign In
+                </a>
                 <div id="dropdown-content" class="dropdown-content">
                     <div id="loginForm">
                         <input type="text" placeholder="Email">
@@ -173,18 +191,39 @@
                     </button>
                 </div>
             </div>
-            <a href="mycart.html">My Cart</a>
+            <a href="mycart.html">
+                <img src="assets/images/cart_icon.svg">
+                My Cart
+            </a>
         </div>
     </div>
 
     <!-- Second Row: Categories -->
     <div class="header-bottom">
-        <a class="tablink" href="catalog.html#Shirts">Baju</a>
-        <a class="tablink" href="catalog.html#Bundles">Celana</a>
-        <a class="tablink" href="catalog.html#Accessories">Aksesoris</a>
-        <a class="tablink" href="catalog.html#Food">Makanan</a>
-        <a class="tablink" href="catalog.html#Stickers">Minuman</a>
-        <a class="tablink" href="catalog.html#All">All Items</a>
+        <a class="tablink" href="catalog.html#Shirts">
+            <img src="assets/images/shirts_icon.svg" alt="Shirts Icon" class="tab-icon">
+            Baju
+        </a>
+        <a class="tablink" href="catalog.html#Pants">
+            <img src="assets/images/pants_icon.svg" alt="Pants Icon" class="tab-icon">
+            Celana
+        </a>
+        <a class="tablink" href="catalog.html#Accessories">
+            <img src="assets/images/accessories_icon.svg" alt="Accessories Icon" class="tab-icon">
+            Aksesoris
+        </a>
+        <a class="tablink" href="catalog.html#Food">
+            <img src="assets/images/food_icon.svg" alt="Food Icon" class="tab-icon">
+            Makanan
+        </a>
+        <a class="tablink" href="catalog.html#Drinks">
+            <img src="assets/images/drinks_icon.svg" alt="Drinks Icon" class="tab-icon">
+            Minuman
+        </a>
+        <a class="tablink" href="catalog.html#All">
+            <img src="assets/images/all_items_icon.svg" alt="All Items Icon" class="tab-icon">
+            All Items
+        </a>
     </div>
 
     <script>
@@ -196,8 +235,8 @@
             const manageProductsBtn = document.getElementById("manageProductsBtn");
 
             // Simulate user login state and username
-            const isLoggedIn = true; // Change to false if user is not logged in
-            const username = "JohnDoe"; // Replace with actual username
+            const isLoggedIn = False; // Change to false if user is not logged in
+            const username = '<img src="assets/images/cart_icon.svg" alt="Cart Icon">JohnDoe';
 
             // Toggle dropdown visibility
             dropdownLink.addEventListener('click', function (event) {
@@ -213,11 +252,11 @@
             });
 
             // Update UI based on login state
-            // if (isLoggedIn) {
-                dropdownLink.textContent = username; // Show username instead of "Sign In"
+            if (isLoggedIn) {
+                dropdownLink.innerHTML = username; // Use innerHTML to render HTML correctly
                 loginForm.style.display = "none"; // Hide login form
                 manageProductsBtn.style.display = "block"; // Show "Manage Products" button
-            // }
+            }
         });
     </script>
 </header>
