@@ -24,10 +24,8 @@
         .logo a {
             text-decoration: none;
             color: inherit;
-            /* Ensure the text retains its default color */
             display: flex;
             align-items: center;
-            /* Keep the logo and text aligned */
         }
 
         .logo img {
@@ -46,7 +44,6 @@
         .tablink:hover {
             background-color: #ddd;
         }
-
 
         .search-bar input {
             padding: 5px;
@@ -144,9 +141,22 @@
         .show {
             display: block;
         }
+
+        /* Add New Product Button (Hide by default) */
+        .add-product-btn {
+            display: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .add-product-btn:hover {
+            background-color: #45a049;
+        }
     </style>
 
-    <!-- First Row: Logo, Search Bar, Sign In, My Cart -->
     <div class="header-top">
         <div class="logo">
             <a href="index.html">
@@ -160,6 +170,9 @@
         <div class="user-options">
             <div class="dropdown">
                 <a href="#" id="userLink">Sign In</a>
+                <button id="addProductBtn" class="add-product-btn"
+                    onclick="window.location.href='add_product.html';">Add New Product</button>
+                <!-- Add Product button -->
                 <div id="dropdown-content" class="dropdown-content">
                     <div id="loginForm">
                         <input type="text" placeholder="Email">
@@ -188,36 +201,55 @@
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Dropdown toggle functionality
-            const dropdownLink = document.getElementById("userLink");
+        // Function to initialize dropdown functionality
+        function initializeDropdown() {
+            const dropdownLink = document.querySelector('.dropdown a');
             const dropdownContent = document.getElementById("dropdown-content");
+
+            if (dropdownLink && dropdownContent) {
+                // Toggle dropdown visibility
+                dropdownLink.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    dropdownContent.classList.toggle("show");
+                });
+
+                // Close dropdown if clicked outside
+                window.addEventListener('click', function (event) {
+                    if (!event.target.closest('.dropdown')) {
+                        dropdownContent.classList.remove('show');
+                    }
+                });
+
+                console.log('Dropdown functionality initialized.');
+            } else {
+                console.error('Dropdown elements not found.');
+            }
+        }
+
+        // Listen for the headerLoaded event to initialize dropdown
+        document.addEventListener('headerLoaded', initializeDropdown);
+
+        // UI updates based on login state
+        document.addEventListener('headerLoaded', function () {
             const loginForm = document.getElementById("loginForm");
             const manageProductsBtn = document.getElementById("manageProductsBtn");
+            const addProductBtn = document.getElementById("addProductBtn");
 
-            // Simulate user login state and username
-            const isLoggedIn = true; // Change to false if user is not logged in
+            const isLoggedIn = False; // Change to false if user is not logged in
             const username = "JohnDoe"; // Replace with actual username
 
-            // Toggle dropdown visibility
-            dropdownLink.addEventListener('click', function (event) {
-                event.preventDefault();
-                dropdownContent.classList.toggle("show");
-            });
-
-            // Close dropdown if clicked outside
-            window.addEventListener('click', function (event) {
-                if (!event.target.closest('.dropdown')) {
-                    dropdownContent.classList.remove('show');
-                }
-            });
-
-            // Update UI based on login state
-            // if (isLoggedIn) {
-                dropdownLink.textContent = username; // Show username instead of "Sign In"
-                loginForm.style.display = "none"; // Hide login form
-                manageProductsBtn.style.display = "block"; // Show "Manage Products" button
-            // }
+            const dropdownLink = document.querySelector('.dropdown a');
+            if (isLoggedIn) {
+                if (dropdownLink) dropdownLink.textContent = username; // Show username instead of "Sign In"
+                if (loginForm) loginForm.style.display = "none"; // Hide login form
+                if (manageProductsBtn) manageProductsBtn.style.display = "block"; // Show "Manage Products" button
+                if (addProductBtn) addProductBtn.style.display = "inline-block"; // Show "Add New Product" button
+            }
         });
+
+        // Call initializeDropdown for static content
+        initializeDropdown();
+        console.log('Dropdown Link:', dropdownLink);
+        console.log('Dropdown Content:', dropdownContent);
     </script>
 </header>

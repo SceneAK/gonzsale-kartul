@@ -135,7 +135,7 @@
                 items.forEach(item => {
                     const itemDiv = document.createElement("div");
                     itemDiv.classList.add("item");
-                    
+
 
                     itemDiv.innerHTML = `
                         <img src="${item.product_imgUrl}" alt="${item.product_name}" />
@@ -169,18 +169,12 @@
             // Default open Shirts tab
             openCategory(null, "Shirts");
         });
-
-        // Load external header and footer
-        function loadHTML(file, elementId) {
-            fetch(file)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById(elementId).innerHTML = data;
-                });
-        }
-
-        loadHTML("header.html", "header");
-        loadHTML("footer.html", "footer");
+    </script>
+    <script src="dropdown.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            initializePage(); // Initialize the shared functionality
+        });
     </script>
 </body>
 
