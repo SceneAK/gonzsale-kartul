@@ -24,10 +24,8 @@
         .logo a {
             text-decoration: none;
             color: inherit;
-            /* Ensure the text retains its default color */
             display: flex;
             align-items: center;
-            /* Keep the logo and text aligned */
         }
 
         .logo img {
@@ -47,6 +45,14 @@
             background-color: #ddd;
         }
 
+        .tab-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            /* Adds spacing between the icon and text */
+            vertical-align: middle;
+            /* Aligns the icon with the text */
+        }
 
         .search-bar input {
             padding: 5px;
@@ -144,9 +150,29 @@
         .show {
             display: block;
         }
+
+        /* Add New Product Button (Hide by default) */
+        .add-product-btn {
+            display: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .add-product-btn:hover {
+            background-color: #45a049;
+        }
+
+        .user-options img {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            /* Add spacing between the icon and text */
+        }
     </style>
 
-    <!-- First Row: Logo, Search Bar, Sign In, My Cart -->
     <div class="header-top">
         <div class="logo">
             <a href="index.html">
@@ -159,7 +185,13 @@
         </div>
         <div class="user-options">
             <div class="dropdown">
-                <a href="#" id="userLink">Sign In</a>
+                <a href="#" id="userLink">
+                    <img src="assets/images/cart_icon.svg" alt="Cart Icon">
+                    Sign In
+                </a> <!-- Keep only one userLink -->
+                <button id="addProductBtn" class="add-product-btn"
+                    onclick="window.location.href='add_product.html';">Add New Product</button>
+                <!-- Add Product button -->
                 <div id="dropdown-content" class="dropdown-content">
                     <div id="loginForm">
                         <input type="text" placeholder="Email">
@@ -173,51 +205,100 @@
                     </button>
                 </div>
             </div>
-            <a href="mycart.html">My Cart</a>
+            <a href="mycart.html">
+                <img src="assets/images/cart_icon.svg" alt="Cart Icon">
+                My Cart
+            </a>
         </div>
     </div>
 
+
     <!-- Second Row: Categories -->
     <div class="header-bottom">
-        <a class="tablink" href="catalog.html#Shirts">Baju</a>
-        <a class="tablink" href="catalog.html#Bundles">Celana</a>
-        <a class="tablink" href="catalog.html#Accessories">Aksesoris</a>
-        <a class="tablink" href="catalog.html#Food">Makanan</a>
-        <a class="tablink" href="catalog.html#Stickers">Minuman</a>
-        <a class="tablink" href="catalog.html#All">All Items</a>
+        <a class="tablink" href="catalog.html#Shirts">
+            <img src="assets/images/shirts_icon.svg" alt="Shirts Icon" class="tab-icon">
+            Baju
+        </a>
+        <a class="tablink" href="catalog.html#Pants">
+            <img src="assets/images/pants_icon.svg" alt="Pants Icon" class="tab-icon">
+            Celana
+        </a>
+        <a class="tablink" href="catalog.html#Accessories">
+            <img src="assets/images/accessories_icon.svg" alt="Accessories Icon" class="tab-icon">
+            Aksesoris
+        </a>
+        <a class="tablink" href="catalog.html#Food">
+            <img src="assets/images/food_icon.svg" alt="Food Icon" class="tab-icon">
+            Makanan
+        </a>
+        <a class="tablink" href="catalog.html#Drinks">
+            <img src="assets/images/drinks_icon.svg" alt="Drinks Icon" class="tab-icon">
+            Minuman
+        </a>
+        <a class="tablink" href="catalog.html#All">
+            <img src="assets/images/all_items_icon.svg" alt="All Items Icon" class="tab-icon">
+            All Items
+        </a>
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Dropdown toggle functionality
-            const dropdownLink = document.getElementById("userLink");
+        // Function to initialize dropdown functionality
+        function initializeDropdown() {
+            const dropdownLink = document.querySelector('.dropdown a');
             const dropdownContent = document.getElementById("dropdown-content");
+
+            if (dropdownLink && dropdownContent) {
+                // Toggle dropdown visibility on click
+                dropdownLink.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    dropdownContent.classList.toggle("show");
+                });
+
+                // Close dropdown if clicked outside
+                window.addEventListener('click', function (event) {
+                    if (!event.target.closest('.dropdown')) {
+                        dropdownContent.classList.remove('show');
+                    }
+                });
+
+                console.log('Dropdown functionality initialized.');
+            } else {
+                console.error('Dropdown elements not found.');
+            }
+        }
+
+        // Update UI based on login state and other UI updates
+        function updateUI(isLoggedIn, username) {
             const loginForm = document.getElementById("loginForm");
             const manageProductsBtn = document.getElementById("manageProductsBtn");
+            const addProductBtn = document.getElementById("addProductBtn");
+            const dropdownLink = document.querySelector('.dropdown a');
+            const dropdownContent = document.getElementById("dropdown-content");
 
-            // Simulate user login state and username
-            const isLoggedIn = true; // Change to false if user is not logged in
-            const username = "JohnDoe"; // Replace with actual username
-
-            // Toggle dropdown visibility
-            dropdownLink.addEventListener('click', function (event) {
-                event.preventDefault();
-                dropdownContent.classList.toggle("show");
-            });
-
-            // Close dropdown if clicked outside
-            window.addEventListener('click', function (event) {
-                if (!event.target.closest('.dropdown')) {
-                    dropdownContent.classList.remove('show');
+            // Update dropdown based on login state
+            if (dropdownLink) {
+                if (isLoggedIn) {
+                    dropdownLink.innerHTML = `<img src="assets/images/cart_icon.svg" alt="Cart Icon">${username}`; // Show username with cart icon
+                } else {
+                    dropdownLink.textContent = "Sign In"; // Keep "Sign In" text for logged-out user
                 }
-            });
+            }
 
-            // Update UI based on login state
-            // if (isLoggedIn) {
-                dropdownLink.textContent = username; // Show username instead of "Sign In"
-                loginForm.style.display = "none"; // Hide login form
-                manageProductsBtn.style.display = "block"; // Show "Manage Products" button
-            // }
+            // Show/hide UI elements based on login state
+            if (loginForm) loginForm.style.display = isLoggedIn ? "none" : "block"; // Hide login form if logged in
+            if (manageProductsBtn) manageProductsBtn.style.display = isLoggedIn ? "block" : "none"; // Show "Manage Products" button if logged in
+            if (addProductBtn) addProductBtn.style.display = isLoggedIn ? "inline-block" : "none"; // Show "Add New Product" button if logged in
+
+            console.log('Header UI updated based on login state.');
+        }
+
+        // Listen for the headerLoaded event to initialize dropdown and update UI
+        document.addEventListener('headerLoaded', function () {
+            initializeDropdown(); // Initialize dropdown functionality
+            const isLoggedIn = false; // Example: Change this value based on the user's login state
+            const username = "JohnDoe"; // Example: Replace with the actual username
+            updateUI(isLoggedIn, username); // Update the UI based on the login state
         });
+
     </script>
 </header>

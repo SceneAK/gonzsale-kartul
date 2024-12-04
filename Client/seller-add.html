@@ -79,6 +79,10 @@
 </head>
 
 <body>
+
+    <!-- Header section -->
+    <div id="header"></div>
+
     <h1>Add Product Penjual</h1>
     <form action="/submit-product" method="POST">
         <!-- Nama Produk -->
@@ -121,6 +125,16 @@
         <!-- Submit Button -->
         <button type="submit">Tambah Produk</button>
     </form>
+
+    <!-- Footer section -->
+    <div id="footer"></div>
+
+    <script src="dropdown.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            initializePage(); // Initialize the shared functionality
+        });
+    </script>
 </body>
 
 </html>
