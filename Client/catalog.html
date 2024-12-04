@@ -124,7 +124,7 @@
             try {
                 const url = `${window.location.protocol}://${window.location.host}`;
                 //console.log(url);
-                const response = await fetch(`http://localhost:3000/${category}`);
+                const response = await fetch(`http://localhost:3000/product/${category}`);
                 if (!response.ok) throw new Error(`Failed to fetch ${category} items`);
 
                 const items = await response.json();

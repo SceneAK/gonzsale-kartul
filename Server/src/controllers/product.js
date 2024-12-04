@@ -1,4 +1,5 @@
 import connectionPromise from '../modules/db.js'
+import { buildURL, getRelative, unlink, updateUsed } from '../modules/upload.js';
 const connection = await connectionPromise;
 
 function includeCategoryInBody(req, category)
@@ -11,9 +12,19 @@ function includeCategoryInBody(req, category)
     
     return req;
 }
+
+function prepareProductImgUrls(protocol, host, rows)
+{
+    return rows.map( row => {
+        const relPaths = JSON.parse(row.product_imgSrc);
+        row.product_imgSrc = relPaths.map( relPath => buildURL(protocol, host, relPath) );
+    })
+}
 const getProducts = async (req, res) => {
     req = includeCategoryInBody(req, req.params.product_category);
     const [rows] = await executeFiltered(req.body);
+
+    rows = prepareProductImgUrls(rows);
     res.status(200).json(rows);
 }
 async function executeFiltered(filter)
@@ -47,10 +58,12 @@ async function executeFiltered(filter)
 const getProduct = async (req, res) => {
     const {id} = req.params;
     const [rows] = await connection.execute('SELECT * FROM product WHERE product_id = ?', [id]);
+
+    rows = prepareProductImgUrls(rows);
     res.json(rows[0]);
 }
 
-const createProduct = async (req, res) => { // Expects upload to process form-data into req.body and req.urls
+const createProduct = async (req, res) => { // Expects upload to process form-data into req.body and req.files
     const [rows] = await connection.execute("SELECT * FROM store WHERE owner_user_id = ?", [req.authenticatedUserId]);
     
     if(rows.length == 0) {
@@ -61,12 +74,13 @@ const createProduct = async (req, res) => { // Expects upload to process form-da
     }
 
     try{
+        const relPaths = req.files.map( file => getRelative(file.path));
         const {product_name, product_description, product_category, product_price, product_unit, product_canOrder} = req.body;
         const [result] = await connection.execute("INSERT INTO product (product_name, product_description, product_imgSrc, product_category, product_price, product_unit, product_canOrder, store_id) VALUES (?, ?, ?, ?, ?)",
             [
             product_name,
             product_description,
-            req.urls,
+            relPaths,
             product_category,
             product_price,
             product_unit,
@@ -74,8 +88,10 @@ const createProduct = async (req, res) => { // Expects upload to process form-da
             rows[0].store_id
             ]
         )
+        updateUsed(req.files, req.authenticatedUserId);
         res.status(200).send({insertId: result.insertId});
     }catch(err) { 
+        if(req.files != undefined) unlink(req.files);
         res.status(400).send(err.message); 
     }
 

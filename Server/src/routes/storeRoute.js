@@ -4,7 +4,7 @@ import {image} from '../modules/upload.js';
 import express from 'express';
 const router = express.Router();
 
-router.get('/:id', getStore);
+router.get('/get/:id', getStore);
 
 router.post('/create/', verifyAuthToken_mid, createStore);
 

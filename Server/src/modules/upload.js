@@ -1,67 +1,91 @@
 import upath from  'upath';
 import multer from 'multer';
+import { promises as fs} from 'fs';
 import { STATIC_ROUTE_NAME, PUBLIC_DIR } from '../../initialize.js';
 import connectionPromise from '../modules/db.js'
 const connection = await connectionPromise;
 
-function buildURL(protocol, host, fullFilePath)
-{
-    const path = upath.relative(PUBLIC_DIR, fullFilePath);
-    return `${protocol}://${host}/${STATIC_ROUTE_NAME}/${path}`;
-}
-function getFilePath(url)
-{
-    const start = url.indexOf(STATIC_ROUTE_NAME) + STATIC_ROUTE_NAME.length + 1; // +1 for the backslash after  
-    const relative = url.substring(start);
-    return upath.join(PUBLIC_DIR, relative);
-}
-function addUsedStorage(amount, id)
-{
-    connection.execute(`UPDATE user SET user_used_storage = user_used_storage + ? WHERE user_id = ?`, [amount, id]);
-}
-
 const MAX_SIZE = 300000000; // 300mb
-async function reachedLimit(req)
+async function getUsed(req)
 {
     const[rows] = await connection.execute(`SELECT * FROM user WHERE user_id = ?`, [req.authenticatedUserId]);
-    console.log("inner: " + rows[0].user_used_storage >= MAX_SIZE);
-    return rows[0].user_used_storage >= MAX_SIZE;
+    return rows[0].user_used_storage;
+}
+async function ensureBelowLimit(req, res, next)
+{
+    const usedStorage = await getUsed(req);
+    if(usedStorage >= MAX_SIZE) {
+        res.status(400).send("Used Storage Limit!"); 
+        return;
+    }else{
+        next();
+    }
+}
+async function createMulter(options)
+{
+    const {isArray, relativeDir, keyName} = options;
+    const upload = multer({dest: upath.join(PUBLIC_DIR, relativeDir) });
+    if(isArray)
+    {
+        return upload.array(keyName);
+    }else{
+        return upload.single(keyName);
+    }
+}
+function buildURL(protocol, host, relativePath)
+{
+    return `${protocol}://${host}/${STATIC_ROUTE_NAME}/${relativePath}`;
+}
+function getRelative(path)
+{
+    return upath.relative(PUBLIC_DIR, path);
 }
 
-const uploadImg = multer({ dest: upath.join(PUBLIC_DIR, 'images') });
-
-const image = async (req, res, next) => {
-    if(await reachedLimit(req)){
-        res.status(400).send("Used Storage Limit!"); return;
-    }
-
-    uploadImg.single('image')(req, res, ()=>{ // parsed form-data
-        req.url = buildURL(req.protocol, req.get('host'), req.file.path);
-        addUsedStorage(req.file.size, req.authenticatedUserId);
-        next();
-    })
+async function addAmountToUsed(amount, id)
+{
+    return await connection.execute(`UPDATE user SET user_used_storage = user_used_storage + ? WHERE user_id = ?`, [amount, id]);
 }
-
-const images = async (req, res, next) => {
-    if(await reachedLimit(req)){
-        res.status(400).send("Used Storage Limit!!"); return;
-    }
-
-    uploadImg.array('images')(req, res, ()=>{
-        let array = [];
-        req.files.forEach( value => {
-            array.push(buildURL(req.protocol, req.get('host'), value.path)) 
-            addUsedStorage(value.size, req.authenticatedUserId); 
-        });
-        req.urls = array;
-        console.log(`Image Sources: ${req.urls}`);
-        next();
-    }) 
+async function updateUsed(files, id)
+{
+    let total = 0;
+    files.forEach( file=> {
+        total += file.size;
+    });
+    addAmountToUsed(total, id);
+}
+async function unlinkStoredUpdateUsed(paths, id)
+{
+    let absSize = 0;
+    paths.forEach(relPath => {
+        fs.unlink(relPath, async err=>{
+            if(err) {
+                console.log(err)
+            }
+            else {
+                const size = fs.stat(relPath).size;
+                absSize += size;
+            }
+        })
+    });
+    addAmountToUsed(-absSize, id);
+}
+async function unlink(files)
+{
+    files.forEach(file => {
+        fs.unlink(file.path, err => {
+            if(err) console.log(err)
+        })
+    });
 }
 
 export {
-    image,
-    images,
     buildURL,
-    getFilePath
+    getRelative,
+
+    ensureBelowLimit,
+    createMulter,
+
+    updateUsed,
+    unlinkStoredUpdateUsed,
+    unlink
 };

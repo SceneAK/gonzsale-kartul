@@ -1,12 +1,12 @@
 import { STATIC_ROUTE_NAME, PUBLIC_DIR } from './initialize.js';
-import cors from 'cors';
 import express from 'express'; 
 
 const app = express()
 
-// static route
+// static routes
 app.use(`/${STATIC_ROUTE_NAME}/`, express.static(PUBLIC_DIR)); 
-app.use(cors());
+
+
 
 // logs
 app.use((req, res, next) => {console.log(req.path, req.method); next();})

@@ -14,6 +14,10 @@
 - Server stores uploaded files to __dir/public/${relativeFilePath}
 - Access the files using gonzsale.com/source/${relativeFilePath}
 - Each User has a specified limit, which is tracked every upload and deletion of files. 
+    - If all operation is successful, then the controller should updateUsed() to update used storage space. 
+    - Else, on error, unlink() the files in request.
+    - This gives control which files to keep or unlink.
+    - Note that updateUsed and unlink accept files because it's usually used after errors in incoming requests, meaning the files are directly accessible through req.files/file, meanwhile unlinkStored() uses relative paths instead of files because it's usually used on files already stored, no access to req.files/file  
 - Key name for image uploads is _image_, and _images_
 ### product.js
 - when creating, expect formdata, res.body = {product_name, product_description, product_category}
@@ -55,7 +59,7 @@
 
 ## Transaction System
 > (Proof based)
-- (Payment Gateway Integration)
+- (Payment Gateway??)
 .ProcessTransaction
 
 Email Validator instead of isValidEmail. 
@@ -64,3 +68,14 @@ Product has field CanOrder-> order implementation
 ## user.js
 - Edit Profile
 - Change Password, maybe use mailer?
+- transition to cookies
+
+
+
+
+
+
+// Remove URLS from req.url;
+// Make a function that converts array of relative file paths into url form
+// Move Store's unlink to upload.js
+// 

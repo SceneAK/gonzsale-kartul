@@ -1,14 +1,12 @@
 import connectionPromise from './db.js';
 const connection = await connectionPromise;
 
-async function processTransaction(totalAmount, payment_method, proof)
+async function processTransaction(totalAmount, proofRelPath)
 {
-    const result = await connection.execute('INSERT INTO transaction (transaction_date, transaction_amount, payment_method) VALUES (?,?,?)', [
-        payment_method, 
+    const result = await connection.execute('INSERT INTO transaction (transaction_date, transaction_amount) VALUES (?,?,?)', [
         totalAmount, 
-        proof
+        proofRelPath
     ]);
-    
     return result.insertedId;
 }
 
