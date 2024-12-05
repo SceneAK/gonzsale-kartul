@@ -21,7 +21,7 @@ async function ensureBelowLimit(req, res, next)
         next();
     }
 }
-async function createMulter(options)
+function createMulter(options)
 {
     const {isArray, relativeDir, keyName} = options;
     const upload = multer({dest: upath.join(PUBLIC_DIR, relativeDir) });
