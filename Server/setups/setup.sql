@@ -47,7 +47,8 @@ CREATE TABLE product(
    );
 
 CREATE TABLE transaction(
-   transaction_id int(6) PRIMARY KEY, 
+   transaction_id VARCHAR(36) PRIMARY KEY, 
    transaction_date date,
-   transaction_amount int
+   transaction_amount int,
+   transaction_proof text
 );

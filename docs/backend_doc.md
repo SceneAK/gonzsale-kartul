@@ -3,6 +3,7 @@
 - Refer to setup.sql for database design and field names accessed in controllers
 - Run Node Server/setups/secretKey.js to generate a secret key in console
 - Users with NULL passwords are considered guest users. They are users who have put their email for an order, but have yet to register.
+- AUTO INCREMENT for all of the fields because anything sensitive is locked behind an account. Who cares if people can see how many products are made in this website. Transaction proofs can only be accessed/retrieved via GetOrders, and that requires sign in.
 
 ## Modules
 ### Interactions

@@ -49,16 +49,19 @@ async function placeOrder(customer_id, req, res)
             res.status(400).send('Incomplete Order Details'); return;
         }
         
-        const [rows] = await connection.execute("SELECT product_canOrder, product_price, FROM product WHERE product_id = ?", [product_Id]);
+        const [rows] = await connection.execute("SELECT product_canOrder, product_price FROM product WHERE product_id = ?", [product_id]);
+        if(rows.length == 0){
+            res.status(400).send('Product Does Not Exist'); return;
+        }
         if(!rows[0].product_canOrder){
-            res.send('Product Unavailable for Order'); return;
+            res.status(400).send('Product Unavailable for Order'); return;
         }
         
         const relProofPath = getRelative(req.file.path);
         const total = rows[0].product_price * order_qty;
-        const transactionId = recordTransaction(total, relProofPath);
+        const transactionId = await recordTransaction(total, relProofPath);
 
-        const result = await connection.execute('INSERT INTO order (product_id, customer_user_id, order_qty, order_variant, transaction_id) VALUES (?, ?, ?, ?, ?)', [
+        const [result] = await connection.execute('INSERT INTO `order` (product_id, customer_user_id, order_qty, order_variant, transaction_id) VALUES (?, ?, ?, ?, ?)', [
             product_id,
             customer_id,
             order_qty,
@@ -66,20 +69,20 @@ async function placeOrder(customer_id, req, res)
             transactionId
         ])
 
-        updateUsed(req.file, customer_id);
-        const insertedId = result.insertedId;
-        res.json({insertedId});
+        updateUsed([req.file], customer_id);
+        const insertId = result.insertId;
+        res.json({insertId});
     }catch(err) {
-        if(req.file != undefined) unlink(req.file);
-        res.status(400).send(err);
+        if(req.file != undefined) unlink([req.file]);
+        res.status(400).send("ERR:\n" + err);
     }
 }
 
 
 const placeOrderAccount = async(req, res) => {
     const token = getCleanAuthToken(req);
-    const customer_id = await verifyAuthToken(token);
-    placeOrder(customer_id, req.body, res);
+    const {id: customer_id} = await verifyAuthToken(token);
+    placeOrder(customer_id, req, res);
 }
 
 function validCustomerDetail(body){
@@ -98,7 +101,7 @@ const placeOrderGuest = async (req, res) => {
     );
     const customer_id = result.insertedId; // guest account ID
 
-    placeOrder(customer_id, req.body, res);
+    placeOrder(customer_id, req, res);
 }
 
 const updateOrderStatus = async (req, res) => {
