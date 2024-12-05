@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <header>
     <style>
         header {
@@ -11,8 +13,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            /* Allows wrapping on smaller screens */
             padding: 10px 0;
         }
+
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                /* Stack the elements */
+                align-items: flex-start;
+                /* Align everything to the left */
+            }
+        }
+
 
         .logo {
             font-size: 1.5em;
@@ -30,7 +44,6 @@
 
         .logo img {
             width: 40px;
-            margin-right: 10px;
         }
 
         .tablink {
@@ -65,11 +78,22 @@
             color: #333;
         }
 
+        .menu-toggle {
+            display: none;
+            /* Hide the button by default */
+            background-color: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
         /* Second Row: Categories */
         .header-bottom {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            flex-wrap: wrap;
+            /* Wrap categories on smaller screens */
+            gap: 15px;
             background-color: #f9f9f9;
             padding: 10px 0;
         }
@@ -83,6 +107,75 @@
         .header-bottom a:hover {
             color: #ff9900;
         }
+
+        .header-bottom.show {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                /* Stack items vertically on smaller screens */
+                align-items: center;
+                /* Center the items horizontally */
+                padding: 20px 0;
+                /* Add more space around the header */
+                gap: 20px;
+                /* Increase the gap between elements for better spacing */
+            }
+
+            .menu-toggle {
+                display: block;
+                position: relative;
+                /* Keep the button within normal document flow */
+                font-size: 30px;
+                /* Increase size for visibility */
+                cursor: pointer;
+            }
+
+            .logo img {
+                width: 30px;
+                /* Scale down logo for smaller screens */
+            }
+
+            .search-bar input {
+                width: 100%;
+                /* Ensure search input takes full width */
+            }
+
+            .user-options {
+                display: flex;
+                justify-content: center;
+                /* Center user options horizontally */
+                gap: 15px;
+                /* Increase spacing between user options */
+                align-items: center;
+                /* Align items vertically in the middle */
+            }
+
+            .user-options a {
+                display: flex;
+                /* Ensure the cart icon and text are aligned properly */
+                align-items: center;
+            }
+
+            .header-bottom {
+                display: none;
+                /* Hide header-bottom on smaller screens */
+            }
+
+            .header-bottom a {
+                display: block;
+                padding: 10px 0;
+                text-align: center;
+            }
+        }
+
+
 
         .user-options {
             position: relative;
@@ -116,6 +209,7 @@
             z-index: 100;
         }
 
+
         .dropdown-content input[type="text"],
         .dropdown-content input[type="password"] {
             width: 100%;
@@ -147,7 +241,7 @@
         }
 
         /* Show dropdown when active */
-        .show {
+        .dropdown-content.dropdown-show {
             display: block;
         }
 
@@ -209,7 +303,13 @@
                 <img src="assets/images/cart_icon.svg" alt="Cart Icon">
                 My Cart
             </a>
+
         </div>
+        <!-- Add the Menu Toggle button here, inside header-top -->
+        <button class="menu-toggle">
+            <i class="fa fa-bars"></i>
+        </button> <!-- Hamburger icon button -->
+
     </div>
 
 
