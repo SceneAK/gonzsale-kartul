@@ -2,51 +2,53 @@ import connectionPromise from '../modules/db.js'
 import { buildURL, getRelative, unlink, updateUsed } from '../modules/upload.js';
 const connection = await connectionPromise;
 
-function includeCategoryInBody(req, category)
-{
-    if(req.body != undefined) {
-        req.body.product_category = category; 
-    }else{
-        req.body = {product_category: category};
-    }
-    
-    return req;
-}
-
-function prepareProductImgUrls(protocol, host, rows)
+function prepareImgUrls(protocol, host, rows)
 {
     return rows.map( row => {
-        const relPaths = JSON.parse(row.product_imgSrc);
-        row.product_imgSrc = relPaths.map( relPath => buildURL(protocol, host, relPath) );
+        try
+        {
+            const relPaths = JSON.parse(row.product_imgSrc);
+            if(row.product_imgSrc != undefined && row.product_imgSrc != null){
+                row.product_imgSrc = relPaths.map( relPath => buildURL(protocol, host, relPath) );
+            }
+        }catch(err){    }
+        
+        return row;
     })
 }
 const getProducts = async (req, res) => {
-    req = includeCategoryInBody(req, req.params.product_category);
-    const [rows] = await executeFiltered(req.body);
+    let filter = {};
+    if(req.params.product_category != "All"){
+        filter = req.body;
+        filter.product_category = req.params.product_category;
+    }
 
-    rows = prepareProductImgUrls(rows);
+    let [rows] = await executeFiltered(filter);
+
+    rows = prepareImgUrls(req.protocol, req.hostname, rows);
     res.status(200).json(rows);
 }
 async function executeFiltered(filter)
 {
     let query = `SELECT * FROM product WHERE 1=1`;
     let params = [];
-    if(filter.product_name != undefined)
+    
+    if(filter.product_name != "")
     {
         query += ` AND product_name LIKE ? COLLATE utf8mb4_general_ci`; // case insensitive
         params.push(`${filter.product_name}%`);
     }
-    if(filter.product_category != undefined)
+    if(filter.product_category != "")
     {
         query += ` AND product_category LIKE ? COLLATE utf8mb4_general_ci`;
         params.push(`${filter.product_category}%`);
     }
-    if(filter.store_id != undefined)
+    if(filter.store_id != -1)
     {
         query += ` AND store_id LIKE ?`;
         params.push(`${filter.store_id}%`);
     }
-    if(filter.store_name != undefined)
+    if(filter.store_name != "")
     {
         query += ` AND store_name LIKE ? COLLATE utf8mb4_general_ci`;
         params.push(`${filter.store_name}%`);
@@ -57,20 +59,15 @@ async function executeFiltered(filter)
 
 const getProduct = async (req, res) => {
     const {id} = req.params;
-    const [rows] = await connection.execute('SELECT * FROM product WHERE product_id = ?', [id]);
-
-    rows = prepareProductImgUrls(rows);
-    res.json(rows[0]);
+    let [rows] = await connection.execute('SELECT * FROM product WHERE product_id = ?', [id]);
+    rows = prepareImgUrls(req.protocol, req.hostname, rows);
+    res.json(rows);
 }
 
-const createProduct = async (req, res) => { // Expects upload to process form-data into req.body and req.files
-    const [rows] = await connection.execute("SELECT * FROM store WHERE owner_user_id = ?", [req.authenticatedUserId]);
-    
+const createProduct = async (req, res) => {
+    const [rows] = await connection.execute("SELECT * FROM store WHERE owner_user_id = ?", [req.authUser.id]);
     if(rows.length == 0) {
-        res.status(400).send("Create a store!"); return;
-    }
-    if(!isValid(req.body)) {
-        res.status(400).send("Bad Request!"); return;
+        return res.status(400).send("Create a store!");
     }
 
     try{
@@ -88,21 +85,15 @@ const createProduct = async (req, res) => { // Expects upload to process form-da
             rows[0].store_id
             ]
         )
-        updateUsed(req.files, req.authenticatedUserId);
+        updateUsed(req.files, req.authUser.id);
         res.status(200).send({insertId: result.insertId});
     }catch(err) { 
         if(req.files != undefined) unlink(req.files);
         res.status(400).send(err.message); 
     }
-
-    function isValid(body)
-    {
-        const defined = (value) => value in body;
-        return defined('product_name') && defined('product_description') && defined('product_category');
-    }
 }
 
-export {
+export default {
     getProduct,
     getProducts,
     createProduct

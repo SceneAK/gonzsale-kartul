@@ -1,15 +1,17 @@
 import express from 'express';
 const router = express.Router();
 
-import { verifyAuthToken_mid } from '../modules/tokenAuth.js';
-import { getProduct, getProducts, createProduct } from '../controllers/product.js';
+import { verifyUser } from '../modules/tokenAuth.js';
 import { ensureBelowLimit, createMulter } from '../modules/upload.js';
+import { validate, productSchemas } from '../reqSchemas/index.js';
+import { product } from '../controllers';
 
-router.get('/get/filtered/:product_category', getProducts);
+router.get('/get/:product_category', validate(productSchemas.getProducts), product.getProducts);
 
-router.get('/get/:id', getProduct);
+router.get('/get/single/:id', product.getProduct);
 
 const imgUpload = createMulter({relativeDir: 'images', keyName: 'images', isArray: true});
-router.post('/create/', verifyAuthToken_mid, ensureBelowLimit, imgUpload, createProduct);
+
+router.post('/create/', verifyUser, ensureBelowLimit, imgUpload, validate(productSchemas.createProduct), product.createProduct);
 
 export default router;

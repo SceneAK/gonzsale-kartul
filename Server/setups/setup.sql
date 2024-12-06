@@ -6,7 +6,7 @@ CREATE TABLE user(
    user_phone varchar(10),
    user_email varchar(30) NOT NULL UNIQUE,
    user_password varchar(256),
-   user_verified boolean,
+   user_role ENUM('USER', 'STORE_CREATOR', 'ADMIN') DEFAULT 'USER',
    user_used_storage int DEFAULT 0
 );
 
@@ -25,7 +25,7 @@ CREATE TABLE product(
    product_description varchar(600),
    product_category varchar(150),
    product_variants json,
-   product_imgSrc json,
+   product_imgSrc json DEFAULT '[]',
    product_price int,
    product_unit varchar(50),
    store_id int(3),
@@ -40,6 +40,7 @@ CREATE TABLE product(
       customer_user_id int(4),
       order_qty int,
       order_variant json,
+      order_notes text,
       order_status ENUM('PENDING', 'PROCESSING', 'IN_GONZAGA' ,'COMPLETED') DEFAULT 'PENDING',
       FOREIGN KEY (product_id) REFERENCES product(product_id),
       FOREIGN KEY (customer_user_id) REFERENCES user(user_id),

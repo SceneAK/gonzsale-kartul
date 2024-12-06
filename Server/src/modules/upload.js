@@ -8,7 +8,7 @@ const connection = await connectionPromise;
 const MAX_SIZE = 300000000; // 300mb
 async function getUsed(req)
 {
-    const[rows] = await connection.execute(`SELECT * FROM user WHERE user_id = ?`, [req.authenticatedUserId]);
+    const[rows] = await connection.execute(`SELECT * FROM user WHERE user_id = ?`, [req.authUser.id]);
     return rows[0].user_used_storage;
 }
 async function ensureBelowLimit(req, res, next)
