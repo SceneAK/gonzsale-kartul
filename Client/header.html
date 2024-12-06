@@ -1,18 +1,31 @@
-<header>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
-        header {
+        .desktop-header {
             background-color: #ffffff;
             padding: 10px 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        /* First Row: Logo, Search Bar, Sign In, Cart */
+        /* DESKTOP First Row: Logo, Search Bar, Sign In, Cart */
         .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            /* Allows wrapping on smaller screens */
             padding: 10px 0;
         }
+
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                /* Stack the elements */
+                align-items: flex-start;
+                /* Align everything to the left */
+            }
+        }
+
 
         .logo {
             font-size: 1.5em;
@@ -30,7 +43,6 @@
 
         .logo img {
             width: 40px;
-            margin-right: 10px;
         }
 
         .tablink {
@@ -65,11 +77,22 @@
             color: #333;
         }
 
+        .menu-toggle {
+            display: none;
+            /* Hide the button by default */
+            background-color: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
         /* Second Row: Categories */
         .header-bottom {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            flex-wrap: wrap;
+            /* Wrap categories on smaller screens */
+            gap: 15px;
             background-color: #f9f9f9;
             padding: 10px 0;
         }
@@ -82,6 +105,13 @@
 
         .header-bottom a:hover {
             color: #ff9900;
+        }
+
+        .header-bottom.show {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
         }
 
         .user-options {
@@ -116,6 +146,7 @@
             z-index: 100;
         }
 
+
         .dropdown-content input[type="text"],
         .dropdown-content input[type="password"] {
             width: 100%;
@@ -147,7 +178,7 @@
         }
 
         /* Show dropdown when active */
-        .show {
+        .dropdown-content.dropdown-show {
             display: block;
         }
 
@@ -171,7 +202,15 @@
             margin-right: 5px;
             /* Add spacing between the icon and text */
         }
+
+        .mobile-header {
+            display: none;
+        }
+
     </style>
+</head>
+
+<header class="desktop-header">
 
     <div class="header-top">
         <div class="logo">
@@ -181,12 +220,12 @@
             </a>
         </div>
         <div class="search-bar">
-            <input type="text" placeholder="Search for items">
+            <input type="text" placeholder="Search for items... ">
         </div>
         <div class="user-options">
             <div class="dropdown">
                 <a href="#" id="userLink">
-                    <img src="assets/images/cart_icon.svg" alt="Cart Icon">
+                    <img src="assets/images/sign_in_icon.svg" alt="Sign in Icon">
                     Sign In
                 </a> <!-- Keep only one userLink -->
                 <button id="addProductBtn" class="add-product-btn"
@@ -211,7 +250,6 @@
             </a>
         </div>
     </div>
-
 
     <!-- Second Row: Categories -->
     <div class="header-bottom">
@@ -300,5 +338,222 @@
             updateUI(isLoggedIn, username); // Update the UI based on the login state
         });
 
+    </script>
+</header>
+
+<header class="mobile-header">
+    <style>
+        /* Mobile Header */
+        @media (max-width: 768px) {
+
+            .desktop-header {
+                display: none;
+            }
+
+            .mobile-header {
+                display: block;
+            }
+
+            header {
+                background-color: #ffffff;
+                padding: 15px 20px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                position: relative;
+                z-index: 1000;
+            }
+
+            .header-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                box-sizing: border-box;
+                /* Include padding in width calculations */
+            }
+
+            /* Hamburger menu icon */
+            .menu-icon {
+                font-size: 28px;
+                cursor: pointer;
+                display: block;
+            }
+
+            /* Logo styling */
+            .logo img {
+                width: 50px;
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            /* User options (icons for cart/profile) */
+            .user-options {
+                display: flex;
+                gap: 15px;
+                align-items: center;
+            }
+
+            .user-options img {
+                width: 24px;
+                /* Adjust width for better size */
+                height: auto;
+                /* Maintain aspect ratio */
+                margin-left: 10px;
+                /* Space between the icon and other elements */
+                vertical-align: middle;
+                /* Align with the text */
+                cursor: pointer;
+                /* Change cursor to indicate it's clickable */
+            }
+
+            /* Search bar */
+            .search-bar-bottom {
+                display: flex;
+                align-items: center;
+                margin: 15px 0;
+                width: 100%;
+                /* Extend the search bar to fill the width */
+            }
+
+            .search-bar-bottom input {
+                flex-grow: 1;
+                /* Ensures the input field stretches to fill the available space */
+                padding: 12px;
+                border: 1px solid #ccc;
+                border-radius: 5px 0 0 5px;
+                font-size: 16px;
+                box-sizing: border-box;
+                /* Prevents padding from affecting width */
+            }
+
+            .search-bar-bottom button {
+                padding: 12px;
+                background-color: #f9f9f9;
+                border: 1px solid #ccc;
+                border-left: none;
+                border-radius: 0 5px 5px 0;
+                font-size: 16px;
+                cursor: pointer;
+            }
+
+            /* Sliding menu */
+            .side-menu {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 80%;
+                height: 100%;
+                background-color: #ffffff;
+                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+                z-index: 1100;
+                transition: left 0.3s ease;
+                padding: 20px;
+            }
+
+            .side-menu.open {
+                left: 0;
+            }
+
+            .side-menu a {
+                text-decoration: none;
+                font-size: 18px;
+                color: #333;
+                margin: 15px 0;
+                display: block;
+            }
+
+            .side-menu a:hover {
+                color: #ff9900;
+            }
+
+            .close-icon {
+                font-size: 24px;
+                cursor: pointer;
+            }
+
+            .side-menu-footer {
+                margin-top: auto;
+                text-align: center;
+            }
+
+            .side-menu-footer a {
+                font-size: 16px;
+                color: #333;
+                text-decoration: none;
+                margin: 10px;
+            }
+
+            .side-menu-footer a:hover {
+                color: #ff9900;
+            }
+        }
+    </style>
+    <div class="header-container">
+        <!-- Hamburger menu -->
+        <div class="menu-icon" onclick="toggleMenu()">☰</div>
+
+        <!-- Logo -->
+        <div class="logo">
+            <img src="assets/images/logo_placeholder.svg" alt="GonzSale Logo">
+            <a href="index.html">
+                GonzSale 2024
+            </a>
+        </div>
+
+        <!-- User options -->
+        <div class="user-options">
+            <a href="#" id="userLink">
+                <img src="assets/images/sign_in_icon.svg" alt="Sign in Icon">
+            </a> <!-- Keep only one userLink -->
+            <a href="mycart.html">
+                <img src="assets/images/cart_icon.svg" alt="Cart Icon">
+            </a>
+        </div>
+    </div>
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <span class="close-icon" onclick="toggleMenu()">×</span>
+        <a class="tablink" href="catalog.html#Shirts">
+            Baju
+        </a>
+        <a class="tablink" href="catalog.html#Pants">
+            Celana
+        </a>
+        <a class="tablink" href="catalog.html#Accessories">
+            Aksesoris
+        </a>
+        <a class="tablink" href="catalog.html#Food">
+            Makanan
+        </a>
+        <a class="tablink" href="catalog.html#Drinks">
+            Minuman
+        </a>
+        <a class="tablink" href="catalog.html#All">
+            All Items
+        </a>
+        <div class="side-menu-footer">
+            <a href="#">© 2024 GonzSale</a>
+            <a href="#">Facebook</a>
+            <a href="#">YouTube</a>
+        </div>
+    </div>
+
+    <!-- Search bar -->
+    <div class="search-bar-bottom">
+        <input type="text" placeholder="Search for items...">
+        <button>🔍</button>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const sideMenu = document.getElementById("sideMenu");
+            sideMenu.classList.toggle("open");
+            console.log('TOGGLE MENU RUNNING')
+        }
     </script>
 </header>
