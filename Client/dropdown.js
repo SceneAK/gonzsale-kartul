@@ -10,7 +10,6 @@ function loadHTML(file, elementId, callback) {
 }
 
 // Function to initialize dropdown functionality
-// Function to initialize dropdown functionality
 function initializeDropdown() {
     const dropdownLink = document.querySelector('.dropdown a');
     const dropdownContent = document.getElementById("dropdown-content");
@@ -51,21 +50,12 @@ function updateUI(isLoggedIn, username) {
 }
 
 // Function to initialize menu toggle functionality for mobile
-function initializeMenuToggle() {
-    const menuToggle = document.querySelector('.menu-toggle');
-    const headerBottom = document.querySelector('.header-bottom');
-
-    if (menuToggle && headerBottom) {
-        // Toggle menu visibility on click
-        menuToggle.addEventListener('click', () => {
-            headerBottom.classList.toggle('show'); // Toggle "show" class
-        });
-
-        console.log('Menu toggle functionality initialized.');
-    } else {
-        console.error('Menu toggle elements not found.');
-    }
+function toggleMenu() {
+    const sideMenu = document.getElementById("sideMenu");
+    sideMenu.classList.toggle("open");
+    console.log('TOGGLE MENU RUNNING')
 }
+
 
 // Load the header and footer, and ensure dropdown and menu toggle initialize
 function initializePage() {
@@ -74,8 +64,13 @@ function initializePage() {
         document.dispatchEvent(headerLoadedEvent); // Notify other scripts
         initializeDropdown(); // Initialize dropdown functionality
         initializeMenuToggle(); // Initialize menu toggle functionality
+        initializeSlideMenu(); // Initialize slide menu functionality
         updateUI(false, "JohnDoe"); // Update UI based on login state
+        toggleMenu(); //Toggle mobile menu
     });
 
     loadHTML('footer.html', 'footer'); // Load footer if needed
 }
+
+// Call initializePage on load
+document.addEventListener('DOMContentLoaded', initializePage);
