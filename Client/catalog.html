@@ -123,8 +123,8 @@
             <div id="shirt-items-container"></div>
         </div>
 
-        <div id="Bundles" class="tabcontent">
-            <div id="bundle-items-container"></div>
+        <div id="Pants" class="tabcontent">
+            <div id="pant-items-container"></div>
         </div>
 
         <div id="Food" class="tabcontent">
@@ -157,6 +157,14 @@
         <div id="Accessories" class="tabcontent">
             <div id="accessory-items-container"></div>
         </div>
+
+        <!-- <div id="Food" class="tabcontent">
+            <div id="food-items-container"></div>
+        </div>
+
+        <div id="Drinks" class="tabcontent">
+            <div id="drink-item-container"></div>
+        </div> -->
 
         <div id="All" class="tabcontent">
             <div id="all-items-container"></div>
@@ -222,10 +230,10 @@
         document.addEventListener("DOMContentLoaded", function () {
             const categories = {
                 Shirts: "shirt-items-container",
-                Bundles: "bundle-items-container",
+                Pants: "pant-items-container",
                 Accessories: "accessory-items-container",
                 Food: "food-items-container",
-                Stickers: "sticker-items-container",
+                Stickers: "drink-item-container",
                 All: "all-items-container",
             };
 
@@ -237,18 +245,12 @@
             // Default open Shirts tab
             openCategory(null, "Food");
         });
-
-        // Load external header and footer
-        function loadHTML(file, elementId) {
-            fetch(file)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById(elementId).innerHTML = data;
-                });
-        }
-
-        loadHTML("header.html", "header");
-        loadHTML("footer.html", "footer");
+    </script>
+    <script src="dropdown.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            initializePage(); // Initialize the shared functionality
+        });
     </script>
 </body>
 

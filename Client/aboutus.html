@@ -12,10 +12,83 @@
             box-sizing: border-box;
         }
 
-        .container {
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .about-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #0073e6;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #0073e6;
+            object-fit: cover;
+        }
+
+        .info h2 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        .details {
+            margin-top: 20px;
+        }
+
+        .details h3 {
+            font-size: 1.5em;
+            color: #0073e6;
+            margin-bottom: 10px;
+        }
+
+        .details p {
             text-align: justify;
-            padding: 100px 150px;
-            word-spacing: 1px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .details ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .details li {
+            margin-bottom: 10px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #555;
         }
     </style>
 </head>
@@ -35,56 +108,54 @@
             <title>Register</title>
             <link rel="stylesheet" href="style.css">
         </head>
+        <div class="about-container">
+            <!-- Header -->
+            <header>
+                <h1>About GonzSale</h1>
+            </header>
 
-        <body>
-            <div class="container">
-                <p>Once upon a time in the bustling halls of Gonzaga High School, three talented students, Evan Kue,
+            <!-- Main Content -->
+            <section class="profile">
+                <img src="assets/images/logo_placeholder.svg" alt="GonzSale Logo" class="profile-picture">
+                <div class="info">
+                    <h2>Our Story</h2>
+                    <p>Welcome to GonzSale! A creative project born out of a passion for storytelling, community, and
+                        the arts. Meet our team of visionaries who made this possible: Evan Kue, Ignatius Pio, and
+                        Dionisius Abiyasa.</p>
+                </div>
+            </section>
+
+            <!-- Detailed Story -->
+            <section class="details">
+                <h3>How It All Began</h3>
+                <p>
+                    Once upon a time in the bustling halls of Gonzaga High School, three talented students, Evan Kue,
                     Ignatius Pio, and Dionisius Abiyasa, found themselves brought together by their passion for creative
                     writing. They had noticed that their peers were full of stories, poems, essays, and articles
-                    brimming with unique perspectives—but without a proper platform to showcase them. That’s when the
-                    idea for GonzSale was born, a website dedicated to hosting and celebrating the literary works of
-                    their school.
+                    brimming
+                    with unique perspectives—but without a proper platform to showcase them. That’s when the idea for
+                    GonzSale was born, a website dedicated to hosting and celebrating the literary works of their
+                    school.
+                </p>
+                <p>
+                    Evan, Ignatius, and Dionisius each contributed their unique talents—Evan as the tech wizard,
+                    Ignatius as
+                    the editorial mastermind, and Dionisius as the marketing genius. Through challenges, late nights,
+                    and
+                    teamwork, GonzSale became a reality, a digital library celebrating creativity.
+                </p>
+            </section>
 
-                    Evan, the tech whiz of the group, immediately took on the role of lead developer. He had been
-                    experimenting with web design and coding for years and knew exactly what it would take to bring
-                    their vision to life. He started by drafting a sleek, user-friendly layout for the site, emphasizing
-                    easy navigation, clean visuals, and a sense of elegance that would mirror the sophistication of the
-                    written work they’d be displaying. Evan envisioned GonzSale as a digital library where each piece of
-                    writing would have its own space to shine.
-
-                    Ignatius, the wordsmith, and editor, had a keen eye for detail and was known for his ability to
-                    refine and elevate any piece of writing. He took charge of the editorial side of things, creating
-                    submission guidelines and brainstorming content categories. Together, he and Evan planned sections
-                    like "Essays & Articles," "Fiction," and "Poetry" to ensure every genre had its own space. Ignatius
-                    also made it his mission to reach out to classmates, encouraging them to submit their works and
-                    offering gentle guidance to those unsure about the quality of their pieces.
-
-                    Finally, Dionisius, who possessed a flair for marketing and a knack for visuals, managed the
-                    promotional side of GonzSale. He created a launch plan, designing eye-catching posters and social
-                    media teasers to get the word out around school and among the alumni network. Dionisius envisioned
-                    GonzSale as more than just a website; he wanted it to become a community. To achieve that, he
-                    implemented interactive features such as comment sections, author profiles, and even a “Spotlight
-                    Writer of the Month” feature to keep readers engaged.
-
-                    Despite their enthusiasm, the three encountered challenges along the way. Testing the website
-                    revealed some technical bugs, particularly with user submissions. Evan spent long nights
-                    troubleshooting code and ensuring that every piece uploaded would display seamlessly. Ignatius had
-                    his hands full with editing and organizing the massive influx of submissions, which sometimes
-                    arrived in formats that were tough to work with. And Dionisius worked tirelessly to address concerns
-                    from teachers and students alike who were worried about privacy and content moderation.
-
-                    Through persistence and teamwork, however, they brought GonzSale to life. The launch was a
-                    resounding success. Gonzaga students, teachers, and even alumni visited the site, amazed by the
-                    quality and diversity of the work displayed. GonzSale quickly became a cornerstone of the school’s
-                    literary community, and the three founders, Evan, Ignatius, and Dionisius, became legends within
-                    their school for their dedication to the arts.
-
-                    Their website didn’t just showcase writing; it nurtured creativity, celebrated diverse voices, and
-                    brought their school’s literary talent to a wider audience. And who knows? Perhaps one day, GonzSale
-                    would inspire others to launch similar projects, sparking a movement of young writers empowered to
-                    share their work with the world.</p>
-            </div>
-        </body>
+            <!-- Quick Facts -->
+            <section class="details">
+                <h3>Quick Facts</h3>
+                <ul>
+                    <li><strong>Launch Year:</strong> 2024</li>
+                    <li><strong>Team Members:</strong> Evan Kue, Ignatius Pio, Dionisius Abiyasa</li>
+                    <li><strong>Mission:</strong> To nurture creativity, celebrate diverse voices, and foster a literary
+                        community.</li>
+                </ul>
+            </section>
 
         </html>
 

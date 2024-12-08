@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #ff9900;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .status-completed {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            color: red;
+            font-weight: bold;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .complete-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .complete-btn:hover {
+            background-color: #218838;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Order Management Dashboard</h1>
+
+    <!-- Loader -->
+    <div class="loader" id="loader">Loading orders...</div>
+
+    <!-- Order Table -->
+    <table id="order-table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Buyer Name</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="order-table-body">
+            <!-- Orders will be populated dynamically -->
+        </tbody>
+    </table>
+
+    <script>
+        // Function to fetch orders
+        async function fetchOrders() {
+            const loader = document.getElementById('loader');
+            loader.style.display = 'block'; // Show loader
+            try {
+                const response = await fetch('http://localhost:3000/orders'); // Adjust API URL as needed
+                if (!response.ok) throw new Error('Failed to fetch orders');
+
+                const orders = await response.json();
+                loader.style.display = 'none'; // Hide loader
+                populateOrders(orders);
+            } catch (error) {
+                console.error('Error fetching orders:', error);
+                loader.innerHTML = '<p>Failed to load orders. Please try again later.</p>';
+            }
+        }
+
+        // Function to populate orders in the table
+        function populateOrders(orders) {
+            const tableBody = document.getElementById('order-table-body');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            orders.forEach(order => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.buyerName}</td>
+                    <td>${order.productName}</td>
+                    <td>${order.quantity}</td>
+                    <td>$${order.totalPrice.toFixed(2)}</td>
+                    <td class="${order.status === 'Completed' ? 'status-completed' : 'status-pending'}">
+                        ${order.status}
+                    </td>
+                    <td>
+                        <button class="action-btn complete-btn" onclick="markOrderAsCompleted(${order.id})">
+                            Mark as Completed
+                        </button>
+                        <button class="action-btn delete-btn" onclick="deleteOrder(${order.id})">
+                            Delete
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to mark an order as completed
+        async function markOrderAsCompleted(orderId) {
+            try {
+                const response = await fetch(`http://localhost:3000/orders/${orderId}/complete`, {
+                    method: 'PUT',
+                });
+                if (!response.ok) throw new Error('Failed to update order status');
+
+                alert(`Order ${orderId} marked as completed.`);
+                fetchOrders(); // Refresh orders
+            } catch (error) {
+                console.error('Error completing order:', error);
+                alert('Failed to mark order as completed.');
+            }
+        }
+
+        // Function to delete an order
+        async function deleteOrder(orderId) {
+            if (!confirm(`Are you sure you want to delete Order ${orderId}?`)) return;
+
+            try {
+                const response = await fetch(`http://localhost:3000/orders/${orderId}`, {
+                    method: 'DELETE',
+                });
+                if (!response.ok) throw new Error('Failed to delete order');
+
+                alert(`Order ${orderId} deleted.`);
+                fetchOrders(); // Refresh orders
+            } catch (error) {
+                console.error('Error deleting order:', error);
+                alert('Failed to delete order.');
+            }
+        }
+
+        // Load orders on page load
+        document.addEventListener('DOMContentLoaded', fetchOrders);
+    </script>
+</body>
+
+</html>

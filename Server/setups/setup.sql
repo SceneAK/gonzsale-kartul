@@ -33,22 +33,22 @@ CREATE TABLE product(
    FOREIGN KEY (store_id) REFERENCES store(store_id)
 );
 
-CREATE TABLE order(
-   order_id int(6) AUTO_INCREMENT PRIMARY KEY,
-   transaction_id int(6),
-   product_id int(4),
-   customer_user_id int(4),
-   order_qty int,
-   order_variant json,
-   order_status ENUM('PENDING', 'PROCESSING', 'IN_GONZAGA' ,'COMPLETED') DEFAULT 'PENDING',
-   FOREIGN KEY (product_id) REFERENCES product(product_id),
-   FOREIGN KEY (customer_user_id) REFERENCES user(user_id),
-   FOREIGN KEY (transaction_id) REFERENCES transaction(transaction_id)
-);
+   CREATE TABLE `order`(
+      order_id int(6) AUTO_INCREMENT PRIMARY KEY,
+      transaction_id int(6),
+      product_id int(4),
+      customer_user_id int(4),
+      order_qty int,
+      order_variant json,
+      order_status ENUM('PENDING', 'PROCESSING', 'IN_GONZAGA' ,'COMPLETED') DEFAULT 'PENDING',
+      FOREIGN KEY (product_id) REFERENCES product(product_id),
+      FOREIGN KEY (customer_user_id) REFERENCES user(user_id),
+      FOREIGN KEY (transaction_id) REFERENCES transaction(transaction_id)
+   );
 
 CREATE TABLE transaction(
-   transaction_id int(6) PRIMARY KEY, 
+   transaction_id VARCHAR(36) PRIMARY KEY, 
    transaction_date date,
-   transaction_amount int
-   payment_method varchar(255),
+   transaction_amount int,
+   transaction_proof text
 );

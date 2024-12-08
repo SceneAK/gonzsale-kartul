@@ -115,19 +115,11 @@
     </div>
 
 
+    <script src="dropdown.js"></script>
     <script>
-        // Load external HTML file into a div
-        function loadHTML(file, elementId) {
-            fetch(file)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById(elementId).innerHTML = data;
-                });
-        }
-
-        // Load header and footer
-        loadHTML('header.html', 'header');
-        loadHTML('footer.html', 'footer');
+        document.addEventListener("DOMContentLoaded", function () {
+            initializePage(); // Initialize the shared functionality
+        });
     </script>
 
 </body>

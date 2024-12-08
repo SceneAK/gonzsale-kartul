@@ -1,58 +1,67 @@
-import {unlink}from 'fs';
 import connectionPromise from '../modules/db.js'
-import { getFilePath } from '../modules/upload.js';
+import {buildURL, getRelative, unlink, unlinkStoredUpdateUsed, updateUsed} from '../modules/upload.js';
 const connection = await connectionPromise;
-
-function unlinkImgSrc(imgSrc)
-{
-    const filePath = getFilePath(imgSrc);
-    unlink(filePath, (err) => {
-        if(err) console.log(err);
-    });
-}
 
 const getStore = async (req, res) =>
 {
     const {store_id} = req.params;
     const [rows] = await connection.execute('SELECT * FROM store WHERE store_id = ?', [store_id]);
+    rows[0].store_imgSrc = buildURL(req.protocol, req.host, rows[0].store_imgSrc);
     res.json(rows[0]);
 }
 
-async function checkVerified() 
-{
-    
-}
 const createStore = async (req, res) =>
 {
-    const result = await connection.execute("INSERT INTO store (owner_user_id, store_name, store_imgSrc) VALUES (?, ?, ?)", [
-        req.authenticatedUserId,
-        req.body.store_name,
-        req.body.store_imgSrc
-    ])
-    res.json({insertedId: result.insertedId});
+    const {authenticatedUserId, file, body} = req;
+    try
+    {   
+        const imgRelPath = getRelative(file.path);
+        const result = await connection.execute("INSERT INTO store (owner_user_id, store_name, store_imgSrc) VALUES (?, ?, ?)", [
+            authenticatedUserId,
+            body.store_name,
+            imgRelPath
+        ])
+        updateUsed([file], authenticatedUserId);
+        res.json({insertedId: result.insertedId});
+    }catch(err)
+    {
+        if( file != undefined ) unlink([file]);        
+        res.status(400).send(err.message);
+    }
 }
 
-async function userOwnsStore(user_id, store_id)
+async function getUserStore(user_id)
 {
-    const [rows] = await connection.execute("SELECT * FROM store WHERE store_id = ?", [store_id]);
-    return rows[0].owner_user_id == user_id;
+    const [rows] = await connection.execute("SELECT * FROM store WHERE owner_user_id = ?", [user_id]);
+    return rows.length > 0 ? rows[0] : null;
 }
 const updateStore = async (req, res) => // expects form-data
 {
-    if(!(store_id in req.body)) { res.status(400).send('No Store ID Provided'); return; }
-    if(!(await userOwnsStore(req.authenticatedUserId, req.body.store_id))) { res.status(401).send('Only Store owner can edit'); return;}
+    const {body, authenticatedUserId, file} = req;
+
+    if(!(store in body)) { 
+        res.status(400).send('No Store ID Provided'); 
+        return; 
+    }
     
-    if(store_name in req.body)
+    const store = await getUserStore(authenticatedUserId)
+    if(store == null) { 
+        res.status(401).send('user does not own a store'); 
+        return;
+    }
+    
+    if(store_name in body)
     {
-        connection.execute("UPDATE store SET store_name = ? WHERE store_id = ?", [req.body.store_name, req.body.store_id]);
+        connection.execute("UPDATE store SET store_name = ? WHERE store_id = ?", [body.store_name, store.store_id]);
     }
 
-    if(url in req)
+    if(file != undefined)
     {
-        const [rows] = await connection.execute("SELECT * FROM store WHERE store_id = ?", [req.body.store_id]);
-        unlinkImgSrc(rows[0].store_imgSrc);
+        unlinkStoredUpdateUsed([store.store_imgSrc], authenticatedUserId);
 
-        connection.execute("UPDATE store SET store_imgSrc = ? WHERE store_id = ?", [req.url, req.body.store_id]);
+        const relPath = getRelative(file.path);
+        await connection.execute("UPDATE store SET store_imgSrc = ? WHERE store_id = ?", [relPath, store.store_id]);
+        updateUsed([file]);
     }
 
     res.status(204);

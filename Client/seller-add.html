@@ -129,17 +129,11 @@
     <!-- Footer section -->
     <div id="footer"></div>
 
+    <script src="dropdown.js"></script>
     <script>
-        function loadHTML(file, elementId) {
-            fetch(file)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById(elementId).innerHTML = data;
-                });
-        }
-
-        loadHTML("header.html", "header");
-        loadHTML("footer.html", "footer");
+        document.addEventListener("DOMContentLoaded", function () {
+            initializePage(); // Initialize the shared functionality
+        });
     </script>
 </body>
 
