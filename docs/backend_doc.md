@@ -76,13 +76,12 @@ Notable points per "module"s of this app, including their controllers, routes, a
 ## store.js
 .Edit store details
 - Delete Store
-- Multiple store support?
-
-## user.js
-- Change to uuid v4. only users who own stores can call getUser(). normal users can view store contacts provided by the store route.
-- Edit Profile
-- Change Password, maybe use mailer?
+- store_qris
 
 ## product variant handling
 - Limit number of variants
-- implement variants
+.implement variants
+
+## user.js
+- Edit Profile
+- Change Password, maybe use mailer?

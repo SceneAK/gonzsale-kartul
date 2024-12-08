@@ -8,10 +8,14 @@ import { createMulter } from '../modules/upload.js';
 
 const transactionUpload = createMulter({relativeDir: 'Transactions', keyName: 'transaction_proof', isArray: false})
 
-router.use('/get/', verifyUser, order.getOrders);
+router.get('/incoming/', verifyUser, order.getIncomingOrders);
 
-router.use('/place/', verifyUser, transactionUpload, validate(orderSchemas.placeOrder), order.placeOrderAccount);
+router.get('/', verifyUser, order.getOrders);
 
-router.use('/guest/place/', transactionUpload, validate(orderSchemas.placeOrder), validate(orderSchemas.guestExtra), order.placeOrderGuest);
+router.post('/', verifyUser, transactionUpload, validate(orderSchemas.placeOrder), order.placeOrderAccount);
+
+router.post('/guest/', transactionUpload, validate(orderSchemas.guestPlace), order.placeOrderGuest);
+
+router.patch('/', verifyUser, validate(orderSchemas.update), order.updateOrderStatus)
 
 export default router;

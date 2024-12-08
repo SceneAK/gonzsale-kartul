@@ -1,3 +1,4 @@
+import { v4 } from 'uuid';
 import connectionPromise from '../modules/db.js'
 import { buildURL, getRelative, unlink, updateUsed } from '../modules/upload.js';
 const connection = await connectionPromise;
@@ -30,7 +31,7 @@ const getProducts = async (req, res) => {
 }
 async function executeFiltered(filter)
 {
-    let query = `SELECT * FROM product WHERE 1=1`;
+    let query = `SELECT * FROM products WHERE 1=1`;
     let params = [];
     
     if(filter.product_name)
@@ -54,13 +55,13 @@ async function executeFiltered(filter)
 
 const getProduct = async (req, res) => {
     const {id} = req.params;
-    let [rows] = await connection.execute('SELECT * FROM product WHERE product_id = ?', [id]);
+    let [rows] = await connection.execute('SELECT * FROM products WHERE product_id = ?', [id]);
     rows = prepareImgUrls(req.protocol, req.hostname, rows);
     res.json(rows);
 }
 
 const createProduct = async (req, res) => {
-    const [rows] = await connection.execute("SELECT * FROM store WHERE owner_user_id = ?", [req.authUser.id]);
+    const [rows] = await connection.execute("SELECT * FROM stores WHERE owner_user_id = ?", [req.authUser.id]);
     if(rows.length == 0) {
         return res.status(400).send("Create a store!");
     }
@@ -70,8 +71,9 @@ const createProduct = async (req, res) => {
         const {product_name, product_description, product_category, product_variants, product_price, product_unit, product_canOrder} = req.body;
         const parsed = JSON.parse(product_variants);
 
-        const [result] = await connection.execute("INSERT INTO product (product_name, product_description, product_imgSrc, product_category, product_variants, product_price, product_unit, product_canOrder, store_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            [
+        const product_id = v4();
+        await connection.execute("INSERT INTO products (product_id, product_name, product_description, product_imgSrc, product_category, product_variants, product_price, product_unit, product_canOrder, store_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",[
+            product_id,
             product_name,
             product_description,
             relPaths,
@@ -84,10 +86,10 @@ const createProduct = async (req, res) => {
             ]
         )
         updateUsed(req.files, req.authUser.id);
-        res.status(200).send({insertId: result.insertId});
+        res.status(200).send({product_id});
     }catch(err) { 
         if(req.files != undefined) unlink(req.files);
-        res.status(400).send(err.message); 
+        return res.status(500).send("ERR\n" + error);
     }
 }
 

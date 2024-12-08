@@ -1,3 +1,4 @@
+import { v4 } from 'uuid';
 import bcrypt from 'bcrypt'; 
 import { signUser } from '../modules/tokenAuth.js';
 import connectionPromise from '../modules/db.js'
@@ -5,14 +6,8 @@ const connection = await connectionPromise;
 
 const SALT_ROUNDS = 8;
 
-const getUser = async (req, res) => {
-    const {id} = req.params;
-    const [rows] = await connection.execute('SELECT user_id, user_name, user_email, user_role FROM user WHERE user_id = ?', [id]);
-    res.json(rows);
-}
-
 async function authenticate(email, password){ // authentication happens only in sign-in
-    const [rows] = await connection.execute('SELECT user_id, user_role, user_password FROM user WHERE user_email = ?', [email]);
+    const [rows] = await connection.execute('SELECT user_id, user_role, user_password FROM users WHERE user_email = ?', [email]);
     if(rows.length == 0) return null;
 
     const result = bcrypt.compare(password, rows[0].user_password)
@@ -48,27 +43,36 @@ const signUp = async (req, res) => {
     const hashed = await bcrypt.hash(user_password, SALT_ROUNDS);
 
     try {
-        const [result] = await connection.execute("INSERT INTO user (user_name, user_phone, user_email, user_password) VALUES (?, ?, ?, ?)", 
-        [
-            user_name,
-            user_phone,
-            user_email,
-            hashed
-        ]);
-
-        if(!result){
-            return res.status(500).send("There was an unknown error");
+        const [rows] = await connection.execute("SELECT user_id WHERE user_email = ?", [user_email])
+        let user_id;
+        if(rows.length != 0){
+            user_id = rows[0].user_id;
+            await connection.execute("UPDATE users SET user_name = ?, user_phone = ?, user_password = ? WHERE user_id = ?", [
+                user_name,
+                user_phone,
+                user_password,
+                user_id
+            ])
+        }else{
+            user_id = v4();
+            await connection.execute("INSERT INTO users (user_id, user_name, user_phone, user_email, user_password) VALUES (?, ?, ?, ?, ?)", [
+                user_id,
+                user_name,
+                user_phone,
+                user_email,
+                hashed
+            ]);
         }
-        const authToken = signUser(result.insertId, 'USER'); // default role
+        
+        const authToken = signUser(user_id, 'USER'); // default role
         res.cookie('token', authToken, cookieOptions);
         res.send('Signed Up');
     } catch (error) {
-        res.status(400).send(error.message);
+        return res.status(500).send("ERR\n" + error);
     }
 }
 
 export default {
-    getUser,
     signIn,
     signUp
 };
