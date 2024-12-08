@@ -58,6 +58,55 @@
             background-color: #ff9900;
             color: white;
         }
+
+        #food-items-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .food-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            width: 200px;
+            text-align: center;
+        }
+
+        .food-item-image {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .food-item-title {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .food-item-description {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .food-item-price {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .food-item-add-to-cart {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .food-item-add-to-cart:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 
@@ -78,19 +127,51 @@
             <div id="pant-items-container"></div>
         </div>
 
-        <div id="Accessories" class="tabcontent">
-            <div id="accessory-items-container"></div>
-        </div>
-
         <div id="Food" class="tabcontent">
             <div id="food-items-container">
+                <!-- Placeholder for shopping items -->
+                <div class="food-item">
+                    <img src="placeholder.jpg" alt="Item Image" class="food-item-image">
+                    <h3 class="food-item-title">Item Name</h3>
+                    <p class="food-item-description">Short description of the item.</p>
+                    <p class="food-item-price">$0.00</p>
+                    <button class="food-item-add-to-cart">Add to Cart</button>
+                    <script>console.log('PLACEHOLDER LOADED');</script>
+                </div>
+                <div class="food-item">
+                    <img src="placeholder.jpg" alt="Item Image" class="food-item-image">
+                    <h3 class="food-item-title">Item Name</h3>
+                    <p class="food-item-description">Short description of the item.</p>
+                    <p class="food-item-price">$0.00</p>
+                    <button class="food-item-add-to-cart">Add to Cart</button>
+                </div>
+                <!-- Repeat as needed -->
             </div>
         </div>
 
 
         <div id="Drinks" class="tabcontent">
-            <div id="drink-item-container"></div>
+            <div id="sticker-items-container"></div>
         </div>
+
+        <div id="Accessories" class="tabcontent">
+            <div id="accessory-items-container"></div>
+        </div>
+
+<<<<<<< HEAD
+        <div id="Food" class="tabcontent">
+            <div id="food-items-container">
+            </div>
+=======
+        <!-- <div id="Food" class="tabcontent">
+            <div id="food-items-container"></div>
+>>>>>>> origin/main
+        </div>
+
+
+        <div id="Drinks" class="tabcontent">
+            <div id="drink-item-container"></div>
+        </div> -->
 
         <div id="All" class="tabcontent">
             <div id="all-items-container"></div>

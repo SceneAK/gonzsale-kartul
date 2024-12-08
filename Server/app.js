@@ -1,4 +1,5 @@
 import { STATIC_ROUTE_NAME, PUBLIC_DIR } from './initialize.js';
+import cookieParser from 'cookie-parser';
 import express from 'express'; 
 
 const app = express()
@@ -6,7 +7,7 @@ const app = express()
 // static routes
 app.use(`/${STATIC_ROUTE_NAME}/`, express.static(PUBLIC_DIR)); 
 
-
+app.use(cookieParser(process.env.JWT_SECRET_KEY));
 
 // logs
 app.use((req, res, next) => {console.log(req.path, req.method); next();})
