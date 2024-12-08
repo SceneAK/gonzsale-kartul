@@ -25,21 +25,28 @@ async function ensureBelowLimit(req, res, next)
     }
 }
 
-function isBelowLimit(body){
+function aboveLimit(body)
+{
     const textSize = JSON.stringify(body).length; 
-    return textSize < MULTER_MAX_BODY_BYTES;
+    return textSize > MULTER_MAX_BODY_BYTES;
 }
-
 function createMulter(options)
 {
     const {isArray, relativeDir, keyName} = options;
     const upload = multer({dest: upath.join(PUBLIC_DIR, relativeDir), limits: { fileSize: MULTER_MAX_FILE_BYTES} });
 
-    if(isArray)
-    {
-        return upload.any(keyName);
+    const limitUpload = (upload)=>(req, res, next) =>{
+        upload(req, res, err => {
+            if(err) return next(err);
+            if(aboveLimit(req.body)) return res.status(413).send('Payload too large'); 
+
+            next();
+        })
+    }
+    if(isArray){
+        return limitUpload(upload.array(keyName));
     }else{
-        return upload.single(keyName);
+        return limitUpload(upload.single(keyName));
     }
 }
 function buildURL(protocol, host, relativePath)

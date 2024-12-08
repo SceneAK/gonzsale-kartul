@@ -13,7 +13,7 @@ const createProductSchema = {
     product_name: Joi.string().min(1).max(50).required(),
     product_description: Joi.string().min(1).max(400).required(),
     product_category: Joi.string().min(1).max(40).required(),
-    product_variant: Joi.any().default("{}"),
+    product_variants: Joi.any().default("{}"),
     product_price: Joi.number().min(0).required(),
     product_unit: Joi.string().min(1).max(15).required(),
     product_canOrder: Joi.any().exist()

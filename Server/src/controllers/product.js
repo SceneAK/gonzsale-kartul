@@ -19,7 +19,7 @@ function prepareImgUrls(protocol, host, rows)
 const getProducts = async (req, res) => {
     let filter = req.body ? req.body : {};
 
-    if(req.params.product_category != "All"){
+    if(req.params.product_category != "all"){
         filter.product_category = req.params.product_category;
     }
 
@@ -68,10 +68,9 @@ const createProduct = async (req, res) => {
     try{
         const relPaths = req.files.map( file => getRelative(file.path));
         const {product_name, product_description, product_category, product_variants, product_price, product_unit, product_canOrder} = req.body;
-
         const parsed = JSON.parse(product_variants);
 
-        const [result] = await connection.execute("INSERT INTO product (product_name, product_description, product_imgSrc, product_category, product_variants, product_price, product_unit, product_canOrder, store_id) VALUES (?, ?, ?, ?, ?)",
+        const [result] = await connection.execute("INSERT INTO product (product_name, product_description, product_imgSrc, product_category, product_variants, product_price, product_unit, product_canOrder, store_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
             product_name,
             product_description,
@@ -80,7 +79,7 @@ const createProduct = async (req, res) => {
             parsed,
             product_price,
             product_unit,
-            product_canOrder,
+            product_canOrder ? 1 : 0, // mysql only has tinyInt(1) 
             rows[0].store_id
             ]
         )
