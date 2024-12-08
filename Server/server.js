@@ -1,5 +1,6 @@
 import app from './app.js';
 import cors from 'cors';
+import {userRoute, productRoute, storeRoute, orderRoute, transactionRoute} from './src/routes/index.js';
 
 app.use(cors(
     { 
@@ -9,10 +10,11 @@ app.use(cors(
 }));
 
 // MOUNTS ROUTES
-app.use('/product/', (await import('./src/routes/productRoute.js')).default);
-app.use('/user/', (await import('./src/routes/userRoute.js')).default);
-app.use('/store/', (await import('./src/routes/storeRoute.js')).default);
-app.use('/order/', (await import('./src/routes/orderRoute.js')).default);
+app.use('/product/', productRoute);
+app.use('/user/', userRoute);
+app.use('/store/', storeRoute);
+app.use('/order/', orderRoute);
+app.use('/transaction/', transactionRoute);
 
 // Start Listening
 const PORT = process.env.PORT;

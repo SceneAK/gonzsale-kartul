@@ -4,13 +4,13 @@ const connection = await connectionPromise;
 
 const getStore = async (req, res) =>
 {
-    const {store_id} = req.params;
-    const [rows] = await connection.execute('SELECT * FROM store WHERE store_id = ?', [store_id]);
+    const {id} = req.params;
+    const [rows] = await connection.execute('SELECT * FROM store WHERE store_id = ?', [id]);
     if(rows.length == 0){
         return res.status(400).send('Store Not Found');
     }
 
-    rows[0].store_imgSrc = buildURL(req.protocol, req.host, rows[0].store_imgSrc);
+    rows[0].store_imgSrc = buildURL(req.protocol, req.hostname, rows[0].store_imgSrc);
     res.json(rows[0]);
 }
 

@@ -1,12 +1,13 @@
-import Joi, { exist } from "joi";
+import Joi from "joi";
+
 const placeOrderSchema = {
     body: Joi.object({
         product_id: Joi.number().required(),
         order_qty: Joi.number().min(1).required(),
-        order_variant: Joi.object().default({}),
-        order_notes: Joi.string().max(150).required()
+        order_variant: Joi.any().default("{}"),
+        order_notes: Joi.string().max(150).default("no notes provided")
     }),
-    file: Joi.object.exist()
+    file: Joi.object().exist() // Expects key name to be 'transaction_proof'
 }
 const placeOrderGuestExtraSchema = {
     body: Joi.object({

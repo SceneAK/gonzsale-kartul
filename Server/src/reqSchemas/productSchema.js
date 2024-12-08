@@ -1,10 +1,11 @@
 import Joi from "joi";
+
 const getProductsSchema = {
     body: Joi.object({
-    product_name: Joi.string.defaults(''),
-    product_category: Joi.string.defaults(''),
-    store_id: Joi.number.defaults(-1),
-    store_name: Joi.string.defaults(''),
+    product_name: Joi.string(),
+    product_category: Joi.string(),
+    store_id: Joi.number(),
+    store_name: Joi.string(),
     })
 }
 const createProductSchema = {
@@ -12,11 +13,12 @@ const createProductSchema = {
     product_name: Joi.string().min(1).max(50).required(),
     product_description: Joi.string().min(1).max(400).required(),
     product_category: Joi.string().min(1).max(40).required(),
-    product_price: Joi.number.min(0).required(),
+    product_variant: Joi.any().default("{}"),
+    product_price: Joi.number().min(0).required(),
     product_unit: Joi.string().min(1).max(15).required(),
-    product_canOrder: Joi.bool.required(),
+    product_canOrder: Joi.any().exist()
     }),
-    files: Joi.object().exist()
+    files: Joi.array().exist() // Expects key name to be 'product_imgSrc'
 }
 
 export default {

@@ -7,7 +7,7 @@ const SALT_ROUNDS = 8;
 
 const getUser = async (req, res) => {
     const {id} = req.params;
-    const [rows] = await connection.execute('SELECT * FROM user WHERE user_id = ?', [id]);
+    const [rows] = await connection.execute('SELECT user_id, user_name, user_email, user_role FROM user WHERE user_id = ?', [id]);
     res.json(rows);
 }
 
@@ -21,6 +21,12 @@ async function authenticate(email, password){ // authentication happens only in 
     }
     return null;
 }
+const cookieOptions = {
+    httpOnly: true, 
+    signed: true,
+    //secure: true, // enable on production
+    sameSite: 'strict'
+}
 
 const signIn = async (req, res) => {
     const {user_email, user_password} = req.body;
@@ -28,7 +34,7 @@ const signIn = async (req, res) => {
     if(user != null)
     {
         const authToken = signUser(user.user_id, user.user_role);
-        res.cookie('token', authToken, { signed: true });
+        res.cookie('token', authToken, cookieOptions);
         res.send('Signed In');
     }else{
         return res.status(401).send("Invalid Sign In Data");
@@ -41,23 +47,24 @@ const signUp = async (req, res) => {
 
     const hashed = await bcrypt.hash(user_password, SALT_ROUNDS);
 
-    const [result] = await connection.execute("INSERT INTO user (user_name, user_phone, user_email, user_password) VALUES (?, ?, ?, ?)", 
+    try {
+        const [result] = await connection.execute("INSERT INTO user (user_name, user_phone, user_email, user_password) VALUES (?, ?, ?, ?)", 
         [
             user_name,
             user_phone,
             user_email,
             hashed
-        ]
-    )
-    if(result)
-    {
+        ]);
+
+        if(!result){
+            return res.status(500).send("There was an unknown error");
+        }
         const authToken = signUser(result.insertId, 'USER'); // default role
-        res.cookie('token', authToken, { signed: true });
+        res.cookie('token', authToken, cookieOptions);
         res.send('Signed Up');
-    }else{
-        res.status(500).send("There was an unkonwn error");
+    } catch (error) {
+        res.status(400).send(error.message);
     }
-    
 }
 
 export default {

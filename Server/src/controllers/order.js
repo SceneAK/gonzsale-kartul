@@ -1,4 +1,4 @@
-import { recordTransaction  }from './transaction.js';
+import transaction from './transaction.js';
 import connectionPromise from '../modules/db.js';
 import { getRelative, unlink, updateUsed } from '../modules/upload.js';
 const connection = await connectionPromise;
@@ -43,10 +43,7 @@ async function placeOrder(customer_id, req, res)
     try
     {
         const {product_id, order_qty, order_variant, order_notes} = req.body; 
-        if(req.file == undefined || product_id == undefined || order_qty == undefined || order_variant == undefined) {
-            res.status(400).send('Incomplete Order Details'); return;
-        }
-        
+
         const [rows] = await connection.execute("SELECT product_canOrder, product_price FROM product WHERE product_id = ?", [product_id]);
         if(rows.length == 0){
             res.status(400).send('Product Does Not Exist'); return;
@@ -57,13 +54,15 @@ async function placeOrder(customer_id, req, res)
         
         const relProofPath = getRelative(req.file.path);
         const total = rows[0].product_price * order_qty;
-        const transactionId = await recordTransaction(total, relProofPath);
+        const transactionId = await transaction.recordTransaction(total, relProofPath);
+        
+        const parsed = JSON.parse(order_variant);
 
         const [result] = await connection.execute('INSERT INTO `order` (product_id, customer_user_id, order_qty, order_variant, order_notes, transaction_id) VALUES (?, ?, ?, ?, ?, ?)', [
             product_id,
             customer_id,
             order_qty,
-            order_variant,
+            parsed,
             order_notes,
             transactionId
         ])
@@ -73,7 +72,7 @@ async function placeOrder(customer_id, req, res)
         res.json({insertId});
     }catch(err) {
         if(req.file != undefined) unlink([req.file]);
-        res.status(400).send("ERR:\n" + err);
+        res.status(400).send(err.message);
     }
 }
 

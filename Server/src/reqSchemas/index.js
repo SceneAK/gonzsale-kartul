@@ -1,5 +1,5 @@
-export { default as validate} from './validate'; 
-export { default as productSchemas } from './productSchema';
-export { default as userSchemas } from './userSchema';
-export { default as storeSchemas } from './storeSchema';
-export { default as orderSchemas } from './orderSchema';
+export { default as validate }from './validate.js'; 
+export { default as productSchemas } from './productSchema.js';
+export { default as userSchemas } from './userSchema.js';
+export { default as storeSchemas } from './storeSchema.js';
+export { default as orderSchemas } from './orderSchema.js';

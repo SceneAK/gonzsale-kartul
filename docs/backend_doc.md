@@ -12,10 +12,13 @@ The following will contain some notable logic, design decisions/quirks, and bugs
 ## ReqSchemas
 - Each controller+route has a req schema validation. reqSchemas are multiple JOI schemas that validate req keys mushed into one object. req  keys like body, params, file etc. 
 - validate() itterates through these keys and validates the corresponding req keys' values. 
+- Schemas .number() and such automatically attempts to convert into that data type (important for form-data requests, because all fields are text/string)
+- In the validator middlware, Schema.validate use coersion to force convert types. Expect Formdata strings to be converted (except for objects)
 
 ## Modules
 Notable points per "module"s of this app, including their controllers, routes, and schemas.
 ### Product
+- Create Product expects formdata file of key 'product_imgSrc'
 - GetProducts expects req.body to contain filters to the get request, product_category is also added from req params /:product_category.
 ### User
 - Users with NULL passwords are considered guest users. They are users who have put their email for an order, but have yet to register.
@@ -32,7 +35,7 @@ Notable points per "module"s of this app, including their controllers, routes, a
     - Note that updateUsed() and unlink() take files because it's usually used after errors in incoming requests, meaning the files are directly accessible through req.files/file, meanwhile unlinkStored() uses relative paths because it's usually used on files already stored in the db
 
 ### Token Authentication
-- auth.js exports a middleware (verifyAuthToken_mid) which authenticates the header authtoken, then fills the *authUser.id* in req. This is intended to be run before an operation requiring user_id and authentication, returning an error if unauthorized.
+- auth.js exports a middleware (verifyUser) which authenticates the header authtoken, then fills the *authUser.id* in req. This is intended to be run before an operation requiring user_id and authentication, returning an error if unauthorized.
 - *Some route controllers expects this middleware to run right before and depends on authUser.id.*
 - The normal checkAuthToken returns the ID or an error. Used for Logins and such
 ### User
@@ -41,22 +44,14 @@ Notable points per "module"s of this app, including their controllers, routes, a
 - Kind of connected / tangled with tokenAuth, because signIn sets the cookies and tokenAuth expects 'token' in req.signedCookies.
 - Schema's regex allows passwords and names to have chinese japanese characters, why the heck not?
 ### Store
+- createStore (and update/endit store too) expects formdata file of key 'store_imgSrc'
 - Although it's possible in the current system for Users to own multiple stores, we expect only one store per user.
 
 
 # TASK BACKLOG
 ## transaction.js
-.Creat route
 .Get Transaction.
 - (Payment Gateway??)
-
-## JOI Replacement
-- product
-- store
-- order
-- user
-- transaction
-- Write Documentation while replacing.
 
 ## order.js
 - Order notes
@@ -67,10 +62,16 @@ Notable points per "module"s of this app, including their controllers, routes, a
 
 ## TEST EVERYTHING
 - product
-- store
-- order
-- user
+.order (place order guest not tested yet)
+.user (get logic needs work, potentially requires rework on user_id)
 - transaction
+
+## Document the return format of each route
+- Product
+- User
+- Store
+- Order
+- Transaction
 
 ## store.js
 .Edit store details
@@ -78,11 +79,10 @@ Notable points per "module"s of this app, including their controllers, routes, a
 - Multiple store support?
 
 ## user.js
+- Change to uuid v4. only users who own stores can call getUser(). normal users can view store contacts provided by the store route.
 - Edit Profile
 - Change Password, maybe use mailer?
 
 ## product variant handling
 - Limit number of variants
-- code up the variants
-
-run npm audit for the cookie parser
+- implement variants

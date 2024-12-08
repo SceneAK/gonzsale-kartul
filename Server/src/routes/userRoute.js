@@ -1,10 +1,12 @@
-import { user } from '../controllers';
-import {validateBody, userSchemas } from '../schemas'
+import { user } from '../controllers/index.js';
+import { validate, userSchemas } from '../reqSchemas/index.js'
 import express from 'express';
 const router = express.Router();
 
-router.post('/signIn/', validateBody(userSchemas.signIn), user.signIn);
+router.get('/get/:id', user.getUser);
 
-router.post('/signUp/', validateBody(userSchemas.signUp), user.signUp);
+router.post('/signin/', validate(userSchemas.signIn), user.signIn);
+
+router.post('/signup/', validate(userSchemas.signUp), user.signUp);
 
 export default router;

@@ -2,8 +2,8 @@ import express from 'express';
 const router = express.Router();
 
 import { verifyUser } from '../modules/tokenAuth.js';
-import { validate, orderSchemas} from '../reqSchemas';
-import { order } from '../controllers'
+import { validate, orderSchemas} from '../reqSchemas/index.js';
+import { order } from '../controllers/index.js'
 import { createMulter } from '../modules/upload.js';
 
 const transactionUpload = createMulter({relativeDir: 'Transactions', keyName: 'transaction_proof', isArray: false})

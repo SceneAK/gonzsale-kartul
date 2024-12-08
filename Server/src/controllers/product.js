@@ -17,9 +17,9 @@ function prepareImgUrls(protocol, host, rows)
     })
 }
 const getProducts = async (req, res) => {
-    let filter = {};
+    let filter = req.body ? req.body : {};
+
     if(req.params.product_category != "All"){
-        filter = req.body;
         filter.product_category = req.params.product_category;
     }
 
@@ -33,25 +33,20 @@ async function executeFiltered(filter)
     let query = `SELECT * FROM product WHERE 1=1`;
     let params = [];
     
-    if(filter.product_name != "")
+    if(filter.product_name)
     {
         query += ` AND product_name LIKE ? COLLATE utf8mb4_general_ci`; // case insensitive
         params.push(`${filter.product_name}%`);
     }
-    if(filter.product_category != "")
+    if(filter.product_category)
     {
         query += ` AND product_category LIKE ? COLLATE utf8mb4_general_ci`;
         params.push(`${filter.product_category}%`);
     }
-    if(filter.store_id != -1)
+    if(filter.store_id)
     {
         query += ` AND store_id LIKE ?`;
         params.push(`${filter.store_id}%`);
-    }
-    if(filter.store_name != "")
-    {
-        query += ` AND store_name LIKE ? COLLATE utf8mb4_general_ci`;
-        params.push(`${filter.store_name}%`);
     }
     
     return connection.execute(query, params);
@@ -72,13 +67,17 @@ const createProduct = async (req, res) => {
 
     try{
         const relPaths = req.files.map( file => getRelative(file.path));
-        const {product_name, product_description, product_category, product_price, product_unit, product_canOrder} = req.body;
-        const [result] = await connection.execute("INSERT INTO product (product_name, product_description, product_imgSrc, product_category, product_price, product_unit, product_canOrder, store_id) VALUES (?, ?, ?, ?, ?)",
+        const {product_name, product_description, product_category, product_variants, product_price, product_unit, product_canOrder} = req.body;
+
+        const parsed = JSON.parse(product_variants);
+
+        const [result] = await connection.execute("INSERT INTO product (product_name, product_description, product_imgSrc, product_category, product_variants, product_price, product_unit, product_canOrder, store_id) VALUES (?, ?, ?, ?, ?)",
             [
             product_name,
             product_description,
             relPaths,
             product_category,
+            parsed,
             product_price,
             product_unit,
             product_canOrder,
