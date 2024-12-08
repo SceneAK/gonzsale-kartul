@@ -1,168 +1,269 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Add New Product</title>
     <style>
-        /* Reset default padding and margin for all elements */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* Global styles */
+        html,
         body {
-            font-family: Arial, sans-serif;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            height: 100%;
             margin: 0;
+            font-family: Arial, sans-serif;
             background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
         }
 
-        .register-container {
-            width: 100%;
-            padding: 20px 100px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        p {
-            margin: 5px 0;
-        }
-
-        .content-wrapper {
+        /* Wrapper for main content */
+        .add-product-wrapper {
             flex: 1;
             display: flex;
-            flex-direction: column;
-            min-height: 35vh;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
         }
 
-        .required {
-            color: red;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            margin-top: 15px;
-            font-weight: bold;
-        }
-
-        input[type="email"],
-        input[type="password"] {
+        /* Form container styling */
+        .add-product-form-container {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
+            max-width: 500px;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .password-instructions {
-            font-size: 0.9em;
-            color: #666;
-            margin-top: -10px;
+        .add-product-form-container h1 {
+            font-size: 1.6em;
             margin-bottom: 20px;
-        }
-
-        .form-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 1em;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        button[type="button"] {
-            background-color: #ccc;
+            text-align: center;
             color: #333;
         }
 
-        button[type="submit"] {
+        /* Form styling */
+        .add-product-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .add-product-form label {
+            font-weight: bold;
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .add-product-form input[type="text"],
+        .add-product-form input[type="number"],
+        .add-product-form textarea,
+        .add-product-form select,
+        .add-product-form input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: 0.3s ease;
+        }
+
+        .add-product-form input[type="text"]:focus,
+        .add-product-form input[type="number"]:focus,
+        .add-product-form textarea:focus,
+        .add-product-form select:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+            outline: none;
+        }
+
+        .add-product-form textarea {
+            resize: none;
+            height: 100px;
+        }
+
+        /* Image preview container */
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: flex-start;
+        }
+
+        .image-preview {
+            width: 80px;
+            height: 80px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        /* Button styling */
+        .add-product-form-buttons button {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .add-product-form-buttons button[type="submit"] {
             background-color: #4CAF50;
             color: white;
         }
 
-        button[type="submit"]:hover {
+        .add-product-form-buttons button[type="submit"]:hover {
             background-color: #45a049;
+        }
+
+        /* Footer styling */
+        #footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            position: relative;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        /* Prevent horizontal scrolling */
+        html,
+        body {
+            overflow-x: hidden;
+        }
+
+        /* Ensure the wrapper and form are centered and do not overflow */
+        .add-product-wrapper {
+            padding: 40px 10px;
+            /* Adjusted padding to ensure no overflow */
+            box-sizing: border-box;
+        }
+
+        .add-product-form-container {
+            max-width: 100%;
+            /* Ensure the form does not exceed the viewport */
+        }
+
+        /* Prevent image previews from causing overflow */
+        .image-preview-container {
+            max-width: 100%;
+            flex-wrap: wrap;
+            gap: 10px;
+            overflow: hidden;
+            /* Prevent content spill */
+        }
+
+        .image-preview {
+            max-width: 80px;
+            height: auto;
+            /* Maintain aspect ratio */
+            object-fit: cover;
         }
     </style>
 </head>
 
 <body>
-    <div class="content-wrapper">
-        <!-- Header placeholder -->
-        <div id="header"></div>
+    <!-- Header Placeholder -->
+    <div id="header"></div>
 
-        <!-- Main content -->
-        <!DOCTYPE html>
-        <html lang="en">
+    <!-- Main Content -->
+    <section class="add-product-wrapper">
+        <div class="add-product-form-container">
+            <h1>Add Product Penjual</h1>
+            <form id="add-product-form" class="add-product-form">
+                <label for="product-name">Nama Produk:</label>
+                <input type="text" id="product-name" name="product_name" placeholder="Masukkan nama produk" required>
 
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Register</title>
-            <link rel="stylesheet" href="style.css">
-        </head>
+                <label for="product-category">Kategori:</label>
+                <select id="product-category" name="product_category" required>
+                    <option value="" disabled selected>Pilih kategori</option>
+                    <option value="Baju">Baju</option>
+                    <option value="Celana">Celana</option>
+                    <option value="Aksesoris">Aksesoris</option>
+                    <option value="Makanan">Makanan</option>
+                    <option value="Minuman">Minuman</option>
+                </select>
 
-        <body>
-            <div class="register-container">
-                <h1>Register</h1>
-                <p><strong>Please provide the following information</strong></p>
-                <p><span class="required">*</span> denotes required fields</p>
+                <label for="product-description">Deskripsi:</label>
+                <textarea id="product-description" name="product_description" placeholder="Deskripsi produk"
+                    required></textarea>
 
-                <form>
-                    <label for="email"><span class="required">*</span> Email:</label>
-                    <input type="email" id="email" name="email" required>
+                <label for="product-price">RP:</label>
+                <input type="number" id="product-price" name="product_price" placeholder="Masukkan harga" required>
 
-                    <label for="password"><span class="required">*</span> Password:</label>
-                    <input type="password" id="password" name="password" required>
+                <label for="product-images">Tambah Gambar:</label>
+                <input type="file" id="product-images" name="product_images" accept=".jpg,.jpeg,.png,.gif" multiple
+                    required>
+                <div class="image-preview-container" id="image-preview-container"></div>
 
-                    <p class="password-instructions">
-                        Your password must be between 8 to 100 characters inclusive, and must include at least one
-                        uppercase and one lowercase letter, a number, and at least one special character, such as *, ',
-                        (, etc. (except whitespace)
-                    </p>
+                <div class="add-product-form-buttons">
+                    <button type="submit">Tambah Produk</button>
+                </div>
+            </form>
+        </div>
+    </section>
 
-                    <div class="form-buttons">
-                        <button type="button" onclick="window.history.back()">Cancel</button>
-                        <button type="submit">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </body>
-
-        </html>
-
-        <!-- Footer placeholder -->
-        <div id="footer"></div>
-    </div>
+    <!-- Footer Placeholder -->
+    <div id="footer"></div>
 
     <script src="dropdown.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            initializePage(); // Initialize the shared functionality
+            initializePage(); // Initialize shared functionality
+
+            const form = document.getElementById("add-product-form");
+            const fileInput = document.getElementById("product-images");
+            const previewContainer = document.getElementById("image-preview-container");
+
+            // Show preview of selected images
+            fileInput.addEventListener("change", function () {
+                previewContainer.innerHTML = ""; // Clear previous previews
+
+                Array.from(fileInput.files).forEach(file => {
+                    if (file.type.match("image.*")) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            const img = document.createElement("img");
+                            img.src = e.target.result;
+                            img.classList.add("image-preview");
+                            previewContainer.appendChild(img);
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                });
+            });
+
+            form.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+
+                try {
+                    const response = await fetch("http://localhost:3000/add-product", {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                    if (!response.ok) throw new Error("Failed to add product");
+
+                    alert("Product added successfully!");
+                    form.reset();
+                    previewContainer.innerHTML = ""; // Clear previews after submission
+                } catch (error) {
+                    console.error("Error adding product:", error);
+                    alert("There was an error adding the product. Please try again.");
+                }
+            });
         });
     </script>
-
 </body>
 
 </html>

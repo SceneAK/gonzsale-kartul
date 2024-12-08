@@ -58,6 +58,55 @@
             background-color: #ff9900;
             color: white;
         }
+
+        #food-items-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .food-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            width: 200px;
+            text-align: center;
+        }
+
+        .food-item-image {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .food-item-title {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .food-item-description {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .food-item-price {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .food-item-add-to-cart {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .food-item-add-to-cart:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 
@@ -78,17 +127,51 @@
             <div id="pant-items-container"></div>
         </div>
 
+        <div id="Food" class="tabcontent">
+            <div id="food-items-container">
+                <!-- Placeholder for shopping items -->
+                <div class="food-item">
+                    <img src="placeholder.jpg" alt="Item Image" class="food-item-image">
+                    <h3 class="food-item-title">Item Name</h3>
+                    <p class="food-item-description">Short description of the item.</p>
+                    <p class="food-item-price">$0.00</p>
+                    <button class="food-item-add-to-cart">Add to Cart</button>
+                    <script>console.log('PLACEHOLDER LOADED');</script>
+                </div>
+                <div class="food-item">
+                    <img src="placeholder.jpg" alt="Item Image" class="food-item-image">
+                    <h3 class="food-item-title">Item Name</h3>
+                    <p class="food-item-description">Short description of the item.</p>
+                    <p class="food-item-price">$0.00</p>
+                    <button class="food-item-add-to-cart">Add to Cart</button>
+                </div>
+                <!-- Repeat as needed -->
+            </div>
+        </div>
+
+
+        <div id="Drinks" class="tabcontent">
+            <div id="sticker-items-container"></div>
+        </div>
+
         <div id="Accessories" class="tabcontent">
             <div id="accessory-items-container"></div>
         </div>
 
+<<<<<<< HEAD
         <div id="Food" class="tabcontent">
+            <div id="food-items-container">
+            </div>
+=======
+        <!-- <div id="Food" class="tabcontent">
             <div id="food-items-container"></div>
+>>>>>>> origin/main
         </div>
+
 
         <div id="Drinks" class="tabcontent">
             <div id="drink-item-container"></div>
-        </div>
+        </div> -->
 
         <div id="All" class="tabcontent">
             <div id="all-items-container"></div>
@@ -99,65 +182,144 @@
     <div id="footer"></div>
 
     <script>
-        // Handle switching between tabs
-        function openCategory(evt, categoryName) {
-            const tabcontents = document.getElementsByClassName("tabcontent");
-            const tablinks = document.getElementsByClassName("tablink");
+        // Dynamic loading of header with hash-based navigation
+        document.addEventListener("DOMContentLoaded", function () {
+            // Dynamically load the header
+            fetch('header.html')
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to load header');
+                    return response.text();
+                })
+                .then(headerHTML => {
+                    // Insert the header into the document
+                    document.getElementById('header-container').innerHTML = headerHTML;
 
-            // Hide all tab contents
-            for (const tab of tabcontents) {
-                tab.style.display = "none";
-            }
+                    // No need to add extra event listeners since buttons use hash-based navigation
+                    handleHashChange(); // Ensure the right tab is displayed after loading the header
+                })
+                .catch(error => console.error('Error loading header:', error));
+        });
 
-            // Remove active class from all tab links
-            for (const link of tablinks) {
-                link.classList.remove("active");
-            }
+        // Mock data for testing
+        const mockData = {
+            shirts: [
+                { product_name: "Cool T-Shirt", product_price: 99000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece" },
+                { product_name: "Graphic Tee", product_price: 119000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece" },
+            ],
+            pants: [
+                { product_name: "Jeans", product_price: 199000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "pair" },
+                { product_name: "Chinos", product_price: 179000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "pair" },
+            ],
+            accessories: [
+                { product_name: "Sunglasses", product_price: 79000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece" },
+                { product_name: "Cap", product_price: 49000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece" },
+            ],
+            food: [
+                { product_name: "Nasi Goreng", product_price: 35000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "plate" },
+                { product_name: "Mie Goreng", product_price: 25000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "plate" },
+            ],
+            drinks: [
+                { product_name: "Iced Coffee", product_price: 20000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "cup" },
+                { product_name: "Milk Tea", product_price: 18000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "cup" },
+            ],
+        };
 
-            // Show the selected category's content
-            document.getElementById(categoryName).style.display = "block";
-            if (evt) evt.currentTarget.classList.add("active");
-        }
-
-        // Function to fetch items from API
+        // Function to fetch items from API or use mock data
         async function fetchItems(category, containerId) {
             try {
-                const url = `${window.location.protocol}://${window.location.host}`;
-                //console.log(url);
+                const container = document.getElementById(containerId);
+
+                // Display a loading message while fetching
+                container.innerHTML = `<p>Loading ${category} items...</p>`;
+
+                // Attempt to fetch data from API
                 const response = await fetch(`http://localhost:3000/product/${category}`);
                 if (!response.ok) throw new Error(`Failed to fetch ${category} items`);
 
+                // Parse response and clear container
                 const items = await response.json();
-                const container = document.getElementById(containerId);
-
-                // Clear container and populate items
-                container.innerHTML = '';
-                items.forEach(item => {
-                    const itemDiv = document.createElement("div");
-                    itemDiv.classList.add("item");
-
-
-                    itemDiv.innerHTML = `
-                        <img src="${item.product_imgUrl}" alt="${item.product_name}" />
-                        <p>${item.product_name} - ${item.product_price} ${item.product_unit}</p>
-                    `;
-                    container.appendChild(itemDiv);
-                });
-                console.log(container.innerHTML);
+                populateItems(container, items);
             } catch (error) {
                 console.error(`Error fetching ${category} items:`, error);
-                document.getElementById(containerId).innerHTML = `<p>Failed to load ${category} items. Please try again later.</p>`;
+
+                // Use mock data in case of fetch failure
+                const items = mockData[category] || [];
+                const container = document.getElementById(containerId);
+                populateItems(container, items);
             }
         }
 
-        // Automatically load content for all categories
+        // Function to populate items in the container
+        function populateItems(container, items) {
+            container.innerHTML = ''; // Clear the container
+
+            items.forEach(item => {
+                const itemDiv = document.createElement("div");
+                itemDiv.classList.add("item");
+
+                itemDiv.innerHTML = `
+                    <img src="${item.product_imgSrc}" alt="${item.product_name}" />
+                    <p>${item.product_name} - Rp ${item.product_price.toLocaleString('id-ID')} / ${item.product_unit}</p>
+                    <button class="add-to-cart" onclick="addToCart('${item.product_name}', ${item.product_price}, '${item.product_imgSrc}')">Add to Cart</button>
+                `;
+                container.appendChild(itemDiv);
+            });
+        }
+
+        // Function to add items to the cart
+        function addToCart(name, price, imgSrc) {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const existingItemIndex = cart.findIndex(item => item.name === name);
+
+            if (existingItemIndex > -1) {
+                // If item already exists in the cart, increase its quantity
+                cart[existingItemIndex].quantity += 1;
+            } else {
+                // Add new item to the cart
+                cart.push({ name, price, imgSrc, quantity: 1 });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart)); // Save updated cart
+            alert(`${name} has been added to your cart!`);
+        }
+
+        // Handle switching between tabs using hash-based navigation
+        function openCategory(categoryName) {
+            const tabcontents = document.getElementsByClassName("tabcontent");
+
+            // Hide all tab contents
+            Array.from(tabcontents).forEach(tab => (tab.style.display = "none"));
+
+            // Show the selected tab's content
+            const selectedTab = document.getElementById(categoryName);
+            if (selectedTab) {
+                selectedTab.style.display = "block";
+
+                // Fetch items dynamically
+                const containerId = `${categoryName.toLowerCase()}-items-container`;
+                fetchItems(categoryName.toLowerCase(), containerId);
+            }
+        }
+
+        // Handle hash changes to navigate between tabs
+        function handleHashChange() {
+            const hash = window.location.hash.substring(1); // Remove the '#' from the hash
+            if (hash) {
+                openCategory(hash);
+            } else {
+                // Default to the "Shirts" tab if no hash is present
+                openCategory("Shirts");
+            }
+        }
+
+        // Automatically load content for all categories on page load
         document.addEventListener("DOMContentLoaded", function () {
             const categories = {
                 Shirts: "shirt-items-container",
                 Pants: "pant-items-container",
                 Accessories: "accessory-items-container",
                 Food: "food-items-container",
-                Stickers: "drink-item-container",
+                Drinks: "drink-item-container",
                 All: "all-items-container",
             };
 
@@ -166,10 +328,14 @@
                 fetchItems(category.toLowerCase(), containerId);
             }
 
-            // Default open Shirts tab
-            openCategory(null, "Shirts");
+            // Attach event listener for hash changes
+            window.addEventListener("hashchange", handleHashChange);
+
+            // Trigger the handler on page load
+            handleHashChange();
         });
     </script>
+
     <script src="dropdown.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
