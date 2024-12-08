@@ -5,31 +5,48 @@ import { STATIC_ROUTE_NAME, PUBLIC_DIR } from '../../initialize.js';
 import connectionPromise from '../modules/db.js'
 const connection = await connectionPromise;
 
-const MAX_SIZE = 300000000; // 300mb
+const MAX_SIZE_USER = 300 * 1024 * 1024; // 300mb
+const MULTER_MAX_BODY_BYTES = 5 * 1024; // 5kb
+const MULTER_MAX_FILE_BYTES = 5 * 1024 * 1024;
+
 async function getUsed(req)
 {
-    const[rows] = await connection.execute(`SELECT * FROM user WHERE user_id = ?`, [req.authenticatedUserId]);
+    const[rows] = await connection.execute(`SELECT * FROM user WHERE user_id = ?`, [req.authUser.id]);
     return rows[0].user_used_storage;
 }
 async function ensureBelowLimit(req, res, next)
 {
     const usedStorage = await getUsed(req);
-    if(usedStorage >= MAX_SIZE) {
+    if(usedStorage >= MAX_SIZE_USER) {
         res.status(400).send("Used Storage Limit!"); 
         return;
     }else{
         next();
     }
 }
+
+function aboveLimit(body)
+{
+    const textSize = JSON.stringify(body).length; 
+    return textSize > MULTER_MAX_BODY_BYTES;
+}
 function createMulter(options)
 {
     const {isArray, relativeDir, keyName} = options;
-    const upload = multer({dest: upath.join(PUBLIC_DIR, relativeDir) });
-    if(isArray)
-    {
-        return upload.array(keyName);
+    const upload = multer({dest: upath.join(PUBLIC_DIR, relativeDir), limits: { fileSize: MULTER_MAX_FILE_BYTES} });
+
+    const limitUpload = (upload)=>(req, res, next) =>{
+        upload(req, res, err => {
+            if(err) return next(err);
+            if(aboveLimit(req.body)) return res.status(413).send('Payload too large'); 
+
+            next();
+        })
+    }
+    if(isArray){
+        return limitUpload(upload.array(keyName));
     }else{
-        return upload.single(keyName);
+        return limitUpload(upload.single(keyName));
     }
 }
 function buildURL(protocol, host, relativePath)

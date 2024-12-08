@@ -1,5 +1,3 @@
-// dropdown.js
-
 // Function to load external HTML file into a div
 function loadHTML(file, elementId, callback) {
     fetch(file)
@@ -20,13 +18,13 @@ function initializeDropdown() {
         // Toggle dropdown visibility
         dropdownLink.addEventListener('click', function (event) {
             event.preventDefault();
-            dropdownContent.classList.toggle("show");
+            dropdownContent.classList.toggle("dropdown-show"); // Update to use dropdown-show
         });
 
         // Close dropdown if clicked outside
         window.addEventListener('click', function (event) {
             if (!event.target.closest('.dropdown')) {
-                dropdownContent.classList.remove('show');
+                dropdownContent.classList.remove('dropdown-show'); // Update to use dropdown-show
             }
         });
 
@@ -51,14 +49,28 @@ function updateUI(isLoggedIn, username) {
     }
 }
 
-// Load the header and footer, and ensure dropdown initializes
+// Function to initialize menu toggle functionality for mobile
+function toggleMenu() {
+    const sideMenu = document.getElementById("sideMenu");
+    sideMenu.classList.toggle("open");
+    console.log('TOGGLE MENU RUNNING')
+}
+
+
+// Load the header and footer, and ensure dropdown and menu toggle initialize
 function initializePage() {
     loadHTML('header.html', 'header', function () {
         const headerLoadedEvent = new Event('headerLoaded');
         document.dispatchEvent(headerLoadedEvent); // Notify other scripts
         initializeDropdown(); // Initialize dropdown functionality
-        updateUI(False, "JohnDoe"); // Update UI based on login state
+        initializeMenuToggle(); // Initialize menu toggle functionality
+        initializeSlideMenu(); // Initialize slide menu functionality
+        updateUI(false, "JohnDoe"); // Update UI based on login state
+        toggleMenu(); //Toggle mobile menu
     });
 
     loadHTML('footer.html', 'footer'); // Load footer if needed
 }
+
+// Call initializePage on load
+document.addEventListener('DOMContentLoaded', initializePage);

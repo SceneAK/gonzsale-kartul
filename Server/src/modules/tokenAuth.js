@@ -1,19 +1,13 @@
 import jwt from 'jsonwebtoken';
 
-const signUser = (userId) => {
-    return jwt.sign({ id: userId}, process.env.SECRET_KEY, { expiresIn: '1h' });
+const signUser = (user_id, user_role) => {
+    return jwt.sign({id: user_id, role: user_role}, process.env.SECRET_KEY, { expiresIn: '1h' });
 }
 
-const  getCleanAuthToken = (req) =>
-{
-    const token = req.headers['authorization'];
-    return token.startsWith("Bearer ") ? token.slice(7, token.length) : token; // remove "Bearer ..." 
-}
-const verifyAuthToken_mid = async (req, res, next) => {
-    const cleanToken = getCleanAuthToken(req);
+const verifyUser = async (req, res, next) => { // NOTE: Expects tokens in req.signedCookies after user.js is called
+    const {token} = req.signedCookies;
     try {
-        const {id} = await verifyAuthToken(cleanToken);
-        req.authenticatedUserId = id; // pass in the request
+        req.authUser = await verifyAuthToken(token);
         next()
     } catch (err) {
         return res.status(401).send("Unauthorized");
@@ -39,7 +33,6 @@ const verifyAuthToken = (authToken) => // async
 
 export {
     signUser,
-    getCleanAuthToken,
     verifyAuthToken,
-    verifyAuthToken_mid
+    verifyUser
 };

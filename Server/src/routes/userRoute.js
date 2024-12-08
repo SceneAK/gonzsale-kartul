@@ -1,11 +1,12 @@
-import { signIn, signUp } from '../controllers/user.js';
+import { user } from '../controllers/index.js';
+import { validate, userSchemas } from '../reqSchemas/index.js'
 import express from 'express';
 const router = express.Router();
 
-// general
-router.post('/signIn/', signIn);
+router.get('/get/:id', user.getUser);
 
-// single
-router.post('/signUp/', signUp);
+router.post('/signin/', validate(userSchemas.signIn), user.signIn);
+
+router.post('/signup/', validate(userSchemas.signUp), user.signUp);
 
 export default router;
