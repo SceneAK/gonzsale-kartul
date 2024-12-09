@@ -3,6 +3,7 @@ import multer from 'multer';
 import { promises as fs} from 'fs';
 import { STATIC_ROUTE_NAME, PUBLIC_DIR } from '../../initialize.js';
 import connectionPromise from '../modules/db.js'
+import { fileURLToPath } from 'url';
 const connection = await connectionPromise;
 
 const MAX_SIZE_USER = 300 * 1024 * 1024; // 300mb
@@ -57,6 +58,10 @@ function getRelative(path)
 {
     return upath.relative(PUBLIC_DIR, path);
 }
+function getFileRelative(files)
+{
+    return files.map(file => getRelative(file.path));
+}
 
 async function addAmountToUsed(amount, id)
 {
@@ -96,6 +101,7 @@ async function unlink(files)
 export {
     buildURL,
     getRelative,
+    getFileRelative,
 
     ensureBelowLimit,
     createMulter,

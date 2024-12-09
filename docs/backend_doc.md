@@ -49,27 +49,22 @@ Notable points per "module"s of this app, including their controllers, routes, a
 
 
 # TASK BACKLOG
-In Order of Importance
-## Document the return format of each route
-- Product
-- User
-- Store
-- Order
-- Transaction
+Order of Importance, descending
+
+## Deployment
+- create .env file
 ## product.js
-- Filter based on store_name
-- Edit Product (availability and such too)
-- Limit number of variants
+- Get Products Filtered maybe rethink whether or not it should be in body or params?
 - Delete Product
+- Limit number of variants
 ## store.js
-- Store_qris
 - Delete Store
 ## order.js
-- Mailing Customers when order status changes.
+- Mailing Customers when order status changes, when product gets deleted, when  
 ## transaction.js
 - Payment Gateway
 ## user.js
 - Edit Profile
 - Change Password, maybe use mailer
-## General
+## Refactor
 - Refactor this shit. Centralized logic along with centralized SQL queries please i beg

@@ -5,7 +5,7 @@ const createStoreSchema = {
     store_bank_account: Joi.string().min(10).max(16).required(),
     store_payment_method: Joi.string().max(10).required()
     }),
-    file: Joi.any().exist() // Expects key name to be 'store_imgSrc'
+    files: Joi.array().exist() // Expects key name to be 'store_imgSrc'
 }
 
 export default {

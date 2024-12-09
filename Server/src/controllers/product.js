@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 import connectionPromise from '../modules/db.js'
-import { buildURL, getRelative, unlink, updateUsed } from '../modules/upload.js';
+import { buildURL, getFileRelative, unlink, unlinkStoredUpdateUsed, updateUsed } from '../modules/upload.js';
 const connection = await connectionPromise;
 
 function prepareImgUrls(protocol, host, rows)
@@ -31,22 +31,30 @@ const getProducts = async (req, res) => {
 }
 async function executeFiltered(filter)
 {
-    let query = `SELECT * FROM products WHERE 1=1`;
+    let query = `SELECT p.* FROM products p`;
     let params = [];
     
+    if(filter.store_name)
+    {
+        query += ` INNER JOIN stores s ON p.store_id = s.store_id WHERE s.store_name LIKE ? COLLATE utf8mb4_general_ci`
+        params.push(`${filter.store_name.trim()}%`);
+        
+    }else{
+        query += ` WHERE 1=1`;
+    }
     if(filter.product_name)
     {
-        query += ` AND product_name LIKE ? COLLATE utf8mb4_general_ci`; // case insensitive
+        query += ` AND p.product_name LIKE ? COLLATE utf8mb4_general_ci`; // case insensitive
         params.push(`${filter.product_name}%`);
     }
     if(filter.product_category)
     {
-        query += ` AND product_category LIKE ? COLLATE utf8mb4_general_ci`;
+        query += ` AND p.product_category LIKE ? COLLATE utf8mb4_general_ci`;
         params.push(`${filter.product_category}%`);
     }
     if(filter.store_id)
     {
-        query += ` AND store_id LIKE ?`;
+        query += ` AND s.store_id LIKE ?`;
         params.push(`${filter.store_id}%`);
     }
     
@@ -60,6 +68,11 @@ const getProduct = async (req, res) => {
     res.json(rows);
 }
 
+function stringToBool(str)
+{
+    str = str.toLowerCase();
+    return str == 'true'; // defaults to false because product_canOrder better be false than true
+}
 const createProduct = async (req, res) => {
     const [rows] = await connection.execute("SELECT * FROM stores WHERE owner_user_id = ?", [req.authUser.id]);
     if(rows.length == 0) {
@@ -67,7 +80,7 @@ const createProduct = async (req, res) => {
     }
 
     try{
-        const relPaths = req.files.map( file => getRelative(file.path));
+        const relPaths = getFileRelative(req.files);
         const {product_name, product_description, product_category, product_variants, product_price, product_unit, product_canOrder} = req.body;
         const parsed = JSON.parse(product_variants);
 
@@ -81,7 +94,7 @@ const createProduct = async (req, res) => {
             parsed,
             product_price,
             product_unit,
-            product_canOrder ? 1 : 0, // mysql only has tinyInt(1) 
+            stringToBool(product_canOrder),
             rows[0].store_id
             ]
         )
@@ -89,14 +102,57 @@ const createProduct = async (req, res) => {
         res.status(200).send({product_id});
     }catch(err) { 
         if(req.files != undefined) unlink(req.files);
-        return res.status(500).send("ERR\n" + error);
+        return res.status(500).send("ERR\n" + err);
+    }
+}
+
+const editProduct = async(req, res) => {
+    const {body, files, authUser} = req;
+    const product_id = req.params.id;
+
+    const [rows] = await connection.execute("SELECT s.store_id FROM products p INNER JOIN stores s ON p.store_id = s.store_id WHERE s.owner_user_id = ? AND p.product_id = ?", [req.authUser.id, product_id]);
+    if(rows.length == 0) {
+        return res.status(400).send("Product not owned!");
+    }
+
+    if(files.length != 0){
+        try
+        {
+            const [rows] = await connection.execute("SELECT product_imgSrc FROM products WHERE product_id = ?", [product_id]); 
+            unlinkStoredUpdateUsed(rows[0].product_imgSrc, authUser.id);
+            const relPaths = getFileRelative(files)
+            body.product_imgSrc = relPaths;
+        }catch (err) { return res.status(500).send(err.message); }
+    }
+
+    if(body.product_canOrder != undefined){ 
+        body.product_canOrder = stringToBool(body.product_canOrder);
+    }
+    
+    let updateQuery = 'UPDATE products SET ';
+    const params = [];
+    for(const key in body)
+    {
+        updateQuery += `${key} = ?, `;
+        params.push(body[key]);
+    }
+    updateQuery = updateQuery.slice(0, -2) + " WHERE product_id = ?"; // removes the ", "
+    params.push(`${product_id}`);
+
+    try{
+        await connection.execute(updateQuery, params);
+        res.status(204).send("updated");
+    }catch(err)
+    {
+        res.status(500).send("ERR\n" + err);
     }
 }
 
 export default {
     getProduct,
+    editProduct,
     getProducts,
     createProduct
 };
 
-// TODO: Update Product, Delete Product
+// TODO: Delete Product

@@ -15,6 +15,7 @@ CREATE TABLE stores(
    owner_user_id VARCHAR(36) UNIQUE, 
    store_name VARCHAR(35),
    store_imgSrc TEXT,
+   store_QR_imgSrc TEXT,
    store_bank_account VARCHAR(16),
    store_payment_method VARCHAR(10),
    FOREIGN KEY (owner_user_id) REFERENCES users(user_id)

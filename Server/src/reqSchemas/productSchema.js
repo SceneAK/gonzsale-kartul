@@ -21,7 +21,21 @@ const createProductSchema = {
     files: Joi.array().exist() // Expects key name to be 'product_imgSrc'
 }
 
+const editProductSchema = {
+    body: Joi.object({
+    product_name: Joi.string().min(1).max(50),
+    product_description: Joi.string().min(1).max(400),
+    product_category: Joi.string().min(1).max(40),
+    product_variants: Joi.any(),
+    product_price: Joi.number().min(0),
+    product_unit: Joi.string().min(1).max(15),
+    product_canOrder: Joi.any()
+    }),
+    files: Joi.array() // Expects key name to be 'product_imgSrc'
+}
+
 export default {
     getProducts: getProductsSchema,
-    createProduct: createProductSchema
+    createProduct: createProductSchema,
+    editProduct: editProductSchema
 };
