@@ -206,7 +206,6 @@
         .mobile-header {
             display: none;
         }
-
     </style>
 </head>
 
@@ -344,18 +343,13 @@
 
 <header class="mobile-header">
     <style>
-        /* Mobile Header */
         @media (max-width: 768px) {
-
             .desktop-header {
                 display: none;
             }
 
             .mobile-header {
                 display: block;
-            }
-
-            header {
                 background-color: #ffffff;
                 padding: 15px 20px;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -369,17 +363,13 @@
                 align-items: center;
                 width: 100%;
                 box-sizing: border-box;
-                /* Include padding in width calculations */
             }
 
-            /* Hamburger menu icon */
             .menu-icon {
                 font-size: 28px;
                 cursor: pointer;
-                display: block;
             }
 
-            /* Logo styling */
             .logo img {
                 width: 50px;
             }
@@ -391,44 +381,28 @@
                 font-weight: bold;
             }
 
-            /* User options (icons for cart/profile) */
-            .user-options {
-                display: flex;
-                gap: 15px;
-                align-items: center;
-            }
-
             .user-options img {
                 width: 24px;
-                /* Adjust width for better size */
                 height: auto;
-                /* Maintain aspect ratio */
                 margin-left: 10px;
-                /* Space between the icon and other elements */
                 vertical-align: middle;
-                /* Align with the text */
                 cursor: pointer;
-                /* Change cursor to indicate it's clickable */
             }
 
-            /* Search bar */
             .search-bar-bottom {
                 display: flex;
                 align-items: center;
                 margin: 15px 0;
                 width: 100%;
-                /* Extend the search bar to fill the width */
             }
 
             .search-bar-bottom input {
                 flex-grow: 1;
-                /* Ensures the input field stretches to fill the available space */
                 padding: 12px;
                 border: 1px solid #ccc;
                 border-radius: 5px 0 0 5px;
                 font-size: 16px;
                 box-sizing: border-box;
-                /* Prevents padding from affecting width */
             }
 
             .search-bar-bottom button {
@@ -441,7 +415,6 @@
                 cursor: pointer;
             }
 
-            /* Sliding menu */
             .side-menu {
                 position: fixed;
                 top: 0;
@@ -471,90 +444,124 @@
                 color: #ff9900;
             }
 
-            .close-icon {
-                font-size: 24px;
-                cursor: pointer;
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 2000;
+                justify-content: center;
+                align-items: center;
             }
 
-            .side-menu-footer {
-                margin-top: auto;
+            .modal-overlay.show {
+                display: flex;
+            }
+
+            .modal-content {
+                background-color: white;
+                padding: 20px;
+                border-radius: 8px;
+                width: 90%;
+                max-width: 400px;
                 text-align: center;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             }
 
-            .side-menu-footer a {
+            .modal-content h2 {
+                margin-bottom: 15px;
+            }
+
+            .modal-content input {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            .modal-content button {
+                width: 100%;
+                padding: 10px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
                 font-size: 16px;
-                color: #333;
-                text-decoration: none;
-                margin: 10px;
             }
 
-            .side-menu-footer a:hover {
-                color: #ff9900;
+            .modal-content button:hover {
+                background-color: #45a049;
+            }
+
+            .modal-content .close-btn {
+                background-color: #f44336;
+                margin-top: 10px;
+            }
+
+            .modal-content .close-btn:hover {
+                background-color: #d32f2f;
             }
         }
     </style>
+
     <div class="header-container">
-        <!-- Hamburger menu -->
         <div class="menu-icon" onclick="toggleMenu()">☰</div>
-
-        <!-- Logo -->
         <div class="logo">
-            <img src="assets/images/logo_placeholder.svg" alt="GonzSale Logo">
-            <a href="index.html">
-                GonzSale 2024
-            </a>
+            <img src="assets/images/logo_placeholder.svg" alt="GonzSale Logo"
+                onclick="window.location.href='mycart.html';"">
+            <a href=" index.html">GonzSale 2024</a>
         </div>
-
-        <!-- User options -->
         <div class="user-options">
-            <a href="#" id="userLink">
-                <img src="assets/images/sign_in_icon.svg" alt="Sign in Icon">
-            </a> <!-- Keep only one userLink -->
-            <a href="mycart.html">
-                <img src="assets/images/cart_icon.svg" alt="Cart Icon">
-            </a>
+            <img src="assets/images/sign_in_icon.svg" alt="Sign In Icon" onclick="toggleModal('loginModal')">
+            <img src="assets/images/cart_icon.svg" alt="Cart Icon" onclick="window.location.href='mycart.html';">
+
         </div>
     </div>
 
-    <!-- Side Menu -->
     <div class="side-menu" id="sideMenu">
         <span class="close-icon" onclick="toggleMenu()">×</span>
-        <a class="tablink" href="catalog.html#Shirts">
-            Baju
-        </a>
-        <a class="tablink" href="catalog.html#Pants">
-            Celana
-        </a>
-        <a class="tablink" href="catalog.html#Accessories">
-            Aksesoris
-        </a>
-        <a class="tablink" href="catalog.html#Food">
-            Makanan
-        </a>
-        <a class="tablink" href="catalog.html#Drinks">
-            Minuman
-        </a>
-        <a class="tablink" href="catalog.html#All">
-            All Items
-        </a>
-        <div class="side-menu-footer">
-            <a href="#">© 2024 GonzSale</a>
-            <a href="#">Facebook</a>
-            <a href="#">YouTube</a>
-        </div>
+        <a class="tablink" href="catalog.html#Shirts">Baju</a>
+        <a class="tablink" href="catalog.html#Pants">Celana</a>
+        <a class="tablink" href="catalog.html#Accessories">Aksesoris</a>
+        <a class="tablink" href="catalog.html#Food">Makanan</a>
+        <a class="tablink" href="catalog.html#Drinks">Minuman</a>
+        <a class="tablink" href="catalog.html#All">All Items</a>
     </div>
 
-    <!-- Search bar -->
-    <div class="search-bar-bottom">
-        <input type="text" placeholder="Search for items...">
-        <button>🔍</button>
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content">
+            <h2>Sign In</h2>
+            <input type="email" placeholder="Email" required>
+            <input type="password" placeholder="Password" required>
+            <button>Sign In</button>
+            <button class="close-btn" onclick="toggleModal('loginModal')">Close</button>
+            <p>Don't have an account? <a href="signup.html">Register</a></p>
+        </div>
     </div>
 
     <script>
         function toggleMenu() {
             const sideMenu = document.getElementById("sideMenu");
             sideMenu.classList.toggle("open");
-            console.log('TOGGLE MENU RUNNING')
         }
+
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.toggle("show");
+        }
+
+        // Close modal when clicking outside the content
+        window.addEventListener("click", function (event) {
+            const modal = document.getElementById("loginModal");
+            const modalContent = modal.querySelector(".modal-content");
+            if (modal.classList.contains("show") && !modalContent.contains(event.target)) {
+                modal.classList.remove("show");
+            }
+        });
     </script>
 </header>

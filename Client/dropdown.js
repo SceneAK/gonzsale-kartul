@@ -49,24 +49,35 @@ function updateUI(isLoggedIn, username) {
     }
 }
 
-// Function to initialize menu toggle functionality for mobile
-function toggleMenu() {
-    const sideMenu = document.getElementById("sideMenu");
-    sideMenu.classList.toggle("open");
-    console.log('TOGGLE MENU RUNNING')
+// Function to toggle modals (added for mobile login modal functionality)
+function toggleModal(modalId) {
+    console.log(`Toggling modal with ID: ${modalId}`); // Debugging log
+    const modal = document.getElementById(modalId);
+    if (!modal) {
+        console.error(`Modal with ID ${modalId} not found!`);
+        return;
+    }
+    modal.classList.toggle("show");
 }
 
+// Add event listener for modal close when clicking outside
+function initializeModals() {
+    window.addEventListener("click", function (event) {
+        const modal = document.querySelector(".modal-overlay.show");
+        if (modal && event.target === modal) {
+            modal.classList.remove("show");
+        }
+    });
+}
 
-// Load the header and footer, and ensure dropdown and menu toggle initialize
+// Load the header and footer, and ensure dropdown and modal functionalities initialize
 function initializePage() {
     loadHTML('header.html', 'header', function () {
         const headerLoadedEvent = new Event('headerLoaded');
         document.dispatchEvent(headerLoadedEvent); // Notify other scripts
         initializeDropdown(); // Initialize dropdown functionality
-        initializeMenuToggle(); // Initialize menu toggle functionality
-        initializeSlideMenu(); // Initialize slide menu functionality
+        initializeModals(); // Initialize modal functionality
         updateUI(false, "JohnDoe"); // Update UI based on login state
-        toggleMenu(); //Toggle mobile menu
     });
 
     loadHTML('footer.html', 'footer'); // Load footer if needed
