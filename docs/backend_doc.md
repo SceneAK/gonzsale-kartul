@@ -49,40 +49,27 @@ Notable points per "module"s of this app, including their controllers, routes, a
 
 
 # TASK BACKLOG
-## transaction.js
-.Get Transaction.
-- (Payment Gateway??)
-
-## order.js
-- Order notes
-.Place Order Guest
-.Get Orders (only orders w/ auth-ed user_id as buyer/seller)
-.Update Order (only for auth-ed sellers, to update the order status etc)
-- Mailing Customers when order status changes.
-
-## TEST EVERYTHING
-- product
-.order (place order guest not tested yet)
-.user (get logic needs work, potentially requires rework on user_id)
-- transaction
-
+In Order of Importance
 ## Document the return format of each route
 - Product
 - User
 - Store
 - Order
 - Transaction
-
-## store.js
-.Edit store details
-- Delete Store
-- Multiple store support?
-
-## user.js
-- Change to uuid v4. only users who own stores can call getUser(). normal users can view store contacts provided by the store route.
-- Edit Profile
-- Change Password, maybe use mailer?
-
-## product variant handling
+## product.js
+- Filter based on store_name
+- Edit Product (availability and such too)
 - Limit number of variants
-- implement variants
+- Delete Product
+## store.js
+- Store_qris
+- Delete Store
+## order.js
+- Mailing Customers when order status changes.
+## transaction.js
+- Payment Gateway
+## user.js
+- Edit Profile
+- Change Password, maybe use mailer
+## General
+- Refactor this shit. Centralized logic along with centralized SQL queries please i beg

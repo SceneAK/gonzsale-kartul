@@ -4,7 +4,7 @@ const getProductsSchema = {
     body: Joi.object({
     product_name: Joi.string(),
     product_category: Joi.string(),
-    store_id: Joi.number(),
+    store_id: Joi.string().length(36),
     store_name: Joi.string(),
     })
 }

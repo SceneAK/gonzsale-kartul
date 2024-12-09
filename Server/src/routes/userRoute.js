@@ -3,8 +3,6 @@ import { validate, userSchemas } from '../reqSchemas/index.js'
 import express from 'express';
 const router = express.Router();
 
-router.get('/get/:id', user.getUser);
-
 router.post('/signin/', validate(userSchemas.signIn), user.signIn);
 
 router.post('/signup/', validate(userSchemas.signUp), user.signUp);

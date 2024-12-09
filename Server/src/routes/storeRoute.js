@@ -9,8 +9,8 @@ router.get('/:id', store.getStore);
 
 const imgUpload = createMulter({relativeDir: "images/store/", keyName: "store_imgSrc", isArray: false});
 
-router.post('/create/', verifyUser, ensureBelowLimit, imgUpload, validate(storeSchemas.createStore), store.createStore);
+router.post('/', verifyUser, ensureBelowLimit, imgUpload, validate(storeSchemas.createStore), store.createStore);
 
-router.patch('/edit/', verifyUser, ensureBelowLimit, imgUpload, store.updateStore);
+router.patch('/', verifyUser, ensureBelowLimit, imgUpload, store.updateStore);
 
 export default router;

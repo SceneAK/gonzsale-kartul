@@ -13,7 +13,7 @@ async function recordTransaction(totalAmount, proofRelPath)
     const dateStr = getCurrentDateMYSQLFormatted();
     try
     {
-        await connection.execute('INSERT INTO transaction (transaction_id, transaction_date, transaction_amount, transaction_proof) VALUES (?,?,?,?)', [
+        await connection.execute('INSERT INTO transactions (transaction_id, transaction_date, transaction_amount, transaction_proof) VALUES (?,?,?,?)', [
             id,
             dateStr,
             totalAmount, 
@@ -26,7 +26,7 @@ async function recordTransaction(totalAmount, proofRelPath)
 const getTransaction = async (req, res)=> {
     const {transaction_id} = req.params;
     const getTransactionIfRelatedToUser =
-        'SELECT t.* FROM transaction t INNER JOIN `order` o ON t.transaction_id = o.transaction_id INNER JOIN product p ON o.product_id = p.product_id INNER JOIN store s ON p.store_id = s.store_id WHERE t.transaction_id = ? AND (o.customer_user_id = ? OR s.owner_user_id = ?)';
+        'SELECT t.* FROM transactions t INNER JOIN orders o ON t.transaction_id = o.transaction_id INNER JOIN products p ON o.product_id = p.product_id INNER JOIN stores s ON p.store_id = s.store_id WHERE t.transaction_id = ? AND (o.customer_user_id = ? OR s.owner_user_id = ?)';
     
     const [rows] = await connection.execute(getTransactionIfRelatedToUser, [
         transaction_id,

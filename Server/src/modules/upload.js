@@ -11,7 +11,7 @@ const MULTER_MAX_FILE_BYTES = 5 * 1024 * 1024;
 
 async function getUsed(req)
 {
-    const[rows] = await connection.execute(`SELECT * FROM user WHERE user_id = ?`, [req.authUser.id]);
+    const[rows] = await connection.execute(`SELECT * FROM users WHERE user_id = ?`, [req.authUser.id]);
     return rows[0].user_used_storage;
 }
 async function ensureBelowLimit(req, res, next)
@@ -60,7 +60,7 @@ function getRelative(path)
 
 async function addAmountToUsed(amount, id)
 {
-    return await connection.execute(`UPDATE user SET user_used_storage = user_used_storage + ? WHERE user_id = ?`, [amount, id]);
+    return await connection.execute(`UPDATE users SET user_used_storage = user_used_storage + ? WHERE user_id = ?`, [amount, id]);
 }
 async function updateUsed(files, id)
 {
@@ -74,15 +74,13 @@ async function unlinkStoredUpdateUsed(paths, id)
 {
     let absSize = 0;
     paths.forEach(relPath => {
-        fs.unlink(relPath, async err=>{
-            if(err) {
-                console.log(err)
-            }
-            else {
+        const path = upath.join(PUBLIC_DIR, relPath)
+        fs.unlink(path, async err=>{
+            if(!err) {
                 const size = fs.stat(relPath).size;
                 absSize += size;
             }
-        })
+        }).catch(err => console.log(err.message));
     });
     addAmountToUsed(-absSize, id);
 }
