@@ -1,7 +1,7 @@
 import '../../initialize.js'; // ensure process.env is up
 import mysql from 'mysql2/promise';
 
-let connectionPromise = mysql.createConnection(process.env.MYSQL_URI);;
+let connectionPromise = mysql.createConnection(process.env.MYSQL_URI);
 
 // SETUP CONNECTION
 (async () => { 

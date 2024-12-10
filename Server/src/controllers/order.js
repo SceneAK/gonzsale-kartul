@@ -49,11 +49,11 @@ async function placeOrder(customer_id, req, res)
     {
         const {product_id, order_qty, order_variant, order_notes} = req.body; 
 
-        const [rows] = await connection.execute("SELECT product_canOrder, product_price FROM products WHERE product_id = ?", [product_id]);
+        const [rows] = await connection.execute("SELECT product_availability, product_price FROM products WHERE product_id = ?", [product_id]);
         if(rows.length == 0){
             res.status(400).send('Product Does Not Exist'); return;
         }
-        if(!rows[0].product_canOrder){
+        if(rows[0].product_availability == 'UNAVAILABLE'){
             res.status(400).send('Product Unavailable for Order'); return;
         }
         

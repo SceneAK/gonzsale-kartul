@@ -33,7 +33,6 @@ Notable points per "module"s of this app, including their controllers, routes, a
         - calling updateUsed(files, userId) updating used storage space. 
         - unlink() the files if an error has occurred.
     - Note that updateUsed() and unlink() take files because it's usually used after errors in incoming requests, meaning the files are directly accessible through req.files/file, meanwhile unlinkStored() uses relative paths because it's usually used on files already stored in the db
-
 ### Token Authentication
 - auth.js exports a middleware (verifyUser) which authenticates the header authtoken, then fills the *authUser.id* in req. This is intended to be run before an operation requiring user_id and authentication, returning an error if unauthorized.
 - *Some route controllers expects this middleware to run right before and depends on authUser.id.*
@@ -51,20 +50,49 @@ Notable points per "module"s of this app, including their controllers, routes, a
 # TASK BACKLOG
 Order of Importance, descending
 
-## Deployment
+Test product_availability creation, edit, & ordering
+test createMulter's field()
+test editing and creating store.
+
+## Seperate product_images table
+- Create product_images (image_id, product_id, imageSrc, image_order)
+- change how images are added in createProduct, editProduct
+- change how images are served in getProduct, getProducts
+## Add Address Functionality
+- add product_deliver_method ENUM('GONZAGA', 'TO_ADDRESS'); 
+    - If an order is placed on a product with 'TO_ADDRESS', server requires user to provide an address. 
+- add user_address table 
+## Deployment Preparation
 - create .env file
-## product.js
+- Retest all functions
+
+## Frontend Integration
+- All the routes, check if they have a page or not
+- For each page, make the .fetch() request and the logic to display on screen
+    - checklist:
+    - product
+    - order
+    - store
+    - user
+    - transaction
+
+## Design Rework & Refactoring
+- Split store Images into their own store_images table (store_id, store_imgSrc, store_QR_imgSrc)
+- Split product images into their own product_images table (image_id, product_id, product_image)
 - Get Products Filtered maybe rethink whether or not it should be in body or params?
-- Delete Product
-- Limit number of variants
-## store.js
-- Delete Store
-## order.js
+- Refactor entire shit. Centralized logic along with centralized SQL queries please i beg
+    - User Mysql query maker or somthing
+## Complete Functions
+    - Delete Product
+    - Delete Store
+    - Edit Profile
+## Payment Gateway
+- rename transaction table to basic_tansactions table
+## Mailing
 - Mailing Customers when order status changes, when product gets deleted, when  
-## transaction.js
-- Payment Gateway
-## user.js
-- Edit Profile
-- Change Password, maybe use mailer
-## Refactor
-- Refactor this shit. Centralized logic along with centralized SQL queries please i beg
+- Change Password
+# Security Concerns & Abuse Protection
+- Limit number of variants
+- Express-Rate-Limiter
+- Cors check reconfig
+## Preorder scheduler

@@ -3,7 +3,6 @@ import multer from 'multer';
 import { promises as fs} from 'fs';
 import { STATIC_ROUTE_NAME, PUBLIC_DIR } from '../../initialize.js';
 import connectionPromise from '../modules/db.js'
-import { fileURLToPath } from 'url';
 const connection = await connectionPromise;
 
 const MAX_SIZE_USER = 300 * 1024 * 1024; // 300mb
@@ -33,7 +32,7 @@ function aboveLimit(body)
 }
 function createMulter(options)
 {
-    const {isArray, relativeDir, keyName} = options;
+    const {relativeDir} = options;
     const upload = multer({dest: upath.join(PUBLIC_DIR, relativeDir), limits: { fileSize: MULTER_MAX_FILE_BYTES} });
 
     const limitUpload = (upload)=>(req, res, next) =>{
@@ -44,12 +43,24 @@ function createMulter(options)
             next();
         })
     }
-    if(isArray){
-        return limitUpload(upload.array(keyName));
-    }else{
-        return limitUpload(upload.single(keyName));
+
+    let uploadMiddle = getUploadMiddleware(upload, options);
+    return limitUpload(uploadMiddle);
+}
+function getUploadMiddleware(upload, options)
+{
+    const { type, keyName, fields } = options;
+    switch (type) {
+        case 'fields':
+            return upload.fields(fields)
+        case 'array':
+            return upload.array(keyName)
+        default:
+            return upload.single(keyName)
     }
 }
+
+
 function buildURL(protocol, host, relativePath)
 {
     return `${protocol}://${host}/${STATIC_ROUTE_NAME}/${relativePath}`;

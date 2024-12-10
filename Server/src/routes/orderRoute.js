@@ -6,7 +6,7 @@ import { validate, orderSchemas} from '../reqSchemas/index.js';
 import { order } from '../controllers/index.js'
 import { createMulter } from '../modules/upload.js';
 
-const transactionUpload = createMulter({relativeDir: 'Transactions', keyName: 'transaction_proof', isArray: false})
+const transactionUpload = createMulter({relativeDir: 'Transactions', keyName: 'transaction_proof', type: 'array'})
 
 router.get('/incoming/', verifyUser, order.getIncomingOrders);
 

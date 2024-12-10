@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 import connectionPromise from '../modules/db.js'
 import { buildURL, getFileRelative, unlink, unlinkStoredUpdateUsed, updateUsed } from '../modules/upload.js';
+import { generateUpdateQuery } from './common.js';
 const connection = await connectionPromise;
 
 function prepareImgUrls(protocol, host, rows)
@@ -68,11 +69,7 @@ const getProduct = async (req, res) => {
     res.json(rows);
 }
 
-function stringToBool(str)
-{
-    str = str.toLowerCase();
-    return str == 'true'; // defaults to false because product_canOrder better be false than true
-}
+
 const createProduct = async (req, res) => {
     const [rows] = await connection.execute("SELECT * FROM stores WHERE owner_user_id = ?", [req.authUser.id]);
     if(rows.length == 0) {
@@ -81,11 +78,11 @@ const createProduct = async (req, res) => {
 
     try{
         const relPaths = getFileRelative(req.files);
-        const {product_name, product_description, product_category, product_variants, product_price, product_unit, product_canOrder} = req.body;
+        const {product_name, product_description, product_category, product_variants, product_price, product_unit, product_availability} = req.body;
         const parsed = JSON.parse(product_variants);
 
         const product_id = v4();
-        await connection.execute("INSERT INTO products (product_id, product_name, product_description, product_imgSrc, product_category, product_variants, product_price, product_unit, product_canOrder, store_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",[
+        await connection.execute("INSERT INTO products (product_id, product_name, product_description, product_imgSrc, product_category, product_variants, product_price, product_unit, product_availability, store_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",[
             product_id,
             product_name,
             product_description,
@@ -94,7 +91,7 @@ const createProduct = async (req, res) => {
             parsed,
             product_price,
             product_unit,
-            stringToBool(product_canOrder),
+            product_availability,
             rows[0].store_id
             ]
         )
@@ -124,23 +121,11 @@ const editProduct = async(req, res) => {
             body.product_imgSrc = relPaths;
         }catch (err) { return res.status(500).send(err.message); }
     }
-
-    if(body.product_canOrder != undefined){ 
-        body.product_canOrder = stringToBool(body.product_canOrder);
-    }
     
-    let updateQuery = 'UPDATE products SET ';
-    const params = [];
-    for(const key in body)
-    {
-        updateQuery += `${key} = ?, `;
-        params.push(body[key]);
-    }
-    updateQuery = updateQuery.slice(0, -2) + " WHERE product_id = ?"; // removes the ", "
-    params.push(`${product_id}`);
+    const {query, params} = generateUpdateQuery(body, "products", "product_id", product_id);
 
     try{
-        await connection.execute(updateQuery, params);
+        await connection.execute(query, params);
         res.status(204).send("updated");
     }catch(err)
     {

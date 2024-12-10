@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 import connectionPromise from '../modules/db.js'
 import {buildURL, getRelative, unlink, unlinkStoredUpdateUsed, updateUsed} from '../modules/upload.js';
+import { generateUpdateQuery } from './common.js';
 const connection = await connectionPromise;
 
 const getStore = async (req, res) =>
@@ -42,24 +43,26 @@ const createStore = async (req, res) =>
             res.status(400).send('Only Store Creators can create their own stores'); return;
         }
 
-        const {store_imgSrc, store_QR_imgSrc} = splitAndTrackFiles(req.files);
+        const {store_imgSrc, store_QR_imgSrc} = files;
         
-        const {store_name, store_payment_method, store_bank_account} = body;
+        const {store_name, store_description, store_payment_method, store_bank_account} = body;
         const store_id = v4();
-        await connection.execute("INSERT INTO stores (store_id, owner_user_id, store_name, store_QR_imgSrc, store_payment_method, store_bank_account, store_imgSrc) VALUES (?, ?, ?, ?, ?, ?, ?)", [
+        await connection.execute("INSERT INTO stores (store_id, owner_user_id, store_name, store_description, store_QR_imgSrc, store_payment_method, store_bank_account, store_imgSrc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
             store_id,
             authUser.id,
             store_name,
+            store_description,
             store_QR_imgSrc,
             store_payment_method,
             store_bank_account,
             store_imgSrc
         ])
         
+        updateUsed(Object.values(files));
         res.json({store_id});
     }catch(err)
     {
-        if( files != undefined ) unlink([files]);        
+        if( files != undefined ) unlink([Object.values(files)]);        
         return res.status(500).send("ERR\n" + err);
     }
 }
@@ -71,39 +74,39 @@ async function getUserStore(user_id)
 }
 const updateStore = async (req, res) => // expects form-data
 {
-    const {body, authUser, file} = req;
+    const {body, authUser, files} = req;
     
     const store = await getUserStore(authUser.id)
     if(store == null) { 
         return res.status(401).send('user does not own a store'); 
     }
     
-    if(body.store_name)
-    {
-        await connection.execute("UPDATE stores SET store_name = ? WHERE store_id = ?", [body.store_name, store.store_id]);
-    }
+    const {query, params} = generateUpdateQuery(body, "stores", "store_id", store_id);;
+    connection.execute(query, params);
 
-    const {store_imgSrc, store_QR_imgSrc} = splitAndTrackFiles(req.files);
+    const {store_imgSrc, store_QR_imgSrc} = files;
 
-    if(store_imgSrc){
-        const result = change(store.store_imgSrc, store_imgSrc, 'store_imgSrc', authUser.id);
-        if(!result) unlink(req.files[0]); // files[0] = Store_imgSrc
-    }
-    if(store_QR_imgSrc){
-        const result = change(store.store_QR_imgSrc, store_QR_imgSrc, 'store_QR_imgSrc', authUser.id);
-        if(!result) unlink(req.files[1]); // files[0] = store_QR_imgSrc
-    }
-    updateUsed(files, authUser.id)
+    tryChange(store_imgSrc, store.store_imgSrc, 'store_imgSrc', authUser.id);
+    tryChange(store_QR_imgSrc, store.store_QR_imgSrc, 'store_QR_imgSrc', authUser.id);
+    
+    updateUsed(Object.values(files), authUser.id)
 
     res.status(204).send("updated");
 }
-async function change(relPath, newRelPath, key, owner_id)
+async function tryChange(newSrc, oldSrc, fieldNameInDb, owner_id)
+{
+    if(newSrc){
+        const result = change(oldSrc, newSrc, fieldNameInDb, owner_id);
+        if(!result) unlink(newSrc);
+    }
+}
+async function change(oldSrc, newSrc, fieldNameInDb, owner_id)
 {
     try
     {
-        await connection.execute(`UPDATE stores SET ${key} = ? WHERE owner_user_id = ?`, [newRelPath, owner_id]);
+        await connection.execute(`UPDATE stores SET ${fieldNameInDb} = ? WHERE owner_user_id = ?`, [newSrc, owner_id]);
     }catch(err){return false;}
-    unlinkStoredUpdateUsed([relPath], owner_id);
+    unlinkStoredUpdateUsed([oldSrc], owner_id);
     return true;
 }
 

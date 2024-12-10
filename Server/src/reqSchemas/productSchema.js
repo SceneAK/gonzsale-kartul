@@ -16,7 +16,7 @@ const createProductSchema = {
     product_variants: Joi.any().default("{}"),
     product_price: Joi.number().min(0).required(),
     product_unit: Joi.string().min(1).max(15).required(),
-    product_canOrder: Joi.any().exist()
+    product_availability: Joi.string().valid('UNAVAILABLE', 'AVAILABLE', 'PREORDER_ONLY').required()
     }),
     files: Joi.array().exist() // Expects key name to be 'product_imgSrc'
 }
@@ -29,7 +29,7 @@ const editProductSchema = {
     product_variants: Joi.any(),
     product_price: Joi.number().min(0),
     product_unit: Joi.string().min(1).max(15),
-    product_canOrder: Joi.any()
+    product_availability: Joi.string().valid('UNAVAILABLE', 'AVAILABLE', 'PREORDER_ONLY')
     }),
     files: Joi.array() // Expects key name to be 'product_imgSrc'
 }
