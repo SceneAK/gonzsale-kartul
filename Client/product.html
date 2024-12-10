@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .product-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .product-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .product-description {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .product-price {
+            font-size: 18px;
+            color: #ff9900;
+            margin: 15px 0;
+        }
+
+        .add-to-cart-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header placeholder -->
+    <div id="header"></div>
+
+    <div class="product-container">
+        <img id="product-img" src="" alt="Product Image" class="product-img">
+        <h1 id="product-name" class="product-name"></h1>
+        <p id="product-description" class="product-description"></p>
+        <p id="product-price" class="product-price"></p>
+        <input id="quantity-input" type="number" min="1" value="1" class="quantity-input">
+        <button id="add-to-cart-btn" class="add-to-cart-btn">Add to Cart</button>
+    </div>
+
+    <!-- Footer placeholder -->
+    <div id="Footer"></div>
+
+    <script src="dropdown.js"></script>
+    <script>
+        // MOCK DATA, REMOVE WHEN SERVER IS SET
+        const mockData = {
+            shirts: [
+                { product_id: 101, product_name: "Cool T-Shirt", product_description: "A trendy and comfortable t-shirt.", product_price: 99000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 1, store_name: "Fransiscus Fashion" },
+                { product_id: 102, product_name: "Graphic Tee", product_description: "Stylish graphic tee for everyday wear.", product_price: 119000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 2, store_name: "Borgias Merch" },
+            ],
+            pants: [
+                { product_id: 201, product_name: "Jeans", product_description: "Durable and classic denim jeans.", product_price: 199000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "pair", store_id: 1, store_name: "Fransiscus Fashion" },
+                { product_id: 202, product_name: "Chinos", product_description: "Smart and casual chinos.", product_price: 179000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "pair", store_id: 3, store_name: "Gonz Pants Co" },
+            ],
+            accessories: [
+                { product_id: 301, product_name: "Sunglasses", product_description: "Protect your eyes in style.", product_price: 79000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 1, store_name: "Fransiscus Borgias" },
+                { product_id: 302, product_name: "Cap", product_description: "A trendy cap for sunny days.", product_price: 49000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 2, store_name: "Borgias Merch" },
+            ],
+            food: [
+                { product_id: 401, product_name: "Nasi Goreng", product_description: "Delicious Indonesian fried rice.", product_price: 35000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "plate", store_id: 4, store_name: "Gonz Foods" },
+                { product_id: 402, product_name: "Mie Goreng", product_description: "Tasty fried noodles.", product_price: 25000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "plate", store_id: 4, store_name: "Gonz Foods" },
+            ],
+            drinks: [
+                { product_id: 501, product_name: "Iced Coffee", product_description: "Refreshing iced coffee.", product_price: 20000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "cup", store_id: 5, store_name: "Caffeine Haven" },
+                { product_id: 502, product_name: "Milk Tea", product_description: "Sweet and creamy milk tea.", product_price: 18000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "cup", store_id: 5, store_name: "Caffeine Haven" },
+            ],
+        };
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+
+            if (!productId) {
+                alert('No product ID provided.');
+                return;
+            }
+
+            try {
+                // Fetch product details from the API ( Uncomment for live data )
+                // const response = await fetch(`http://localhost:3000/api/product/${productId}`);
+                // if (!response.ok) throw new Error('Failed to fetch product details.');
+
+                // const product = await response.json();
+
+                // Use mock data for testing
+                const allItems = [...mockData.shirts, ...mockData.pants, ...mockData.accessories, ...mockData.food, ...mockData.drinks];
+                const product = allItems.find(item => item.product_id === parseInt(productId));
+
+                if (!product) throw new Error('Product not found in mock data.');
+
+                // Populate product details on the page
+                document.getElementById('product-img').src = product.product_imgSrc;
+                document.getElementById('product-name').textContent = product.product_name;
+                document.getElementById('product-description').textContent = product.product_description;
+                document.getElementById('product-price').textContent =
+                    `Rp ${product.product_price.toLocaleString('id-ID')} / ${product.product_unit}`;
+
+                // Add to Cart functionality
+                document.getElementById('add-to-cart-btn').addEventListener('click', () => {
+                    const quantity = parseInt(document.getElementById('quantity-input').value, 10) || 1; // Default to 1 if no input
+
+                    if (quantity < 1) {
+                        alert('Quantity must be at least 1.');
+                        return;
+                    }
+
+                    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                    const existingItemIndex = cart.findIndex(item => item.id === product.product_id);
+
+                    if (existingItemIndex > -1) {
+                        // Update quantity if item already exists in the cart
+                        cart[existingItemIndex].quantity += quantity;
+                    } else {
+                        // Add new item to the cart
+                        cart.push({
+                            id: product.product_id,
+                            name: product.product_name,
+                            price: product.product_price,
+                            imgSrc: product.product_imgSrc,
+                            quantity: quantity,
+                            store_id: product.store_id,
+                            store_name: product.store_name
+                        });
+
+                    }
+
+                    // Save updated cart to localStorage
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    alert(`${quantity} x ${product.product_name} has been added to your cart!`);
+                });
+
+            } catch (error) {
+                console.error('Error loading product details:', error);
+                alert('Failed to load product details. Using mock data.');
+            }
+        });
+    </script>
+</body>
+
+</html>

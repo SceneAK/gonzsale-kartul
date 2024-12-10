@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .checkout-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .buyer-info {
+            margin-bottom: 20px;
+        }
+
+        .buyer-info label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .buyer-info input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .store-section {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f7f7f7;
+        }
+
+        .store-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .product-list {
+            margin-bottom: 10px;
+        }
+
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .total-price {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .payment-details {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .upload-container {
+            margin-top: 10px;
+        }
+
+        .upload-container input[type="file"] {
+            display: block;
+            margin-top: 5px;
+        }
+
+        .finish-orders-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 1em;
+            font-weight: bold;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .finish-orders-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header placeholder -->
+    <div id="header"></div>
+
+    <div class="checkout-container">
+        <h1>Checkout</h1>
+
+        <!-- Buyer Information -->
+        <div class="buyer-info">
+            <label for="full-name">Full Name:</label>
+            <input type="text" id="full-name" placeholder="Enter your full name" required>
+
+            <label for="phone-number">Phone Number:</label>
+            <input type="tel" id="phone-number" placeholder="Enter your phone number" required>
+        </div>
+
+        <!-- Order Summary -->
+        <div id="order-summary"></div>
+
+        <!-- Finish Orders Button -->
+        <button class="finish-orders-btn" id="finish-orders-btn" disabled>Finish Orders</button>
+    </div>
+
+    <script src="dropdown.js"></script>
+    <script>
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]'); // Get cart data from localStorage
+        const orderSummaryContainer = document.getElementById('order-summary');
+        const finishOrdersButton = document.getElementById('finish-orders-btn');
+
+        if (cart.length === 0) {
+            alert("Your cart is empty. Redirecting to the catalog...");
+            window.location.href = "catalog.html";
+        }
+
+        // Group cart items by store_id
+        const groupedCart = cart.reduce((groups, item) => {
+            if (!groups[item.store_id]) {
+                groups[item.store_id] = {
+                    store_name: item.store_name,
+                    payment_method: item.payment_method,
+                    payment_info: item.payment_info,
+                    items: [],
+                    total: 0
+                };
+            }
+
+            // Push item with its quantity and calculate the total cost
+            groups[item.store_id].items.push(item);
+            groups[item.store_id].total += item.price * item.quantity; // Total includes quantity
+            return groups;
+        }, {});
+
+
+        // Render order summary
+        function renderOrderSummary() {
+            let allUploadsComplete = true;
+
+            orderSummaryContainer.innerHTML = ''; // Clear existing content
+
+            Object.values(groupedCart).forEach((group, index) => {
+                const storeSection = document.createElement('div');
+                storeSection.classList.add('store-section');
+
+                storeSection.innerHTML = `
+            <div class="store-header">From store: ${group.store_name}</div>
+            <div class="product-list">
+                ${group.items.map(item => `
+                    <div class="product-item">
+                        <span>${item.name} (x${item.quantity})</span>
+                        <span>Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</span>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="total-price">Total: Rp ${group.total.toLocaleString('id-ID')}</div>
+            <div class="payment-details">
+                Nomer Rekening: ${group.payment_method || 'Not Provided'}<br>
+                Payment Information: ${group.payment_info || 'Not Provided'}
+            </div>
+            <div class="upload-container">
+                <label for="proof-${index}">Upload Bukti Pembayaran:</label>
+                <input type="file" id="proof-${index}" name="proof-${index}" accept=".jpg,.jpeg,.png" required>
+            </div>
+        `;
+
+                const fileInput = storeSection.querySelector(`#proof-${index}`);
+                fileInput.addEventListener('change', () => checkUploads());
+
+                orderSummaryContainer.appendChild(storeSection);
+            });
+
+            function checkUploads() {
+                allUploadsComplete = Array.from(orderSummaryContainer.querySelectorAll('input[type="file"]')).every(input => input.files.length > 0);
+                finishOrdersButton.disabled = !allUploadsComplete;
+            }
+
+            checkUploads();
+        }
+
+        renderOrderSummary();
+
+        // Handle Finish Orders Button
+        finishOrdersButton.addEventListener('click', () => {
+            alert('Order Submitted!');
+        });
+    </script>
+</body>
+
+</html>

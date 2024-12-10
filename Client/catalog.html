@@ -18,6 +18,20 @@
             padding: 20px;
         }
 
+        .catalog h1 {
+            margin-bottom: 20px;
+            text-align: center;
+            /* Center the heading */
+        }
+
+        .catalog-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            /* Flexible grid layout */
+            gap: 20px;
+            padding: 20px;
+        }
+
         /* Tab links */
         .tablink {
             background-color: #f9f9f9;
@@ -39,18 +53,82 @@
         }
 
         .item {
-            display: inline-block;
-            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
             text-align: center;
+        }
+
+        .item:hover {
+            transform: translateY(-5px);
+            /* Slight hover effect */
         }
 
         .item img {
             width: 150px;
+            /* Set consistent size */
             height: 150px;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .item .store-logo {
+            width: 40px;
+            /* Make the store image smaller */
+            height: 40px;
+            border-radius: 50%;
+            margin: 10px 0;
         }
 
         .item p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .item .price {
             font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .item button,
+        .item a {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .item button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .item button:hover {
+            background-color: #218838;
+        }
+
+        .item a {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .item a:hover {
+            background-color: #0056b3;
         }
 
         /* Active class for the selected tablink */
@@ -59,53 +137,111 @@
             color: white;
         }
 
-        #food-items-container {
+        .catalog-items-container {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
+            justify-content: center;
+            /* Center items within the container */
         }
 
-        .food-item {
+        .catalog-item {
             border: 1px solid #ddd;
             border-radius: 8px;
-            padding: 10px;
+            padding: 15px;
             width: 200px;
             text-align: center;
+            background-color: #fff;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .food-item-image {
+        .catalog-item:hover {
+            transform: translateY(-5px);
+            /* Slight lift on hover */
+            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .catalog-item img {
             width: 100%;
             height: auto;
             border-radius: 5px;
         }
 
-        .food-item-title {
+        .catalog-item-title {
             font-size: 18px;
             margin: 10px 0;
         }
 
-        .food-item-description {
+        .catalog-item-description {
             font-size: 14px;
             color: #555;
+            margin: 5px 0;
         }
 
-        .food-item-price {
+        .catalog-item-price {
             font-size: 16px;
             font-weight: bold;
             margin: 10px 0;
         }
 
-        .food-item-add-to-cart {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
+        .store-logo {
+            margin-top: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
-        .food-item-add-to-cart:hover {
+        .store-name {
+            font-size: 14px;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .product-price {
+            font-size: 14px;
+            color: #ff6600;
+            font-weight: bold;
+        }
+
+        .add-to-cart,
+        .view-details {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 15px;
+            font-size: 14px;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .add-to-cart {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+        }
+
+        .add-to-cart:hover {
             background-color: #218838;
+        }
+
+        .view-details {
+            background-color: #007bff;
+            color: #fff;
+            margin-left: 10px;
+        }
+
+        .view-details:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -116,60 +252,33 @@
 
     <!-- Main content -->
     <div class="catalog">
-        <h1>Item Catalog</h1>
+        <div class="catalog">
+            <h1>Item Catalog</h1>
 
-        <!-- Category Contents -->
-        <div id="Shirts" class="tabcontent">
-            <div id="shirt-items-container"></div>
-        </div>
-
-        <div id="Pants" class="tabcontent">
-            <div id="pant-items-container"></div>
-        </div>
-
-        <div id="Food" class="tabcontent">
-            <div id="food-items-container">
-                <!-- Placeholder for shopping items -->
-                <div class="food-item">
-                    <img src="placeholder.jpg" alt="Item Image" class="food-item-image">
-                    <h3 class="food-item-title">Item Name</h3>
-                    <p class="food-item-description">Short description of the item.</p>
-                    <p class="food-item-price">$0.00</p>
-                    <button class="food-item-add-to-cart">Add to Cart</button>
-                    <script>console.log('PLACEHOLDER LOADED');</script>
-                </div>
-                <div class="food-item">
-                    <img src="placeholder.jpg" alt="Item Image" class="food-item-image">
-                    <h3 class="food-item-title">Item Name</h3>
-                    <p class="food-item-description">Short description of the item.</p>
-                    <p class="food-item-price">$0.00</p>
-                    <button class="food-item-add-to-cart">Add to Cart</button>
-                </div>
-                <!-- Repeat as needed -->
+            <!-- Category Contents -->
+            <div id="Shirts" class="tabcontent">
+                <div id="shirt-items-container" class="catalog-items-container"></div>
             </div>
-        </div>
 
-
-        <div id="Drinks" class="tabcontent">
-            <div id="sticker-items-container"></div>
-        </div>
-
-        <div id="Accessories" class="tabcontent">
-            <div id="accessory-items-container"></div>
-        </div>
-
-        <div id="Food" class="tabcontent">
-            <div id="food-items-container">
+            <div id="Pants" class="tabcontent">
+                <div id="pant-items-container" class="catalog-items-container"></div>
             </div>
-        </div>
 
+            <div id="Accessories" class="tabcontent">
+                <div id="accessory-items-container" class="catalog-items-container"></div>
+            </div>
 
-        <div id="Drinks" class="tabcontent">
-            <div id="drink-item-container"></div>
-        </div>
+            <div id="Food" class="tabcontent">
+                <div id="food-items-container" class="catalog-items-container"></div>
+            </div>
 
-        <div id="All" class="tabcontent">
-            <div id="all-items-container"></div>
+            <div id="Drinks" class="tabcontent">
+                <div id="drink-item-container" class="catalog-items-container"></div>
+            </div>
+
+            <div id="All" class="tabcontent">
+                <div id="all-items-container" class="catalog-items-container"></div>
+            </div>
         </div>
     </div>
 
@@ -198,24 +307,24 @@
         // Mock data for testing
         const mockData = {
             shirts: [
-                { product_name: "Cool T-Shirt", product_price: 99000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece" },
-                { product_name: "Graphic Tee", product_price: 119000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece" },
+                { product_id: 101, product_name: "Cool T-Shirt", product_price: 99000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 1, store_name: "Fransiscus Fashion" },
+                { product_id: 102, product_name: "Graphic Tee", product_price: 119000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 2, store_name: "Borgias Merch" },
             ],
             pants: [
-                { product_name: "Jeans", product_price: 199000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "pair" },
-                { product_name: "Chinos", product_price: 179000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "pair" },
+                { product_id: 201, product_name: "Jeans", product_price: 199000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "pair", store_id: 1, store_name: "Fransiscus Fashion" },
+                { product_id: 202, product_name: "Chinos", product_price: 179000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "pair", store_id: 3, store_name: "Gonz Pants Co" },
             ],
             accessories: [
-                { product_name: "Sunglasses", product_price: 79000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece" },
-                { product_name: "Cap", product_price: 49000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece" },
+                { product_id: 301, product_name: "Sunglasses", product_price: 79000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 1, store_name: "Fransiscus Borgias" },
+                { product_id: 302, product_name: "Cap", product_price: 49000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 2, store_name: "Borgias Merch" },
             ],
             food: [
-                { product_name: "Nasi Goreng", product_price: 35000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "plate" },
-                { product_name: "Mie Goreng", product_price: 25000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "plate" },
+                { product_id: 401, product_name: "Nasi Goreng", product_price: 35000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "plate", store_id: 4, store_name: "Gonz Foods" },
+                { product_id: 402, product_name: "Mie Goreng", product_price: 25000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "plate", store_id: 4, store_name: "Gonz Foods" },
             ],
             drinks: [
-                { product_name: "Iced Coffee", product_price: 20000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "cup" },
-                { product_name: "Milk Tea", product_price: 18000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "cup" },
+                { product_id: 501, product_name: "Iced Coffee", product_price: 20000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "cup", store_id: 5, store_name: "Caffeine Haven" },
+                { product_id: 502, product_name: "Milk Tea", product_price: 18000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "cup", store_id: 5, store_name: "Caffeine Haven" },
             ],
         };
 
@@ -223,58 +332,46 @@
         async function fetchItems(category, containerId) {
             try {
                 const container = document.getElementById(containerId);
-
-                // Display a loading message while fetching
                 container.innerHTML = `<p>Loading ${category} items...</p>`;
-
-                // Attempt to fetch data from API
-                const response = await fetch(`http://localhost:3000/product/${category}`);
-                if (!response.ok) throw new Error(`Failed to fetch ${category} items`);
-
-                // Parse response and clear container
-                const items = await response.json();
+                const items = mockData[category.toLowerCase()] || [];
                 populateItems(container, items);
             } catch (error) {
                 console.error(`Error fetching ${category} items:`, error);
-
-                // Use mock data in case of fetch failure
-                const items = mockData[category] || [];
-                const container = document.getElementById(containerId);
-                populateItems(container, items);
             }
         }
 
         // Function to populate items in the container
         function populateItems(container, items) {
-            container.innerHTML = ''; // Clear the container
-
+            console.log(`Populating items: `, items); // Log items
+            container.innerHTML = '';
             items.forEach(item => {
-                const itemDiv = document.createElement("div");
-                itemDiv.classList.add("item");
-
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('item');
                 itemDiv.innerHTML = `
-                    <img src="${item.product_imgSrc}" alt="${item.product_name}" />
-                    <p>${item.product_name} - Rp ${item.product_price.toLocaleString('id-ID')} / ${item.product_unit}</p>
-                    <button class="add-to-cart" onclick="addToCart('${item.product_name}', ${item.product_price}, '${item.product_imgSrc}')">Add to Cart</button>
-                `;
+            <img src="${item.product_imgSrc}" alt="${item.product_name}">
+            <p>${item.product_name}</p>
+            <p class="store-name">Store: ${item.store_name}</p>
+            <img class="store-logo" src="https://via.placeholder.com/50" alt="${item.store_name} Logo">
+            <p>Rp ${item.product_price.toLocaleString('id-ID')} / ${item.product_unit}</p>
+            <button class="add-to-cart" onclick="addToCart('${item.product_name}', ${item.product_price}, '${item.product_imgSrc}', ${item.store_id}, '${item.store_name}')">Add to Cart</button>
+            <a href="product.html?id=${item.product_id}" class="view-details">View Details</a>
+        `;
                 container.appendChild(itemDiv);
             });
         }
 
         // Function to add items to the cart
-        function addToCart(name, price, imgSrc) {
+        function addToCart(name, price, imgSrc, store_id, store_name) {
             const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            const existingItemIndex = cart.findIndex(item => item.name === name);
+            const existingItemIndex = cart.findIndex(item => item.name === name && item.store_id === store_id);
 
             if (existingItemIndex > -1) {
-                // If item already exists in the cart, increase its quantity
                 cart[existingItemIndex].quantity += 1;
             } else {
-                // Add new item to the cart
-                cart.push({ name, price, imgSrc, quantity: 1 });
+                cart.push({ name, price, imgSrc, store_id, store_name, quantity: 1 });
             }
 
-            localStorage.setItem('cart', JSON.stringify(cart)); // Save updated cart
+            localStorage.setItem('cart', JSON.stringify(cart));
             alert(`${name} has been added to your cart!`);
         }
 
