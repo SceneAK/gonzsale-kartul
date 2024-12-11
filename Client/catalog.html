@@ -257,11 +257,11 @@
 
             <!-- Category Contents -->
             <div id="Shirts" class="tabcontent">
-                <div id="shirt-items-container" class="catalog-items-container"></div>
+                <div id="shirts-items-container" class="catalog-items-container"></div>
             </div>
 
             <div id="Pants" class="tabcontent">
-                <div id="pant-items-container" class="catalog-items-container"></div>
+                <div id="pants-items-container" class="catalog-items-container"></div>
             </div>
 
             <div id="Accessories" class="tabcontent">
@@ -273,7 +273,7 @@
             </div>
 
             <div id="Drinks" class="tabcontent">
-                <div id="drink-item-container" class="catalog-items-container"></div>
+                <div id="drinks-items-container" class="catalog-items-container"></div>
             </div>
 
             <div id="All" class="tabcontent">
@@ -285,80 +285,44 @@
     <!-- Footer section -->
     <div id="footer"></div>
 
-    <script>
-        // Dynamic loading of header with hash-based navigation
-        document.addEventListener("DOMContentLoaded", function () {
-            // Dynamically load the header
-            fetch('header.html')
-                .then(response => {
-                    if (!response.ok) throw new Error('Failed to load header');
-                    return response.text();
-                })
-                .then(headerHTML => {
-                    // Insert the header into the document
-                    document.getElementById('header-container').innerHTML = headerHTML;
+    <script type="module">
 
-                    // No need to add extra event listeners since buttons use hash-based navigation
-                    handleHashChange(); // Ensure the right tab is displayed after loading the header
-                })
-                .catch(error => console.error('Error loading header:', error));
-        });
-
+        // Unrealistic model. 
         // Mock data for testing
-        const mockData = {
-            shirts: [
-                { product_id: 101, product_name: "Cool T-Shirt", product_price: 99000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 1, store_name: "Fransiscus Fashion" },
-                { product_id: 102, product_name: "Graphic Tee", product_price: 119000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 2, store_name: "Borgias Merch" },
-            ],
-            pants: [
-                { product_id: 201, product_name: "Jeans", product_price: 199000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "pair", store_id: 1, store_name: "Fransiscus Fashion" },
-                { product_id: 202, product_name: "Chinos", product_price: 179000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "pair", store_id: 3, store_name: "Gonz Pants Co" },
-            ],
-            accessories: [
-                { product_id: 301, product_name: "Sunglasses", product_price: 79000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 1, store_name: "Fransiscus Borgias" },
-                { product_id: 302, product_name: "Cap", product_price: 49000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 2, store_name: "Borgias Merch" },
-            ],
-            food: [
-                { product_id: 401, product_name: "Nasi Goreng", product_price: 35000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "plate", store_id: 4, store_name: "Gonz Foods" },
-                { product_id: 402, product_name: "Mie Goreng", product_price: 25000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "plate", store_id: 4, store_name: "Gonz Foods" },
-            ],
-            drinks: [
-                { product_id: 501, product_name: "Iced Coffee", product_price: 20000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "cup", store_id: 5, store_name: "Caffeine Haven" },
-                { product_id: 502, product_name: "Milk Tea", product_price: 18000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "cup", store_id: 5, store_name: "Caffeine Haven" },
-            ],
-        };
-
+        // const productData = {
+        //     shirts: [
+        //         { product_id: 101, product_name: "Cool T-Shirt", product_price: 99000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 1, store_name: "Fransiscus Fashion" },
+        //         { product_id: 102, product_name: "Graphic Tee", product_price: 119000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 2, store_name: "Borgias Merch" },
+        //     ],
+        //     pants: [
+        //         { product_id: 201, product_name: "Jeans", product_price: 199000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "pair", store_id: 1, store_name: "Fransiscus Fashion" },
+        //         { product_id: 202, product_name: "Chinos", product_price: 179000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "pair", store_id: 3, store_name: "Gonz Pants Co" },
+        //     ],
+        //     accessories: [
+        //         { product_id: 301, product_name: "Sunglasses", product_price: 79000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 1, store_name: "Fransiscus Borgias" },
+        //         { product_id: 302, product_name: "Cap", product_price: 49000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 2, store_name: "Borgias Merch" },
+        //     ],
+        //     food: [
+        //         { product_id: 401, product_name: "Nasi Goreng", product_price: 35000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "plate", store_id: 4, store_name: "Gonz Foods" },
+        //         { product_id: 402, product_name: "Mie Goreng", product_price: 25000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "plate", store_id: 4, store_name: "Gonz Foods" },
+        //     ],
+        //     drinks: [
+        //         { product_id: 501, product_name: "Iced Coffee", product_price: 20000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "cup", store_id: 5, store_name: "Caffeine Haven" },
+        //         { product_id: 502, product_name: "Milk Tea", product_price: 18000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "cup", store_id: 5, store_name: "Caffeine Haven" },
+        //     ],
+        // };
+        
         // Function to fetch items from API or use mock data
-        async function fetchItems(category, containerId) {
-            try {
-                const container = document.getElementById(containerId);
-                container.innerHTML = `<p>Loading ${category} items...</p>`;
-                const items = mockData[category.toLowerCase()] || [];
-                populateItems(container, items);
-            } catch (error) {
-                console.error(`Error fetching ${category} items:`, error);
-            }
-        }
-
-        // Function to populate items in the container
-        function populateItems(container, items) {
-            console.log(`Populating items: `, items); // Log items
-            container.innerHTML = '';
-            items.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.classList.add('item');
-                itemDiv.innerHTML = `
-            <img src="${item.product_imgSrc}" alt="${item.product_name}">
-            <p>${item.product_name}</p>
-            <p class="store-name">Store: ${item.store_name}</p>
-            <img class="store-logo" src="https://via.placeholder.com/50" alt="${item.store_name} Logo">
-            <p>Rp ${item.product_price.toLocaleString('id-ID')} / ${item.product_unit}</p>
-            <button class="add-to-cart" onclick="addToCart('${item.product_name}', ${item.product_price}, '${item.product_imgSrc}', ${item.store_id}, '${item.store_name}')">Add to Cart</button>
-            <a href="product.html?id=${item.product_id}" class="view-details">View Details</a>
-        `;
-                container.appendChild(itemDiv);
-            });
-        }
+        // async function fetchItems(category, containerId) {
+        //     try {
+        //         const container = document.getElementById(containerId);
+        //         container.innerHTML = `<p>Loading ${category} items...</p>`;
+        //         const items = productData[category.toLowerCase()] || [];
+        //         populateItems(container, items);
+        //     } catch (error) {
+        //         console.error(`Error fetching ${category} items:`, error);
+        //     }
+        // }
 
         // Function to add items to the cart
         function addToCart(name, price, imgSrc, store_id, store_name) {
@@ -375,8 +339,38 @@
             alert(`${name} has been added to your cart!`);
         }
 
+        //#region GET PRODUCTS LOGIC
+        import { product } from './integration/fetches.js';
+        const categoryToIdPair = {
+            Shirts: "shirts-items-container",
+            Pants: "pants-items-container",
+            Accessories: "accessory-items-container",
+            Food: "food-items-container",
+            Drinks: "drinks-items-container",
+            All: "all-items-container",
+        };
+
+        function populateItems(container, items) {
+            container.innerHTML = '';
+            items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('item');
+
+                itemDiv.innerHTML = `
+                    <img src="${item.product_imgSrc}" alt="${item.product_name}">
+                    <p>${item.product_name}</p>
+                    <p class="store-name">Store: ${item.store_name}</p>
+                    <img class="store-logo" src="https://via.placeholder.com/50" alt="${item.store_name} Logo">
+                    <p>Rp ${item.product_price.toLocaleString('id-ID')} / ${item.product_unit}</p>
+                    <button class="add-to-cart" onclick="addToCart('${item.product_name}', ${item.product_price}, '${item.product_imgSrc}', ${item.store_id}, '${item.store_name}')">Add to Cart</button>
+                    <a href="product.html?id=${item.product_id}" class="view-details">View Details</a>
+                    `;
+                container.appendChild(itemDiv);
+            });
+        }
+
         // Handle switching between tabs using hash-based navigation
-        function openCategory(categoryName) {
+        async function openCategory(categoryName) {
             const tabcontents = document.getElementsByClassName("tabcontent");
 
             // Hide all tab contents
@@ -387,12 +381,22 @@
             if (selectedTab) {
                 selectedTab.style.display = "block";
 
-                // Fetch items dynamically
-                const containerId = `${categoryName.toLowerCase()}-items-container`;
-                fetchItems(categoryName.toLowerCase(), containerId);
+                const products = await product.getProducts(categoryName.toLowerCase());
+                console.log(products);
+                const container = document.getElementById(categoryToIdPair[categoryName]);
+                populateItems(container, products);
             }
         }
 
+        // Automatically load content for all categories on page load 
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // Fetch items for each category
+            for (const [category, containerId] of Object.entries(categoryToIdPair)) {
+                fetchItems(category.toLowerCase(), containerId);
+            }
+        });
+        
         // Handle hash changes to navigate between tabs
         function handleHashChange() {
             const hash = window.location.hash.substring(1); // Remove the '#' from the hash
@@ -403,37 +407,16 @@
                 openCategory("Shirts");
             }
         }
+        // Attach event listener for hash changes
+        window.addEventListener("hashchange", handleHashChange);
 
-        // Automatically load content for all categories on page load
-        document.addEventListener("DOMContentLoaded", function () {
-            const categories = {
-                Shirts: "shirt-items-container",
-                Pants: "pant-items-container",
-                Accessories: "accessory-items-container",
-                Food: "food-items-container",
-                Drinks: "drink-item-container",
-                All: "all-items-container",
-            };
+        // Trigger the handler on page load
+        handleHashChange();
 
-            // Fetch items for each category
-            for (const [category, containerId] of Object.entries(categories)) {
-                fetchItems(category.toLowerCase(), containerId);
-            }
-
-            // Attach event listener for hash changes
-            window.addEventListener("hashchange", handleHashChange);
-
-            // Trigger the handler on page load
-            handleHashChange();
-        });
+        //#endregion
     </script>
 
-    <script src="dropdown.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            initializePage(); // Initialize the shared functionality
-        });
-    </script>
+    <script type="module" src="dropdown.js" defer></script>
 </body>
 
 </html>

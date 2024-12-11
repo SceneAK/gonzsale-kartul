@@ -84,10 +84,6 @@
 
     <script src="dropdown.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            initializePage(); // Initialize shared functionality
-        });
-
         const cart = JSON.parse(localStorage.getItem('cart') || '[]');
         const cartItemsContainer = document.getElementById('cart-items');
         const emptyMessage = document.getElementById('empty-message');

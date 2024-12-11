@@ -232,9 +232,9 @@
                 <!-- Add Product button -->
                 <div id="dropdown-content" class="dropdown-content">
                     <div id="loginForm">
-                        <input type="text" placeholder="Email">
-                        <input type="password" placeholder="Password">
-                        <button onclick="window.location.href='signup.html';">Sign In</button>
+                        <input type="text" id="email" placeholder="Email">
+                        <input type="password" id="password" placeholder="Password">
+                        <button id="signIn">Sign In</button>
                         <p>Don't have an account?</p>
                         <button onclick="window.location.href='signup.html';">Sign Up</button>
                     </div>
@@ -278,67 +278,6 @@
             All Items
         </a>
     </div>
-
-    <script>
-        // Function to initialize dropdown functionality
-        function initializeDropdown() {
-            const dropdownLink = document.querySelector('.dropdown a');
-            const dropdownContent = document.getElementById("dropdown-content");
-
-            if (dropdownLink && dropdownContent) {
-                // Toggle dropdown visibility on click
-                dropdownLink.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    dropdownContent.classList.toggle("show");
-                });
-
-                // Close dropdown if clicked outside
-                window.addEventListener('click', function (event) {
-                    if (!event.target.closest('.dropdown')) {
-                        dropdownContent.classList.remove('show');
-                    }
-                });
-
-                console.log('Dropdown functionality initialized.');
-            } else {
-                console.error('Dropdown elements not found.');
-            }
-        }
-
-        // Update UI based on login state and other UI updates
-        function updateUI(isLoggedIn, username) {
-            const loginForm = document.getElementById("loginForm");
-            const manageProductsBtn = document.getElementById("manageProductsBtn");
-            const addProductBtn = document.getElementById("addProductBtn");
-            const dropdownLink = document.querySelector('.dropdown a');
-            const dropdownContent = document.getElementById("dropdown-content");
-
-            // Update dropdown based on login state
-            if (dropdownLink) {
-                if (isLoggedIn) {
-                    dropdownLink.innerHTML = `<img src="assets/images/cart_icon.svg" alt="Cart Icon">${username}`; // Show username with cart icon
-                } else {
-                    dropdownLink.textContent = "Sign In"; // Keep "Sign In" text for logged-out user
-                }
-            }
-
-            // Show/hide UI elements based on login state
-            if (loginForm) loginForm.style.display = isLoggedIn ? "none" : "block"; // Hide login form if logged in
-            if (manageProductsBtn) manageProductsBtn.style.display = isLoggedIn ? "block" : "none"; // Show "Manage Products" button if logged in
-            if (addProductBtn) addProductBtn.style.display = isLoggedIn ? "inline-block" : "none"; // Show "Add New Product" button if logged in
-
-            console.log('Header UI updated based on login state.');
-        }
-
-        // Listen for the headerLoaded event to initialize dropdown and update UI
-        document.addEventListener('headerLoaded', function () {
-            initializeDropdown(); // Initialize dropdown functionality
-            const isLoggedIn = false; // Example: Change this value based on the user's login state
-            const username = "JohnDoe"; // Example: Replace with the actual username
-            updateUI(isLoggedIn, username); // Update the UI based on the login state
-        });
-
-    </script>
 </header>
 
 <header class="mobile-header">
@@ -538,9 +477,9 @@
     <div class="modal-overlay" id="loginModal">
         <div class="modal-content">
             <h2>Sign In</h2>
-            <input type="email" placeholder="Email" required>
-            <input type="password" placeholder="Password" required>
-            <button>Sign In</button>
+            <input type="email" id="email_mobile" placeholder="Email" required>
+            <input type="password" id="password_mobile" placeholder="Password" required>
+            <button id="signIn_mobile" >Sign In</button>
             <button class="close-btn" onclick="toggleModal('loginModal')">Close</button>
             <p>Don't have an account? <a href="signup.html">Register</a></p>
         </div>
@@ -548,24 +487,5 @@
 
     <!-- comment for push -->
 
-    <script>
-        function toggleMenu() {
-            const sideMenu = document.getElementById("sideMenu");
-            sideMenu.classList.toggle("open");
-        }
 
-        function toggleModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.classList.toggle("show");
-        }
-
-        // Close modal when clicking outside the content
-        window.addEventListener("click", function (event) {
-            const modal = document.getElementById("loginModal");
-            const modalContent = modal.querySelector(".modal-content");
-            if (modal.classList.contains("show") && !modalContent.contains(event.target)) {
-                modal.classList.remove("show");
-            }
-        });
-    </script>
 </header>

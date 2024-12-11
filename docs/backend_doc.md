@@ -60,6 +60,7 @@ Order of Importance, descending
 ## store.js
 - Delete Store
 ## order.js
+- get singular order
 - Mailing Customers when order status changes, when product gets deleted, when  
 ## transaction.js
 - Payment Gateway

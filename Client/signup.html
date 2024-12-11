@@ -59,6 +59,7 @@
             font-weight: bold;
         }
 
+        input[type="text"],
         input[type="email"],
         input[type="password"] {
             width: 100%;
@@ -129,21 +130,26 @@
                 <p><strong>Please provide the following information</strong></p>
                 <p><span class="required">*</span> denotes required fields</p>
 
+                <label for="username"><span class="required">*</span> Username:</label>
+                <input type="text" id="username" name="username" required>
+
+                <label for="phone"><span class="required">*</span> Phone:</label>
+                <input type="text" id="phone" name="phone" required>
+                
                 <label for="email"><span class="required">*</span> Email:</label>
                 <input type="email" id="email" name="email" required>
 
                 <label for="password"><span class="required">*</span> Password:</label>
                 <input type="password" id="password" name="password" required>
 
+
                 <p class="password-instructions">
-                    Your password must be between 8 to 100 characters inclusive, and must include at least one
-                    uppercase and one lowercase letter, a number, and at least one special character, such as *, ',
-                    (, etc. (except whitespace)
+                    Your password must be between 3 to 300 characters inclusive
                 </p>
 
                 <div class="form-buttons">
                     <button type="button" onclick="window.history.back()">Cancel</button>
-                    <button type="submit" onclick="incompleteSignup('Abi Binawan Gunardi', '200191169420')">Register</button>
+                    <button type="submit" id="submitButton">Register</button>
                 </div>
             </div>
         </body>
@@ -155,47 +161,18 @@
     </div>
 
 
-    <script>
-        // Load external HTML file into a div
-        function loadHTML(file, elementId) {
-            fetch(file)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById(elementId).innerHTML = data;
-                });
-        }
-
-        // Tambahan
-        async function incompleteSignup(name, phone){
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            signUp(name, phone, email, password);
-        }
-        async function signUp(name, phone, email, password) { // will return a cookie
-            const response = await fetch("http://localhost:3000/user/signup", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user_name: name,
-                    user_phone: phone,
-                    user_email: email,
-                    user_password: password
-                })
-            })
-            if (!response.ok) {
-                response.text().then(text => {throw new Error("Signup Failed, ", text)});
-            }
-            localStorage.setItem('isLoggedIn', true);
-            localStorage.setItem('loginTime', Date.now());
-        }
-
-        // Load header and footer
-        loadHTML('header.html', 'header');
-        loadHTML('footer.html', 'footer');
+    <script type="module">
+        import {hookSignUp} from './integration/user.js';
+        
+        const submitButton = document.getElementById('submitButton');
+        const name = document.getElementById('username');
+        const phone = document.getElementById('phone');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        hookSignUp(submitButton, name, phone, email, password);
+        
     </script>
-
+    <script type="module" src="dropdown.js" defer></script>
 </body>
 
 </html>
