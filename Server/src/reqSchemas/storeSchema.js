@@ -5,7 +5,7 @@ const createStoreSchema = {
         store_description: Joi.string().max(300).required(),
         store_bank_account: Joi.string().min(10).max(16).required(),
         store_payment_method: Joi.string().max(10).required()
-    }),
+    }).required(),
     files: Joi.object().exist()
 }
 const updateStoreSchema = {
@@ -14,7 +14,7 @@ const updateStoreSchema = {
         store_description: Joi.string().max(300),
         store_bank_account: Joi.string().min(10).max(16),
         store_payment_method: Joi.string().max(10)
-    }).unknown(false),
+    }).unknown(false).required(),
     files: Joi.object()
 }
 

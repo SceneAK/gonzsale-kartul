@@ -7,6 +7,8 @@ const router = express.Router();
 
 router.get('/:id', store.getStore);
 
+router.get('/', verifyUser, store.getOwnedStore);
+
 const imgUpload = createMulter({relativeDir: "images/store/", type: 'fields', fields: [
     {name: 'store_imgSrc', maxCount: 1},
     {name: 'store_QR_imgSrc', maxCount: 1}

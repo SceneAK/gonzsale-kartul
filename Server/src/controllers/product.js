@@ -9,11 +9,11 @@ function prepareImgUrls(protocol, host, rows)
     return rows.map( row => {
         try
         {
-            const relPaths = JSON.parse(row.product_imgSrc);
-            if(row.product_imgSrc != undefined && row.product_imgSrc != null){
-                row.product_imgSrc = relPaths.map( relPath => buildURL(protocol, host, relPath) );
+            const{ product_imgSrc } = row;
+            if(product_imgSrc){
+                row.product_imgSrc = product_imgSrc.map( src => buildURL(protocol, host, src) );
             }
-        }catch(err){    }
+        }catch(err){ console.error(err); }
         
         return row;
     })
@@ -32,12 +32,12 @@ const getProducts = async (req, res) => {
 }
 async function executeFiltered(filter)
 {
-    let query = `SELECT p.* FROM products p`;
+    let query = `SELECT p.*, s.store_name FROM products p INNER JOIN stores s ON p.store_id = s.store_id`;
     let params = [];
     
     if(filter.store_name)
     {
-        query += ` INNER JOIN stores s ON p.store_id = s.store_id WHERE s.store_name LIKE ? COLLATE utf8mb4_general_ci`
+        query += ` WHERE s.store_name LIKE ? COLLATE utf8mb4_general_ci`
         params.push(`${filter.store_name.trim()}%`);
         
     }else{

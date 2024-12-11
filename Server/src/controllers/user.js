@@ -7,11 +7,13 @@ const connection = await connectionPromise;
 const SALT_ROUNDS = 8;
 
 async function authenticate(email, password){ // authentication happens only in sign-in
-    const [rows] = await connection.execute('SELECT user_id, user_role, user_password FROM users WHERE user_email = ?', [email]);
+    const [rows] = await connection.execute('SELECT * FROM users WHERE user_email = ?', [email]);
     if(rows.length == 0) return null;
 
     const result = bcrypt.compare(password, rows[0].user_password)
     if(result){
+        delete rows[0].user_password;
+        delete rows[0].user_used_storage;
         return rows[0];
     }
     return null;
@@ -30,7 +32,7 @@ const signIn = async (req, res) => {
     {
         const authToken = signUser(user.user_id, user.user_role);
         res.cookie('token', authToken, cookieOptions);
-        res.send('Signed In');
+        res.json(user);
     }else{
         return res.status(401).send("Invalid Sign In Data");
     }
@@ -66,7 +68,7 @@ const signUp = async (req, res) => {
         
         const authToken = signUser(user_id, 'USER'); // default role
         res.cookie('token', authToken, cookieOptions);
-        res.send('Signed Up');
+        res.json({user_name, user_phone, user_email, user_role: "USER"});
     } catch (error) {
         return res.status(500).send("ERR\n" + error);
     }

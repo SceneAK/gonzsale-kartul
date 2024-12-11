@@ -6,7 +6,7 @@ const placeOrderSchema = {
         order_qty: Joi.number().min(1).required(),
         order_variant: Joi.any().default("{}"),
         order_notes: Joi.string().max(150).default("no notes provided")
-    }),
+    }).required(),
     file: Joi.any().exist() // Expects key name to be 'transaction_proof'
 }
 
@@ -17,14 +17,14 @@ const bodyExtra = Joi.object({
 });
 const guestPlaceOrderSchema = {
     ...placeOrderSchema,
-    body: placeOrderSchema.body.concat(bodyExtra),
+    body: placeOrderSchema.body.concat(bodyExtra).required(),
 }
 
 const updateSchema = {
     body: Joi.object({
         order_id: Joi.string().length(36).required(),
         order_status: Joi.string().valid('PROCESSING', 'IN_GONZAGA' ,'COMPLETED').required()
-    })
+    }).required()
 }
 
 export default {

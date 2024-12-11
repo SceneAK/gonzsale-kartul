@@ -21,6 +21,12 @@ const getStore = async (req, res) =>
     res.json({...stores[0], owner: owners[0]});
 }
 
+const getOwnedStore = async (req, res) =>{
+    const store = await getUserStore(req.authUser.id)
+    console.log(store);
+    res.json(store);
+}
+
 function splitAndTrackFiles(files)
 {
     let store_imgSrc = null;
@@ -110,4 +116,4 @@ async function change(oldSrc, newSrc, fieldNameInDb, owner_id)
     return true;
 }
 
-export default  { getStore, createStore, updateStore }
+export default  { getStore, getOwnedStore, createStore, updateStore }
