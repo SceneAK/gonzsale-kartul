@@ -107,46 +107,31 @@
         </tbody>
     </table>
 
-    <script>
-        // Function to fetch orders
-        async function fetchOrders() {
-            const loader = document.getElementById('loader');
-            loader.style.display = 'block'; // Show loader
-            try {
-                const response = await fetch('http://localhost:3000/orders'); // Adjust API URL as needed
-                if (!response.ok) throw new Error('Failed to fetch orders');
-
-                const orders = await response.json();
-                loader.style.display = 'none'; // Hide loader
-                populateOrders(orders);
-            } catch (error) {
-                console.error('Error fetching orders:', error);
-                loader.innerHTML = '<p>Failed to load orders. Please try again later.</p>';
-            }
-        }
+    <script type="module">
+        import { order } from './integration/fetches.js';
 
         // Function to populate orders in the table
         function populateOrders(orders) {
             const tableBody = document.getElementById('order-table-body');
             tableBody.innerHTML = ''; // Clear existing rows
 
-            orders.forEach(order => {
+            orders.forEach(o => {
                 const row = document.createElement('tr');
 
                 row.innerHTML = `
-                    <td>${order.id}</td>
-                    <td>${order.buyerName}</td>
-                    <td>${order.productName}</td>
-                    <td>${order.quantity}</td>
-                    <td>$${order.totalPrice.toFixed(2)}</td>
-                    <td class="${order.status === 'Completed' ? 'status-completed' : 'status-pending'}">
-                        ${order.status}
+                    <td>${o.id}</td>
+                    <td>${o.buyerName}</td>
+                    <td>${o.productName}</td>
+                    <td>${o.quantity}</td>
+                    <td>$${o.totalPrice.toFixed(2)}</td>
+                    <td class="${o.status === 'Completed' ? 'status-completed' : 'status-pending'}">
+                        ${o.status}
                     </td>
                     <td>
-                        <button class="action-btn complete-btn" onclick="markOrderAsCompleted(${order.id})">
+                        <button class="action-btn complete-btn" onclick="markOrderAsCompleted(${o.id})">
                             Mark as Completed
                         </button>
-                        <button class="action-btn delete-btn" onclick="deleteOrder(${order.id})">
+                        <button class="action-btn delete-btn" onclick="deleteOrder(${o.id})">
                             Delete
                         </button>
                     </td>
@@ -155,42 +140,11 @@
             });
         }
 
-        // Function to mark an order as completed
-        async function markOrderAsCompleted(orderId) {
-            try {
-                const response = await fetch(`http://localhost:3000/orders/${orderId}/complete`, {
-                    method: 'PUT',
-                });
-                if (!response.ok) throw new Error('Failed to update order status');
-
-                alert(`Order ${orderId} marked as completed.`);
-                fetchOrders(); // Refresh orders
-            } catch (error) {
-                console.error('Error completing order:', error);
-                alert('Failed to mark order as completed.');
-            }
-        }
-
-        // Function to delete an order
-        async function deleteOrder(orderId) {
-            if (!confirm(`Are you sure you want to delete Order ${orderId}?`)) return;
-
-            try {
-                const response = await fetch(`http://localhost:3000/orders/${orderId}`, {
-                    method: 'DELETE',
-                });
-                if (!response.ok) throw new Error('Failed to delete order');
-
-                alert(`Order ${orderId} deleted.`);
-                fetchOrders(); // Refresh orders
-            } catch (error) {
-                console.error('Error deleting order:', error);
-                alert('Failed to delete order.');
-            }
-        }
-
         // Load orders on page load
-        document.addEventListener('DOMContentLoaded', fetchOrders);
+        document.addEventListener('DOMContentLoaded', async function(){
+            const orders = await order.getIncomingOrders();
+            populateOrders(orders);
+        });
     </script>
 </body>
 

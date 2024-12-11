@@ -89,6 +89,12 @@ test editing and creating store.
 ## Payment Gateway
 - rename transaction table to basic_tansactions table
 ## Mailing
+- Delete Product
+- Limit number of variants
+## store.js
+- Delete Store
+## order.js
+- get singular order
 - Mailing Customers when order status changes, when product gets deleted, when  
 - Change Password
 # Security Concerns & Abuse Protection

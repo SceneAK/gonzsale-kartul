@@ -3,7 +3,7 @@ USE gonzsale;
 CREATE TABLE users(
    user_id VARCHAR(36) PRIMARY KEY, 
    user_name VARCHAR(35),
-   user_phone VARCHAR(10),
+   user_phone VARCHAR(15),
    user_email VARCHAR(30) NOT NULL UNIQUE,
    user_password VARCHAR(256),
    user_role ENUM('USER', 'STORE_MANAGER', 'ADMIN') DEFAULT 'USER',

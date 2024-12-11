@@ -45,7 +45,7 @@ const signUp = async (req, res) => {
     const hashed = await bcrypt.hash(user_password, SALT_ROUNDS);
 
     try {
-        const [rows] = await connection.execute("SELECT user_id WHERE user_email = ?", [user_email])
+        const [rows] = await connection.execute("SELECT user_id FROM users WHERE user_email = ?", [user_email])
         let user_id;
         if(rows.length != 0){
             user_id = rows[0].user_id;
@@ -70,6 +70,7 @@ const signUp = async (req, res) => {
         res.cookie('token', authToken, cookieOptions);
         res.json({user_name, user_phone, user_email, user_role: "USER"});
     } catch (error) {
+        console.log("ERROR ", error);
         return res.status(500).send("ERR\n" + error);
     }
 }

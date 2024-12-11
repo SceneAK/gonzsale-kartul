@@ -215,7 +215,6 @@
     <script src="dropdown.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            initializePage(); // Initialize shared functionality
 
             const form = document.getElementById("add-product-form");
             const fileInput = document.getElementById("product-images");
@@ -247,7 +246,7 @@
                 const formData = new FormData(form);
 
                 try {
-                    const response = await fetch("http://localhost:3000/add-product", {
+                    const response = await fetch("http://localhost:3000/product", {
                         method: "POST",
                         body: formData,
                     });

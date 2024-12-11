@@ -76,7 +76,7 @@
         <h1>My Cart</h1>
         <div id="cart-items"></div>
         <p id="empty-message" class="empty-message">Nothing yet</p>
-        <a href="/checkout" class="checkout-button" id="checkout-button" style="display: none;">Proceed to Checkout</a>
+        <a href="checkout.html" class="checkout-button" id="checkout-button" style="display: none;">Proceed to Checkout</a>
     </div>
 
     <!-- Placeholder for existing footer -->
@@ -84,10 +84,6 @@
 
     <script src="dropdown.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            initializePage(); // Initialize shared functionality
-        });
-
         const cart = JSON.parse(localStorage.getItem('cart') || '[]');
         const cartItemsContainer = document.getElementById('cart-items');
         const emptyMessage = document.getElementById('empty-message');
