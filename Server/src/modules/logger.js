@@ -3,7 +3,7 @@ import upath from 'upath';
 import pinoHttp from 'pino-http';
 import pino from "pino";
 
-const dest = pino.destination(upath.join(__dirname, 'logs'))
+const dest = pino.destination(upath.join(__dirname, '.log'))
 const logger = pino({ 
     level: process.env.LOG_LEVEL || 'info',
     timestamp: pino.stdTimeFunctions.isoTime 

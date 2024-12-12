@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { logger } from './logger.js';
 
 const signUser = (user_id, user_role) => {
     return jwt.sign({id: user_id, role: user_role}, process.env.SECRET_KEY, { expiresIn: '1h' });
@@ -7,10 +8,11 @@ const signUser = (user_id, user_role) => {
 const verifyUser = async (req, res, next) => { // NOTE: Expects tokens in req.signedCookies after user.js is called
     const {token} = req.signedCookies;
     try {
+        logger.log("TOKEN: ", token);
         req.authUser = await verifyAuthToken(token);
         next()
     } catch (err) {
-        return res.status(401).send("Unauthorized");
+        return res.status(401).send("Unauthorized: " + err);
     }
     
 }

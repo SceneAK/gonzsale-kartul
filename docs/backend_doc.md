@@ -50,9 +50,21 @@ Notable points per "module"s of this app, including their controllers, routes, a
 # TASK BACKLOG
 Order of Importance, descending
 
+Frontend Integration 
+- Place Order (Logged in)
+- Create Product Page (make accessible on signed in, hook up to fetches.js)
+- Get Orders page (make accessible)
+- Store Page (single store) (make accessible(,
+- Create Store Page (make accessible when STORE_MANAGER but no owned store
 Test product_availability creation, edit, & ordering
 test createMulter's field()
 test editing and creating store.
+
+Deployment
+- Deploy backend + mysql + nginx/apache
+- learn how to customize DNS settings &
+- Get ssl certificate LET'S ENCRYPT
+- Change cookies to samesite strict
 
 ## Seperate product_images table
 - Create product_images (image_id, product_id, imageSrc, image_order)

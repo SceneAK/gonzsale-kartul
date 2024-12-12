@@ -1,9 +1,10 @@
 const baseUrl = "http://localhost:3000";
-async function request(endpoint, method, body = null, headers = {})
+async function request(endpoint, method, body = null, credentials = 'omit', headers = {})
 {
     const res = await fetch(`${baseUrl}${endpoint}`, {
         method,
         headers,
+        credentials,
         body
     });
     if (!res.ok) {
@@ -12,17 +13,17 @@ async function request(endpoint, method, body = null, headers = {})
     }
     return res;
 }
-async function jsonRequest(endpoint, method, body = null, headers = {})
+async function jsonRequest(endpoint, method, body = null, credentials = 'omit', headers = {})
 {
-    const req = await request(endpoint, method, body, {'Content-Type': 'application/json', ...headers})
+    const req = await request(endpoint, method, body, credentials, {'Content-Type': 'application/json', ...headers})
     try
     {
         return req.json();
     }catch(err) {throw err;}
 }
-async function formdataRequest(endpoint, method, formdata = null, headers = {})
+async function formdataRequest(endpoint, method, formdata = null, credentials = 'omit', headers = {})
 {
-    return await jsonRequest(endpoint, method, formdata, {'Content-Type': 'multipart/form-data', ...headers})
+    return await jsonRequest(endpoint, method, formdata, credentials, {'Content-Type': 'multipart/form-data', ...headers})
 }
 
 //#region User
@@ -51,15 +52,19 @@ async function getStore(id)
 {
     return await jsonRequest(`/store/${id}`, "GET");
 }
+async function getOwnStore()
+{
+    return await jsonRequest(`/store`, "GET", null, 'include');
+}
 async function createStore(formdata) // auth
 {
-    return await formdataRequest(`/store`, "POST", formdata);
+    return await formdataRequest(`/store`, "POST", formdata, 'include');
 }
 async function editStore(formdata)
 {
     return await formdataRequest(`/store`, "PATCH", formdata);
 }
-const store = {getStore, createStore, editStore};
+const store = {getStore, getOwnStore, createStore, editStore};
 //#endregion
 
 //#region Product
@@ -82,11 +87,11 @@ async function getProduct(id)
 }
 async function createProduct(formdata) // auth & store
 {
-    return await formdataRequest(`/product`, "POST", formdata);
+    return await formdataRequest(`/product`, "POST", formdata, 'include');
 }
 async function editProduct(formdata, id) // auth & store
 {
-    return await formdataRequest(`/product/${id}`, "PATCH", formdata);
+    return await formdataRequest(`/product/${id}`, "PATCH", formdata, 'include');
 }
 const product = {getProduct, getProducts, createProduct, editProduct};
 //#endregion
@@ -94,15 +99,15 @@ const product = {getProduct, getProducts, createProduct, editProduct};
 //#region Order
 async function getOrders() // auth
 {
-    return await jsonRequest('/order', "GET");
+    return await jsonRequest('/order', "GET", null, 'include');
 }
 async function getIncomingOrders() // auth & store
 {
-    return await jsonRequest('/order/incoming', "GET");
+    return await jsonRequest('/order/incoming', "GET", null, 'include');
 }
 async function placeOrder(formdata)// auth
 {
-    return await formdataRequest('/order', "POST", formdata);   
+    return await formdataRequest('/order', "POST", formdata, 'include');   
 }
 async function placeOrderGuest(formdata)
 {

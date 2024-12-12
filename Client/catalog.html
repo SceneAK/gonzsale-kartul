@@ -382,7 +382,6 @@
                 selectedTab.style.display = "block";
 
                 const products = await product.getProducts(categoryName.toLowerCase());
-                console.log(products);
                 const container = document.getElementById(categoryToIdPair[categoryName]);
                 populateItems(container, products);
             }
@@ -391,10 +390,7 @@
         // Automatically load content for all categories on page load 
         document.addEventListener("DOMContentLoaded", function () {
 
-            // Fetch items for each category
-            for (const [category, containerId] of Object.entries(categoryToIdPair)) {
-                fetchItems(category.toLowerCase(), containerId);
-            }
+            
         });
         
         // Handle hash changes to navigate between tabs

@@ -5,7 +5,7 @@ import { logger } from './src/modules/logger.js';
 
 app.use(cors(
     { 
-        origin: 'http://127.0.0.1:5500',
+        origin: 'http://127.0.0.1:5500', // http server origin
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         credentials: true
 }));
