@@ -2,6 +2,7 @@ import { STATIC_ROUTE_NAME, PUBLIC_DIR } from './initialize.js';
 import cookieParser from 'cookie-parser';
 import express from 'express'; 
 import { httpLogger, logger } from './src/modules/logger.js';
+import cleanUp from './cleanup.js';
 
 
 const app = express()
@@ -25,17 +26,29 @@ app.use(
     }
   }
 );
-process.on('uncaughtException', (error) => { 
-    logger.error('Uncaught Exception:', error); 
+
+process.on('SIGTERM', async ()=>{
+  await cleanUp();
+  process.exit(1)
+});
+process.on('SIGINT', async ()=>{
+  await cleanUp();
+  process.exit(1)
+});
+process.on('uncaughtException',async error => { 
+    logger.error('Uncaught Exception: ' + error); 
+    await cleanUp();
     process.exit(1);
 }); 
-process.on('unhandledRejection', (reason, promise) => { 
-    logger.error('Unhandled Rejection:', reason);
+process.on('unhandledRejection', async (reason, promise) => { 
+    logger.error('Unhandled Rejection: ' + reason);
+    await cleanUp();
+    process.exit(1);
 });
 
 // error handling
 app.use((err, req, res, next) => {
-  loggererror(err.stack)
+  logger.error(err.stack)
   res.status(500).send('Error')
 })
 
