@@ -65,7 +65,16 @@ const store = {getStore, createStore, editStore};
 //#region Product
 async function getProducts(category, extraFilters)
 {
-    return await jsonRequest(`/product/${category}`, "GET", extraFilters);
+    const products = await jsonRequest(`/product/${category}`, "GET", extraFilters); 
+    // REMOVE ON PRODUCTION
+    return products.map( product => { 
+        
+        product.product_imgSrc = product.product_imgSrc.map( src => {
+            const insertIndex = src.indexOf("localhost") + 9;
+            return src.slice(0, insertIndex) + ":3000" + src.slice(insertIndex);
+        }); 
+        return product;
+    })
 }
 async function getProduct(id)
 {

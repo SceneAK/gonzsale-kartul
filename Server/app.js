@@ -1,6 +1,8 @@
 import { STATIC_ROUTE_NAME, PUBLIC_DIR } from './initialize.js';
 import cookieParser from 'cookie-parser';
 import express from 'express'; 
+import { httpLogger, logger } from './src/modules/logger.js';
+
 
 const app = express()
 
@@ -10,7 +12,7 @@ app.use(`/${STATIC_ROUTE_NAME}/`, express.static(PUBLIC_DIR));
 app.use(cookieParser(process.env.JWT_SECRET_KEY));
 
 // logs
-app.use((req, res, next) => {console.log(req.path, req.method); next();})
+app.use(httpLogger)
 
 // Parse req.json if it's json
 app.use(
@@ -23,10 +25,17 @@ app.use(
     }
   }
 );
+process.on('uncaughtException', (error) => { 
+    logger.error('Uncaught Exception:', error); 
+    process.exit(1);
+}); 
+process.on('unhandledRejection', (reason, promise) => { 
+    logger.error('Unhandled Rejection:', reason);
+});
 
 // error handling
 app.use((err, req, res, next) => {
-  console.error(err.stack)
+  loggererror(err.stack)
   res.status(500).send('Error')
 })
 

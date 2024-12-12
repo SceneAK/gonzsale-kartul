@@ -3,6 +3,7 @@ import multer from 'multer';
 import { promises as fs} from 'fs';
 import { STATIC_ROUTE_NAME, PUBLIC_DIR } from '../../initialize.js';
 import connectionPromise from '../modules/db.js'
+import { logger } from './logger.js';
 const connection = await connectionPromise;
 
 const MAX_SIZE_USER = 300 * 1024 * 1024; // 300mb
@@ -96,7 +97,7 @@ async function unlinkStoredUpdateUsed(paths, id)
                 const size = fs.stat(relPath).size;
                 absSize += size;
             }
-        }).catch(err => console.log(err.message));
+        }).catch(err => logger.error("Updated Unlink Error, ", err.message));
     });
     addAmountToUsed(-absSize, id);
 }
@@ -104,7 +105,7 @@ async function unlink(files)
 {
     files.forEach(file => {
         fs.unlink(file.path, err => {
-            if(err) console.log(err)
+            if(err) logger.error("Unlink Error", err)
         })
     });
 }

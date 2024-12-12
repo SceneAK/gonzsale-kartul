@@ -1,6 +1,7 @@
 import app from './app.js';
 import cors from 'cors';
 import {userRoute, productRoute, storeRoute, orderRoute, transactionRoute} from './src/routes/index.js';
+import { logger } from './src/modules/logger.js';
 
 app.use(cors(
     { 
@@ -18,4 +19,4 @@ app.use('/transaction/', transactionRoute);
 
 // Start Listening
 const PORT = process.env.PORT;
-app.listen(PORT, () => {console.log(`listening on ${PORT}`)})
+app.listen(PORT, () => {logger.info(`listening on ${PORT}`)})

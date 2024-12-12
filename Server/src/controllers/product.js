@@ -2,6 +2,7 @@ import { v4 } from 'uuid';
 import connectionPromise from '../modules/db.js'
 import { buildURL, getFileRelative, unlink, unlinkStoredUpdateUsed, updateUsed } from '../modules/upload.js';
 import { generateUpdateQuery } from './common.js';
+import { logger } from '../modules/logger.js';
 const connection = await connectionPromise;
 
 function prepareImgUrls(protocol, host, rows)
@@ -13,7 +14,7 @@ function prepareImgUrls(protocol, host, rows)
             if(product_imgSrc){
                 row.product_imgSrc = product_imgSrc.map( src => buildURL(protocol, host, src) );
             }
-        }catch(err){ console.error(err); }
+        }catch(err){ logger.error("Error Preparing Product Img URL", err); }
         
         return row;
     })

@@ -115,7 +115,7 @@ const updateOrderStatus = async (req, res) => {
     }
 
     const [rows] = await connection.execute('SELECT p.store_id FROM orders o INNER JOIN products p ON o.product_id = p.product_id WHERE o.order_id = ?', [body.order_id]);
-    console.log(store.store_id);
+
     const storeOwnsProduct = rows[0].store_id == store.store_id;
     if(!storeOwnsProduct){ 
         res.status(401).send("Order's Product Does Not Belong To Store"); return;

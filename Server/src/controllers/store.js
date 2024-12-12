@@ -23,7 +23,6 @@ const getStore = async (req, res) =>
 
 const getOwnedStore = async (req, res) =>{
     const store = await getUserStore(req.authUser.id)
-    console.log(store);
     res.json(store);
 }
 
