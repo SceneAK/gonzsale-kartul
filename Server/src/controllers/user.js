@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { signUser } from '../modules/tokenAuth.js';
 import connectionPromise from '../modules/db.js'
 import { logger } from '../modules/logger.js';
+import 'cookie-parser';
 const connection = await connectionPromise;
 
 const SALT_ROUNDS = 8;
@@ -20,10 +21,10 @@ async function authenticate(email, password){ // authentication happens only in 
     return null;
 }
 const cookieOptions = {
-    httpOnly: true, 
+    httpOnly: false, 
     signed: true,
     //secure: true, // enable on production
-    sameSite: 'strict'
+    sameSite: 'none'
 }
 
 const signIn = async (req, res) => {

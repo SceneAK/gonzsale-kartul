@@ -8,7 +8,7 @@ const signUser = (user_id, user_role) => {
 const verifyUser = async (req, res, next) => { // NOTE: Expects tokens in req.signedCookies after user.js is called
     const {token} = req.signedCookies;
     try {
-        logger.log("TOKEN: ", token);
+        logger.info("TOKEN: ", token);
         req.authUser = await verifyAuthToken(token);
         next()
     } catch (err) {

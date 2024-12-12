@@ -1,4 +1,5 @@
-import { STATIC_ROUTE_NAME, PUBLIC_DIR } from './initialize.js';
+import { STATIC_ROUTE_NAME, PUBLIC_DIR, __dirname } from './initialize.js';
+import upath from 'upath';
 import cookieParser from 'cookie-parser';
 import express from 'express'; 
 import { httpLogger, logger } from './src/modules/logger.js';
@@ -9,6 +10,10 @@ const app = express()
 
 // static routes
 app.use(`/${STATIC_ROUTE_NAME}/`, express.static(PUBLIC_DIR)); 
+
+const pagesPath = upath.join(__dirname, '../Client');
+console.log(pagesPath);
+app.use(`/page/`, express.static(pagesPath)); 
 
 app.use(cookieParser(process.env.JWT_SECRET_KEY));
 

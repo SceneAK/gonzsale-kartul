@@ -1,5 +1,6 @@
 import app from './app.js';
 import cors from 'cors';
+import express from 'express'; 
 import {userRoute, productRoute, storeRoute, orderRoute, transactionRoute} from './src/routes/index.js';
 import { logger } from './src/modules/logger.js';
 
@@ -7,8 +8,9 @@ app.use(cors(
     { 
         origin: 'http://127.0.0.1:5500', // http server origin
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-        credentials: true
+        credentials: true,
 }));
+
 
 // MOUNTS ROUTES
 app.use('/product/', productRoute);
