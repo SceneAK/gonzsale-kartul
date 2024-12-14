@@ -31,7 +31,7 @@ async function signIn(email, password) {
     const body = JSON.stringify({user_email: email, user_password: password});
     try
     { // temporary
-        return await jsonRequest('/user/signin', 'POST', body)
+        return await jsonRequest('/user/signin', 'POST', body, 'include')
     }catch(err){ return {user_name: "TEMP", user_role: "STORE_MANAGER"}}
 }
 async function signUp(name, phone, email, password) { 
@@ -41,7 +41,7 @@ async function signUp(name, phone, email, password) {
         user_email: email, 
         user_password: password
     });
-    const res = await jsonRequest('/user/signup', 'POST', body);
+    const res = await jsonRequest('/user/signup', 'POST', body, 'include');
     return await res.text();
 }
 const user = { signIn, signUp } // both returns cookies

@@ -21,10 +21,10 @@ async function authenticate(email, password){ // authentication happens only in 
     return null;
 }
 const cookieOptions = {
-    httpOnly: false, 
+    httpOnly: true, 
     signed: true,
     //secure: true, // enable on production
-    sameSite: 'none'
+    sameSite: 'Strict'
 }
 
 const signIn = async (req, res) => {

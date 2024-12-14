@@ -84,6 +84,7 @@
 </head>
 
 <body>
+    <div id="header"></div>
     <h1>Order Management Dashboard</h1>
 
     <!-- Loader -->
@@ -107,6 +108,8 @@
         </tbody>
     </table>
 
+    <div id="footer"></div>
+    <script type="module" src="dropdown.js" defer></script>
     <script type="module">
         import { order } from './integration/fetches.js';
 
@@ -119,13 +122,13 @@
                 const row = document.createElement('tr');
 
                 row.innerHTML = `
-                    <td>${o.id}</td>
-                    <td>${o.buyerName}</td>
-                    <td>${o.productName}</td>
-                    <td>${o.quantity}</td>
-                    <td>$${o.totalPrice.toFixed(2)}</td>
-                    <td class="${o.status === 'Completed' ? 'status-completed' : 'status-pending'}">
-                        ${o.status}
+                    <td>${o.order_id}</td>
+                    <td>${o.customer_user_id}</td>
+                    <td>${o.product_id}</td>
+                    <td>${o.order_qty}</td>
+                    <td>$${o.transaction_id}</td>
+                    <td class="${o.order_status === 'COMPLETED' ? 'status-completed' : 'status-pending'}">
+                        ${o.order_status}
                     </td>
                     <td>
                         <button class="action-btn complete-btn" onclick="markOrderAsCompleted(${o.id})">

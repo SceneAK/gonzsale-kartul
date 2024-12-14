@@ -1,16 +1,14 @@
 import app from './app.js';
 import cors from 'cors';
-import express from 'express'; 
-import {userRoute, productRoute, storeRoute, orderRoute, transactionRoute} from './src/routes/index.js';
+import { userRoute, productRoute, storeRoute, orderRoute, transactionRoute } from './src/routes/index.js';
 import { logger } from './src/modules/logger.js';
 
 app.use(cors(
     { 
-        origin: 'http://127.0.0.1:5500', // http server origin
+        origin: 'http://localhost:3000',
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         credentials: true,
 }));
-
 
 // MOUNTS ROUTES
 app.use('/product/', productRoute);
@@ -21,4 +19,4 @@ app.use('/transaction/', transactionRoute);
 
 // Start Listening
 const PORT = process.env.PORT;
-app.listen(PORT, () => {logger.info(`listening on ${PORT}`)})
+app.listen(PORT, () => { logger.info(`listening on ${PORT}`)} )
