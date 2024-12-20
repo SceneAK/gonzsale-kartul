@@ -11,6 +11,12 @@
             background-color: #f9f9f9;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            /* Ensures the body fills the viewport height */
+            box-sizing: border-box;
+            /* Includes padding and border in element size */
         }
 
         .checkout-container {
@@ -20,6 +26,11 @@
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            /* Ensures it grows to fill available space */
+            box-sizing: border-box;
+            width: calc(100% - 40px);
+            /* Provides space for padding on smaller screens */
         }
 
         h1 {
@@ -27,6 +38,8 @@
             font-size: 2em;
             margin-bottom: 20px;
             color: #333;
+            word-wrap: break-word;
+            /* Prevents long words from overflowing */
         }
 
         .buyer-info {
@@ -45,6 +58,7 @@
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            box-sizing: border-box;
         }
 
         .store-section {
@@ -53,12 +67,14 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             background-color: #f7f7f7;
+            box-sizing: border-box;
         }
 
         .store-header {
             font-weight: bold;
             margin-bottom: 10px;
             color: #333;
+            word-wrap: break-word;
         }
 
         .product-list {
@@ -69,17 +85,25 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 5px;
+            flex-wrap: wrap;
+            /* Prevents items from overlapping on small screens */
+        }
+
+        .product-item span {
+            word-break: break-word;
         }
 
         .total-price {
             font-weight: bold;
             margin-top: 10px;
+            word-wrap: break-word;
         }
 
         .payment-details {
             margin-top: 10px;
             font-size: 0.9em;
             color: #666;
+            word-wrap: break-word;
         }
 
         .upload-container {
@@ -89,6 +113,9 @@
         .upload-container input[type="file"] {
             display: block;
             margin-top: 5px;
+            width: 100%;
+            /* Ensures file input spans across the container width */
+            box-sizing: border-box;
         }
 
         .finish-orders-btn {
@@ -104,6 +131,7 @@
             border-radius: 5px;
             cursor: pointer;
             text-align: center;
+            box-sizing: border-box;
         }
 
         .finish-orders-btn:disabled {
@@ -112,11 +140,11 @@
         }
     </style>
 </head>
+<header> <!-- Header placeholder -->
+    <div id="header"></div>
+</header>
 
 <body>
-    <!-- Header placeholder -->
-    <div id="header"></div>
-
     <div class="checkout-container">
         <h1>Checkout</h1>
 
@@ -136,7 +164,7 @@
         <button class="finish-orders-btn" id="finish-orders-btn" disabled>Finish Orders</button>
     </div>
 
-    <script src="dropdown.js"></script>
+    <script type="module" src="dropdown.js" defer></script>
     <script>
         const cart = JSON.parse(localStorage.getItem('cart') || '[]'); // Get cart data from localStorage
         const orderSummaryContainer = document.getElementById('order-summary');
@@ -219,5 +247,8 @@
         });
     </script>
 </body>
+<footer>
+    <div id="footer"></div>
+</footer>
 
 </html>

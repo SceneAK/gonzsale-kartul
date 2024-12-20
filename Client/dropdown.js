@@ -37,8 +37,7 @@ function initializeDropdown() {
 
     hookSignInWithElementIds('email', 'password', 'signIn')
 }
-function hookSignInWithElementIds(emailId, passwordId, signInId)
-{
+function hookSignInWithElementIds(emailId, passwordId, signInId) {
     const email = document.getElementById(emailId);
     const password = document.getElementById(passwordId);
     const signIn = document.getElementById(signInId);
@@ -56,8 +55,7 @@ export function updateUI() {
     if (loginDetail) {
         if (dropdownLink) dropdownLink.textContent = loginDetail.user_name; // Show username instead of "Sign In"
         if (loginForm) loginForm.style.display = "none"; // Hide login form
-        if(loginDetail.user_role == 'STORE_MANAGER')
-        {
+        if (loginDetail.user_role == 'STORE_MANAGER') {
             if (manageProductsBtn) manageProductsBtn.style.display = "block"; // Show "Manage Products" button
             if (addProductBtn) addProductBtn.style.display = "inline-block"; // Show "Add New Product" button
         }
@@ -65,7 +63,7 @@ export function updateUI() {
 }
 
 // Function to toggle modals (added for mobile login modal functionality)
-window.toggleModal = function(modalId) { 
+window.toggleModal = function (modalId) {
     console.log(`Toggling modal with ID: ${modalId}`); // Debugging log
     const modal = document.getElementById(modalId);
     if (!modal) {
@@ -89,6 +87,29 @@ function initializeModals() {
     hookSignInWithElementIds('email_mobile', 'password_mobile', 'signIn_mobile')
 }
 
+function initializeMenuToggle() {
+    const menuIcon = document.querySelector('.menu-icon');
+    const closeIcon = document.querySelector('.close-icon');
+    const sideMenu = document.getElementById('sideMenu');
+
+    if (menuIcon && sideMenu) {
+        menuIcon.addEventListener('click', () => {
+            console.log('Menu icon clicked!');
+            sideMenu.classList.toggle('open');
+        });
+    } else {
+        console.error('Menu icon or side menu not found.');
+    }
+
+    if (closeIcon && sideMenu) {
+        closeIcon.addEventListener('click', () => {
+            console.log('Close icon clicked!');
+            sideMenu.classList.remove('open');
+        });
+    } else {
+        console.error('Close icon or side menu not found.');
+    }
+}
 
 // Load the header and footer, and ensure dropdown and modal functionalities initialize
 function initializePage() {
@@ -96,9 +117,10 @@ function initializePage() {
         const headerLoadedEvent = new Event('headerLoaded');
         document.dispatchEvent(headerLoadedEvent); // Notify other scripts
 
-        initializeDropdown(); 
+        initializeDropdown();
         initializeModals();
-        updateUI(); 
+        updateUI();
+        initializeMenuToggle();
     });
 
     loadHTML('footer.html', 'footer'); // Load footer if needed

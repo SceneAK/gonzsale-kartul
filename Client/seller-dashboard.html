@@ -25,7 +25,8 @@
             background-color: #fff;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 10px;
             text-align: center;
@@ -82,33 +83,37 @@
         }
     </style>
 </head>
+<header>
+    <!-- Header section -->
+    <div id="header"></div>
+</header>
 
 <body>
-    <div id="header"></div>
-    <h1>Order Management Dashboard</h1>
+    <div class="content-wrapper">
+        <h1>Order Management Dashboard</h1>
 
-    <!-- Loader -->
-    <div class="loader" id="loader">Loading orders...</div>
+        <!-- Loader -->
+        <div class="loader" id="loader">Loading orders...</div>
 
-    <!-- Order Table -->
-    <table id="order-table">
-        <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>Buyer Name</th>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Total Price</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="order-table-body">
-            <!-- Orders will be populated dynamically -->
-        </tbody>
-    </table>
+        <!-- Order Table -->
+        <table id="order-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Buyer Name</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="order-table-body">
+                <!-- Orders will be populated dynamically -->
+            </tbody>
+        </table>
+    </div>
 
-    <div id="footer"></div>
     <script type="module" src="dropdown.js" defer></script>
     <script type="module">
         import { order } from './integration/fetches.js';
@@ -144,11 +149,15 @@
         }
 
         // Load orders on page load
-        document.addEventListener('DOMContentLoaded', async function(){
+        document.addEventListener('DOMContentLoaded', async function () {
             const orders = await order.getIncomingOrders();
             populateOrders(orders);
         });
     </script>
 </body>
+<footer>
+    <!-- Footer section -->
+    <div id="footer"></div>
+</footer>
 
 </html>

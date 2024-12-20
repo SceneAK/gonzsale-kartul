@@ -452,7 +452,7 @@
         <div class="menu-icon" onclick="toggleMenu()">☰</div>
         <div class="logo">
             <img src="assets/images/logo_placeholder.svg" alt="GonzSale Logo"
-                onclick="window.location.href='mycart.html';"">
+                onclick="window.location.href='index.html';">
             <a href=" index.html">GonzSale 2024</a>
         </div>
         <div class="user-options">
@@ -479,13 +479,22 @@
             <h2>Sign In</h2>
             <input type="email" id="email_mobile" placeholder="Email" required>
             <input type="password" id="password_mobile" placeholder="Password" required>
-            <button id="signIn_mobile" >Sign In</button>
+            <button id="signIn_mobile">Sign In</button>
             <button class="close-btn" onclick="toggleModal('loginModal')">Close</button>
             <p>Don't have an account? <a href="signup.html">Register</a></p>
         </div>
     </div>
 
-    <!-- comment for push -->
-
-
 </header>
+
+<script>
+    function toggleMenu() {
+        console.log('Toggle menu clicked!');
+        const sideMenu = document.getElementById('sideMenu');
+        if (sideMenu.classList.contains('open')) {
+            sideMenu.classList.remove('open'); // Close the menu
+        } else {
+            sideMenu.classList.add('open'); // Open the menu
+        }
+    }
+</script>
