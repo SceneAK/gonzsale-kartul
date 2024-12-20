@@ -85,12 +85,13 @@
         }
     </style>
 </head>
+<header>
+    <!-- Header placeholder -->
+    <div id="header"></div>
+</header>
 
 <body>
     <div class="content-wrapper">
-        <!-- Header placeholder -->
-        <div id="header"></div>
-
         <!-- Main content -->
         <!DOCTYPE html>
         <html lang="en">
@@ -153,25 +154,12 @@
         </html>
 
     </div>
+
+    <script type="module" src="dropdown.js" defer></script>
+</body>
+<footer>
     <!-- Footer placeholder -->
     <div id="footer"></div>
-
-
-    <script>
-        // Load external HTML file into a div
-        function loadHTML(file, elementId) {
-            fetch(file)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById(elementId).innerHTML = data;
-                });
-        }
-
-        // Load header and footer
-        loadHTML('header.html', 'header');
-        loadHTML('footer.html', 'footer');
-    </script>
-
-</body>
+</footer>
 
 </html>

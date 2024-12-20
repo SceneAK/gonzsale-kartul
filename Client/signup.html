@@ -1,52 +1,40 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Register</title>
     <style>
-        /* Reset default padding and margin for all elements */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: Arial, sans-serif;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             margin: 0;
             background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            /* Prevents overflow issues globally */
+        }
+
+        .signup-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            /* Ensures proper spacing around content */
+            box-sizing: border-box;
         }
 
         .register-container {
             width: 100%;
-            padding: 20px 100px;
+            max-width: 500px;
+            /* Limits the width for larger screens */
+            padding: 20px;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        p {
-            margin: 5px 0;
-        }
-
-        .content-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 35vh;
-        }
-
-        .required {
-            color: red;
+            box-sizing: border-box;
         }
 
         form {
@@ -54,34 +42,15 @@
             flex-direction: column;
         }
 
-        label {
-            margin-top: 15px;
-            font-weight: bold;
-        }
-
         input[type="text"],
         input[type="email"],
         input[type="password"] {
             width: 100%;
             padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-        }
-
-        .password-instructions {
-            font-size: 0.9em;
-            color: #666;
-            margin-top: -10px;
-            margin-bottom: 20px;
-        }
-
-        .form-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
+            margin-bottom: 15px;
         }
 
         button {
@@ -105,43 +74,68 @@
         button[type="submit"]:hover {
             background-color: #45a049;
         }
+
+        /* Footer styles */
+        #footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            /* Ensures it doesn't cause horizontal overflow */
+        }
+
+        #footer a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        #footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .register-container {
+                padding: 15px;
+            }
+
+            button {
+                font-size: 0.9em;
+                padding: 8px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="content-wrapper">
-        <!-- Header placeholder -->
-        <div id="header"></div>
+    <!-- Header -->
+    <div id="header">
+        <p>Header Placeholder</p>
+    </div>
 
-        <!-- Main content -->
-        <!DOCTYPE html>
-        <html lang="en">
+    <!-- Main Content -->
+    <div class="signup-wrapper">
+        <div class="register-container">
+            <h1>Register</h1>
+            <p><strong>Please provide the following information</strong></p>
+            <p><span class="required">*</span> denotes required fields</p>
 
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Register</title>
-            <link rel="stylesheet" href="style.css">
-        </head>
-
-        <body>
-            <div class="register-container">
-                <h1>Register</h1>
-                <p><strong>Please provide the following information</strong></p>
-                <p><span class="required">*</span> denotes required fields</p>
-
+            <form id="register-form">
                 <label for="username"><span class="required">*</span> Username:</label>
                 <input type="text" id="username" name="username" required>
 
                 <label for="phone"><span class="required">*</span> Phone:</label>
                 <input type="text" id="phone" name="phone" required>
-                
+
                 <label for="email"><span class="required">*</span> Email:</label>
                 <input type="email" id="email" name="email" required>
 
                 <label for="password"><span class="required">*</span> Password:</label>
                 <input type="password" id="password" name="password" required>
-
 
                 <p class="password-instructions">
                     Your password must be between 3 to 300 characters inclusive
@@ -151,26 +145,24 @@
                     <button type="button" onclick="window.history.back()">Cancel</button>
                     <button type="submit" id="submitButton">Register</button>
                 </div>
-            </div>
-        </body>
-
-        </html>
-
-        <!-- Footer placeholder -->
-        <div id="footer"></div>
+            </form>
+        </div>
     </div>
 
+    <!-- Footer -->
+    <div id="footer">
+        <p>&copy; 2024 My Website | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </div>
 
     <script type="module">
-        import {hookSignUp} from './integration/user.js';
-        
+        import { hookSignUp } from './integration/user.js';
+
         const submitButton = document.getElementById('submitButton');
         const name = document.getElementById('username');
         const phone = document.getElementById('phone');
         const email = document.getElementById('email');
         const password = document.getElementById('password');
         hookSignUp(submitButton, name, phone, email, password);
-        
     </script>
     <script type="module" src="dropdown.js" defer></script>
 </body>

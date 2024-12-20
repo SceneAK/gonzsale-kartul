@@ -30,10 +30,13 @@
         .add-product-form-container {
             width: 100%;
             max-width: 500px;
+            /* Limits the form width for large screens */
             padding: 30px;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            /* Ensures padding is included in the width */
         }
 
         .add-product-form-container h1 {
@@ -132,46 +135,27 @@
             margin-top: auto;
         }
 
-        /* Prevent horizontal scrolling */
-        html,
-        body {
-            overflow-x: hidden;
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .add-product-form-container {
+                padding: 40px;
+            }
         }
 
-        /* Ensure the wrapper and form are centered and do not overflow */
-        .add-product-wrapper {
-            padding: 40px 10px;
-            /* Adjusted padding to ensure no overflow */
-            box-sizing: border-box;
-        }
-
-        .add-product-form-container {
-            max-width: 100%;
-            /* Ensure the form does not exceed the viewport */
-        }
-
-        /* Prevent image previews from causing overflow */
-        .image-preview-container {
-            max-width: 100%;
-            flex-wrap: wrap;
-            gap: 10px;
-            overflow: hidden;
-            /* Prevent content spill */
-        }
-
-        .image-preview {
-            max-width: 80px;
-            height: auto;
-            /* Maintain aspect ratio */
-            object-fit: cover;
+        @media (min-width: 1024px) {
+            .add-product-form-container {
+                max-width: 400px;
+                /* Further limits width for larger screens */
+            }
         }
     </style>
 </head>
-
-<body>
+<header>
     <!-- Header Placeholder -->
     <div id="header"></div>
+</header>
 
+<body>
     <!-- Main Content -->
     <section class="add-product-wrapper">
         <div class="add-product-form-container">
@@ -209,10 +193,7 @@
         </div>
     </section>
 
-    <!-- Footer Placeholder -->
-    <div id="footer"></div>
-
-    <script src="dropdown.js"></script>
+    <script type="module" src="dropdown.js" defer></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
@@ -264,5 +245,9 @@
         });
     </script>
 </body>
+<footer>
+    <!-- Footer Placeholder -->
+    <div id="footer"></div>
+</footer>
 
 </html>

@@ -16,9 +16,8 @@
             flex-direction: column;
         }
 
-
-        .catalog {
-            padding: 20px;
+        /* Wrapper to push footer down */
+        .content-wrapper {
             flex: 1;
         }
 
@@ -26,13 +25,19 @@
         footer {
             background-color: #333;
             color: #fff;
-            padding: 20px;
+            padding: 15px 10px;
             text-align: center;
+            width: 100%;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            /* Responsive styling */
+            font-size: 0.95em;
+            line-height: 1.5;
+            box-sizing: border-box;
         }
 
         footer a {
             color: #fff;
-            margin: 0 10px;
+            margin: 0 5px;
             text-decoration: none;
         }
 
@@ -43,20 +48,37 @@
         .footer-links {
             margin-top: 10px;
         }
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 600px) {
+            footer {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+
+            footer a {
+                margin: 0 3px;
+            }
+
+            .footer-links p {
+                margin: 5px 0;
+            }
+        }
     </style>
 </head>
 
 <body>
     <!-- Main content wrapper -->
     <div class="content-wrapper">
-        </div>
+    </div>
 
     <!-- Footer -->
     <footer>
-        <p>Check out our socials! <p>
-            <a href="https://instagram.com/senatgonzaga" target="_blank">@senatgonzaga</a> - 
-            <a href="https://instagram.com/dionisius_abi" target="_blank">@dionisius_abi</a> - 
-            <a href="https://instagram.com/ip.binawan" target="_blank">@ip.binawan</a> - 
+        <p>Check out our socials!
+        <p>
+            <a href="https://instagram.com/senatgonzaga" target="_blank">@senatgonzaga</a> -
+            <a href="https://instagram.com/dionisius_abi" target="_blank">@dionisius_abi</a> -
+            <a href="https://instagram.com/ip.binawan" target="_blank">@ip.binawan</a> -
             <a href="https://instagram.com/evan_kue" target="_blank">@evan_kue</a>
         </p>
         </p>
