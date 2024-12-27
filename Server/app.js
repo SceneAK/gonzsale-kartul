@@ -13,7 +13,7 @@ app.use(`/${STATIC_ROUTE_NAME}/`, express.static(PUBLIC_DIR));
 
 const pagesPath = upath.join(__dirname, '../Client');
 console.log(pagesPath);
-app.use(`/page/`, express.static(pagesPath)); 
+app.use(`/`, express.static(pagesPath)); 
 
 app.use(cookieParser(process.env.JWT_SECRET_KEY));
 

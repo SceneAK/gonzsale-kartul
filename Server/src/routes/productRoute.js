@@ -1,19 +1,18 @@
 import express from 'express';
 const router = express.Router();
 
-import { verifyUser } from '../modules/tokenAuth.js';
-import { ensureBelowLimit, createMulter } from '../modules/upload.js';
+import { ensureBelowLimit, createMulter, verify } from '../middlewares/index.js';
 import { validate, productSchemas } from '../reqSchemas/index.js';
 import { product } from '../controllers/index.js';
 
-const imgUpload = createMulter({relativeDir: 'images', keyName: 'product_imgSrc', type: 'array'});
+const imgUpload = createMulter({relativeDir: 'images', keyName: 'images', type: 'array'});
 
-router.get('/:product_category', validate(productSchemas.getProducts), product.getProducts);
+router.get('/:product_category', validate(productSchemas.getProducts), product.fetchProducts);
 
-router.get('/single/:id', product.getProduct);
+router.get('/single/:id', product.fetchProduct);
 
-router.patch('/:id', verifyUser, ensureBelowLimit, imgUpload, validate(productSchemas.editProduct), product.editProduct);
+router.patch('/:id', verify, ensureBelowLimit, imgUpload, validate(productSchemas.editProduct), product.editProduct);
 
-router.post('/', verifyUser, ensureBelowLimit, imgUpload, validate(productSchemas.createProduct), product.createProduct);
+router.post('/', verify, ensureBelowLimit, imgUpload, validate(productSchemas.createProduct), product.createProduct);
 
 export default router;

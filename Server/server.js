@@ -11,11 +11,11 @@ app.use(cors(
 }));
 
 // MOUNTS ROUTES
-app.use('/product/', productRoute);
-app.use('/user/', userRoute);
-app.use('/store/', storeRoute);
-app.use('/order/', orderRoute);
-app.use('/transaction/', transactionRoute);
+app.use('/api/product/', productRoute);
+app.use('/api/user/', userRoute);
+app.use('/api/store/', storeRoute);
+app.use('/api/order/', orderRoute);
+app.use('/api/transaction/', transactionRoute);
 
 // Start Listening
 const PORT = process.env.PORT;

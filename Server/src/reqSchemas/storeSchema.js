@@ -1,22 +1,26 @@
 import Joi from "joi";
+
 const createStoreSchema = {
-    body: Joi.object({
-        store_name: Joi.string().min(3).max(20).required(),
-        store_description: Joi.string().max(300).required(),
-        store_bank_account: Joi.string().min(10).max(16).required(),
-        store_payment_method: Joi.string().max(10).required()
-    }).required(),
-    files: Joi.object().exist()
+    body: bodySchemaRequired.required(),
+    files: filesSchema
 }
 const updateStoreSchema = {
-    body: Joi.object({
-        store_name: Joi.string().min(3).max(20),
-        store_description: Joi.string().max(300),
-        store_bank_account: Joi.string().min(10).max(16),
-        store_payment_method: Joi.string().max(10)
-    }).unknown(false).required(),
-    files: Joi.object()
+    body: bodySchema.required(),
+    files: filesSchema
 }
+
+const bodySchema = Joi.object({
+    name: Joi.string().min(3).max(20),
+    description: Joi.string().max(300),
+    bankAccount: Joi.string().min(10).max(16),
+    bankName: Joi.string().max(10)
+});
+const bodySchemaRequired = bodySchema.fork(['name', 'bankAccount', 'bankName'], schema => schema.required());
+
+const filesSchema = Joi.object({
+    image: Joi.any(),
+    qrImage: Joi.any()
+});
 
 export default {
     createStore: createStoreSchema,

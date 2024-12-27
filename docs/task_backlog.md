@@ -1,5 +1,7 @@
 Please sort by importance
 # Gonzsale Website
+## Route Management
+- cleanup frontend static route & backend route
 ## Deployment & Prep
 - Deploy backend + mysql + nginx/apache
 - learn how to customize DNS settings &
@@ -33,7 +35,9 @@ Please sort by importance
 
 
 # BACKEND
-## Seperate product_images table
+## Seperate images
+- Seperate product_images table
+- Test the store_QR_imgSrc and store_imgSrc seperation
 - test createMulter's field()
 - Create product_images (image_id, product_id, imageSrc, image_order)
 - change how images are added in createProduct, editProduct
@@ -54,7 +58,17 @@ Please sort by importance
 ## Payment Gateway
 - rename transaction table to basic_tansactions table
 
+## Dynamic Try-Catch error handling
+
+## Optimize update logic for product variant and product images
+
+## Add paranoid delete for 
+
 ## Add Address Functionality
 - add product_deliver_method ENUM('GONZAGA', 'TO_ADDRESS'); 
     - If an order is placed on a product with 'TO_ADDRESS', server requires user to provide an address. 
 - add user_address table 
+
+##　Request Home page Items (promotional content)
+
+## Statistical Analysis for Seller Account

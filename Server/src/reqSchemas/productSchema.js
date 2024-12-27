@@ -1,41 +1,36 @@
 import Joi from "joi";
 
-const getProductsSchema = {
+const fetchFilteredSchema = {
     body: Joi.object({
-    product_name: Joi.string(),
-    product_category: Joi.string(),
-    store_id: Joi.string().length(36),
-    store_name: Joi.string(),
+    name: Joi.string(),
+    category: Joi.string(),
+    storeId: Joi.string().length(36),
+    storeName: Joi.string(),
     })
 }
 const createProductSchema = {
-    body: Joi.object({
-    product_name: Joi.string().min(1).max(50).required(),
-    product_description: Joi.string().min(1).max(400).required(),
-    product_category: Joi.string().min(1).max(40).required(),
-    product_variants: Joi.any().default("{}"),
-    product_price: Joi.number().min(0).required(),
-    product_unit: Joi.string().min(1).max(15).required(),
-    product_availability: Joi.string().valid('UNAVAILABLE', 'AVAILABLE', 'PREORDER_ONLY').required()
-    }).required(),
-    files: Joi.array().exist() // Expects key name to be 'product_imgSrc'
+    body: bodySchema.fork(['name', 'category', 'price', 'unit', 'availability'], schema => schema.required()).required(),
+    files: Joi.array().exist()
 }
 
 const editProductSchema = {
-    body: Joi.object({
-    product_name: Joi.string().min(1).max(50),
-    product_description: Joi.string().min(1).max(400),
-    product_category: Joi.string().min(1).max(40),
-    product_variants: Joi.any(),
-    product_price: Joi.number().min(0),
-    product_unit: Joi.string().min(1).max(15),
-    product_availability: Joi.string().valid('UNAVAILABLE', 'AVAILABLE', 'PREORDER_ONLY')
-    }).required(),
-    files: Joi.array() // Expects key name to be 'product_imgSrc'
+    body: bodySchema.required(),
+    files: Joi.array() 
 }
 
+const bodySchema = Joi.object({
+    name: Joi.string().min(1).max(50),
+    description: Joi.string().min(1).max(400),
+    category: Joi.string().min(1).max(40),
+    price: Joi.number().min(0),
+    unit: Joi.string().min(1).max(15),
+    availability: Joi.string().valid('UNAVAILABLE', 'AVAILABLE', 'PREORDER_ONLY'),
+
+    variants: Joi.object().pattern(Joi.string(), Joi.array().items(Joi.string().min(1).max(50)))
+})
+
 export default {
-    getProducts: getProductsSchema,
+    getProducts: fetchFilteredSchema,
     createProduct: createProductSchema,
     editProduct: editProductSchema
 };

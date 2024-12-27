@@ -1,5 +1,4 @@
-import Joi from "joi";
-
+import "joi";
 
 const validate = (reqSchemas) => (req, res, next) => {
     for(const key in reqSchemas)

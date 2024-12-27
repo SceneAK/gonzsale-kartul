@@ -1,8 +1,8 @@
 import { v4 } from 'uuid';
 import transaction from './transaction.js';
-import connectionPromise from '../modules/db.js';
+import databaseInitializePromise from '../modules/database/initialize.js';
 import { getRelative, unlink, updateUsed } from '../modules/upload.js';
-const connection = await connectionPromise;
+const connection = await databaseInitializePromise;
 
 
 async function getStoreOwnedBy(user_id) {
@@ -12,9 +12,9 @@ async function getStoreOwnedBy(user_id) {
     } catch (error) { throw error; }
 }
 const getIncomingOrders = async (req, res) => {
-    const { authUser } = req; 
+    const { decodedAuthToken } = req; 
     try {
-        const store = await getStoreOwnedBy(authUser.id);
+        const store = await getStoreOwnedBy(decodedAuthToken.id);
 
         if (store == null) return res.status(401).send("No Store Owned");
 
@@ -32,9 +32,9 @@ const getIncomingOrders = async (req, res) => {
 }
 
 const getOrders = async (req, res) => {
-    const { authUser } = req; 
+    const { decodedAuthToken } = req; 
     try {
-        const [rows] = await connection.execute("SELECT * FROM orders WHERE customer_user_id = ?", [authUser.id]);
+        const [rows] = await connection.execute("SELECT * FROM orders WHERE customer_user_id = ?", [decodedAuthToken.id]);
         rows.forEach(row => delete row.customer_user_id );
         res.json(rows);
     } catch (err) {
@@ -84,7 +84,7 @@ async function placeOrder(customer_id, req, res)
 
 
 const placeOrderAccount = async(req, res) => {
-    placeOrder(req.authUser.id, req, res);
+    placeOrder(req.decodedAuthToken.id, req, res);
 }
 
 const placeOrderGuest = async (req, res) => {
@@ -107,9 +107,9 @@ const placeOrderGuest = async (req, res) => {
 }
 
 const updateOrderStatus = async (req, res) => {
-    const {authUser, body} = req;
+    const {decodedAuthToken, body} = req;
 
-    const store = await getStoreOwnedBy(authUser.id);
+    const store = await getStoreOwnedBy(decodedAuthToken.id);
     if(store == null){ 
         res.status(401).send("No Owned Store"); return;
     }
