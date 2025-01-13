@@ -1,7 +1,8 @@
-import { sequelize, DataTypes } from "../sequelize.js";
+import { DataTypes, getInstance } from "../sequelize.js";
 import { Product, Variant } from "./productModel.js";
 import Store from './storeModel.js';
-import User from "./userModel.js";
+import { User } from "./userModel.js";
+const sequelize = getInstance();
 
 const Order = sequelize.define('Order', {
     id: {
@@ -26,15 +27,6 @@ const Order = sequelize.define('Order', {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
         allowNull: false
-    }
-}, {
-    scopes: {
-        withItems: {
-            include: OrderItem.scope('withOrderVariants', 'withProductInfo')
-        },
-        withStore: {
-            include: Store
-        }
     }
 })
 Order.belongsTo(Store, {foreignKey: 'storeId'})
@@ -70,16 +62,6 @@ const OrderItem = sequelize.define('OrderItem', {
         allowNull: false,
         defaultValue: 'PENDING'
     }
-}, {
-    scopes: {
-        withProductInfo: {
-            include: Product.scope('withProductImages')
-        },
-        withOrderVariants: {
-            include: OrderItemVariant.scope('withVariant'),
-            attributes: []
-        }
-    }
 });
 
 OrderItem.belongsTo(Order, {foreignKey: 'orderId'})
@@ -91,6 +73,7 @@ Product.hasMany(OrderItem, {foreignKey: 'productId'})
 const OrderItemVariant = sequelize.define('OrderItemVariant', {
     id:{
         type: DataTypes.INTEGER.UNSIGNED,
+        primaryKey: true,
         autoIncrement: true
     },
     orderItemId:{
@@ -100,12 +83,6 @@ const OrderItemVariant = sequelize.define('OrderItemVariant', {
     variantId: {
         type: DataTypes.UUID,
         allowNull: false
-    }
-}, {
-    scopes: {
-        withVariant: {
-            include: Variant
-        }
     }
 })
 

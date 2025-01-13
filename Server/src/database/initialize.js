@@ -1,18 +1,17 @@
-import '../../../initialize.js'; // ensure process.env is up
-import { sequelize } from './sequelize.js';
-import * as models from './models/index.js'; // ensure models are set up
-import { logger } from '../logger.js';
+import { getInstance } from './sequelize.js';
+import * as models from './models/index.js';
+import { logger } from '../common/index.js';
 
 const databaseInitializePromise = (async () => {
   try
   {
+    const sequelize = getInstance();
     await sequelize.authenticate();
-    await sequelize.sync();
-    logger.info('Database connnected and synced');
-    return {sequelize, ...models};
+    logger.info('Database initialized');
+    return { sequelize, ...models };
   }catch(err)
   {
-    logger.error('Error setting up database: ' + err);
+    logger.error('Error initializing database: ' + err);
     throw err;
   }
 })();

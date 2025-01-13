@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import databaseInitializePromise from '../modules/database/initialize.js';
+import databaseInitializePromise from '../database/initialize.js';
 const connection = await databaseInitializePromise;
 
 function getCurrentDateMYSQLFormatted()

@@ -1,4 +1,5 @@
-import { sequelize, DataTypes } from "../sequelize.js";
+import { DataTypes, getInstance } from "../sequelize.js";
+const sequelize = getInstance();
 
 const Image = sequelize.define('Image', {
     id: {
@@ -11,11 +12,6 @@ const Image = sequelize.define('Image', {
         type: DataTypes.TEXT,
         allowNull: false
     }
-}, {
-    scopes: {
-        withoutId:{
-            attributes: { exclude: ['id'] }
-        }
-    }
 });
+
 export default Image;

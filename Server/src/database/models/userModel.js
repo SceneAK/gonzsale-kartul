@@ -1,4 +1,5 @@
-import { sequelize, DataTypes } from "../sequelize.js";
+import { DataTypes, getInstance } from "../sequelize.js";
+const sequelize = getInstance();
 
 const User = sequelize.define('User', {
     id: {
@@ -39,15 +40,7 @@ const User = sequelize.define('User', {
             unique: true,
             fields: ['email']
         }
-    ],
-    scopes:{
-        withoutPassword:{
-            attributes: { exclude: ['password']},
-        },
-        contactsOnly:{
-            attributes: { include: ['username', 'email', 'phone']},
-        }
-    }
+    ]
 });
 
 const UserStorage = sequelize.define('UserStorage', {
@@ -61,12 +54,6 @@ const UserStorage = sequelize.define('UserStorage', {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false,
         defaultValue: 0
-    }
-},{
-    scopes:{
-        withoutId:{
-            attributes: { exclude: ['userId']},
-        }
     }
 })
 

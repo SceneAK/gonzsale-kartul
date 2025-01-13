@@ -1,8 +1,8 @@
 import express from 'express';
-import { verifyUser } from '../modules/tokenAuth.js';
+import verify from '../middlewares/verifyAuthToken.js';
 import { transaction } from '../controllers/index.js';
 const router = express.Router();
 
-router.get('/:transaction_id', verifyUser, transaction.getTransaction);
+router.get('/:transaction_id', verify, transaction.getTransaction);
 
 export default router;

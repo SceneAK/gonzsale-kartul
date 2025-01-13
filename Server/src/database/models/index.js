@@ -6,4 +6,3 @@ export { Order, OrderItem, OrderItemVariant} from  './orderModel.js';
 export { Transaction, ProofTransaction} from './transactionModel.js';
 
 
-

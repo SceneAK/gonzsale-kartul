@@ -1,48 +1,54 @@
 import bcrypt from 'bcrypt'; 
 import tokenAuthServices from './tokenAuthServices.js';
 import databaseInitializePromise from '../database/initialize.js'
+import {ApplicationError} from '../common/index.js';
 const { User } = await databaseInitializePromise;
 
 const SALT_ROUNDS = 8;
 
-async function fetchUserInfo(id)
+const SERVE_ATTRIBUTES = ['id', 'name', 'phone', 'email', 'role'];
+
+async function fetchUser(id)
 {
-    const userModel = await User.findByPk(id);
-    if(!userModel) throw new Error("User not found");
+    const userModel = await User.findByPk(id, { attributes: SERVE_ATTRIBUTES} );
+    if(!userModel) throw new ApplicationError("User ID not found", 404);
     
-    return prepareForServe(userModel);
+    return userModel.get();
 }
 
 async function signIn(email, password)
 {
-    const userModel = await authenticate(email, password);
-    if(!userModel) throw new Error("Failed to Authenticate");
+    const user = await User.findOne({ where: {email}, raw: true});
+    if(!user) throw new ApplicationError("Email not found", 404);
+
+    const match = await bcrypt.compare(password, user.password);;
+    if(!match) throw new ApplicationError("Failed to Authenticate", 401);
     
-    return signInReturnObject(userModel);
+    return signReturnObject(user);
 }
 
 async function signUp(email, password, name, phone)
 {
     const hashed = await bcrypt.hash(password, SALT_ROUNDS);
-    const [userModel] = await User.findOrCreate({where: {email}, defaults:{
+    const [user] = await User.findOrCreate({ where: {email}, defaults:{
         name,
         phone,
         password: hashed
-    }})
+    }, attributes: SERVE_ATTRIBUTES, raw: true });
     
-    return signInReturnObject(userModel);
+    return signReturnObject(user);
 }
 
 async function findOrCreateGuest(email, name, phone)
 {
-    const [userModel] = await User.findOrCreate({where: {email}, defaults: {
-        name,
-        phone,
-        email,
-        password: null
-    }})
+    const [user] = await User.findOrCreate({
+        where: {email}, 
+        defaults: { name, phone, email, password: null },
+        attributes: SERVE_ATTRIBUTES, 
+        raw: true
+    })
     
-    return signInReturnObject(userModel);
+    return signReturnObject(user);
 }
 
 async function refresh(decodedAuthToken)
@@ -50,18 +56,9 @@ async function refresh(decodedAuthToken)
     return createAuthToken(decodedAuthToken);
 }
 
-async function authenticate(email, password)
+async function signReturnObject(user)
 {
-    const userModel = await User.findOne({where: {email}});
-    
-    const result = await bcrypt.compare(password, userModel.password);
-    return result ? userModel : null;
-}
-
-async function signInReturnObject(userModel)
-{
-    const user = prepareForServe(userModel);
-    const authToken = createAuthToken(user);
+    const authToken = await createAuthToken(user);
     return {user, authToken};
 }
 async function createAuthToken(user)
@@ -71,17 +68,32 @@ async function createAuthToken(user)
         role: user.role
     })
 }
-async function prepareForServe(userModel)
+
+function include(level)
 {
-    const user = userModel.get();
-    delete user.password;
-    return user;
+    switch (level) {
+        case 'serve':
+            return {
+                model: User,
+                attributes: SERVE_ATTRIBUTES
+            }
+        case 'contacts':
+            return {
+                model: User,
+                attributes: ['name', 'phone', 'email']
+            }
+        default:
+            return {
+                model: User
+            } 
+    }
 }
 
 export default {
-    fetchUserInfo,
+    fetchUser,
     signIn,
     signUp,
     findOrCreateGuest,
-    refresh
+    refresh,
+    include
 };

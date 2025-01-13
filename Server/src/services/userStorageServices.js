@@ -1,45 +1,46 @@
-import upath from  'upath';
 import { promises as fs} from 'fs';
-import { PUBLIC_DIR } from '../../initialize.js';
-import { logger } from '../common/logger.js';
+import { logger, getFull } from '../common/index.js';
 import dbInitializePromise from '../database/initialize.js'
 const { UserStorage } = await dbInitializePromise;
 
-async function getUsed(decodedAuthToken)
+async function getUsed(userId)
 {
-    const model = await UserStorage.findByPk(decodedAuthToken.id);
-    return model ? model.get('usedStorage') : 0;
+    const row = await UserStorage.findByPk(userId, {raw: true});
+    return row ? row.usedStorage : 0;
 }
-async function trackUsedFiles(files, decodedAuthToken)
+
+async function trackUsedFiles(files, userId)
 {
     let total = 0;
-    files.forEach( file => {
-        total += file.size;
-    });
-    await addToUsed(total, decodedAuthToken.id);
+    files.forEach( file => total += file.size );
+    await addToUsed(total, userId);
 }
-async function unlinkUnused(relPaths, decodedAuthToken)
+
+async function unlinkUnused(relPaths, userId)
 {
     let absSize = 0;
-    relPaths.forEach(relPath => {
-        const path = upath.join(PUBLIC_DIR, relPath)
-        fs.unlink(path, async err => {
-            if(!err) 
-            {
-                const size = (await fs.stat(path)).size;
-                absSize += size;
-            }
-        }).catch( err => logger.error("Updated Unlink Error, ", err.message) );
-    });
-    await addToUsed(-absSize, decodedAuthToken.id);
+    for(const relPath of relPaths){
+        const path = getFull(relPath);
+        try
+        {
+            const size = (await fs.stat(path)).size;
+            absSize += size;
+            
+            await fs.unlink(path);
+        }catch(err)
+        {
+            logger.error("Updated Unlink Error, ", err.message);
+        }
+    }
+    await addToUsed(-absSize, userId);
 }
 
 async function addToUsed(amount, userId)
 {
-    const userStorageModel = await UserStorage.findByPk(userId);
-    if(userStorageModel)
+    const model = await UserStorage.findByPk(userId);
+    if(model)
     {
-        userStorageModel.increment('usedStorage', {by: amount});
+        model.increment('usedStorage', { by: amount });
     }else{
         await UserStorage.create({
             userId,

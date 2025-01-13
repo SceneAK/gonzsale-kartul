@@ -2,8 +2,8 @@ import Joi from "joi";
 
 const placeOrderSchema = {
     body: Joi.object({
-        product_id: Joi.string().length(36).required(),
-        order_qty: Joi.number().min(1).required(),
+        productId: Joi.string().length(36).required(),
+        qty: Joi.number().min(1).required(),
         order_variant: Joi.any().default("{}"),
         order_notes: Joi.string().max(150).default("no notes provided")
     }).required(),
@@ -11,9 +11,9 @@ const placeOrderSchema = {
 }
 
 const bodyExtra = Joi.object({
-    user_name: Joi.string().required(),
-    user_phone: Joi.number().min(1000 * 1000).max(100 * 1000 * 1000 * 1000 * 1000 * 1000).required(), 
-    user_email: Joi.string().email().required()
+    name: Joi.string().required(),
+    phone: Joi.number().min(1000 * 1000).max(100 * 1000 * 1000 * 1000 * 1000 * 1000).required(), 
+    email: Joi.string().email().required()
 });
 const guestPlaceOrderSchema = {
     ...placeOrderSchema,
@@ -22,8 +22,8 @@ const guestPlaceOrderSchema = {
 
 const updateSchema = {
     body: Joi.object({
-        order_id: Joi.string().length(36).required(),
-        order_status: Joi.string().valid('PROCESSING', 'IN_GONZAGA' ,'COMPLETED').required()
+        orderId: Joi.string().length(36).required(),
+        orderStatus: Joi.string().valid('PROCESSING', 'IN_GONZAGA' ,'COMPLETED').required()
     }).required()
 }
 

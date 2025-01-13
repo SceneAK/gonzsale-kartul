@@ -1,40 +1,60 @@
 import multer from 'multer';
+import upath from 'upath';
+import fs from 'fs';
+import { PUBLIC_DIR } from '../../initialize.js';
+import { ApplicationError, getFilesIfAny, logger } from '../common/index.js';
+
+const MULTER_MAX_FILE_BYTES = 10 * 1024 * 1024;
 
 function createMulter(options)
 {
-    const {relativeDir} = options;
-    const upload = multer({dest: upath.join(PUBLIC_DIR, relativeDir), limits: { fileSize: MULTER_MAX_FILE_BYTES} });
-
-    const limitUpload = (upload)=>(req, res, next) =>{
-        upload(req, res, err => {
-            if(err) return next(err);
-            if(aboveLimit(req.body)) return res.status(413).send('Payload too large'); 
-            next();
-        })
-    }
-
-    let uploadMiddle = getUploadMiddleware(upload, options);
-    return limitUpload(uploadMiddle);
+    const { relativeDir, mimeType } = options;
+    const upload = multer({
+        dest: upath.join(PUBLIC_DIR, relativeDir), 
+        limits: { fileSize: MULTER_MAX_FILE_BYTES },
+        fileFilter: createMimeTypeFilterer(mimeType ? mimeType : 'any')
+    });
+    return getUploadMiddleware(upload, options);
 }
+
+function onErrorFileDeletion(err, req, res, next)
+{
+    const paths = getFilesIfAny(req).map(file => file.path);
+
+    console.log(paths);
+    paths.forEach( path => {
+            if(path) fs.unlink(path, err => {
+                if(err) logger.info(`Failed to delete ${path}`)
+            })
+        }
+    );
+    next(err)
+}
+
 function getUploadMiddleware(upload, options)
 {
-    const { type, keyName, fields } = options;
+    const { type, keyName, fields, maxCount } = options;
     switch (type) {
         case 'fields':
             return upload.fields(fields)
         case 'array':
-            return upload.array(keyName)
+            return upload.array(keyName, maxCount)
         default:
             return upload.single(keyName)
     }
 }
 
-const MULTER_MAX_BODY_BYTES = 5 * 1024; // 5kb
-const MULTER_MAX_FILE_BYTES = 5 * 1024 * 1024;
-function aboveLimit(body)
+function createMimeTypeFilterer(mimetype)
 {
-    const textSize = JSON.stringify(body).length; 
-    return textSize > MULTER_MAX_BODY_BYTES;
+    return (req, file, cb) => {
+        const condition = mimetype == 'any' || file.mimetype.startsWith(mimetype)
+        if(condition)
+        {
+            cb(null, true)
+        }else{
+            cb(new ApplicationError("File uploaded not of expected type", 400), false);
+        }
+    };
 }
 
-export default createMulter;
+export { createMulter, onErrorFileDeletion };

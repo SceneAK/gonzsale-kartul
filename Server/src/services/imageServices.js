@@ -1,44 +1,66 @@
-import { getRelative }from '../common/pathUtil.js'
+import { ApplicationError, getRelative }from '../common/index.js'
 import databaseInitializePromise from '../database/initialize.js'
 import userStorageServices from './userStorageServices.js';
 const { Image } = await databaseInitializePromise;
 
-async function createImages(files, decodedAuthToken)
+async function createImages(files, userId)
 {
     const imageDatas = files.map( file => {
-        if (!file.mimetype.startsWith('image/')) throw new Error('File is not an Image');
-
-        const relPath = getRelative(file.path);
-        return { path: relPath };
+        if (!isImage(file)) throw new ApplicationError('File is not an Image', 400);
+        const rel = getRelative(file.path);
+        return { path: rel };
     });
-
     const imageModels = await Image.bulkCreate(imageDatas);
-    await userStorageServices.trackUsedFiles(files, decodedAuthToken);
-    
+    await userStorageServices.trackUsedFiles(files, userId);
     const images = imageModels.map( model => model.get() );
     return images;
 }
-async function createImagesKeepNull(files, decodedAuthToken)
+async function createImagesKeepInvalids(fileArray, userId)
 {
-    const validFiles = removeUndefinedKeys(files);
-    const images = await createImages(validFiles, decodedAuthToken);
-
-    return files.map( file => file ? images.shift() : file );
+    const validFiles = filterInvalids(fileArray);
+    const images = await createImages(validFiles, userId);
+    return fileArray.map( file => file ? images.shift() : file );
 }
 
-async function deleteImages(imageIds, decodedAuthToken)
+async function deleteImages(imageIds, userId)
 {
-    const imageModels = await Image.findAll({ where: { id: imageIds } })
-
-    const ids = imageModels.map(model => model.id);
-    await Image.destroy({where: {id: ids} })
-
-    const relPaths = imageModels.map(model => model.path);
-    await userStorageServices.unlinkUnused(relPaths, decodedAuthToken);
+    await deleteImageFilesOnly(imageIds, userId);
+    await Image.destroy({where: { id: imageIds } })
 }
 
-function removeUndefinedKeys(input) {
-    return Object.fromEntries(Object.entries(input).filter(([key, value]) => value != undefined));
+async function deleteImageFilesOnly(imageIds, userId)
+{
+    const images = await Image.findAll({ where: { id: imageIds }, raw: true })
+    const relPaths = images.map( img => img.path);
+    await userStorageServices.unlinkUnused(relPaths, userId);
 }
 
-export default { createImages, createImagesKeepNull, deleteImages }
+function filterInvalids(files)
+{
+    return files.filter( file => {
+        return file ? true : false;
+    })
+}
+function isImage(file)
+{
+    return file.mimetype.startsWith('image/');
+}
+
+function include(level)
+{
+    switch (level) {
+        case 'serve':
+            return { model: Image, attributes: ['id', 'path']};
+        default:
+            return { model: Image };
+    }
+    
+}
+
+export default { 
+    createImages, 
+    createImagesKeepInvalids, 
+    deleteImages, 
+    deleteImageFilesOnly, 
+    include 
+};

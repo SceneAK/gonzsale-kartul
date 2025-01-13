@@ -1,6 +1,7 @@
-import { sequelize, DataTypes } from "../sequelize.js";
+import { DataTypes, getInstance } from "../sequelize.js";
 import Image from "./imageModel.js";
 import { Order } from "./orderModel.js";
+const sequelize = getInstance();
 
 
 const Transaction = sequelize.define('Transaction', {
@@ -29,8 +30,8 @@ const Transaction = sequelize.define('Transaction', {
     }
 });
 
-Order.hasOne(Transaction, {foreignKey: 'orderId'})
-Transaction.belongsTo(Order, {foreignKey: 'orderId'})
+Order.hasOne(Transaction, {foreignKey: 'orderId', onDelete: 'RESTRICT'})
+Transaction.belongsTo(Order, {foreignKey: 'orderId', onDelete: 'RESTRICT'})
 
 const ProofTransaction = sequelize.define('ProofTransaction', {
     transactionId: {

@@ -1,4 +1,4 @@
-import databaseInitializePromise from "../database/initialize";
+import databaseInitializePromise from "../database/initialize.js";
 const { Variant } = await databaseInitializePromise;
 
 async function createVariants(variants, productId) 

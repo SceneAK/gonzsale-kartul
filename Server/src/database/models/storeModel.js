@@ -1,6 +1,7 @@
-import { sequelize, DataTypes } from "../sequelize.js";
+import { DataTypes, getInstance } from "../sequelize.js";
 import { User } from "./userModel.js";
 import Image from "./imageModel.js";
+const sequelize = getInstance();
 
 const Store = sequelize.define('Store', {
     id: {
@@ -40,38 +41,14 @@ const Store = sequelize.define('Store', {
         allowNull: false,
         defaultValue: DataTypes.NOW
     }
-}, {
-    scopes:{
-        onlyName:{
-            attributes: ['name']
-        },
-        withImage:{
-            include: {
-                model: Image.scope('withoutId'),
-                as: 'image'
-            }
-        },
-        withQrImage:{
-            include: {
-                model: Image.scope('withoutId'),
-                as: 'qrImage'   
-            }
-        },
-        withOwner:{
-            include: {
-                model: User.scope('contactsOnly'),
-                as: 'owner'
-            }
-        }
-    }
 });
-User.hasOne(Store);
-Store.belongsTo(User);
+User.hasOne(Store, {foreignKey: 'userId'});
+Store.belongsTo(User, {foreignKey: 'userId'});
 
-Image.hasOne(Store, {as: 'storeWithimage', foreignKey: 'imageId'});
-Store.belongsTo(Image, {as: 'image', foreignKey: 'imageId'});
+Image.hasOne(Store, {as: 'storeWithImage', foreignKey: 'imageId', onDelete: 'RESTRICT'});
+Store.belongsTo(Image, {as: 'image', foreignKey: 'imageId', onDelete: 'RESTRICT'});
 
-Image.hasOne(Store, {as: 'storeWithQrimage', foreignKey: 'qrImageId'});
-Store.belongsTo(Image, {as: 'qrImage', foreignKey: 'qrImageId'});
+Image.hasOne(Store, {as: 'storeWithQrImage', foreignKey: 'qrImageId', onDelete: 'SET NULL'});
+Store.belongsTo(Image, {as: 'qrImage', foreignKey: 'qrImageId', onDelete: 'SET NULL'});
 
 export default Store;

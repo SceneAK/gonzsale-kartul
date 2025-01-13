@@ -1,7 +1,7 @@
-import databaseInitPromise from "./src/modules/database/initialize.js";
-const { sequelize }= await databaseInitPromise;
+import initPromise from './src/database/initialize.js';
+const { sequelize } = await initPromise;
 
-import { logger } from "./src/modules/logger.js";
+import { logger } from "./src/common/index.js";
 
 export default async function cleanUp()
 {

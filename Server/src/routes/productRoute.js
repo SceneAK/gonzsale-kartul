@@ -5,9 +5,9 @@ import { ensureBelowLimit, createMulter, verify } from '../middlewares/index.js'
 import { validate, productSchemas } from '../reqSchemas/index.js';
 import { product } from '../controllers/index.js';
 
-const imgUpload = createMulter({relativeDir: 'images', keyName: 'images', type: 'array'});
+const imgUpload = createMulter({relativeDir: 'images', keyName: 'images', type: 'array', maxCount: 4});
 
-router.get('/:product_category', validate(productSchemas.getProducts), product.fetchProducts);
+router.get('/search', validate(productSchemas.getProducts), product.fetchProducts);
 
 router.get('/single/:id', product.fetchProduct);
 

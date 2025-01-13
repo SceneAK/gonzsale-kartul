@@ -39,3 +39,5 @@ The following will contain some notable logic, design decisions/quirks, and bugs
 - As per the schema, storeData expects name, description, bankAccount, bankName. Files expects imageFile, qrImageFile.
 
 ### Move reqSchemas to middleware
+
+## Delete files on rollback. 

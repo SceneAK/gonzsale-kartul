@@ -1,6 +1,7 @@
-import { sequelize, DataTypes } from "../sequelize.js";
+import { DataTypes, getInstance } from "../sequelize.js";
 import Store from './storeModel.js';
 import Image from "./imageModel.js";
+const sequelize = getInstance();
 
 const Product = sequelize.define('Product', {
     id: {
@@ -37,18 +38,6 @@ const Product = sequelize.define('Product', {
         allowNull: false,
         defaultValue: 'UNAVAILABLE'
     }
-}, {
-    scopes:{
-        withProductImages: {
-            include: ProductImage.scope('withoutAllIds', 'withImage')
-        },
-        withVariants: {
-            include: Variant.scope('withoutId')
-        },
-        withStore:{
-            include: Store.scope('onlyName', 'withImage')
-        }
-    }
 });
 
 Store.hasMany(Product, {foreignKey: 'storeId'})
@@ -66,17 +55,6 @@ const ProductImage = sequelize.define('ProductImage', {
     priority: {
         type: DataTypes.SMALLINT,
         allowNull: false
-    }
-},{
-    scopes: {
-        withoutAllIds: {
-            attributes: {
-                exclude: ['imageId', 'productId']
-            }
-        },
-        withImage: {
-            include: Image.scope('withoutId')
-        }
     }
 });
 
@@ -104,17 +82,9 @@ const Variant = sequelize.define('Variant', {
         type: DataTypes.STRING(30),
         allowNull: false
     }
-}, {
-    scopes: {
-        withoutId: {
-            attributes: {
-                exclude: ['id']
-            }
-        }
-    }
 })
 
 Product.hasMany(Variant, {foreignKey: 'productId'})
 Variant.belongsTo(Product, {foreignKey: 'productId'})
 
-export {Product, ProductImage, Variant};
+export { Product, ProductImage, Variant };

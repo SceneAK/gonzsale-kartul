@@ -5,22 +5,28 @@ function buildURL(protocol, host, relativePath)
     return `${protocol}://${host}/${STATIC_ROUTE_NAME}/${relativePath}`;
 }
 
-const imageModelPathFieldName = 'path';
-function convertAllImagePathsToURLs(protocol, host, obj)
+const pathFieldName = 'path';
+function convertAllPathsToURLs(protocol, host, obj)
 {
     for(const key in obj)
     {
-        const isObject = obj[key] instanceof Object;
-        const isArray = Array.isArray(obj[key]);
-        if(isObject && !isArray)
-            {
-            convertAllImagePathsToURLs(protocol, host, obj[key]);
-        }
-        else if(key === imageModelPathFieldName)
+        if(isPlainObject(obj[key]))
         {
-            obj[key] = buildURL(protocol, host, obj[key]);
+            convertAllPathsToURLs(protocol, host, obj[key]);
+        }
+        else if(key === pathFieldName)
+        {
+            obj['url'] = buildURL(protocol, host, obj[key]);
+            delete obj[key];
         }
     }
 }
 
-export {buildURL, convertAllImagePathsToURLs};
+function isPlainObject(value)
+{
+    const isArray = Array.isArray(value);
+    const isObject = value && typeof value === 'object';
+    return !isArray && isObject;
+}
+
+export {buildURL, convertAllPathsToURLs};

@@ -8,15 +8,6 @@ const fetchFilteredSchema = {
     storeName: Joi.string(),
     })
 }
-const createProductSchema = {
-    body: bodySchema.fork(['name', 'category', 'price', 'unit', 'availability'], schema => schema.required()).required(),
-    files: Joi.array().exist()
-}
-
-const editProductSchema = {
-    body: bodySchema.required(),
-    files: Joi.array() 
-}
 
 const bodySchema = Joi.object({
     name: Joi.string().min(1).max(50),
@@ -28,6 +19,16 @@ const bodySchema = Joi.object({
 
     variants: Joi.object().pattern(Joi.string(), Joi.array().items(Joi.string().min(1).max(50)))
 })
+
+const createProductSchema = {
+    body: bodySchema.fork(['name', 'category', 'price', 'unit', 'availability'], schema => schema.required()).required(),
+    files: Joi.array().exist()
+}
+
+const editProductSchema = {
+    body: bodySchema.required(),
+    files: Joi.array() 
+}
 
 export default {
     getProducts: fetchFilteredSchema,
