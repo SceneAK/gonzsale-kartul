@@ -128,4 +128,14 @@ function initializePage() {
 
 // Call initializePage on load
 document.addEventListener('DOMContentLoaded', initializePage);
-// abi code
+
+document.addEventListener("DOMContentLoaded", function () {
+    const searchBars = document.querySelectorAll(".search-bar");
+    const currentPath = window.location.pathname;
+
+    if (currentPath.includes("create-store.html")) {
+        searchBars.forEach(searchBar => {
+            searchBar.style.display = "none";
+        });
+    }
+});

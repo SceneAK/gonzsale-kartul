@@ -96,22 +96,24 @@
         <div class="loader" id="loader">Loading orders...</div>
 
         <!-- Order Table -->
-        <table id="order-table">
-            <thead>
-                <tr>
-                    <th>Order ID</th>
-                    <th>Buyer Name</th>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Total Price</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="order-table-body">
-                <!-- Orders will be populated dynamically -->
-            </tbody>
-        </table>
+        <div style="overflow-x: auto;">
+            <table id="order-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Buyer Name</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="order-table-body">
+                    <!-- Orders will be populated dynamically -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script type="module" src="dropdown.js" defer></script>

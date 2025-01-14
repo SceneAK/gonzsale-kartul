@@ -71,12 +71,6 @@
             width: 250px;
         }
 
-        .user-options a {
-            margin-left: 20px;
-            text-decoration: none;
-            color: #333;
-        }
-
         .menu-toggle {
             display: none;
             /* Hide the button by default */
@@ -91,7 +85,7 @@
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            /* Wrap categories on smaller screens */
+            align-items: center;
             gap: 15px;
             background-color: #f9f9f9;
             padding: 10px 0;
@@ -118,12 +112,14 @@
             position: relative;
             display: flex;
             gap: 20px;
+            align-items: center;
         }
 
         .user-options a {
             text-decoration: none;
             color: #333;
             cursor: pointer;
+            align-items: center;
         }
 
         /* Dropdown styling */
@@ -200,7 +196,7 @@
             width: 20px;
             height: 20px;
             margin-right: 5px;
-            /* Add spacing between the icon and text */
+            vertical-align: middle;
         }
 
         .mobile-header {
@@ -228,7 +224,7 @@
                     Sign In
                 </a> <!-- Keep only one userLink -->
                 <button id="addProductBtn" class="add-product-btn"
-                    onclick="window.location.href='add_product.html';">Add New Product</button>
+                    onclick="window.location.href='product-form.html';">Add New Product</button>
                 <!-- Add Product button -->
                 <div id="dropdown-content" class="dropdown-content">
                     <div id="loginForm">
@@ -365,6 +361,7 @@
                 z-index: 1100;
                 transition: left 0.3s ease;
                 padding: 20px;
+                overflow-y: auto; /* Allows scrolling within the side menu */
             }
 
             .side-menu.open {
@@ -391,9 +388,10 @@
                 width: 100%;
                 height: 100%;
                 background-color: rgba(0, 0, 0, 0.5);
-                z-index: 2000;
+                z-index: 3000;
                 justify-content: center;
                 align-items: center;
+                overflow: hidden;
             }
 
             .modal-overlay.show {
@@ -408,6 +406,7 @@
                 max-width: 400px;
                 text-align: center;
                 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                z-index: 3100; /* Ensures it appears above the modal overlay */
             }
 
             .modal-content h2 {
@@ -462,7 +461,10 @@
         </div>
     </div>
 
-    <!-- push #2 -->
+    <div class="search-bar-bottom">
+        <input type="text" placeholder="Search for items..." data-lpignore="true" id="mobileSearch">
+        <button onclick="performSearch()">Search</button>
+    </div>
 
     <div class="side-menu" id="sideMenu">
         <span class="close-icon" onclick="toggleMenu()">×</span>
@@ -486,15 +488,3 @@
     </div>
 
 </header>
-
-<script>
-    function toggleMenu() {
-        console.log('Toggle menu clicked!');
-        const sideMenu = document.getElementById('sideMenu');
-        if (sideMenu.classList.contains('open')) {
-            sideMenu.classList.remove('open'); // Close the menu
-        } else {
-            sideMenu.classList.add('open'); // Open the menu
-        }
-    }
-</script>

@@ -287,43 +287,7 @@
     <div id="footer"></div>
 
     <script type="module">
-
-        // Unrealistic model. 
-        // Mock data for testing
-        // const productData = {
-        //     shirts: [
-        //         { product_id: 101, product_name: "Cool T-Shirt", product_price: 99000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 1, store_name: "Fransiscus Fashion" },
-        //         { product_id: 102, product_name: "Graphic Tee", product_price: 119000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 2, store_name: "Borgias Merch" },
-        //     ],
-        //     pants: [
-        //         { product_id: 201, product_name: "Jeans", product_price: 199000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "pair", store_id: 1, store_name: "Fransiscus Fashion" },
-        //         { product_id: 202, product_name: "Chinos", product_price: 179000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "pair", store_id: 3, store_name: "Gonz Pants Co" },
-        //     ],
-        //     accessories: [
-        //         { product_id: 301, product_name: "Sunglasses", product_price: 79000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 1, store_name: "Fransiscus Borgias" },
-        //         { product_id: 302, product_name: "Cap", product_price: 49000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "piece", store_id: 2, store_name: "Borgias Merch" },
-        //     ],
-        //     food: [
-        //         { product_id: 401, product_name: "Nasi Goreng", product_price: 35000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "plate", store_id: 4, store_name: "Gonz Foods" },
-        //         { product_id: 402, product_name: "Mie Goreng", product_price: 25000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "plate", store_id: 4, store_name: "Gonz Foods" },
-        //     ],
-        //     drinks: [
-        //         { product_id: 501, product_name: "Iced Coffee", product_price: 20000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "cup", store_id: 5, store_name: "Caffeine Haven" },
-        //         { product_id: 502, product_name: "Milk Tea", product_price: 18000, product_imgSrc: "https://via.placeholder.com/150", product_unit: "cup", store_id: 5, store_name: "Caffeine Haven" },
-        //     ],
-        // };
-        
-        // Function to fetch items from API or use mock data
-        // async function fetchItems(category, containerId) {
-        //     try {
-        //         const container = document.getElementById(containerId);
-        //         container.innerHTML = `<p>Loading ${category} items...</p>`;
-        //         const items = productData[category.toLowerCase()] || [];
-        //         populateItems(container, items);
-        //     } catch (error) {
-        //         console.error(`Error fetching ${category} items:`, error);
-        //     }
-        // }
+        import { mockApi } from './frontendTest/mockApi.js';
 
         // Function to add items to the cart
         function addToCart(name, price, imgSrc, store_id, store_name) {
@@ -340,38 +304,49 @@
             alert(`${name} has been added to your cart!`);
         }
 
-        //#region GET PRODUCTS LOGIC
-        import { product } from './integration/fetches.js';
         const categoryToIdPair = {
-            Shirts: "shirts-items-container",
-            Pants: "pants-items-container",
-            Accessories: "accessory-items-container",
-            Food: "food-items-container",
-            Drinks: "drinks-items-container",
-            All: "all-items-container",
+            shirts: "shirts-items-container",
+            pants: "pants-items-container",
+            accessories: "accessory-items-container",
+            food: "food-items-container",
+            drinks: "drinks-items-container",
+            all: "all-items-container",
         };
 
         function populateItems(container, items) {
             container.innerHTML = '';
+
+            if (!items || items.length === 0) {
+                container.innerHTML = '<p>No products available for this category.</p>';
+                return;
+            }
+
             items.forEach(item => {
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('item');
 
                 itemDiv.innerHTML = `
-                    <img src="${item.product_imgSrc}" alt="${item.product_name}">
+                    <img src="${item.product_imgSrc}" alt="${item.name}">
                     <p>${item.product_name}</p>
                     <p class="store-name">Store: ${item.store_name}</p>
-                    <img class="store-logo" src="https://via.placeholder.com/50" alt="${item.store_name} Logo">
                     <p>Rp ${item.product_price.toLocaleString('id-ID')} / ${item.product_unit}</p>
                     <button class="add-to-cart" onclick="addToCart('${item.product_name}', ${item.product_price}, '${item.product_imgSrc}', ${item.store_id}, '${item.store_name}')">Add to Cart</button>
-                    <a href="product.html?id=${item.product_id}" class="view-details">View Details</a>
-                    `;
+                `;
                 container.appendChild(itemDiv);
             });
         }
 
-        // Handle switching between tabs using hash-based navigation
         async function openCategory(categoryName) {
+            console.log("Category Name:", categoryName);
+
+            const container = document.getElementById(categoryToIdPair[categoryName.toLowerCase()]);
+            console.log("Container Element:", container);
+
+            if (!container) {
+                console.error(`Invalid category: ${categoryName}`);
+                return;
+            }
+
             const tabcontents = document.getElementsByClassName("tabcontent");
 
             // Hide all tab contents
@@ -382,37 +357,34 @@
             if (selectedTab) {
                 selectedTab.style.display = "block";
 
-                const products = await product.getProducts(categoryName.toLowerCase());
-                const container = document.getElementById(categoryToIdPair[categoryName]);
+                const products = await mockApi.getProducts(categoryName.toLowerCase());
+                console.log("Fetched Products:", products);
+
                 populateItems(container, products);
+            } else {
+                console.error(`Tab not found for category: ${categoryName}`);
             }
         }
 
-        // Automatically load content for all categories on page load 
-        document.addEventListener("DOMContentLoaded", function () {
-
-            
-        });
-        
-        // Handle hash changes to navigate between tabs
         function handleHashChange() {
             const hash = window.location.hash.substring(1); // Remove the '#' from the hash
             if (hash) {
                 openCategory(hash);
             } else {
-                // Default to the "Shirts" tab if no hash is present
-                openCategory("Shirts");
+                openCategory("shirts"); // Default to shirts
             }
         }
-        // Attach event listener for hash changes
-        window.addEventListener("hashchange", handleHashChange);
 
-        // Trigger the handler on page load
-        handleHashChange();
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("DOM fully loaded");
+            handleHashChange();
+        });
 
-        //#endregion
+        window.addEventListener("hashchange", () => {
+            console.log("Hash changed");
+            handleHashChange();
+        });
     </script>
-
     <script type="module" src="dropdown.js" defer></script>
 </body>
 

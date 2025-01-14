@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Create Store</title>
+    <style>
+        /* Reset and global body styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* Wrapper for the form to ensure centering and padding */
+        .form-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Container for the Create Store form */
+        .create-store-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        /* Form structure */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Input and textarea styling */
+        form input[type="text"],
+        form textarea,
+        form input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        /* Textarea resizing */
+        form textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        /* Form labels */
+        form label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        /* Button styles */
+        form button {
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #45a049;
+        }
+
+        /* Heading styling */
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        /* Footer styling */
+        #footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        #footer a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        #footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .create-store-container {
+                padding: 15px;
+            }
+
+            form button {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content-wrapper">
+        <div id="header"></div>
+        <div class="form-wrapper">
+            <div class="create-store-container">
+                <h1>Create Store</h1>
+                <form action="#" method="POST" enctype="multipart/form-data">
+                    <div>
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div>
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="4" required></textarea>
+                    </div>
+
+                    <div>
+                        <label for="imageFile">Image File</label>
+                        <input type="file" id="imageFile" name="imageFile" accept="image/*" required>
+                    </div>
+
+                    <div>
+                        <label for="bankAccount">Bank Account</label>
+                        <input type="text" id="bankAccount" name="bankAccount" required>
+                    </div>
+
+                    <div>
+                        <label for="bankName">Bank Name</label>
+                        <input type="text" id="bankName" name="bankName" required>
+                    </div>
+
+                    <button type="submit">Create Store</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="footer"></div>
+</body>
+
+<script type="module" src="dropdown.js" defer></script>
+
+</html>

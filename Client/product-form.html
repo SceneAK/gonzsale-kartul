@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Product</title>
     <style>
-        /* Global styles */
+        /* Reset and global body styling */
         html,
         body {
             height: 100%;
@@ -22,21 +22,20 @@
             flex: 1;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            padding: 40px 20px;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         /* Form container styling */
         .add-product-form-container {
             width: 100%;
             max-width: 500px;
-            /* Limits the form width for large screens */
             padding: 30px;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
-            /* Ensures padding is included in the width */
         }
 
         .add-product-form-container h1 {
@@ -50,7 +49,7 @@
         .add-product-form {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 10px;
         }
 
         .add-product-form label {
@@ -145,7 +144,6 @@
         @media (min-width: 1024px) {
             .add-product-form-container {
                 max-width: 400px;
-                /* Further limits width for larger screens */
             }
         }
     </style>
@@ -157,7 +155,7 @@
 
 <body>
     <!-- Main Content -->
-    <section class="add-product-wrapper">
+    <div class="add-product-wrapper">
         <div class="add-product-form-container">
             <h1>Add Product Penjual</h1>
             <form id="add-product-form" class="add-product-form">
@@ -191,7 +189,7 @@
                 </div>
             </form>
         </div>
-    </section>
+    </div>
 
     <script type="module" src="dropdown.js" defer></script>
     <script>
