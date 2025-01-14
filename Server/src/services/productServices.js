@@ -19,29 +19,34 @@ async function fetchProducts(filter)
             { ...storeServices.include('just-name'), where: storeWhereClause }
         ]
     });
-    return products.map(product => product.get());
+    return products.map(product => product.toJSON());
 }
 
 async function fetchProduct(id){
-    const product = await Product.findByPk(id, {
+    const product = await _fetchProduct(id, {
         attributes: SERVE_ATTRIBUTES,
         include: [
             {...storeServices.include('serve')},
             {...productImageServices.include('serve-image')}
         ]
-    })
-    if(!product) throw new Error('Product not found');
-    return product.get();
+    });
+    return product.toJSON();
+}
+async function _fetchProduct(id, option)
+{
+    const result = await Product.findByPk(id, option);
+    if(!result) throw new Error('Product not found');
+    return result;
 }
 
 async function createProduct(productData, productImageFiles, variantData, decodedAuthToken) 
 {
     const storeId = await storeServices.fetchStoreIdOfUser(decodedAuthToken.id);
 
-    await Product.sequelize.transaction(async (t) => {
+    await Product.sequelize.transaction(async t => {
         const product = await Product.create({ ...productData, storeId });
 
-        await productImageServices.createProductImages(productImageFiles, product.id);
+        await productImageServices.createProductImagesAuto(productImageFiles, product.id);
         if(variantData) await variantServices.createVariants(variantData, product.id);
     });
     return { result: 'created product' };
@@ -51,18 +56,27 @@ async function editProduct(productId, productData, productImageFiles, variantDat
 {
     const storeId = await storeServices.fetchStoreIdOfUser(decodedAuthToken.id);
 
-    await Product.sequelize.transaction(async (t) => {
+    await Product.sequelize.transaction(async t => {
         const product = await Product.findByPk(productId);
 
         if (!product) throw new Error('Product not found');
         if (product.storeId !== storeId) throw new Error('Unauthorized');
 
-        await product.update(productData);
-
-        await productImageServices.updateProductImages(productImageFiles, product.id);
-        await variantServices.updateVariants(variantData, product.id);
     });
     return { result: 'updated product' };
+}
+async function handleImageUpdate(productId, actions, files, decodedAuthToken)
+{
+    actions.forEach( action => {
+        if(action != 'keep')
+        {
+            productImageServices.deleteImages()
+        }
+        if(action == 'replace')
+        {
+            
+        }
+    })
 }
 
 async function convertToWhereClauses(filter) 

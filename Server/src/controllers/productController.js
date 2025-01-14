@@ -10,7 +10,8 @@ const fetchProducts = async (req, res) => {
 const fetchProduct = async (req, res) => {
     const {id} = req.params;
     const product = await productServices.fetchProduct(id);
-    res.json(transform(product, req));
+    transform(product, req)
+    res.json(product);
 }
 
 const createProduct = async (req, res) => {

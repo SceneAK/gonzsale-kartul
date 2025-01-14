@@ -6,27 +6,34 @@ function buildURL(protocol, host, relativePath)
 }
 
 const pathFieldName = 'path';
-function convertAllPathsToURLs(protocol, host, obj)
+function convertAllPathsToURLs(protocol, host, input)
 {
-    for(const key in obj)
+    if(isArray(input))
     {
-        if(isPlainObject(obj[key]))
+        input.forEach( element => {
+            convertAllPathsToURLs(protocol, host, element);
+        })
+    }else if(isObject(input))
+    {
+        for(const key in input)
         {
-            convertAllPathsToURLs(protocol, host, obj[key]);
-        }
-        else if(key === pathFieldName)
-        {
-            obj['url'] = buildURL(protocol, host, obj[key]);
-            delete obj[key];
+            if(key === pathFieldName)
+            {
+                input['url'] = buildURL(protocol, host, input[key]);
+                delete input[key];
+            }else{
+                convertAllPathsToURLs(protocol, host, input[key]);
+            }
         }
     }
 }
-
-function isPlainObject(value)
+function isObject(value)
 {
-    const isArray = Array.isArray(value);
-    const isObject = value && typeof value === 'object';
-    return !isArray && isObject;
+    return value && typeof value === 'object';
+}
+function isArray(value)
+{
+    return Array.isArray(value)
 }
 
 export {buildURL, convertAllPathsToURLs};

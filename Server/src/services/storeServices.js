@@ -69,10 +69,8 @@ async function handleImage(fieldName, action, file, store, updateData)
 {
     if(action)
     {
-        console.log(store);
         if(store[fieldName] != null && action != 'keep')
         {
-            console.log('deleted');
             await imageServices.deleteImages(store[fieldName], store.userId);
             updateData[fieldName] = null;
         }

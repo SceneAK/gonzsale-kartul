@@ -2,21 +2,38 @@ import databaseInitializePromise from "../database/initialize.js";
 import imageServices from "./imageServices.js";
 const { ProductImage } = await databaseInitializePromise;
 
-async function createProductImages(files, productId) 
+async function createProductImagesAuto(files, productId, userId)
 {
-    const images = await imageServices.createImages(files);
-    const imageDatas = images.map( (image, index) => {
-        return { productId, imageId: image.id, priority: index };
-    });
-    console.log(imageDatas);
-    const productImageModels = await ProductImage.bulkCreate(imageDatas);
-    return productImageModels.map( model => model.get());
+    return await _createProductImages(files, productId, userId, imageDataMapper);
+}
+async function createProductImages(files, priorities, productId, userId)
+{
+    return await _createProductImages(files, productId, userId, imageDataDefinedPriorityMapper(priorities));
 }
 
-async function updateProductImages(files, productId)
+async function deleteImages(imageIds, userId)
 {
-    deleteProductImages(productId);
-    return createProductImages(files, productId);
+    return imageServices.deleteImages(imageIds, userId);
+}
+
+async function _createProductImages(files, productId, userId, imagesToImageDatas)
+{
+    const images = await imageServices.createImages(files);
+    const imageDatas = images.map(imagesToImageDatas);
+
+    const productImageModels = await ProductImage.bulkCreate(imageDatas);
+    return productImageModels.map( model => model.toJSON());
+}
+
+const imageDataMapper = (image, index) => {
+    const imageId = image.id;
+    return { productId, imageId, priority: index };
+}
+
+const imageDataDefinedPriorityMapper = (priorities) => (image, index) => {
+    const imageId = image.id;
+    const priority = priorities[index];
+    return { productId, imageId, priority };
 }
 
 function include(level)
@@ -35,4 +52,4 @@ function include(level)
     }
 }
 
-export default { createProductImages, updateProductImages, include };
+export default { createProductImagesAuto, createProductImages, deleteImages, include };
