@@ -178,17 +178,19 @@
             display: block;
         }
 
-        /* Add New Product Button (Hide by default) */
-        .add-product-btn {
-            display: none;
+        #loggedInState button {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
             background-color: #4CAF50;
             color: white;
-            padding: 10px 20px;
             border: none;
-            cursor: pointer;
+            border-radius: 5px;
+            text-align: left;
         }
 
-        .add-product-btn:hover {
+        #loggedInState button:hover {
             background-color: #45a049;
         }
 
@@ -223,21 +225,19 @@
                     <img src="assets/images/sign_in_icon.svg" alt="Sign in Icon">
                     Sign In
                 </a> <!-- Keep only one userLink -->
-                <button id="addProductBtn" class="add-product-btn"
-                    onclick="window.location.href='product-form.html';">Add New Product</button>
-                <!-- Add Product button -->
                 <div id="dropdown-content" class="dropdown-content">
-                    <div id="loginForm">
+                    <div id="loginForm" style="display: none;">
                         <input type="text" id="email" placeholder="Email">
                         <input type="password" id="password" placeholder="Password">
                         <button id="signIn">Sign In</button>
                         <p>Don't have an account?</p>
                         <button onclick="window.location.href='signup.html';">Sign Up</button>
                     </div>
-                    <button id="manageProductsBtn" style="display: none;"
-                        onclick="window.location.href='manage_products.html';">
-                        Manage Products
-                    </button>
+                    <div id="editForm">
+                        <button onclick="window.location.href='edit-shop.html';">Edit Shop</button>
+                        <button onclick="window.location.href='manage-products.html';">Manage Products</button>
+                        <button id="logoutButton">Logout</button>
+                    </div>
                 </div>
             </div>
             <a href="mycart.html">
@@ -361,7 +361,8 @@
                 z-index: 1100;
                 transition: left 0.3s ease;
                 padding: 20px;
-                overflow-y: auto; /* Allows scrolling within the side menu */
+                overflow-y: auto;
+                /* Allows scrolling within the side menu */
             }
 
             .side-menu.open {
@@ -406,7 +407,8 @@
                 max-width: 400px;
                 text-align: center;
                 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-                z-index: 3100; /* Ensures it appears above the modal overlay */
+                z-index: 3100;
+                /* Ensures it appears above the modal overlay */
             }
 
             .modal-content h2 {
