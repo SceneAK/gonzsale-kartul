@@ -16,16 +16,17 @@
             /* Prevents overflow issues globally */
         }
 
+        /* Container that centers form content */
         .signup-wrapper {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            /* Ensures proper spacing around content */
             box-sizing: border-box;
         }
 
+        /* Outer box for register form */
         .register-container {
             width: 100%;
             max-width: 500px;
@@ -37,14 +38,17 @@
             box-sizing: border-box;
         }
 
-        form {
+        /* Scope your form elements to avoid conflicts:
+       - We use .register-container form to make sure these styles apply
+         ONLY to the form inside our .register-container. */
+        .register-container form {
             display: flex;
             flex-direction: column;
         }
 
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
+        .register-container form input[type="text"],
+        .register-container form input[type="email"],
+        .register-container form input[type="password"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
@@ -53,25 +57,29 @@
             margin-bottom: 15px;
         }
 
-        button {
+        /* Buttons inside this particular form/container */
+        .register-container form button {
             padding: 10px 20px;
             font-size: 1em;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin-right: 10px;
+            /* Example spacing if you want it */
         }
 
-        button[type="button"] {
+        /* If you want distinct styles for button[type="button"] vs. button[type="submit"] */
+        .register-container form button[type="button"] {
             background-color: #ccc;
             color: #333;
         }
 
-        button[type="submit"] {
+        .register-container form button[type="submit"] {
             background-color: #4CAF50;
             color: white;
         }
 
-        button[type="submit"]:hover {
+        .register-container form button[type="submit"]:hover {
             background-color: #45a049;
         }
 
@@ -84,7 +92,6 @@
             width: 100%;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
-            /* Ensures it doesn't cause horizontal overflow */
         }
 
         #footer a {
@@ -103,7 +110,7 @@
                 padding: 15px;
             }
 
-            button {
+            .register-container form button {
                 font-size: 0.9em;
                 padding: 8px;
             }
@@ -124,18 +131,22 @@
             <p><strong>Please provide the following information</strong></p>
             <p><span class="required">*</span> denotes required fields</p>
 
+            <!-- 
+        Notice how the input elements are now 100% 
+        *scoped* by the .register-container form CSS above.
+      -->
             <form id="register-form">
-                <label for="username"><span class="required">*</span> Username:</label>
-                <input type="text" id="username" name="username" required>
+                <label for="signupUsername"><span class="required">*</span> Username:</label>
+                <input type="text" id="signupUsername" name="signupUsername" required>
 
-                <label for="phone"><span class="required">*</span> Phone:</label>
-                <input type="text" id="phone" name="phone" required>
+                <label for="signupPhone"><span class="required">*</span> Phone (+62):</label>
+                <input type="text" id="signupPhone" name="signupPhone" required>
 
-                <label for="email"><span class="required">*</span> Email:</label>
-                <input type="email" id="email" name="email" required>
+                <label for="signupEmail"><span class="required">*</span> Email:</label>
+                <input type="email" id="signupEmail" name="signupEmail" required>
 
-                <label for="password"><span class="required">*</span> Password:</label>
-                <input type="password" id="password" name="password" required>
+                <label for="signupPassword"><span class="required">*</span> Password:</label>
+                <input type="password" id="signupPassword" name="signupPassword" required>
 
                 <p class="password-instructions">
                     Your password must be between 3 to 300 characters inclusive
@@ -143,7 +154,7 @@
 
                 <div class="form-buttons">
                     <button type="button" onclick="window.history.back()">Cancel</button>
-                    <button type="submit" id="submitButton">Register</button>
+                    <button type="submit" id="signupSubmitButton">Register</button>
                 </div>
             </form>
         </div>
@@ -154,15 +165,19 @@
         <p>&copy; 2024 My Website | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
     </div>
 
+    <!-- JavaScript -->
     <script type="module">
         import { hookSignUp } from './integration/user.js';
 
-        const submitButton = document.getElementById('submitButton');
-        const name = document.getElementById('username');
-        const phone = document.getElementById('phone');
-        const email = document.getElementById('email');
-        const password = document.getElementById('password');
-        hookSignUp(submitButton, name, phone, email, password);
+        // Grab the renamed elements
+        const registerButton = document.getElementById('signupSubmitButton');
+        const registerUsername = document.getElementById('signupUsername');
+        const registerPhone = document.getElementById('signupPhone');
+        const registerEmail = document.getElementById('signupEmail');
+        const registerPassword = document.getElementById('signupPassword');
+
+        // Pass them into your sign-up hook
+        hookSignUp(registerButton, registerUsername, registerPhone, registerEmail, registerPassword);
     </script>
     <script type="module" src="integration/uiManagement.js" defer></script>
 </body>

@@ -338,33 +338,43 @@
         }
 
         async function openCategory(categoryName) {
-            console.log("Category Name:", categoryName);
-
             const container = document.getElementById(categoryToIdPair[categoryName.toLowerCase()]);
-            console.log("Container Element:", container);
-
             if (!container) {
                 console.error(`Invalid category: ${categoryName}`);
                 return;
             }
 
+            // Hide all other tab contents
             const tabcontents = document.getElementsByClassName("tabcontent");
-
-            // Hide all tab contents
             Array.from(tabcontents).forEach(tab => (tab.style.display = "none"));
 
-            // Show the selected tab's content
+            // Show the selected tab
             const selectedTab = document.getElementById(categoryName);
-            if (selectedTab) {
-                selectedTab.style.display = "block";
-
-                const products = await mockApi.getProducts(categoryName.toLowerCase());
-                console.log("Fetched Products:", products);
-
-                populateItems(container, products);
-            } else {
+            if (!selectedTab) {
                 console.error(`Tab not found for category: ${categoryName}`);
+                return;
             }
+            selectedTab.style.display = "block";
+
+            let products = [];
+
+            if (categoryName.toLowerCase() === "all") {
+                // Manually fetch each category
+                const shirts = await mockApi.getProducts("shirts");
+                const pants = await mockApi.getProducts("pants");
+                const accessories = await mockApi.getProducts("accessories");
+                const food = await mockApi.getProducts("food");
+                const drinks = await mockApi.getProducts("drinks");
+
+                // Combine them into one array
+                products = shirts.concat(pants, accessories, food, drinks);
+            } else {
+                // Fetch only the requested category
+                products = await mockApi.getProducts(categoryName.toLowerCase());
+            }
+
+            // Finally, populate the container with the combined (or single) set of items
+            populateItems(container, products);
         }
 
         function handleHashChange() {

@@ -117,9 +117,11 @@ window.toggleMenu = function () {
     if (sideMenu) {
         console.log("Found sideMenu:", sideMenu);
         console.log("Before toggle:", sideMenu.classList.value);
+        
         sideMenu.classList.remove('open');
         sideMenu.classList.toggle('open');
-
+        
+        // Logging final state
         console.log("After toggle:", sideMenu.classList.value);
     } else {
         console.error('sideMenu element not found.');
@@ -129,6 +131,7 @@ window.toggleMenu = function () {
 function initializeMenuToggle() {
     const menuIcon = document.querySelector('.menu-icon');
     const closeIcon = document.querySelector('.close-icon');
+    const sideMenu = document.getElementById("sideMenu");
 
     if (menuIcon) {
         menuIcon.addEventListener('click', () => {
@@ -136,26 +139,27 @@ function initializeMenuToggle() {
             window.toggleMenu();
         });
     }
+
     if (closeIcon) {
         closeIcon.addEventListener('click', () => {
             console.log('Close icon clicked!');
-            sideMenu.classList.remove('open'); // or sideMenu.classList.remove('open')
+            sideMenu.classList.remove('open');
         });
     }
 
-    // 2. Add your "click outside" logic for the side menu
+    // "Click outside" logic for the side menu:
+    // If you want this to work on every click (not just once), remove `{ once: true }`.
     document.addEventListener("click", function handleSideMenuOutsideClick(event) {
-        const sideMenu = document.getElementById("sideMenu");
         if (
             sideMenu &&
             sideMenu.classList.contains("open") &&
-            !event.target.closest("#sideMenu") &&         // Not inside the side menu
-            !event.target.closest(".menu-icon") &&        // Not the menu icon
-            !event.target.closest(".close-icon")          // Not the side menu close icon
+            !event.target.closest("#sideMenu") &&       // Not inside the side menu
+            !event.target.closest(".menu-icon") &&       // Not the menu icon
+            !event.target.closest(".close-icon")         // Not the side menu close icon
         ) {
             sideMenu.classList.remove("open");
         }
-    }, { once: true });
+    }, /* { once: true } */);
 }
 
 /***************************************************
@@ -183,7 +187,11 @@ function initializePage() {
         initializeMenuToggle();
         updateUI();
         attachEventListeners();
-        handleSideMenuOutsideClick();
+
+        // REMOVED: handleSideMenuOutsideClick() call 
+        // because it wasn't defined as a standalone function.
+        // The side-menu "click outside" logic is already handled 
+        // in initializeMenuToggle().
     });
 
     loadHTML('footer.html', 'footer');

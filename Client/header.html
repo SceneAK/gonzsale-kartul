@@ -155,16 +155,29 @@
 
         .dropdown-content button {
             width: 100%;
+            display: block;
+            margin: 10px 0;
             padding: 10px;
+            font-size: 16px;
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
+            text-align: center;
             cursor: pointer;
         }
 
         .dropdown-content button:hover {
             background-color: #45a049;
+        }
+
+        .dropdown-content .btn-signUp {
+            background-color: #ff9900;
+            color: white;
+        }
+
+        .dropdown-content .btn-signUp:hover {
+            background-color: #df8602;
         }
 
         .dropdown-content p {
@@ -209,7 +222,7 @@
             color: white;
             border: none;
             border-radius: 5px;
-            text-align: left;
+            text-align: center;
             cursor: pointer;
         }
 
@@ -237,7 +250,7 @@
         <div class="logo">
             <a href="index.html">
                 <img src="assets/images/logo_placeholder.svg" alt="GonzSale Logo">
-                GonzSale 2024
+                GonzSale
             </a>
         </div>
         <div class="search-bar">
@@ -255,12 +268,10 @@
                         <input type="password" id="password" placeholder="Password">
                         <button id="signIn">Sign In</button>
                         <p>Don't have an account?</p>
-                        <button onclick="window.location.href='signup.html';">Sign Up</button>
+                        <button onclick="window.location.href='signup.html';" class="btn-signUp">Sign Up</button>
                     </div>
                     <div id="editForm">
-                        <button onclick="window.location.href='store-management.html';">Edit Shop</button>
-                        <button onclick="window.location.href='manage-products.html';">Manage Products</button>
-                        <button onclick="window.location.href='product-dashboard.html';">Product Dashboard</button>
+                        <button onclick="window.location.href='store-management.html';">Manage Store</button>
                         <button id="logoutButton">Logout</button>
                     </div>
                 </div>
@@ -406,6 +417,15 @@
                 color: #ff9900;
             }
 
+            .close-icon img {
+                width: 24px;
+                /* or any size you prefer */
+                height: auto;
+                /* maintain aspect ratio */
+                cursor: pointer;
+                /* show pointer on hover */
+            }
+
             .modal-overlay {
                 display: none;
                 position: fixed;
@@ -489,7 +509,7 @@
                 color: white;
                 border: none;
                 border-radius: 5px;
-                text-align: left;
+                text-align: center;
                 cursor: pointer;
             }
 
@@ -506,7 +526,7 @@
         <div class="logo">
             <img src="assets/images/logo_placeholder.svg" alt="GonzSale Logo"
                 onclick="window.location.href='index.html';">
-            <a href=" index.html">GonzSale 2024</a>
+            <a href=" index.html">GonzSale</a>
         </div>
         <div class="user-options">
             <img src="assets/images/sign_in_icon.svg" alt="Sign In Icon" onclick="toggleModal('loginModal')">
@@ -521,7 +541,9 @@
     </div>
 
     <div class="side-menu" id="sideMenu">
-        <span class="close-icon" onclick="toggleMenu()">×</span>
+        <span class="close-icon" onclick="toggleMenu()">
+            <img src="assets/images/exit_button.svg" alt="Close Menu">
+        </span>
         <a class="tablink" href="catalog.html#Shirts">Baju</a>
         <a class="tablink" href="catalog.html#Pants">Celana</a>
         <a class="tablink" href="catalog.html#Accessories">Aksesoris</a>
@@ -540,10 +562,8 @@
                 <button class="close-btn" onclick="toggleModal('loginModal')">Close</button>
                 <p>Don't have an account? <a href="signup.html">Register</a></p>
             </div>
-            <div id="editForm" >
-                <button onclick="window.location.href='edit-shop.html';">Edit Shop</button>
-                <button onclick="window.location.href='manage-products.html';">Manage Products</button>
-                <button onclick="window.location.href='product-dashboard.html';">Product Dashboard</button>
+            <div id="editForm">
+                <button onclick="window.location.href='store-management.html';">Manage Store</button>
                 <button id="logoutButton">Logout</button>
             </div>
         </div>
