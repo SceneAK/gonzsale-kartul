@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Management Hub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* Header (placed in the first row of the grid) */
+        #header {
+            grid-row: 1;
+            /* Fixes header at the top */
+            box-sizing: border-box;
+        }
+
+        /* Footer (placed in the last row of the grid) */
+        #footer {
+            grid-row: 3;
+            /* Fixes footer at the bottom */
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        /* Main Content Wrapper (middle row of the grid) */
+        .content-wrapper {
+            grid-row: 2;
+            /* Occupies the middle section */
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            /* Side menu (200px) and main content (remaining space) */
+            /* Ensures it fills the available height */
+            overflow: hidden;
+        }
+
+        /* Side Menu */
+        .side-menu {
+            background: #333;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            height: 100%; 
+        }
+
+        /* Links in Side Menu */
+        .side-menu a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .side-menu a.active,
+        .side-menu a:hover {
+            background: #ff9900;
+        }
+
+        /* Main Content */
+        .content {
+            padding: 20px;
+            overflow-y: auto;
+            /* Scrollable if content exceeds height */
+            box-sizing: border-box;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        /* Show only the active content section */
+        .content-section.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header">Header Content Here</div>
+
+    <div class="content-wrapper">
+        <!-- Side Menu -->
+        <div class="side-menu">
+            <a href="#dashboard" class="menu-link">Dashboard</a>
+            <a href="#store" class="menu-link">Store</a>
+            <a href="#products" class="menu-link">Products</a>
+            <a href="#orders" class="menu-link">Orders</a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="content-section active">
+                <h1>Dashboard</h1>
+                <div>Total Orders: <span id="total-orders">0</span></div>
+                <div>Total Revenue: <span id="total-revenue">0</span></div>
+            </div>
+
+            <!-- Store Section -->
+            <div id="store" class="content-section">
+                <h1>Store</h1>
+                <div id="store-content">
+                    <p>Loading store details...</p>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div id="products" class="content-section">
+                <h1>Products</h1>
+                <button id="add-product-btn">Add New Product</button>
+                <div id="product-list">
+                    <p>Loading products...</p>
+                </div>
+            </div>
+
+            <!-- Orders Section -->
+            <div id="orders" class="content-section">
+                <h1>Orders</h1>
+                <div id="order-table">
+                    <p>Loading orders...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer"></div>
+
+    <script type="module">
+        // Hash-based navigation
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('click', function () {
+                document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+
+                this.classList.add('active');
+                const sectionId = this.getAttribute('href').substring(1);
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+
+        // Load store data
+        async function loadStore() {
+            const storeContent = document.getElementById('store-content');
+            const stores = await mockApi.getStores();
+            if (stores.length > 0) {
+                storeContent.innerHTML = `
+              <h2>${stores[0].store_name}</h2>
+              <p>${stores[0].store_description}</p>
+              <button onclick="editStore()">Edit Store</button>
+            `;
+            } else {
+                storeContent.innerHTML = `<button onclick="createStore()">Create Store</button>`;
+            }
+        }
+
+        // Load products data
+        async function loadProducts() {
+            const productList = document.getElementById('product-list');
+            const products = await mockApi.getProducts('all');
+            productList.innerHTML = products.map(product => `
+            <div>
+              <h3>${product.product_name}</h3>
+              <p>Price: Rp ${product.product_price}</p>
+              <button onclick="editProduct('${product.product_id}')">Edit</button>
+            </div>
+          `).join('');
+        }
+
+        // Load orders data
+        async function loadOrders() {
+            const orderTable = document.getElementById('order-table');
+            const orders = await mockApi.getOrders();
+            orderTable.innerHTML = orders.map(order => `
+            <div>
+              <h3>Order #${order.order_id}</h3>
+              <p>Product ID: ${order.product_id}</p>
+              <p>Status: ${order.order_status}</p>
+              <button onclick="markOrderAsCompleted('${order.order_id}')">Complete</button>
+            </div>
+          `).join('');
+        }
+
+        // Initial Load
+        loadStore();
+        loadProducts();
+        loadOrders();
+    </script>
+    <script type="module" src="integration/uiManagement.js" defer></script>
+</body>
+
+</html>

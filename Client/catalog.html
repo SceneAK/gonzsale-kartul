@@ -290,19 +290,20 @@
         import { mockApi } from './frontendTest/mockApi.js';
 
         // Function to add items to the cart
-        function addToCart(name, price, imgSrc, store_id, store_name) {
+        window.addToCart = function (name, product_price, imgSrc, store_id, store_name) {
             const cart = JSON.parse(localStorage.getItem('cart') || '[]');
             const existingItemIndex = cart.findIndex(item => item.name === name && item.store_id === store_id);
 
             if (existingItemIndex > -1) {
                 cart[existingItemIndex].quantity += 1;
             } else {
-                cart.push({ name, price, imgSrc, store_id, store_name, quantity: 1 });
+                cart.push({ name, product_price, imgSrc, store_id, store_name, quantity: 1 });
             }
 
             localStorage.setItem('cart', JSON.stringify(cart));
             alert(`${name} has been added to your cart!`);
-        }
+        };
+
 
         const categoryToIdPair = {
             shirts: "shirts-items-container",
@@ -330,7 +331,7 @@
                     <p>${item.product_name}</p>
                     <p class="store-name">Store: ${item.store_name}</p>
                     <p>Rp ${item.product_price.toLocaleString('id-ID')} / ${item.product_unit}</p>
-                    <button class="add-to-cart" onclick="addToCart('${item.product_name}', ${item.product_price}, '${item.product_imgSrc}', ${item.store_id}, '${item.store_name}')">Add to Cart</button>
+                    <button class="add-to-cart" onclick="addToCart('${item.product_name}', ${item.product_price}, '${item.product_imgSrc}', '${item.store_id}', '${item.store_name}')">Add to Cart</button>
                 `;
                 container.appendChild(itemDiv);
             });

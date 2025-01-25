@@ -194,6 +194,30 @@
             background-color: #45a049;
         }
 
+        #editForm {
+            margin-top: 10px;
+            /* example spacing */
+        }
+
+        /* Buttons inside #editForm */
+        #editForm button {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        /* Hover effect for buttons inside #editForm */
+        #editForm button:hover {
+            background-color: #45a049;
+        }
+
         .user-options img {
             width: 20px;
             height: 20px;
@@ -226,7 +250,7 @@
                     Sign In
                 </a> <!-- Keep only one userLink -->
                 <div id="dropdown-content" class="dropdown-content">
-                    <div id="loginForm" style="display: none;">
+                    <div id="loginForm">
                         <input type="text" id="email" placeholder="Email">
                         <input type="password" id="password" placeholder="Password">
                         <button id="signIn">Sign In</button>
@@ -234,8 +258,9 @@
                         <button onclick="window.location.href='signup.html';">Sign Up</button>
                     </div>
                     <div id="editForm">
-                        <button onclick="window.location.href='edit-shop.html';">Edit Shop</button>
+                        <button onclick="window.location.href='store-management.html';">Edit Shop</button>
                         <button onclick="window.location.href='manage-products.html';">Manage Products</button>
+                        <button onclick="window.location.href='product-dashboard.html';">Product Dashboard</button>
                         <button id="logoutButton">Logout</button>
                     </div>
                 </div>
@@ -416,11 +441,12 @@
             }
 
             .modal-content input {
-                width: 100%;
+                width: calc(100% - 20px);
                 padding: 10px;
                 margin-bottom: 10px;
                 border: 1px solid #ccc;
                 border-radius: 5px;
+                display: block;
             }
 
             .modal-content button {
@@ -446,6 +472,32 @@
             .modal-content .close-btn:hover {
                 background-color: #d32f2f;
             }
+
+            /* EditForm container styling (applies to both dropdown and modal if they share #editForm) */
+            #editForm {
+                margin-top: 10px;
+                /* example spacing */
+            }
+
+            /* Buttons inside #editForm */
+            #editForm button {
+                display: block;
+                margin: 10px 0;
+                padding: 10px;
+                font-size: 16px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                text-align: left;
+                cursor: pointer;
+            }
+
+            /* Hover effect for buttons inside #editForm */
+            #editForm button:hover {
+                background-color: #45a049;
+            }
+
         }
     </style>
 
@@ -480,13 +532,22 @@
 
     <div class="modal-overlay" id="loginModal">
         <div class="modal-content">
-            <h2>Sign In</h2>
-            <input type="email" id="email_mobile" placeholder="Email" required>
-            <input type="password" id="password_mobile" placeholder="Password" required>
-            <button id="signIn_mobile">Sign In</button>
-            <button class="close-btn" onclick="toggleModal('loginModal')">Close</button>
-            <p>Don't have an account? <a href="signup.html">Register</a></p>
+            <div class="loginForm">
+                <h2>Sign In</h2>
+                <input type="email" id="email_mobile" placeholder="Email" required>
+                <input type="password" id="password_mobile" placeholder="Password" required>
+                <button id="signIn_mobile">Sign In</button>
+                <button class="close-btn" onclick="toggleModal('loginModal')">Close</button>
+                <p>Don't have an account? <a href="signup.html">Register</a></p>
+            </div>
+            <div id="editForm" >
+                <button onclick="window.location.href='edit-shop.html';">Edit Shop</button>
+                <button onclick="window.location.href='manage-products.html';">Manage Products</button>
+                <button onclick="window.location.href='product-dashboard.html';">Product Dashboard</button>
+                <button id="logoutButton">Logout</button>
+            </div>
         </div>
+
     </div>
 
 </header>
