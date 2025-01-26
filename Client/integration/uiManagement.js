@@ -21,16 +21,19 @@ function toggleDropdownState(isLoggedIn) {
 
     if (!loginForm || !editForm || !dropdownLink) return; // Graceful exit
 
-    if (isLoggedIn) {
-        loginForm.style.display = 'none';
-        editForm.style.display = 'block';
+    loginForms.forEach((loginForm) => {
+        loginForm.style.display = isLoggedIn ? 'none' : 'block';
+    });
+
+    editForms.forEach((editForm) => {
+        editForm.style.display = isLoggedIn ? 'block' : 'none';
+    });
+
+    dropdownLinks.forEach((dropdownLink) => {
         const user = JSON.parse(localStorage.getItem('loginDetail')) || {};
-        dropdownLink.textContent = `Welcome, ${user.user_name || 'User'}`;
-    } else {
-        loginForm.style.display = 'block';
-        editForm.style.display = 'none';
-        dropdownLink.textContent = "Sign In";
-    }
+        dropdownLink.textContent = isLoggedIn ? `Welcome, ${user.name || 'User'}` : 'Sign In';
+    });
+
 }
 
 // Update UI based on login state
@@ -117,10 +120,10 @@ window.toggleMenu = function () {
     if (sideMenu) {
         console.log("Found sideMenu:", sideMenu);
         console.log("Before toggle:", sideMenu.classList.value);
-        
+
         sideMenu.classList.remove('open');
         sideMenu.classList.toggle('open');
-        
+
         // Logging final state
         console.log("After toggle:", sideMenu.classList.value);
     } else {
