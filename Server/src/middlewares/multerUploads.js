@@ -21,7 +21,6 @@ function onErrorFileDeletion(err, req, res, next)
 {
     const paths = getFilesIfAny(req).map(file => file.path);
 
-    console.log(paths);
     paths.forEach( path => {
             if(path) fs.unlink(path, err => {
                 if(err) logger.info(`Failed to delete ${path}`)

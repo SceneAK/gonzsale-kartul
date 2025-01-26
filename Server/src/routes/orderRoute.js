@@ -4,17 +4,14 @@ const router = express.Router();
 import verify from '../middlewares/verifyAuthToken.js';
 import { validate, orderSchemas} from '../reqSchemas/index.js';
 import { order } from '../controllers/index.js'
-import {createMulter} from '../middlewares/multerUploads.js';
 
-const transactionUpload = createMulter({relativeDir: 'Transactions', keyName: 'transaction_proof', type: 'single'})
+router.get('/single/:id', order.fetchOrder);
 
-router.get('/incoming', verify, order.getIncomingOrders);
+router.get('/incoming', verify, order.fetchIncomingOrders);
 
-router.get('/', verify, order.getOrders);
+router.get('/my', verify, order.fetchOrders);
 
-router.post('/', verify, transactionUpload, validate(orderSchemas.placeOrder), order.placeOrderAccount);
-
-router.post('/guest', transactionUpload, validate(orderSchemas.guestPlace), order.placeOrderGuest);
+router.post('/', verify, validate(orderSchemas.createOrder), order.createOrder);
 
 router.patch('/', verify, validate(orderSchemas.update), order.updateOrderStatus)
 

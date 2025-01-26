@@ -15,27 +15,24 @@ const Transaction = sequelize.define('Transaction', {
         type: DataTypes.UUID,
         allowNull: false
     },
-    amount: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false
-    },
     method: {
-        type: DataTypes.STRING(30),
+        type: DataTypes.ENUM('PROOF-BASED', 'CASH-ON-DELIVERY'),
         allowNull: false,
         defaultValue: "PROOF-BASED"
+    },
+    type: {
+        type: DataTypes.ENUM('PAYMENT', 'REFUND'),
+        allowNull: false
     }
 });
 
-Order.hasOne(Transaction, {foreignKey: 'orderId', onDelete: 'RESTRICT'})
+Order.hasMany(Transaction, {foreignKey: 'orderId', onDelete: 'RESTRICT'})
 Transaction.belongsTo(Order, {foreignKey: 'orderId', onDelete: 'RESTRICT'})
 
 const ProofTransaction = sequelize.define('ProofTransaction', {
     transactionId: {
         type: DataTypes.UUID,
+        primaryKey: true,
         allowNull: false
     },
     proofImageId: {
@@ -44,10 +41,21 @@ const ProofTransaction = sequelize.define('ProofTransaction', {
     }
 })
 
-ProofTransaction.belongsTo(Transaction, {foreignKey: 'transactionId'})
-Transaction.hasOne(ProofTransaction, {foreignKey:'transactionId'})
+ProofTransaction.belongsTo(Transaction, { foreignKey: 'transactionId'})
+Transaction.hasOne(ProofTransaction, { foreignKey:'transactionId'} )
 
 ProofTransaction.belongsTo(Image, {foreignKey: 'proofImageId'})
 Image.hasOne(ProofTransaction, {foreignKey: 'proofImageId'})
 
-export {Transaction, ProofTransaction};
+const CODTransaction = sequelize.define('CODTransaction', {
+    transactionId: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        allowNull: false
+    },
+    status:{
+        type: DataTypes.ENUM('PENDING', 'COMPLETED')
+    }
+})
+
+export {Transaction, ProofTransaction, CODTransaction};

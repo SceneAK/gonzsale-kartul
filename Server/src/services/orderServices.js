@@ -1,53 +1,62 @@
+import ApplicationError from '../common/errors.js';
 import initializePromise from '../database/initialize.js';
-import productServices from './productServices.js';
+import orderItemServices from './orderItemServices.js';
 import storeServices from './storeServices.js';
-import userServices from './userServices.js';
-const { Order, OrderItem } = await initializePromise;
+import transactionServices from './transactionServices.js';
+const { Order } = await initializePromise;
 
-async function fetchIncomingOrders(decodedAuthToken)
+const WITH_ITEMS = [
+    {...transactionServices.include('serve')}, 
+    {...orderItemServices.include('serve')}
+];
+const ATTRIBUTES = ['id', 'storeId', 'customerId', 'createdAt'];
+async function fetchOrder(id) // todo: check if user has association with the order
 {
-    const storeId = storeServices.fetchStoreIdOfUser(decodedAuthToken.id);
-    const orders = await Order.scope('withItems').findAll({ where: { storeId },});
-    return orders.map(order => order.get());
+    const order = await Order.findByPk(id, {
+        include: WITH_ITEMS,
+        attributes: ATTRIBUTES
+    });
+    
+    if(!order) throw new ApplicationError('Order not found', 404);
+    return order.toJSON();
+    
+}
+async function fetchIncomingOrders(storeOwnerUserId)
+{
+    const storeId = await storeServices.fetchStoreIdOfUser(storeOwnerUserId);
+    const orders = await Order.findAll({ 
+        where: { storeId },
+        include: WITH_ITEMS,
+        attributes: ATTRIBUTES
+    });
+    return orders.map(order => order.toJSON());
 }
 
-async function fetchOrders(decodedAuthToken)
+async function fetchOrders(customerId)
 {
-    const orders = await Order.scope('withItems').findAll({ where: { customerId: decodedAuthToken.id } });
+    const orders = await Order.findAll({ 
+        where: { customerId }, 
+        include: WITH_ITEMS,
+        attributes: ATTRIBUTES
+    });
     return orders.map(order => order.get());
 };
 
-
-async function placeOrder(orderData, decodedAuthToken)
+async function createOrder(orderItems, customerId) // please refactor
 {
-    const { productId } = orderData;
-    const product = productServices.fetchProduct(productId);
-    if(product.availability == 'UNAVAILABLE') throw new Error("Product Unavailable");
-    
-    // record transaction 
-
-    // parse orderVariant as obj
-
-    // make the order
+    await Order.sequelize.transaction( async t => {
+        const orderModel = Order.build({customerId});
+        const commonStoreId = await orderItemServices.completeAndValidate(orderItems, orderModel.id);
+        orderModel.storeId = commonStoreId;
+        await orderModel.save();
+        await orderItemServices.createOrderItems(orderItems);
+    })
+    return orderItems;
 }
-
-async function placeOrderGuest(orderData, guestData){
-    const {email, name, phone} = guestData;
-    const user = userServices.findOrCreateGuest(email, name, phone);
-
-    return await placeOrder(orderData, user);
-}
-
-async function updateOrderStatus(orderId, status, decodedAuthToken)
-{
-    
-}
-
 
 export default {
+    fetchOrder,
     fetchOrders,
     fetchIncomingOrders,
-    placeOrder, 
-    placeOrderGuest, 
-    updateOrderStatus
+    createOrder
 }

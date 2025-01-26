@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import tokenAuthServices from './tokenAuthServices.js';
 import databaseInitializePromise from '../database/initialize.js'
 import {ApplicationError} from '../common/index.js';
+import { UniqueConstraintError } from 'sequelize';
 const { User } = await databaseInitializePromise;
 
 const SALT_ROUNDS = 8;
@@ -24,19 +25,40 @@ async function signIn(email, password)
     const match = await bcrypt.compare(password, user.password);;
     if(!match) throw new ApplicationError("Failed to Authenticate", 401);
     
+    filterOnly(user, SERVE_ATTRIBUTES);
     return signReturnObject(user);
 }
 
 async function signUp(email, password, name, phone)
 {
     const hashed = await bcrypt.hash(password, SALT_ROUNDS);
-    const [user] = await User.findOrCreate({ where: {email}, defaults:{
-        name,
-        phone,
-        password: hashed
-    }, attributes: SERVE_ATTRIBUTES, raw: true });
-    
-    return signReturnObject(user);
+    try
+    {
+        const userModel = await User.create({
+            email,
+            name,
+            phone,
+            password: hashed
+        });
+        const user = userModel.toJSON();
+        filterOnly(user, SERVE_ATTRIBUTES);
+        return signReturnObject(user);
+    }catch(err)
+    {
+        if(err instanceof UniqueConstraintError){
+            throw new ApplicationError('Email not unique', 400)
+        }
+        throw err;
+    }
+}
+function filterOnly(obj, keys)
+{
+    for (const key in obj) {
+        if(!keys.includes(key))
+        {
+            delete obj[key];
+        }
+    }
 }
 
 async function findOrCreateGuest(email, name, phone)

@@ -59,7 +59,6 @@ async function updateStore(storeData, files, userId)
 
         await handleImage('imageId', updateData.imageAction, files.imageFile?.[0], store, updateData);
         await handleImage('qrImageId', updateData.qrImageAction, files.qrImageFile?.[0], store, updateData);
-        console.log(updateData);
         await store.update(updateData);
     });
 
@@ -80,9 +79,11 @@ async function handleImage(fieldName, action, file, store, updateData)
             updateData[fieldName] = image.id;
         }
     }
+    
+    // cleanup
     if(file && action != 'replace')
     {
-        fs.unlink(file.path, () => {console.log('unlinked')});
+        fs.unlink(file.path, _ => _);
     }
 }
 async function complete(storeData, files, userId)

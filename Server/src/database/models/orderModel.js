@@ -18,15 +18,6 @@ const Order = sequelize.define('Order', {
     storeId: {
         type: DataTypes.UUID,
         allowNull: false
-    },
-    total: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    placedAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-        allowNull: false
     }
 })
 Order.belongsTo(Store, {foreignKey: 'storeId'})
@@ -54,18 +45,22 @@ const OrderItem = sequelize.define('OrderItem', {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false
     },
+    unitPrice: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false
+    },
     notes: {
-        type: DataTypes.TEXT,
+        type: DataTypes.TEXT
     },
     status: {
-        type: DataTypes.ENUM('PENDING', 'PROCESSING', 'COMPLETED'),
+        type: DataTypes.ENUM('UNREAD', 'UNCOMPLETED', 'READY', 'COMPLETED', 'CANCELED'),
         allowNull: false,
-        defaultValue: 'PENDING'
+        defaultValue: 'UNREAD'
     }
 });
 
-OrderItem.belongsTo(Order, {foreignKey: 'orderId'})
-Order.hasMany(OrderItem, {foreignKey: 'orderId'})
+OrderItem.belongsTo(Order, {foreignKey: 'orderId'} )
+Order.hasMany(OrderItem, {foreignKey: 'orderId'} )
 
 OrderItem.belongsTo(Product, {foreignKey: 'productId'})
 Product.hasMany(OrderItem, {foreignKey: 'productId'})

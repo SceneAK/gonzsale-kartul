@@ -1,5 +1,5 @@
 import { convertAllPathsToURLs } from '../common/index.js';
-import { productServices } from '../services/index.js';
+import { productServices, variantServices } from '../services/index.js';
 
 const fetchProducts = async (req, res) => {
     const products = await productServices.fetchProducts(req.query);
@@ -17,14 +17,26 @@ const fetchProduct = async (req, res) => {
 const createProduct = async (req, res) => {
     const { body, files, decodedAuthToken } = req;
     const { variants, ...productData } = body;
-    const result = await productServices.createProduct(productData, files, variants, decodedAuthToken);
+
+    const result = await productServices.createProduct(decodedAuthToken.id, {
+        productData,
+        files,
+        variants
+    });
     res.json(result);
 }
 
 const editProduct = async(req, res) => {
+    const {id} = req.params;
     const { body, files, decodedAuthToken } = req;
-    const { variants, ...productData } = body;
-    const result = await productServices.editProduct(productData, files, variants, decodedAuthToken);
+    const { variants, actionJson, ...productData } = body;
+    const actions = JSON.parse(actionJson);
+    const result = await productServices.editProduct(id, decodedAuthToken.id, {
+        productData,
+        files,
+        actions,
+        variants
+    });
     res.json(result);
 }
 

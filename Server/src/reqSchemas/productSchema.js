@@ -1,10 +1,11 @@
 import Joi from "joi";
+import { UUID } from "./common.js";
 
 const fetchFilteredSchema = {
     body: Joi.object({
     name: Joi.string(),
     category: Joi.string(),
-    storeId: Joi.string().length(36),
+    storeId: UUID,
     storeName: Joi.string(),
     })
 }
@@ -26,8 +27,10 @@ const createProductSchema = {
 }
 
 const editProductSchema = {
-    body: bodySchema.required(),
-    files: Joi.array() 
+    body: bodySchema.append({ 
+        actionJson: Joi.string()
+    }).required(),
+    files: Joi.array()
 }
 
 export default {

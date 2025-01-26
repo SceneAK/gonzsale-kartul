@@ -35,24 +35,13 @@ Please sort by importance
 
 
 # BACKEND
-## Sequelize Transition
-.Image 
-.Users
-    .UserStorage
-.Stores
-- Products
-    - ProductImages
-    - Variants
-- Orders
-    - OrderVariants
-- Transaction
-    
-## Seperate images
-- Test the qrImage and image seperation
-- test createMulter's field()
+## MAKE EVERYTHING WORK DAMNIT
+- Guest Order -> create a guest account from userServices which only lasts this browsing session (via jwt token refreshes)
+- Update OrderItem Status Logic
+
+## Rework productImage creation and priority so that whoever uses the service completes the data first (with an exported function) before passing it to productImageServices
 
 ## Propper Error Handling
-- Ensure pino .log server's response error message correctly. Currently it just says  "Server responded with error code 500/400/whatever lah"
 - Check all route's potential error throw.
 - Custom Error classes extending ApplicationError (maybe a bit much?)
 
@@ -64,14 +53,12 @@ Please sort by importance
 ## Optimize update logic for product variant and product images
 
 ## Add paranoid delete for
-- Transaction
-- Orders, Order items, order variants
 - Products, variants
 
 ## Payment Gateway
-- rename transaction table to basic_tansactions table
 
 ## Additional Stuff
-- Add Shipping option
 - Statistical Analysis for Seller Account
 - Request Home page Items (promotional content)
+
+# Make so refunds can only be issued by store owners
