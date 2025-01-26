@@ -1,5 +1,6 @@
 import initializePromise from '../database/initialize.js';
 import productServices from './productServices.js';
+import ApplicationError from '../common/errors.js';
 const { OrderItem } = await initializePromise;
 
 async function createOrderItems(orderItems)
@@ -12,6 +13,7 @@ async function completeAndValidate(orderItems, orderId)
     const products = await fetchProductsOfOrderItems(orderItems);
 
     for (let i = 0; i < orderItems.length; i++) {
+        if(products[i].availability == 'UNAVAILABLE') throw new ApplicationError("Order contains unavailable product", 400);
         if(products[i].storeId != products[0].storeId) throw new ApplicationError("Order contains products of mixed store origin", 400);
 
         const unitPrice = products[i].price;

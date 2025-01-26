@@ -1,5 +1,5 @@
 import { convertAllPathsToURLs } from '../common/index.js';
-import { productServices, variantServices } from '../services/index.js';
+import { productServices } from '../services/index.js';
 
 const fetchProducts = async (req, res) => {
     const products = await productServices.fetchProducts(req.query);
@@ -43,7 +43,17 @@ const editProduct = async(req, res) => {
 function transform(product, req)
 {
     convertAllPathsToURLs(req.protocol, req.hostname, product);
+    flattenProductImages(product);
 }
+function flattenProductImages(product)
+{
+    for (let i = 0; i < product.ProductImages.length; i++) {
+        const image = product.ProductImages[i].Image;
+        product.ProductImages[i] = {...product.ProductImages[i], ...image}
+        delete product.ProductImages[i].Image
+    }
+}
+
 
 export default {
     fetchProduct,

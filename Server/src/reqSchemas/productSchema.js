@@ -16,7 +16,7 @@ const bodySchema = Joi.object({
     category: Joi.string().min(1).max(40),
     price: Joi.number().min(0),
     unit: Joi.string().min(1).max(15),
-    availability: Joi.string().valid('UNAVAILABLE', 'AVAILABLE', 'PREORDER_ONLY'),
+    availability: Joi.string().valid('UNAVAILABLE', 'AVAILABLE', 'PREORDER'),
 
     variants: Joi.object().pattern(Joi.string(), Joi.array().items(Joi.string().min(1).max(50)))
 })

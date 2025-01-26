@@ -62,3 +62,5 @@ Please sort by importance
 - Request Home page Items (promotional content)
 
 # Make so refunds can only be issued by store owners
+
+## Implement signout (set cookie as expired)

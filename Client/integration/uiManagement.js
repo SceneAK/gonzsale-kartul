@@ -25,7 +25,7 @@ function toggleDropdownState(isLoggedIn) {
         loginForm.style.display = 'none';
         editForm.style.display = 'block';
         const user = JSON.parse(localStorage.getItem('loginDetail')) || {};
-        dropdownLink.textContent = `Welcome, ${user.user_name || 'User'}`;
+        dropdownLink.textContent = `Welcome, ${user.name || 'User'}`;
     } else {
         loginForm.style.display = 'block';
         editForm.style.display = 'none';
@@ -36,6 +36,7 @@ function toggleDropdownState(isLoggedIn) {
 // Update UI based on login state
 function updateUI() {
     const loginDetail = JSON.parse(localStorage.getItem('loginDetail'));
+    console.log("TEST " + loginDetail);
     const isLoggedIn = !!loginDetail;
     toggleDropdownState(isLoggedIn);
 }
@@ -75,7 +76,6 @@ function attachEventListeners() {
         logoutButton.addEventListener('click', () => {
             localStorage.removeItem('loginDetail');
             updateUI();
-            alert('You have logged out successfully.');
         });
     }
 }

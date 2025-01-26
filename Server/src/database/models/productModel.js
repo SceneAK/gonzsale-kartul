@@ -34,7 +34,7 @@ const Product = sequelize.define('Product', {
         allowNull: false
     },
     availability: {
-        type: DataTypes.ENUM('AVAILABLE', 'UNAVAILABLE', 'PREORDER_ONLY'),
+        type: DataTypes.ENUM('AVAILABLE', 'UNAVAILABLE', 'PREORDER'),
         allowNull: false,
         defaultValue: 'UNAVAILABLE'
     }

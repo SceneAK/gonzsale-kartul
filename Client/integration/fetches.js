@@ -1,4 +1,5 @@
-const baseUrl = "http://localhost:3000";
+const baseUrl = "http://localhost:3000/api";
+
 async function request(endpoint, method, body = null, credentials = 'omit', headers = {})
 {
     const res = await fetch(`${baseUrl}${endpoint}`, {
@@ -16,30 +17,23 @@ async function request(endpoint, method, body = null, credentials = 'omit', head
 async function jsonRequest(endpoint, method, body = null, credentials = 'omit', headers = {})
 {
     const req = await request(endpoint, method, body, credentials, {'Content-Type': 'application/json', ...headers})
-    try
-    {
-        return req.json();
-    }catch(err) {throw err;}
+    return req.json();
 }
 async function formdataRequest(endpoint, method, formdata = null, credentials = 'omit', headers = {})
 {
     return await jsonRequest(endpoint, method, formdata, credentials, {'Content-Type': 'multipart/form-data', ...headers})
 }
-
 //#region User
 async function signIn(email, password) {
-    const body = JSON.stringify({user_email: email, user_password: password});
-    try
-    { // temporary
-        return await jsonRequest('/user/signin', 'POST', body, 'include')
-    }catch(err){ return {user_name: "TEMP", user_role: "STORE_MANAGER"}}
+    const body = JSON.stringify({email, password});
+    return await jsonRequest('/user/signin', 'POST', body, 'include')
 }
 async function signUp(name, phone, email, password) { 
     const body = JSON.stringify({
-        user_name: name,
-        user_phone: phone,
-        user_email: email, 
-        user_password: password
+        name,
+        phone,
+        email, 
+        password
     });
     const res = await jsonRequest('/user/signup', 'POST', body, 'include');
     return await res.text();
@@ -68,22 +62,36 @@ const store = {getStore, getOwnStore, createStore, editStore};
 //#endregion
 
 //#region Product
-async function getProducts(category, extraFilters)
+async function fetchProducts(category, others = {})
 {
-    const products = await jsonRequest(`/product/${category}`, "GET", extraFilters); 
-    // REMOVE ON PRODUCTION
-    return products.map( product => { 
-        
-        product.product_imgSrc = product.product_imgSrc.map( src => {
-            const insertIndex = src.indexOf("localhost") + 9;
-            return src.slice(0, insertIndex) + ":3000" + src.slice(insertIndex);
-        }); 
-        return product;
-    })
+    const paramsObj = { category, ...others};
+    const products = await jsonRequest(`/product/search?${toQueryString(paramsObj)}`, "GET"); 
+    products.forEach( product => transformProductImagesUrls(product)) ;
+    return products;
 }
-async function getProduct(id)
+function toQueryString(obj)
 {
-    return (await jsonRequest(`/product/single/${id}`, "GET"))[0];
+    const queryParams = Object.keys(obj).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`).join("&");
+    return queryParams;
+}
+
+async function fetchProduct(id)
+{
+    const product = await jsonRequest(`/product/single/${id}`, "GET")
+    transformProductImagesUrls(product);
+    return product;
+}
+function transformProductImagesUrls(product)
+{
+    console.log(product);
+    for (let i = 0; i < product.ProductImages.length; i++) {
+        product.ProductImages[i].url = transformUrl(product.ProductImages[i].url);
+    }
+}
+function transformUrl(str)
+{
+    const insertIndex = str.indexOf("localhost") + 9;
+    return str.slice(0, insertIndex) + ":3000" + str.slice(insertIndex);
 }
 async function createProduct(formdata) // auth & store
 {
@@ -93,7 +101,7 @@ async function editProduct(formdata, id) // auth & store
 {
     return await formdataRequest(`/product/${id}`, "PATCH", formdata, 'include');
 }
-const product = {getProduct, getProducts, createProduct, editProduct};
+const product = {fetchProduct, fetchProducts, createProduct, editProduct};
 //#endregion
 
 //#region Order

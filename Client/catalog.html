@@ -288,6 +288,7 @@
 
     <script type="module">
         import { mockApi } from './frontendTest/mockApi.js';
+        import { product } from './integration/fetches.js';
 
         // Function to add items to the cart
         window.addToCart = function (name, product_price, imgSrc, store_id, store_name) {
@@ -314,24 +315,24 @@
             all: "all-items-container",
         };
 
-        function populateItems(container, items) {
+        function populateItems(container, products) {
             container.innerHTML = '';
 
-            if (!items || items.length === 0) {
+            if (!products || products.length === 0) {
                 container.innerHTML = '<p>No products available for this category.</p>';
                 return;
             }
 
-            items.forEach(item => {
+            products.forEach(product => {
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('item');
 
                 itemDiv.innerHTML = `
-                    <img src="${item.product_imgSrc}" alt="${item.name}">
-                    <p>${item.product_name}</p>
-                    <p class="store-name">Store: ${item.store_name}</p>
-                    <p>Rp ${item.product_price.toLocaleString('id-ID')} / ${item.product_unit}</p>
-                    <button class="add-to-cart" onclick="addToCart('${item.product_name}', ${item.product_price}, '${item.product_imgSrc}', '${item.store_id}', '${item.store_name}')">Add to Cart</button>
+                    <img src="${product.ProductImages[0]?.url}" alt="${product.name}">
+                    <p>${product.name}</p>
+                    <p class="store-name">Store: ${product.Store.name}</p>
+                    <p>Rp ${product.price.toLocaleString('id-ID')} / ${product.unit}</p>
+                    <button class="add-to-cart" onclick="addToCart('${product.name}', ${product.price}, '${product.ProductImages[0]?.url}', '${product.storeId}', '${product.Store.name}')">Add to Cart</button>
                 `;
                 container.appendChild(itemDiv);
             });
@@ -356,22 +357,8 @@
             }
             selectedTab.style.display = "block";
 
-            let products = [];
-
-            if (categoryName.toLowerCase() === "all") {
-                // Manually fetch each category
-                const shirts = await mockApi.getProducts("shirts");
-                const pants = await mockApi.getProducts("pants");
-                const accessories = await mockApi.getProducts("accessories");
-                const food = await mockApi.getProducts("food");
-                const drinks = await mockApi.getProducts("drinks");
-
-                // Combine them into one array
-                products = shirts.concat(pants, accessories, food, drinks);
-            } else {
-                // Fetch only the requested category
-                products = await mockApi.getProducts(categoryName.toLowerCase());
-            }
+            console.log(categoryName);
+            const products = await product.fetchProducts(categoryName != 'All' ? categoryName : "");
 
             // Finally, populate the container with the combined (or single) set of items
             populateItems(container, products);
