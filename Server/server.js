@@ -1,21 +1,22 @@
+import 'express-async-errors';
 import app from './app.js';
-import cors from 'cors';
 import { userRoute, productRoute, storeRoute, orderRoute, transactionRoute } from './src/routes/index.js';
-import { logger } from './src/modules/logger.js';
+import { onErrorFileDeletion } from './src/middlewares/multerUploads.js';
+import { logger } from './src/common/index.js';
+import errorHandler from './src/middlewares/errorHandler.js';
 
-app.use(cors(
-    { 
-        origin: 'http://localhost:3000',
-        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-        credentials: true,
-}));
+logger.info('Start Server');
 
 // MOUNTS ROUTES
-app.use('/product/', productRoute);
-app.use('/user/', userRoute);
-app.use('/store/', storeRoute);
-app.use('/order/', orderRoute);
-app.use('/transaction/', transactionRoute);
+app.use('/api/product/', productRoute);
+app.use('/api/user/', userRoute);
+app.use('/api/store/', storeRoute);
+app.use('/api/order/', orderRoute);
+app.use('/api/transaction/', transactionRoute);
+
+// Handled Errors
+app.use(onErrorFileDeletion); // for multer
+app.use(errorHandler)
 
 // Start Listening
 const PORT = process.env.PORT;

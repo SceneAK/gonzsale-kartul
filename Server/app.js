@@ -2,27 +2,29 @@ import { STATIC_ROUTE_NAME, PUBLIC_DIR, __dirname } from './initialize.js';
 import upath from 'upath';
 import cookieParser from 'cookie-parser';
 import express from 'express'; 
-import { httpLogger, logger } from './src/modules/logger.js';
-import cleanUp from './cleanup.js';
+import { httpLogger } from './src/common/index.js';
+import './signalHandlers.js';
+import cors from 'cors';
 
 
 const app = express()
+app.use(cors(
+  { 
+      origin: 'http://localhost:3000',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      credentials: true,
+  })
+);
 
 // static routes
+const pagesPath = upath.join(__dirname, '../Client');
+app.use(`/`, express.static(pagesPath)); 
 app.use(`/${STATIC_ROUTE_NAME}/`, express.static(PUBLIC_DIR)); 
 
-const pagesPath = upath.join(__dirname, '../Client');
-console.log(pagesPath);
-app.use(`/page/`, express.static(pagesPath)); 
-
+// Middlewares
 app.use(cookieParser(process.env.JWT_SECRET_KEY));
-
-// logs
 app.use(httpLogger)
-
-// Parse req.json if it's json
-app.use(
-  (req, res, next) => {
+app.use( (req, res, next) => {
     if(req.headers['content-type'] == 'application/json')
     {
       express.json({limit: '1mb'})(req, res, next);
@@ -31,30 +33,5 @@ app.use(
     }
   }
 );
-
-process.on('SIGTERM', async ()=>{
-  await cleanUp();
-  process.exit(1)
-});
-process.on('SIGINT', async ()=>{
-  await cleanUp();
-  process.exit(1)
-});
-process.on('uncaughtException',async error => { 
-    logger.error('Uncaught Exception: ' + error); 
-    await cleanUp();
-    process.exit(1);
-}); 
-process.on('unhandledRejection', async (reason, promise) => { 
-    logger.error('Unhandled Rejection: ' + reason);
-    await cleanUp();
-    process.exit(1);
-});
-
-// error handling
-app.use((err, req, res, next) => {
-  logger.error(err.stack)
-  res.status(500).send('Error')
-})
 
 export default app;

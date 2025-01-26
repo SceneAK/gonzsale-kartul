@@ -1,8 +1,16 @@
 import express from 'express';
-import { verifyUser } from '../modules/tokenAuth.js';
+import verify from '../middlewares/verifyAuthToken.js';
 import { transaction } from '../controllers/index.js';
-const router = express.Router();
+import { createMulter } from '../middlewares/index.js';
+import { transactionSchemas } from '../reqSchemas/index.js';
+import validate from '../middlewares/schemaValidator.js';
 
-router.get('/:transaction_id', verifyUser, transaction.getTransaction);
+const router = express.Router();
+const transactionUpload = createMulter({relativeDir: 'Transactions', keyName: 'file', type: 'single'})
+
+router.get('/:id', verify, transaction.fetchTransaction);
+
+router.post('/cod', verify, validate(transactionSchemas.createCOD), transaction.createCODTransaction);
+router.post('/proof', verify, transactionUpload, validate(transactionSchemas.createProof), transaction.createProofTransaction);
 
 export default router;

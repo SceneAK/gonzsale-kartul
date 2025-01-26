@@ -1,5 +1,7 @@
 Please sort by importance
 # Gonzsale Website
+## Route Management
+- cleanup frontend static route & backend route
 ## Deployment & Prep
 - Deploy backend + mysql + nginx/apache
 - learn how to customize DNS settings &
@@ -33,28 +35,30 @@ Please sort by importance
 
 
 # BACKEND
-## Seperate product_images table
-- test createMulter's field()
-- Create product_images (image_id, product_id, imageSrc, image_order)
-- change how images are added in createProduct, editProduct
-- change how images are served in getProduct, getProducts
+## MAKE EVERYTHING WORK DAMNIT
+- Guest Order -> create a guest account from userServices which only lasts this browsing session (via jwt token refreshes)
+- Update OrderItem Status Logic
 
-## Design Rework & Refactoring
-- Split store Images into their own store_images table (store_id, store_imgSrc, store_QR_imgSrc)
-- Split product images into their own product_images table (image_id, product_id, product_image)
-- Get Products Filtered maybe rethink whether or not it should be in body or params?
-- Refactor entire shit. Centralized logic along with centralized SQL queries please i beg
-    - User Mysql query maker or somthing
-- order has duplicate with store: getStoreOwnedBy...
+## Rework productImage creation and priority so that whoever uses the service completes the data first (with an exported function) before passing it to productImageServices
+
+## Propper Error Handling
+- Check all route's potential error throw.
+- Custom Error classes extending ApplicationError (maybe a bit much?)
+
 ## Complete Functions
     - Delete Product
     - Delete Store
     - Edit Profile
 
-## Payment Gateway
-- rename transaction table to basic_tansactions table
+## Optimize update logic for product variant and product images
 
-## Add Address Functionality
-- add product_deliver_method ENUM('GONZAGA', 'TO_ADDRESS'); 
-    - If an order is placed on a product with 'TO_ADDRESS', server requires user to provide an address. 
-- add user_address table 
+## Add paranoid delete for
+- Products, variants
+
+## Payment Gateway
+
+## Additional Stuff
+- Statistical Analysis for Seller Account
+- Request Home page Items (promotional content)
+
+# Make so refunds can only be issued by store owners

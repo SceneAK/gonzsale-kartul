@@ -1,14 +1,14 @@
-import connectionPromise from "./src/modules/db.js";
-const connection = await connectionPromise;
+import initPromise from './src/database/initialize.js';
+const { sequelize } = await initPromise;
 
-import { logger } from "./src/modules/logger.js";
+import { logger } from "./src/common/index.js";
 
 export default async function cleanUp()
 {
     logger.info("Cleaning Up");
     try
     {
-        await connection.end();
+        await sequelize.close();
         logger.info('Connection closed');
     }catch(err){
         logger.error('Error closing connection: ' + err)

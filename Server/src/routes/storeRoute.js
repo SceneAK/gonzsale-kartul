@@ -1,21 +1,25 @@
 import { store }from '../controllers/index.js';
-import { verifyUser } from '../modules/tokenAuth.js';
-import { ensureBelowLimit, createMulter} from '../modules/upload.js'; 
+import { verify, createMulter, ensureBelowLimit} from '../middlewares/index.js'
 import { validate, storeSchemas } from '../reqSchemas/index.js';
 import express from 'express';
+
+const storeImgUpload = createMulter({
+    relativeDir: "images/store/", 
+    type: 'fields', 
+    fields: [
+        { name: 'imageFile', maxCount: 1 },
+        { name: 'qrImageFile', maxCount: 1 }
+    ]
+});
+
 const router = express.Router();
 
-router.get('/:id', store.getStore);
+router.get('/:id', store.fetchStore);
 
-router.get('/', verifyUser, store.getOwnedStore);
+router.get('/', verify, store.fetchOwnedStore);
 
-const imgUpload = createMulter({relativeDir: "images/store/", type: 'fields', fields: [
-    {name: 'store_imgSrc', maxCount: 1},
-    {name: 'store_QR_imgSrc', maxCount: 1}
-]});
+router.post('/', verify, ensureBelowLimit, storeImgUpload, validate(storeSchemas.createStore), store.createStore);
 
-router.post('/', verifyUser, ensureBelowLimit, imgUpload, validate(storeSchemas.createStore), store.createStore);
-
-router.patch('/', verifyUser, ensureBelowLimit, imgUpload, validate(storeSchemas.updateStore), store.updateStore);
+router.patch('/', verify, ensureBelowLimit, storeImgUpload, validate(storeSchemas.updateStore), store.updateStore);
 
 export default router;
