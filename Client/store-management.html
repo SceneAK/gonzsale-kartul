@@ -51,7 +51,7 @@
             padding: 20px;
             box-sizing: border-box;
             overflow-y: auto;
-            height: 100%; 
+            height: 100%;
         }
 
         /* Links in Side Menu */
@@ -84,6 +84,399 @@
         .content-section.active {
             display: block;
         }
+
+        /*STORE STYLING*/
+        .store-details {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .store-details h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .store-details p {
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .store-details img {
+            margin: 20px 0;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .store-details button {
+            padding: 10px 15px;
+            font-size: 1em;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .store-details button:hover {
+            background-color: #0056b3;
+        }
+
+
+        /*PRODUCT TAB STYLES*/
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .product-table th,
+        .product-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .product-table th {
+            background-color: #ff9900;
+            color: #fff;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background-color: #ffc107;
+            color: #fff;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .add-product-btn {
+            background-color: #c2c2c2;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto 20px auto;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .modal input,
+        .modal select {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .modal-buttons {
+            text-align: right;
+        }
+
+        .modal-buttons button {
+            padding: 8px 12px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .save-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        /* Modal Wrapper */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 500px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        /* Active State to Display Modal */
+        .modal.active {
+            display: block;
+        }
+
+        /* Modal Content Wrapper */
+        .add-product-form-container {
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        /* Modal Header */
+        .add-product-form-container h1 {
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        /* Form Styling */
+        .add-product-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .add-product-form label {
+            font-weight: bold;
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .add-product-form input[type="text"],
+        .add-product-form input[type="number"],
+        .add-product-form textarea,
+        .add-product-form select,
+        .add-product-form input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: 0.3s ease;
+        }
+
+        .add-product-form textarea {
+            resize: none;
+            height: 100px;
+        }
+
+        /* Form Field Focus Effect */
+        .add-product-form input[type="text"]:focus,
+        .add-product-form input[type="number"]:focus,
+        .add-product-form textarea:focus,
+        .add-product-form select:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+            outline: none;
+        }
+
+        /* Image Preview Container */
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: flex-start;
+        }
+
+        .image-preview {
+            width: 80px;
+            height: 80px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        /* Modal Buttons */
+        .add-product-form-buttons button {
+            padding: 12px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .add-product-form-buttons button[type="button"] {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .add-product-form-buttons button[type="button"]:hover {
+            background-color: #d32f2f;
+        }
+
+        .add-product-form-buttons button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .add-product-form-buttons button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        @media (min-width: 768px) {
+            .add-product-form-container {
+                padding: 40px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .modal {
+                width: 500px;
+            }
+        }
+
+
+        /* ORDER TABLE STYLES */
+        table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0px 4px 8px rgba(27, 27, 27, 0.1);
+        }
+
+        th,
+        td {
+            padding: 15px;
+            /* Consistent spacing for cells */
+            text-align: center;
+            border: 1px solid #ddd;
+            /* Light border for separation */
+        }
+
+        th {
+            background-color: #ff9900;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        td {
+            font-size: 0.95em;
+            color: #333;
+        }
+
+        .status-completed {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        /* Action Button Styles */
+        .action-btn {
+            padding: 8px 12px;
+            font-size: 0.9em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .complete-btn {
+            background-color: #28a745;
+            color: #fff;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .complete-btn:hover {
+            background-color: #218838;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: #fff;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.85em;
+            }
+
+            th,
+            td {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            table,
+            th,
+            td {
+                display: block;
+                width: 100%;
+            }
+
+            th {
+                display: none;
+            }
+
+            td {
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+            }
+
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                text-align: left;
+                font-weight: bold;
+            }
+        }
     </style>
 </head>
 
@@ -110,26 +503,97 @@
 
             <!-- Store Section -->
             <div id="store" class="content-section">
-                <h1>Store</h1>
-                <div id="store-content">
-                    <p>Loading store details...</p>
+                <h1>Manage Store</h1>
+                <div id="store-container">
+                    <!-- Dynamic content will be injected here -->
                 </div>
             </div>
 
+
             <!-- Products Section -->
             <div id="products" class="content-section">
-                <h1>Products</h1>
-                <button id="add-product-btn">Add New Product</button>
-                <div id="product-list">
-                    <p>Loading products...</p>
+                <h1>Manage Products</h1>
+
+                <!-- Add Product Button -->
+                <button class="add-product-btn" onclick="openAddProductModal()">+ Add Product</button>
+
+                <!-- Product Table -->
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-list">
+                        <!-- Existing Products Will Be Populated Dynamically -->
+                    </tbody>
+                </table>
+
+                <!-- Modal for Add Product -->
+                <div class="modal" id="add-product-modal">
+                    <div class="add-product-form-container">
+                        <h1>Add New Product</h1>
+                        <form id="add-product-form" class="add-product-form">
+                            <label for="product-name">Nama Produk:</label>
+                            <input type="text" id="product-name" name="product_name" placeholder="Masukkan nama produk"
+                                required />
+
+                            <label for="product-category">Kategori:</label>
+                            <select id="product-category" name="product_category" required>
+                                <option value="" disabled selected>Pilih kategori</option>
+                                <option value="Baju">Baju</option>
+                                <option value="Celana">Celana</option>
+                                <option value="Aksesoris">Aksesoris</option>
+                                <option value="Makanan">Makanan</option>
+                                <option value="Minuman">Minuman</option>
+                            </select>
+
+                            <label for="product-description">Deskripsi:</label>
+                            <textarea id="product-description" name="product_description" placeholder="Deskripsi produk"
+                                required></textarea>
+
+                            <label for="product-price">RP:</label>
+                            <input type="number" id="product-price" name="product_price" placeholder="Masukkan harga"
+                                required />
+
+                            <label for="product-images">Tambah Gambar:</label>
+                            <input type="file" id="product-images" name="product_images" accept=".jpg,.jpeg,.png,.gif"
+                                multiple required />
+                            <div class="image-preview-container" id="image-preview-container"></div>
+
+                            <div class="add-product-form-buttons">
+                                <button type="button" onclick="closeAddProductModal()">Cancel</button>
+                                <button type="submit">Tambah Produk</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 
             <!-- Orders Section -->
             <div id="orders" class="content-section">
                 <h1>Orders</h1>
-                <div id="order-table">
-                    <p>Loading orders...</p>
+                <div class="loader" id="loader">Loading orders...</div>
+                <div style="overflow-x: auto;">
+                    <table id="order-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Buyer Name</th>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Total Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="order-table-body">
+                            <!-- Orders will be populated dynamically -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -137,7 +601,7 @@
 
     <div id="footer"></div>
 
-    <script type="module">
+    <script type="module" defer>
         // Hash-based navigation
         document.querySelectorAll('.menu-link').forEach(link => {
             link.addEventListener('click', function () {
@@ -147,23 +611,109 @@
                 this.classList.add('active');
                 const sectionId = this.getAttribute('href').substring(1);
                 document.getElementById(sectionId).classList.add('active');
+
+                if (sectionId === 'orders') {
+                    loadOrders(); // Load orders when the Orders section is active
+                }
             });
         });
 
+
         // Load store data
         async function loadStore() {
-            const storeContent = document.getElementById('store-content');
-            const stores = await mockApi.getStores();
-            if (stores.length > 0) {
-                storeContent.innerHTML = `
-              <h2>${stores[0].store_name}</h2>
-              <p>${stores[0].store_description}</p>
-              <button onclick="editStore()">Edit Store</button>
+            const storeContainer = document.getElementById("store-container");
+
+            try {
+                // Fetch the user's store (use actual API endpoint)
+                const userStore = await mockApi.getStores(); // Replace with actual API function
+
+                if (userStore.length === 0) {
+                    // No store exists
+                    storeContainer.innerHTML = `
+                <div class="form-wrapper">
+                    <div class="create-store-container">
+                        <h1>Create Store</h1>
+                        <form id="create-store-form" enctype="multipart/form-data">
+                            <div>
+                                <label for="name">Name</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+
+                            <div>
+                                <label for="description">Description</label>
+                                <textarea id="description" name="description" rows="4" required></textarea>
+                            </div>
+
+                            <div>
+                                <label for="imageFile">Image File</label>
+                                <input type="file" id="imageFile" name="imageFile" accept="image/*" required>
+                            </div>
+
+                            <div>
+                                <label for="bankAccount">Bank Account</label>
+                                <input type="text" id="bankAccount" name="bankAccount" required>
+                            </div>
+
+                            <div>
+                                <label for="bankName">Bank Name</label>
+                                <input type="text" id="bankName" name="bankName" required>
+                            </div>
+
+                            <button type="submit">Create Store</button>
+                        </form>
+                    </div>
+                </div>
             `;
-            } else {
-                storeContent.innerHTML = `<button onclick="createStore()">Create Store</button>`;
+
+                    // Handle form submission
+                    document.getElementById("create-store-form").addEventListener("submit", async function (event) {
+                        event.preventDefault();
+
+                        const formData = new FormData(this);
+
+                        try {
+                            const response = await fetch("http://localhost:3000/store", {
+                                method: "POST",
+                                body: formData,
+                            });
+
+                            if (!response.ok) throw new Error("Failed to create store");
+
+                            alert("Store created successfully!");
+                            loadStore(); // Reload to display the new store details
+                        } catch (error) {
+                            console.error("Error creating store:", error);
+                            alert("There was an error creating the store. Please try again.");
+                        }
+                    });
+                } else {
+                    // Store exists
+                    const store = userStore[0]; // Assuming a single store per user
+                    storeContainer.innerHTML = `
+                <div class="store-details">
+                    <h2>${store.store_name}</h2>
+                    <p>${store.store_description}</p>
+                    <img src="${store.store_imgSrc}" alt="${store.store_name}" style="width: 100%; max-width: 300px; border-radius: 8px;">
+                    <p><strong>Bank Account:</strong> ${store.store_bank_account}</p>
+                    <p><strong>Bank Name:</strong> ${store.store_bank_name}</p>
+                    <button onclick="editStore()">Edit Store</button>
+                </div>
+            `;
+                }
+            } catch (error) {
+                console.error("Error loading store:", error);
+                storeContainer.innerHTML = `<p>Failed to load store data. Please try again later.</p>`;
             }
         }
+
+        // Initialize the Store tab
+        document.addEventListener("DOMContentLoaded", () => {
+            const hash = window.location.hash.substring(1); // Get the hash from the URL
+            if (hash === "store") {
+                loadStore();
+            }
+        });
+
 
         // Load products data
         async function loadProducts() {
@@ -178,19 +728,120 @@
           `).join('');
         }
 
+        document.addEventListener("DOMContentLoaded", () => {
+            // Open Add Product Modal
+            window.openAddProductModal = function () {
+                document.getElementById('add-product-modal').classList.add('active');
+            };
+
+            // Close Add Product Modal
+            window.closeAddProductModal = function () {
+                document.getElementById('add-product-modal').classList.remove('active');
+            };
+
+            document.addEventListener("click", (event) => {
+                const modalContent = modal.querySelector(".add-product-form-container");
+                if (modal.classList.contains("active") && !modalContent.contains(event.target)) {
+                    closeAddProductModal();
+                }
+            });
+
+            // Image Preview
+            document.getElementById('product-images').addEventListener('change', function () {
+                const previewContainer = document.getElementById('image-preview-container');
+                previewContainer.innerHTML = ""; // Clear existing previews
+
+                Array.from(this.files).forEach((file) => {
+                    if (file.type.match("image.*")) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.classList.add('image-preview');
+                            previewContainer.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            });
+
+            // Handle Add Product Form Submission
+            document.getElementById('add-product-form').addEventListener('submit', async function (event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+
+                try {
+                    const response = await fetch("http://localhost:3000/product", {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                    if (!response.ok) throw new Error("Failed to add product");
+
+                    alert("Product added successfully!");
+                    this.reset(); // Clear the form
+                    document.getElementById('image-preview-container').innerHTML = ""; // Clear previews
+                    closeAddProductModal();
+                    loadProducts(); // Reload the products list
+                } catch (error) {
+                    console.error("Error adding product:", error);
+                    alert("There was an error adding the product. Please try again.");
+                }
+            });
+        });
+
+
         // Load orders data
         async function loadOrders() {
-            const orderTable = document.getElementById('order-table');
-            const orders = await mockApi.getOrders();
-            orderTable.innerHTML = orders.map(order => `
-            <div>
-              <h3>Order #${order.order_id}</h3>
-              <p>Product ID: ${order.product_id}</p>
-              <p>Status: ${order.order_status}</p>
-              <button onclick="markOrderAsCompleted('${order.order_id}')">Complete</button>
-            </div>
-          `).join('');
+            const orderTableBody = document.getElementById('order-table-body');
+            const loader = document.getElementById('loader');
+            loader.style.display = 'block'; // Show loader
+
+            try {
+                const orders = await mockApi.getOrders(); // Replace with actual API if necessary
+                orderTableBody.innerHTML = ''; // Clear existing rows
+
+                orders.forEach(order => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                <td>${order.order_id}</td>
+                <td>${order.customer_user_id}</td>
+                <td>${order.product_id}</td>
+                <td>${order.order_qty}</td>
+                <td>${order.transaction_id}</td>
+                <td class="${order.order_status === 'COMPLETED' ? 'status-completed' : 'status-pending'}">
+                    ${order.order_status}
+                </td>
+                <td>
+                    <button class="action-btn complete-btn" onclick="markOrderAsCompleted('${order.order_id}')">
+                        Mark as Completed
+                    </button>
+                    <button class="action-btn delete-btn" onclick="deleteOrder('${order.order_id}')">
+                        Delete
+                    </button>
+                </td>
+            `;
+                    orderTableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading orders:', error);
+            } finally {
+                loader.style.display = 'none'; // Hide loader
+            }
         }
+
+        async function markOrderAsCompleted(orderId) {
+            // Logic to mark an order as completed
+            alert(`Marking order ${orderId} as completed!`);
+        }
+
+        async function deleteOrder(orderId) {
+            if (confirm(`Are you sure you want to delete order ${orderId}?`)) {
+                // Logic to delete the order
+                alert(`Order ${orderId} deleted.`);
+            }
+        }
+
 
         // Initial Load
         loadStore();
