@@ -555,17 +555,17 @@
                             <textarea id="product-description" name="description" placeholder="Deskripsi produk"
                                 required></textarea>
 
-                                <label for="product-price">Harga & Unit</label>
+                            <label for="product-price">Harga & Unit</label>
                             <div>
                                 <input type="number" id="product-price" name="price" placeholder="Masukkan harga"
-                                    required style="padding-right: 0%; width: 70%;"/>
-                                <input type="text" id="product-unit" name="Unit" value="Unit" placeholder="Satuan..."
-                                    required style="width: 20%;"/>
+                                    required style="padding-right: 0%; width: 70%;" />
+                                <input type="text" id="product-unit" name="unit" value="Unit" placeholder="Satuan..."
+                                    required style="width: 20%;" />
                             </div>
 
                             <label for="product-images">Tambah Gambar:</label>
-                            <input type="file" id="product-images" name="images" accept=".jpg,.jpeg,.png,.gif"
-                                multiple required />
+                            <input type="file" id="product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple
+                                required />
                             <div class="image-preview-container" id="image-preview-container"></div>
 
                             <label for="product-availability">Availability:</label>
@@ -638,39 +638,39 @@
             const storeContainer = document.getElementById("store-container");
 
             try {
-                // Fetch the user's store (use actual API endpoint)
-                const userStore = await store.fetchOwnedStore(); // Replace with actual API function
-                console.log(userStore);
+                // Fetch the user's store
+                const userStore = await store.fetchOwnedStore();
+
                 if (!userStore) {
-                    // No store exists
+                    // No store exists: Show "Create Store" form
                     storeContainer.innerHTML = `
                 <div class="form-wrapper">
                     <div class="create-store-container">
                         <h1>Create Store</h1>
                         <form id="create-store-form" enctype="multipart/form-data">
                             <div>
-                                <label for="name">Name</label>
-                                <input type="text" id="name" name="name" required>
+                                <label for="name">Store Name:</label>
+                                <input type="text" id="name" name="name" placeholder="Enter store name" required>
                             </div>
 
                             <div>
-                                <label for="description">Description</label>
-                                <textarea id="description" name="description" rows="4" required></textarea>
+                                <label for="description">Description:</label>
+                                <textarea id="description" name="description" rows="4" placeholder="Enter store description" required></textarea>
                             </div>
 
                             <div>
-                                <label for="imageFile">Image File</label>
+                                <label for="imageFile">Image:</label>
                                 <input type="file" id="imageFile" name="imageFile" accept="image/*" required>
                             </div>
 
                             <div>
-                                <label for="bankAccount">Bank Account</label>
-                                <input type="text" id="bankAccount" name="bankAccount" required>
+                                <label for="bankAccount">Bank Account:</label>
+                                <input type="text" id="bankAccount" name="bankAccount" placeholder="Enter bank account number" required>
                             </div>
 
                             <div>
-                                <label for="bankName">Bank Name</label>
-                                <input type="text" id="bankName" name="bankName" required>
+                                <label for="bankName">Bank Name:</label>
+                                <input type="text" id="bankName" name="bankName" placeholder="Enter bank name" required>
                             </div>
 
                             <button type="submit">Create Store</button>
@@ -679,29 +679,24 @@
                 </div>
             `;
 
-                    // Handle form submission
+                    // Handle "Create Store" form submission
                     document.getElementById("create-store-form").addEventListener("submit", async function (event) {
                         event.preventDefault();
 
                         const formData = new FormData(this);
 
                         try {
-                            const response = await fetch("http://localhost:3000/store", {
-                                method: "POST",
-                                body: formData,
-                            });
-
+                            const response = await store.createStore(formData);
                             if (!response.ok) throw new Error("Failed to create store");
-
                             alert("Store created successfully!");
-                            loadStore(); // Reload to display the new store details
+                            loadStore(); // Reload store data
                         } catch (error) {
                             console.error("Error creating store:", error);
                             alert("There was an error creating the store. Please try again.");
                         }
                     });
                 } else {
-                    // Store exists
+                    // Store exists: Show store details
                     storeContainer.innerHTML = `
                 <div class="store-details">
                     <h2>${userStore.name}</h2>
@@ -719,9 +714,14 @@
             }
         }
 
-        // Initialize the Store tab
+        // Placeholder function for editing store
+        function editStore() {
+            alert("Edit store functionality coming soon!");
+        }
+
+        // Initialize the Store tab on page load
         document.addEventListener("DOMContentLoaded", () => {
-            const hash = window.location.hash.substring(1); // Get the hash from the URL
+            const hash = window.location.hash.substring(1);
             if (hash === "store") {
                 loadStore();
             }
@@ -731,7 +731,7 @@
         // Load products data
         async function loadProducts() {
             const products = await product.fetchOwnedProducts();
-            
+
             const productList = document.getElementById('product-list');
             productList.innerHTML = products.map(product => `
             <div>

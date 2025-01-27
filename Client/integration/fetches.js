@@ -46,10 +46,17 @@ async function fetchStore(id)
 {
     return await jsonRequestResponse(`/store/${id}`, "GET");
 }
-async function fetchOwnedStore()
-{
-    return await jsonRequestResponse(`/store`, "GET", null, 'include');
+async function fetchOwnedStore() {
+    try {
+        return await jsonRequestResponse(`/store`, "GET", null, 'include');
+    } catch (error) {
+        if (error.message.includes("No store owned")) {
+            return null; // Gracefully handle "No store owned" by returning null
+        }
+        throw error; // Re-throw other errors
+    }
 }
+
 async function createStore(formdata) // auth
 {
     return await jsonResponse(`/store`, "POST", formdata, 'include');

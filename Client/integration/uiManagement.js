@@ -14,8 +14,7 @@ function loadHTML(file, elementId, callback) {
 /***************************************************
  * Dropdown Toggle Logic
  ***************************************************/
-function toggleDropdownState(loginDetails) 
-{
+function toggleDropdownState(loginDetails) {
     doElementsOfSelector('.loginForm', loginForm => {
         loginForm.style.display = loginDetails ? 'none' : 'block';
     })
@@ -162,10 +161,44 @@ function hookSignInWithElementIds(emailId, passwordId, signInId) {
     const email = document.getElementById(emailId);
     const password = document.getElementById(passwordId);
     const signIn = document.getElementById(signInId);
+
     if (!email || !password || !signIn) {
         console.error("SignIn elements not found:", emailId, passwordId, signInId);
         return;
     }
+
+    const displayError = (message) => {
+        alert(message); // Use alert for now; you can replace with a styled message element
+    };
+
+    // Trigger sign-in on button click
+    signIn.addEventListener("click", async function () {
+        if (!email.value.trim() || !password.value.trim()) {
+            displayError("Please fill in both email and password.");
+            return;
+        }
+
+        try {
+            const userInfo = await user.signIn(email.value, password.value);
+            trackSignin(userInfo);
+            console.log("User signed in:", userInfo);
+            alert("Login successful! Welcome, " + userInfo.user_name);
+            // Reload or update UI here if needed
+        } catch (err) {
+            displayError("Incorrect email or password. Please try again.");
+        }
+    });
+
+    // Trigger sign-in on Enter key press
+    [email, password].forEach((input) => {
+        input.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Prevent form submission
+                signIn.click(); // Simulate button click
+            }
+        });
+    });
+
     hookSignIn(signIn, email, password);
 }
 
@@ -201,10 +234,9 @@ function initializePage() {
     }
 }
 
-function doElementsOfSelector(selector, callback)
-{
+function doElementsOfSelector(selector, callback) {
     const elements = document.querySelectorAll(selector);
-    Array.from(elements).forEach( callback );
+    Array.from(elements).forEach(callback);
 }
 
 
