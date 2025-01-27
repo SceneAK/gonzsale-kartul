@@ -2,7 +2,7 @@ import { convertAllPathsToURLs } from '../common/index.js';
 import { productServices } from '../services/index.js';
 
 const fetchProducts = async (req, res) => {
-    const products = await productServices.fetchProducts(req.query);
+    const products = await productServices.fetchPublicProducts(req.query);
     products.forEach( product => transform(product, req));
     res.json(products);
 }

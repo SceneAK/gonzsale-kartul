@@ -64,3 +64,6 @@ Please sort by importance
 # Make so refunds can only be issued by store owners
 
 ## Implement signout (set cookie as expired)
+
+## Implement guest accounts
+
