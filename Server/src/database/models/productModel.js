@@ -1,4 +1,4 @@
-import { DataTypes, getInstance } from "../sequelize.js";
+import { DataTypes, getInstance, Sequelize } from "../sequelize.js";
 import Store from './storeModel.js';
 import Image from "./imageModel.js";
 const sequelize = getInstance();
@@ -37,6 +37,17 @@ const Product = sequelize.define('Product', {
         type: DataTypes.ENUM('AVAILABLE', 'UNAVAILABLE', 'PREORDER'),
         allowNull: false,
         defaultValue: 'UNAVAILABLE'
+    }
+}, {
+    scopes:{
+        Public: {
+            where: {
+                [Sequelize.Op.or]: [
+                    {availability: 'AVAILABLE'},
+                    {availability: 'PREORDER'}
+                ]
+            }
+        }
     }
 });
 

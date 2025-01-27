@@ -7,6 +7,13 @@ const fetchProducts = async (req, res) => {
     res.json(products);
 }
 
+const fetchOwnedProducts =  async (req, res) => {
+    
+    const products = await productServices.fetchProductsFromStoreOfUser(req.decodedAuthToken.id);
+    products.forEach( product => transform(product, req));
+    res.json(products);
+}
+
 const fetchProduct = async (req, res) => {
     const {id} = req.params;
     const product = await productServices.fetchProduct(id);
@@ -57,6 +64,7 @@ function flattenProductImages(product)
 
 export default {
     fetchProduct,
+    fetchOwnedProducts,
     fetchProducts,
     createProduct,
     editProduct

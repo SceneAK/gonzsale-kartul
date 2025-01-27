@@ -10,16 +10,33 @@ const { Product } = await databaseInitializePromise;
 const GENERAL_ATTRIUTES = ['id', 'storeId', 'name', 'category', 'price', 'unit', 'availability'];
 const SERVE_ATTRIBUTES = ['id', 'name', 'description', 'category', 'price', 'unit', 'availability'];
 
-async function fetchProducts(filter) 
+async function fetchPublicProducts(filter) 
 {
     const { whereClause, storeWhereClause } = await convertToWhereClauses(filter);
-    const products = await Product.findAll({
+    const products = await Product.scope('Public').findAll({
         attributes: GENERAL_ATTRIUTES,
         where: whereClause,
         include: [
             { ...productImageServices.include('serve-image') },
             { ...storeServices.include('just-name'), where: storeWhereClause }
         ]
+    });
+    return products.map(product => product.toJSON());
+}
+
+async function fetchProductsFromStoreOfUser(userId)
+{
+    const storeId = await storeServices.fetchStoreIdOfUser(userId);
+    return await fetchProductsFromStore(storeId);
+}
+async function fetchProductsFromStore(storeId)
+{
+    const products = await Product.findAll({
+        attributes: GENERAL_ATTRIUTES,
+        include: [
+            { ...productImageServices.include('serve-image') }
+        ],
+        where: {storeId}
     });
     return products.map(product => product.toJSON());
 }
@@ -55,7 +72,7 @@ async function createProduct(userId, data)
 
     await Product.sequelize.transaction(async t => {
         const product = await Product.create({ ...productData, storeId });
-
+        console.log(data);
         await productImageServices.createProductImagesAuto(files, product.id);
         if(variants) await variantServices.createVariants(variants, product.id);
     });
@@ -156,7 +173,8 @@ function include(level)
 }
 
 export default {
-    fetchProducts,
+    fetchPublicProducts,
+    fetchProductsFromStoreOfUser,
     fetchProduct,
     fetchProductsPlain,
     createProduct,

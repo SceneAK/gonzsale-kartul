@@ -3,6 +3,7 @@ import initializePromise from '../database/initialize.js';
 import orderItemServices from './orderItemServices.js';
 import storeServices from './storeServices.js';
 import transactionServices from './transactionServices.js';
+import userServices from './userServices.js';
 const { Order } = await initializePromise;
 
 const WITH_ITEMS = [
@@ -26,7 +27,7 @@ async function fetchIncomingOrders(storeOwnerUserId)
     const storeId = await storeServices.fetchStoreIdOfUser(storeOwnerUserId);
     const orders = await Order.findAll({ 
         where: { storeId },
-        include: WITH_ITEMS,
+        include: [...WITH_ITEMS, userServices.include('contacts')],
         attributes: ATTRIBUTES
     });
     return orders.map(order => order.toJSON());
@@ -36,7 +37,7 @@ async function fetchOrders(customerId)
 {
     const orders = await Order.findAll({ 
         where: { customerId }, 
-        include: WITH_ITEMS,
+        include: [...WITH_ITEMS, storeServices.include('just-name')],
         attributes: ATTRIBUTES
     });
     return orders.map(order => order.get());

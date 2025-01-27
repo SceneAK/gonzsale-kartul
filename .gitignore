@@ -50,6 +50,9 @@ Thumbs.db
 
 *.env
 
+# Public Server Directory
+server/public/
+
 # PERSONAL HTML FILES (TESTING)
 plswork.html
 catalog_backup.html

@@ -14,34 +14,25 @@ function loadHTML(file, elementId, callback) {
 /***************************************************
  * Dropdown Toggle Logic
  ***************************************************/
-function toggleDropdownState(isLoggedIn) {
-    const loginForm = document.getElementById('loginForm');
-    const editForm = document.getElementById('editForm');
-    const dropdownLink = document.querySelector('.dropdown a');
+function toggleDropdownState(loginDetails) 
+{
+    doElementsOfSelector('.loginForm', loginForm => {
+        loginForm.style.display = loginDetails ? 'none' : 'block';
+    })
 
-    if (!loginForm || !editForm || !dropdownLink) return; // Graceful exit
+    doElementsOfSelector('.editForm', editForm => {
+        editForm.style.display = loginDetails ? 'block' : 'none';
+    })
 
-    loginForms.forEach((loginForm) => {
-        loginForm.style.display = isLoggedIn ? 'none' : 'block';
-    });
-
-    editForms.forEach((editForm) => {
-        editForm.style.display = isLoggedIn ? 'block' : 'none';
-    });
-
-    dropdownLinks.forEach((dropdownLink) => {
-        const user = JSON.parse(localStorage.getItem('loginDetail')) || {};
-        dropdownLink.textContent = isLoggedIn ? `Welcome, ${user.name || 'User'}` : 'Sign In';
-    });
-
+    doElementsOfSelector('.dropdown a', element => {
+        element.textContent = loginDetails ? `Welcome, ${loginDetails.name || 'User'}` : 'Sign In';
+    })
 }
 
 // Update UI based on login state
 function updateUI() {
     const loginDetail = JSON.parse(localStorage.getItem('loginDetail'));
-    console.log("TEST " + loginDetail);
-    const isLoggedIn = !!loginDetail;
-    toggleDropdownState(isLoggedIn);
+    toggleDropdownState(loginDetail);
 }
 
 /***************************************************
@@ -74,13 +65,12 @@ function initializeDropdown() {
  ***************************************************/
 function attachEventListeners() {
     // Logout
-    const logoutButton = document.getElementById('logoutButton');
-    if (logoutButton) {
+    doElementsOfSelector('.logoutButton', logoutButton => {
         logoutButton.addEventListener('click', () => {
             localStorage.removeItem('loginDetail');
             updateUI();
         });
-    }
+    })
 }
 
 /***************************************************
@@ -210,5 +200,12 @@ function initializePage() {
         });
     }
 }
+
+function doElementsOfSelector(selector, callback)
+{
+    const elements = document.querySelectorAll(selector);
+    Array.from(elements).forEach( callback );
+}
+
 
 document.addEventListener('DOMContentLoaded', initializePage);

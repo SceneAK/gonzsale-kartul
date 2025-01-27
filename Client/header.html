@@ -263,16 +263,16 @@
                     Sign In
                 </a> <!-- Keep only one userLink -->
                 <div id="dropdown-content" class="dropdown-content">
-                    <div id="loginForm">
+                    <div class="loginForm">
                         <input type="text" id="email" placeholder="Email">
                         <input type="password" id="password" placeholder="Password">
                         <button id="signIn">Sign In</button>
                         <p>Don't have an account?</p>
                         <button onclick="window.location.href='signup.html';" class="btn-signUp">Sign Up</button>
                     </div>
-                    <div id="editForm">
+                    <div class="editForm">
                         <button onclick="window.location.href='store-management.html';">Manage Store</button>
-                        <button id="logoutButton">Logout</button>
+                        <button class="logoutButton">Logout</button>
                     </div>
                 </div>
             </div>
@@ -562,9 +562,9 @@
                 <button class="close-btn" onclick="toggleModal('loginModal')">Close</button>
                 <p>Don't have an account? <a href="signup.html">Register</a></p>
             </div>
-            <div id="editForm">
+            <div class="editForm">
                 <button id="manageButton" onclick="window.location.href='store-management.html';">Manage Store</button>
-                <button id="logoutButton">Logout</button>
+                <button class="logoutButton">Logout</button>
             </div>
         </div>
 

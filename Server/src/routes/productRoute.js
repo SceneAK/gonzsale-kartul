@@ -9,7 +9,9 @@ const imgUpload = createMulter({relativeDir: 'images', keyName: 'images', type: 
 
 router.get('/search', validate(productSchemas.getProducts), product.fetchProducts);
 
-router.get('/single/:id', product.fetchProduct);
+router.get('/owned', verify, product.fetchOwnedProducts);
+
+router.get('/:id', product.fetchProduct);
 
 router.patch('/:id', verify, ensureBelowLimit, imgUpload, validate(productSchemas.editProduct), product.editProduct);
 

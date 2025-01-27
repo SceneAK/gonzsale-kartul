@@ -538,31 +538,42 @@
                         <h1>Add New Product</h1>
                         <form id="add-product-form" class="add-product-form">
                             <label for="product-name">Nama Produk:</label>
-                            <input type="text" id="product-name" name="product_name" placeholder="Masukkan nama produk"
+                            <input type="text" id="product-name" name="name" placeholder="Masukkan nama produk"
                                 required />
 
                             <label for="product-category">Kategori:</label>
-                            <select id="product-category" name="product_category" required>
+                            <select id="product-category" name="category" required>
                                 <option value="" disabled selected>Pilih kategori</option>
-                                <option value="Baju">Baju</option>
-                                <option value="Celana">Celana</option>
-                                <option value="Aksesoris">Aksesoris</option>
-                                <option value="Makanan">Makanan</option>
-                                <option value="Minuman">Minuman</option>
+                                <option value="Shirts">Baju</option>
+                                <option value="Pants">Celana</option>
+                                <option value="Accessories">Aksesoris</option>
+                                <option value="Food">Makanan</option>
+                                <option value="Drinks">Minuman</option>
                             </select>
 
                             <label for="product-description">Deskripsi:</label>
-                            <textarea id="product-description" name="product_description" placeholder="Deskripsi produk"
+                            <textarea id="product-description" name="description" placeholder="Deskripsi produk"
                                 required></textarea>
 
-                            <label for="product-price">RP:</label>
-                            <input type="number" id="product-price" name="product_price" placeholder="Masukkan harga"
-                                required />
+                                <label for="product-price">Harga & Unit</label>
+                            <div>
+                                <input type="number" id="product-price" name="price" placeholder="Masukkan harga"
+                                    required style="padding-right: 0%; width: 70%;"/>
+                                <input type="text" id="product-unit" name="Unit" value="Unit" placeholder="Satuan..."
+                                    required style="width: 20%;"/>
+                            </div>
 
                             <label for="product-images">Tambah Gambar:</label>
-                            <input type="file" id="product-images" name="product_images" accept=".jpg,.jpeg,.png,.gif"
+                            <input type="file" id="product-images" name="images" accept=".jpg,.jpeg,.png,.gif"
                                 multiple required />
                             <div class="image-preview-container" id="image-preview-container"></div>
+
+                            <label for="product-availability">Availability:</label>
+                            <select id="product-availability" name="availability" required>
+                                <option value="AVAILABLE">Available</option>
+                                <option value="UNAVAILABLE">Unavailable</option>
+                                <option value="PREORDER">Pre-Order</option>
+                            </select>
 
                             <div class="add-product-form-buttons">
                                 <button type="button" onclick="closeAddProductModal()">Cancel</button>
@@ -602,6 +613,9 @@
     <div id="footer"></div>
 
     <script type="module" defer>
+        import { mockApi } from './frontendTest/mockApi.js'
+        import { store, product, order } from './integration/fetches.js'
+
         // Hash-based navigation
         document.querySelectorAll('.menu-link').forEach(link => {
             link.addEventListener('click', function () {
@@ -625,9 +639,9 @@
 
             try {
                 // Fetch the user's store (use actual API endpoint)
-                const userStore = await mockApi.getStores(); // Replace with actual API function
-
-                if (userStore.length === 0) {
+                const userStore = await store.fetchOwnedStore(); // Replace with actual API function
+                console.log(userStore);
+                if (!userStore) {
                     // No store exists
                     storeContainer.innerHTML = `
                 <div class="form-wrapper">
@@ -688,14 +702,13 @@
                     });
                 } else {
                     // Store exists
-                    const store = userStore[0]; // Assuming a single store per user
                     storeContainer.innerHTML = `
                 <div class="store-details">
-                    <h2>${store.store_name}</h2>
-                    <p>${store.store_description}</p>
-                    <img src="${store.store_imgSrc}" alt="${store.store_name}" style="width: 100%; max-width: 300px; border-radius: 8px;">
-                    <p><strong>Bank Account:</strong> ${store.store_bank_account}</p>
-                    <p><strong>Bank Name:</strong> ${store.store_bank_name}</p>
+                    <h2>${userStore.name}</h2>
+                    <p>${userStore.description}</p>
+                    <img src="${userStore.image?.url}" alt="${userStore.name}" style="width: 100%; max-width: 300px; border-radius: 8px;">
+                    <p><strong>Bank Account:</strong> ${userStore.bankAccount}</p>
+                    <p><strong>Bank Name:</strong> ${userStore.bankName}</p>
                     <button onclick="editStore()">Edit Store</button>
                 </div>
             `;
@@ -717,13 +730,14 @@
 
         // Load products data
         async function loadProducts() {
+            const products = await product.fetchOwnedProducts();
+            
             const productList = document.getElementById('product-list');
-            const products = await mockApi.getProducts('all');
             productList.innerHTML = products.map(product => `
             <div>
-              <h3>${product.product_name}</h3>
-              <p>Price: Rp ${product.product_price}</p>
-              <button onclick="editProduct('${product.product_id}')">Edit</button>
+              <h3>${product.name}</h3>
+              <p>Price: Rp ${product.price}</p>
+              <button onclick="editProduct('${product.productId}')">Edit</button>
             </div>
           `).join('');
         }
@@ -740,8 +754,8 @@
             };
 
             document.addEventListener("click", (event) => {
-                const modalContent = modal.querySelector(".add-product-form-container");
-                if (modal.classList.contains("active") && !modalContent.contains(event.target)) {
+                const modalContent = document.querySelector(".add-product-form-container");
+                if (modalContent.classList.contains("active") && !modalContent.contains(event.target)) {
                     closeAddProductModal();
                 }
             });
@@ -771,14 +785,7 @@
                 const formData = new FormData(this);
 
                 try {
-                    const response = await fetch("http://localhost:3000/product", {
-                        method: "POST",
-                        body: formData,
-                    });
-
-                    if (!response.ok) throw new Error("Failed to add product");
-
-                    alert("Product added successfully!");
+                    const response = await product.createProduct(formData)
                     this.reset(); // Clear the form
                     document.getElementById('image-preview-container').innerHTML = ""; // Clear previews
                     closeAddProductModal();
@@ -798,18 +805,18 @@
             loader.style.display = 'block'; // Show loader
 
             try {
-                const orders = await mockApi.getOrders(); // Replace with actual API if necessary
+                const orders = await order.fetchIncomingOrders(); // Replace with actual API if necessary
                 orderTableBody.innerHTML = ''; // Clear existing rows
 
                 orders.forEach(order => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                <td>${order.order_id}</td>
-                <td>${order.customer_user_id}</td>
-                <td>${order.product_id}</td>
-                <td>${order.order_qty}</td>
-                <td>${order.transaction_id}</td>
-                <td class="${order.order_status === 'COMPLETED' ? 'status-completed' : 'status-pending'}">
+                <td>${order.id}</td>
+                <td>${order.customerId}</td>
+                <td>First Item: ${order.OrderItems[0]?.Product?.name}</td>
+                <td>First Item: ${order.OrderItems[0]?.quantity}</td>
+                <td>${order.Transaction ? order.Transaction.id : " No Transaction Made "}</td>
+                <td class="${order.status === 'COMPLETED' ? 'status-completed' : 'status-pending'}">
                     ${order.order_status}
                 </td>
                 <td>

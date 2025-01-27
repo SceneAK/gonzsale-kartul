@@ -14,19 +14,19 @@ async function request(endpoint, method, body = null, credentials = 'omit', head
     }
     return res;
 }
-async function jsonRequest(endpoint, method, body = null, credentials = 'omit', headers = {})
+async function jsonResponse(endpoint, method, body = null, credentials = 'omit', headers = {})
 {
-    const req = await request(endpoint, method, body, credentials, {'Content-Type': 'application/json', ...headers})
+    const req = await request(endpoint, method, body, credentials,headers)
     return req.json();
 }
-async function formdataRequest(endpoint, method, formdata = null, credentials = 'omit', headers = {})
+async function jsonRequestResponse(endpoint, method, body = null, credentials = 'omit', headers = {})
 {
-    return await jsonRequest(endpoint, method, formdata, credentials, {'Content-Type': 'multipart/form-data', ...headers})
+    return await jsonResponse(endpoint, method, body, credentials, {'Content-Type': 'application/json', ...headers})
 }
 //#region User
 async function signIn(email, password) {
     const body = JSON.stringify({email, password});
-    return await jsonRequest('/user/signin', 'POST', body, 'include')
+    return await jsonRequestResponse('/user/signin', 'POST', body, 'include')
 }
 async function signUp(name, phone, email, password) { 
     const body = JSON.stringify({
@@ -35,37 +35,37 @@ async function signUp(name, phone, email, password) {
         email, 
         password
     });
-    const res = await jsonRequest('/user/signup', 'POST', body, 'include');
+    const res = await jsonRequestResponse('/user/signup', 'POST', body, 'include');
     return await res.text();
 }
 const user = { signIn, signUp } // both returns cookies
 //#endregion
 
 //#region Store
-async function getStore(id)
+async function fetchStore(id)
 {
-    return await jsonRequest(`/store/${id}`, "GET");
+    return await jsonRequestResponse(`/store/${id}`, "GET");
 }
-async function getOwnStore()
+async function fetchOwnedStore()
 {
-    return await jsonRequest(`/store`, "GET", null, 'include');
+    return await jsonRequestResponse(`/store`, "GET", null, 'include');
 }
 async function createStore(formdata) // auth
 {
-    return await formdataRequest(`/store`, "POST", formdata, 'include');
+    return await jsonResponse(`/store`, "POST", formdata, 'include');
 }
 async function editStore(formdata)
 {
-    return await formdataRequest(`/store`, "PATCH", formdata);
+    return await jsonResponse(`/store`, "PATCH", formdata);
 }
-const store = {getStore, getOwnStore, createStore, editStore};
+const store = {fetchStore, fetchOwnedStore, createStore, editStore};
 //#endregion
 
 //#region Product
 async function fetchProducts(category, others = {})
 {
     const paramsObj = { category, ...others};
-    const products = await jsonRequest(`/product/search?${toQueryString(paramsObj)}`, "GET"); 
+    const products = await jsonRequestResponse(`/product/search?${toQueryString(paramsObj)}`, "GET"); 
     products.forEach( product => transformProductImagesUrls(product)) ;
     return products;
 }
@@ -75,15 +75,19 @@ function toQueryString(obj)
     return queryParams;
 }
 
+async function fetchOwnedProducts() // auth
+{
+    return await jsonResponse(`/product/owned`, "GET", null, 'include'); 
+}
+
 async function fetchProduct(id)
 {
-    const product = await jsonRequest(`/product/single/${id}`, "GET")
+    const product = await jsonRequestResponse(`/product/single/${id}`, "GET")
     transformProductImagesUrls(product);
     return product;
 }
 function transformProductImagesUrls(product)
 {
-    console.log(product);
     for (let i = 0; i < product.ProductImages.length; i++) {
         product.ProductImages[i].url = transformUrl(product.ProductImages[i].url);
     }
@@ -95,33 +99,33 @@ function transformUrl(str)
 }
 async function createProduct(formdata) // auth & store
 {
-    return await formdataRequest(`/product`, "POST", formdata, 'include');
+    return await jsonResponse(`/product`, "POST", formdata, 'include');
 }
 async function editProduct(formdata, id) // auth & store
 {
-    return await formdataRequest(`/product/${id}`, "PATCH", formdata, 'include');
+    return await jsonResponse(`/product/${id}`, "PATCH", formdata, 'include');
 }
-const product = {fetchProduct, fetchProducts, createProduct, editProduct};
+const product = {fetchProduct, fetchProducts, fetchOwnedProducts, createProduct, editProduct};
 //#endregion
 
 //#region Order
-async function getOrders() // auth
+async function fetchOrders() // auth
 {
-    return await jsonRequest('/order', "GET", null, 'include');
+    return await jsonResponse('/order', "GET", null, 'include');
 }
-async function getIncomingOrders() // auth & store
+async function fetchIncomingOrders() // auth & store
 {
-    return await jsonRequest('/order/incoming', "GET", null, 'include');
+    return await jsonResponse('/order/incoming', "GET", null, 'include');
 }
 async function placeOrder(formdata)// auth
 {
-    return await formdataRequest('/order', "POST", formdata, 'include');   
+    return await jsonResponse('/order', "POST", formdata, 'include');   
 }
 async function placeOrderGuest(formdata)
 {
-    return await formdataRequest('/order/guest', "POST", formdata);
+    return await jsonResponse('/order/guest', "POST", formdata);
 }
-const order = {getOrders, getIncomingOrders, placeOrder, placeOrderGuest};
+const order = {fetchOrders, fetchIncomingOrders, placeOrder, placeOrderGuest};
 //#endregion
 
 
