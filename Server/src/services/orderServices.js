@@ -40,7 +40,7 @@ async function fetchOrders(customerId)
         include: [...WITH_ITEMS, storeServices.include('just-name')],
         attributes: ATTRIBUTES
     });
-    return orders.map(order => order.get());
+    return orders.map(order => order.toJSON());
 };
 
 async function createOrder(orderItems, customerId) // please refactor

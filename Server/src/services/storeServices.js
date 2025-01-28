@@ -12,7 +12,7 @@ async function fetchStore(id)
         attributes: SERVE_ATTRIBUTES
     });
     if(!storeModel) throw new ApplicationError('Store not found', 404);
-    return storeModel.get();
+    return storeModel.toJSON();
 }
 
 async function fetchStoreOfUser(userId)
@@ -23,8 +23,7 @@ async function fetchStoreOfUser(userId)
         attributes: SERVE_ATTRIBUTES
     });
     if(!storeModel) throw new ApplicationError('No store owned', 404);
-    
-    return storeModel.get();
+    return storeModel.toJSON();
 }
 
 async function fetchStoreIdOfUser(userId) {

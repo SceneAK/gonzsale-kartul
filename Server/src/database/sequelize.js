@@ -3,8 +3,8 @@ import cls from 'cls-hooked';
 import { Sequelize, DataTypes } from 'sequelize';
 import { logger } from '../common/index.js';
 
-const namespace = cls.createNamespace('gonzsaleNamespace');
-Sequelize.useCLS(namespace);
+const gonzsaleNamespace = cls.createNamespace('gonzsaleNamespace');
+Sequelize.useCLS(gonzsaleNamespace);
 
 let sequelize = new Sequelize(process.env.URI);
 logger.info('Database connection created');
@@ -19,4 +19,4 @@ async function switchURI(uri)
     sequelize = new Sequelize(uri);
 }
 
-export { getInstance, switchURI, Sequelize, DataTypes};
+export { getInstance, switchURI, Sequelize, DataTypes, gonzsaleNamespace};

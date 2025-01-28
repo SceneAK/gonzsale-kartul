@@ -14,9 +14,9 @@ const storeImgUpload = createMulter({
 
 const router = express.Router();
 
-router.get('/:id', store.fetchStore);
-
 router.get('/', verify, store.fetchOwnedStore);
+
+router.get('/:id', store.fetchStore);
 
 router.post('/', verify, ensureBelowLimit, storeImgUpload, validate(storeSchemas.createStore), store.createStore);
 

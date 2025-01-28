@@ -10,10 +10,12 @@ async function createImages(files, userId)
         const rel = getRelative(file.path);
         return { path: rel };
     });
+    console.log("ImageServices LINE 13")
+    console.log(imageDatas);
     const imageModels = await Image.bulkCreate(imageDatas);
+    console.log("ImageServices LINE 16")
     await userStorageServices.trackUsedFiles(files, userId);
-    const images = imageModels.map( model => model.get() );
-    return images;
+    return imageModels.map( model => model.toJSON() );;
 }
 async function createImagesKeepInvalids(fileArray, userId)
 {

@@ -72,7 +72,6 @@ async function createProduct(userId, data)
 
     await Product.sequelize.transaction(async t => {
         const product = await Product.create({ ...productData, storeId });
-        console.log(data);
         await productImageServices.createProductImagesAuto(files, product.id);
         if(variants) await variantServices.createVariants(variants, product.id);
     });

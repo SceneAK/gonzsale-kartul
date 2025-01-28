@@ -7,7 +7,7 @@ async function createVariants(variants, productId)
         return {...variant, productId };
     } );
     const variantModels = await Variant.bulkCreate(variantsData);
-    return variantModels.map( model => model.get());
+    return variantModels.map( model => model.toJSON());
 }
 
 async function updateVariants(variants, productId) { // temporary. very bad

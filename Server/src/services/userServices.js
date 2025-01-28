@@ -14,7 +14,7 @@ async function fetchUser(id)
     const userModel = await User.findByPk(id, { attributes: SERVE_ATTRIBUTES} );
     if(!userModel) throw new ApplicationError("User ID not found", 404);
     
-    return userModel.get();
+    return userModel.toJSON();
 }
 
 async function signIn(email, password)

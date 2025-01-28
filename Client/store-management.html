@@ -558,9 +558,9 @@
                             <label for="product-price">Harga & Unit</label>
                             <div>
                                 <input type="number" id="product-price" name="price" placeholder="Masukkan harga"
-                                    required style="padding-right: 0%; width: 70%;" />
+                                    required style="padding-right: 0%; width: 70%;"/>
                                 <input type="text" id="product-unit" name="unit" value="Unit" placeholder="Satuan..."
-                                    required style="width: 20%;" />
+                                    required style="width: 20%;"/>
                             </div>
 
                             <label for="product-images">Tambah Gambar:</label>
@@ -730,6 +730,7 @@
 
         // Load products data
         async function loadProducts() {
+            return;
             const products = await product.fetchOwnedProducts();
 
             const productList = document.getElementById('product-list');
@@ -812,7 +813,7 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                 <td>${order.id}</td>
-                <td>${order.customerId}</td>
+                <td>${order.User.name}</td>
                 <td>First Item: ${order.OrderItems[0]?.Product?.name}</td>
                 <td>First Item: ${order.OrderItems[0]?.quantity}</td>
                 <td>${order.Transaction ? order.Transaction.id : " No Transaction Made "}</td>
