@@ -136,8 +136,8 @@
         *scoped* by the .register-container form CSS above.
       -->
             <form id="register-form">
-                <label for="signupUsername"><span class="required">*</span> Username:</label>
-                <input type="text" id="signupUsername" name="signupUsername" required>
+                <label for="signupFullName"><span class="required">*</span> Full Name:</label>
+                <input type="text" id="signupFullName" name="signupFullName" required>
 
                 <label for="signupPhone"><span class="required">*</span> Phone (+62):</label>
                 <input type="text" id="signupPhone" name="signupPhone" required>
@@ -171,7 +171,7 @@
 
         // Grab the renamed elements
         const registerButton = document.getElementById('signupSubmitButton');
-        const registerUsername = document.getElementById('signupUsername');
+        const registerFullName = document.getElementById('signupFullName');
         const registerPhone = document.getElementById('signupPhone');
         const registerEmail = document.getElementById('signupEmail');
         const registerPassword = document.getElementById('signupPassword');

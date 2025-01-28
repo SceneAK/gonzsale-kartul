@@ -481,6 +481,35 @@
 </head>
 
 <body>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginDetails = localStorage.getItem('loginDetail');
+            if (!loginDetails) {
+                // Select the content wrapper
+                const contentWrapper = document.querySelector('.content-wrapper');
+
+                // Replace its content
+                contentWrapper.innerHTML = `
+                    <div style="text-align: center; margin-top: 50px;">
+                        <h1>Access Restricted</h1>
+                        <p>You must be logged in to access this page.</p>
+                        <button onclick="window.location.href='signup.html'" 
+                            style="padding: 10px 20px; font-size: 16px; background-color: #ff9900; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
+                            Sign Up / Log In
+                        </button>
+                    </div>
+                `;
+
+                // Optional: Style the wrapper to center the content
+                contentWrapper.style.display = 'flex';
+                contentWrapper.style.justifyContent = 'center';
+                contentWrapper.style.alignItems = 'center';
+                contentWrapper.style.height = '100%';
+            }
+        });
+    </script>
+
+
     <div id="header">Header Content Here</div>
 
     <div class="content-wrapper">
@@ -558,9 +587,9 @@
                             <label for="product-price">Harga & Unit</label>
                             <div>
                                 <input type="number" id="product-price" name="price" placeholder="Masukkan harga"
-                                    required style="padding-right: 0%; width: 70%;"/>
+                                    required style="padding-right: 0%; width: 70%;" />
                                 <input type="text" id="product-unit" name="unit" value="Unit" placeholder="Satuan..."
-                                    required style="width: 20%;"/>
+                                    required style="width: 20%;" />
                             </div>
 
                             <label for="product-images">Tambah Gambar:</label>
@@ -730,16 +759,19 @@
 
         // Load products data
         async function loadProducts() {
-            return;
             const products = await product.fetchOwnedProducts();
-
             const productList = document.getElementById('product-list');
+
             productList.innerHTML = products.map(product => `
-            <div>
-              <h3>${product.name}</h3>
-              <p>Price: Rp ${product.price}</p>
-              <button onclick="editProduct('${product.productId}')">Edit</button>
-            </div>
+    <tr>
+        <td>${product.name}</td>
+        <td>${product.category.toLocaleString('id-ID')}</td>
+        <td>Rp ${product.price.toLocaleString('id-ID')}</td>
+        <td>
+            <button onclick="editProduct('${product.productId}')">Edit</button>
+            <button onclick="deleteProduct('${product.productId}')">Delete</button>
+        </td>
+    </tr>
           `).join('');
         }
 

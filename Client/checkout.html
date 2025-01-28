@@ -155,7 +155,11 @@
 
             <label for="phone-number">Phone Number:</label>
             <input type="tel" id="phone-number" placeholder="Enter your phone number" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Enter your email address" required>
         </div>
+
 
         <!-- Order Summary -->
         <div id="order-summary"></div>
@@ -173,6 +177,36 @@
         if (cart.length === 0) {
             alert("Your cart is empty. Redirecting to the catalog...");
             window.location.href = "catalog.html";
+        }
+
+        // Pre-fill buyer info if logged in
+        const loginDetail = JSON.parse(localStorage.getItem('loginDetail') || '{}');
+        const buyerInfoContainer = document.querySelector('.buyer-info');
+
+        if (loginDetail.name && loginDetail.email && loginDetail.phone) {
+            // Replace input fields with text or p elements
+            buyerInfoContainer.innerHTML = `
+        <p><strong>Full Name:</strong> ${loginDetail.name}</p>
+        <p><strong>Phone Number:</strong> ${loginDetail.phone}</p>
+        <p><strong>Email:</strong> ${loginDetail.email}</p>
+        <button id="change-details-btn" style="margin-top: 10px; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Change Details</button>
+    `;
+
+            // Add event listener to the "Change Details" button
+            document.getElementById('change-details-btn').addEventListener('click', () => {
+                window.location.href = 'profile-management.html';
+            });
+        } else {
+            // If not logged in or details are missing, show input fields as usual
+            const fullNameInput = document.getElementById('full-name');
+            const phoneInput = document.getElementById('phone-number');
+            const emailInput = document.getElementById('email');
+
+            if (fullNameInput && phoneInput && emailInput) {
+                fullNameInput.value = loginDetail.name || '';
+                phoneInput.value = loginDetail.phone || '';
+                emailInput.value = loginDetail.email || '';
+            }
         }
 
         // Group cart items by store_id

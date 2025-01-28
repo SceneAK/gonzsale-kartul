@@ -15,18 +15,80 @@ function loadHTML(file, elementId, callback) {
  * Dropdown Toggle Logic
  ***************************************************/
 function toggleDropdownState(loginDetails) {
+    // Show or hide login forms
     doElementsOfSelector('.loginForm', loginForm => {
         loginForm.style.display = loginDetails ? 'none' : 'block';
-    })
+    });
 
+    // Show or hide edit forms
     doElementsOfSelector('.editForm', editForm => {
-        editForm.style.display = loginDetails ? 'block' : 'none';
-    })
+        if (loginDetails) {
+            // Dynamically populate editForm content when logged in
+            const isStoreManager = loginDetails.role === 'STORE_MANAGER';
+            editForm.innerHTML = `
+                <div style="text-align: center; padding: 10px;">
+                    <p>Welcome, <strong>${loginDetails.name || 'User'}</strong></p>
+                    <p style="color: #555;">Role: ${isStoreManager ? 'Store Manager' : 'Buyer'}</p>
+                </div>
+                <hr>
+                <button onclick="window.location.href='profile-management.html'" style="width: 100%; padding: 10px; margin-bottom: 5px;">
+                    Profile Management
+                </button>
+                <button onclick="window.location.href='order-history.html'" style="width: 100%; padding: 10px; margin-bottom: 5px;">
+                    Order History
+                </button>
+                ${isStoreManager
+                    ? `<button onclick="window.location.href='store-management.html'" style="width: 100%; padding: 10px; margin-bottom: 5px;">
+                            Manage Store
+                       </button>`
+                    : ''
+                }
+                <hr>
+                <button id="logoutButton" style="width: 100%; padding: 10px; background-color: #ff4c4c; color: white;">
+                    Logout
+                </button>
+            `;
 
+            // Attach logout functionality
+            const logoutButton = editForm.querySelector('#logoutButton');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', () => {
+                    localStorage.removeItem('loginDetail');
+                    alert('You have logged out successfully.');
+                    window.location.reload(); // Refresh to reset the state
+                });
+            }
+
+            editForm.style.display = 'block';
+        } else {
+            editForm.style.display = 'none';
+        }
+    });
+
+    // Update dropdown link text
     doElementsOfSelector('.dropdown a', element => {
-        element.textContent = loginDetails ? `Welcome, ${loginDetails.name || 'User'}` : 'Sign In';
-    })
+        if (loginDetails) {
+            // Truncate the name if it exceeds 15 characters
+            const displayName = loginDetails.name.length > 15
+                ? `${loginDetails.name.slice(0, 12)}...`
+                : loginDetails.name;
+
+            // If the user is logged in, display the icon next to their name
+            element.innerHTML = `
+                <img src="assets/images/user_logged_in_icon.svg" alt="User Icon">
+                ${displayName || 'User'}
+            `;
+        } else {
+            // Default text for sign-in with icon
+            element.innerHTML = `
+                <img src="assets/images/sign_in_icon.svg" alt="Sign In Icon">
+                Sign In
+            `;
+        }
+    });
 }
+
+
 
 // Update UI based on login state
 function updateUI() {
@@ -68,6 +130,7 @@ function attachEventListeners() {
         logoutButton.addEventListener('click', () => {
             localStorage.removeItem('loginDetail');
             updateUI();
+            window.location.reload();
         });
     })
 }
