@@ -13,8 +13,8 @@ const createCODTransaction = async(req, res) => {
     res.json({result: 'created'});
 }
 const createProofTransaction = async(req, res) => {
-    const transactionData = {...req.body, file: req.file};
-    await extendedTransactionServices.createTransaction(transactionData, 'PROOF-BASED', req.decodedAuthToken.id)
+    const bodyAndFile = {...req.body, file: req.file};
+    await extendedTransactionServices.createTransaction(bodyAndFile, 'PROOF-BASED', req.decodedAuthToken.id)
     res.json({result: 'created'});
 }
 

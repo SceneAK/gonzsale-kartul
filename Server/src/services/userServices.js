@@ -9,12 +9,21 @@ const SALT_ROUNDS = 8;
 
 const SERVE_ATTRIBUTES = ['id', 'name', 'phone', 'email', 'role'];
 
+const ROLES = {
+    User: 'USER',
+    Admin: 'ADMIN',
+    StoreManager: 'STORE_MANAGER'
+}
+
 async function fetchUser(id)
 {
-    const userModel = await User.findByPk(id, { attributes: SERVE_ATTRIBUTES} );
+    return (await _fetchUser(id, {attributes: SERVE_ATTRIBUTES})).toJSON();
+}
+async function _fetchUser(id, options)
+{
+    const userModel = await User.findByPk(id, options);
     if(!userModel) throw new ApplicationError("User ID not found", 404);
-    
-    return userModel.toJSON();
+    return userModel;
 }
 
 async function signIn(email, password)
@@ -72,10 +81,31 @@ async function findOrCreateGuest(email, name, phone)
     
     return signReturnObject(user);
 }
+async function isGuest(userId)
+{
+    const user = await _fetchUser(userId, {attributes: ['password']});
+    return user.passsword == null;
+}
 
 async function refresh(decodedAuthToken)
 {
     return createAuthToken(decodedAuthToken);
+}
+
+async function editRole(id, role, requesterId)
+{
+    const role = await fetchUserRole(requesterId);
+    if(role != ROLES.Admin) throw new ApplicationError("Unauthorized", 401);
+    
+    if(isGuest(id)) throw new ApplicationError("Cannot edit role of guest", 400);
+
+    await User.update({role}, {where: {id}});
+}
+
+async function fetchUserRole(userId)
+{
+    const userModel = await _fetchUser(userId, {attributes: ['role']});
+    return userModel.role;
 }
 
 async function signReturnObject(user)
@@ -112,10 +142,13 @@ function include(level)
 }
 
 export default {
+    ROLES,
     fetchUser,
+    fetchUserRole,
     signIn,
     signUp,
     findOrCreateGuest,
+    editRole,
     refresh,
     include
 };

@@ -3,6 +3,12 @@ import productServices from './productServices.js';
 import ApplicationError from '../common/errors.js';
 const { OrderItem } = await initializePromise;
 
+async function fetchOrderItems(orderId)
+{
+    const items = await OrderItem.findAll({ where: { orderId } })
+    return items.map(item => item.toJSON());
+}
+
 async function createOrderItems(orderItems)
 {
     await OrderItem.bulkCreate(orderItems);
@@ -44,4 +50,4 @@ function include(level)
     }
 }
 
-export default {completeAndValidate, createOrderItems, include}
+export default {fetchOrderItems, completeAndValidate, createOrderItems, include}

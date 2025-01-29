@@ -95,8 +95,8 @@ async function complete(storeData, files, userId)
 
 async function ensureCanCreate(userId)
 {
-    const user = await userServices.fetchUser(userId);
-    if(user.role != 'STORE_MANAGER') throw new ApplicationError("User not a store manager", 403);
+    const userRole = await userServices.fetchUserRole(userId);
+    if(userRole != userServices.ROLES.StoreManager) throw new ApplicationError("User not a store manager", 403);
 }
 
 const SERVE_ATTRIBUTES = ['id', 'name', 'description', 'bankAccount', 'bankName']

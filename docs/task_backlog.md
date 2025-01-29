@@ -36,8 +36,8 @@ Please sort by importance
 
 # BACKEND
 ## MAKE EVERYTHING WORK DAMNIT
-- Guest Order -> create a guest account from userServices which only lasts this browsing session (via jwt token refreshes)
-- Update OrderItem Status Logic
+- Order Status
+- Transaction & order creation logic. refer to whatsapp
 
 ## Rework productImage creation and priority so that whoever uses the service completes the data first (with an exported function) before passing it to productImageServices
 

@@ -6,12 +6,11 @@ const sequelize = getInstance();
 
 async function createTransaction(transactionData, method, userId)
 {
-    const {orderId, type} = transactionData;
     const extService = getExtensionForTransactionMethod(method);
 
     let combined;
     await sequelize.transaction(async t => {
-        const transaction = await transactionServices.createTransaction(orderId, method, type);
+        const transaction = await transactionServices.createTransaction( { ...transactionData, method } );
         const extTransaction = await extService.create(transactionData, transaction.id, userId);
         
         delete extTransaction.transactionId;

@@ -36,7 +36,7 @@ async function sync()
         await sequelize.authenticate();
     
         await import('./src/database/models/index.js')
-        await sequelize.sync();
+        await sequelize.sync({force: true});
         logger.info('Successfully Synced');
     }catch(err)
     {

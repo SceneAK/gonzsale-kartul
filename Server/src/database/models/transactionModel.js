@@ -47,15 +47,4 @@ Transaction.hasOne(ProofTransaction, { foreignKey:'transactionId'} )
 ProofTransaction.belongsTo(Image, {foreignKey: 'proofImageId'})
 Image.hasOne(ProofTransaction, {foreignKey: 'proofImageId'})
 
-const CODTransaction = sequelize.define('CODTransaction', {
-    transactionId: {
-        type: DataTypes.UUID,
-        primaryKey: true,
-        allowNull: false
-    },
-    status:{
-        type: DataTypes.ENUM('PENDING', 'COMPLETED')
-    }
-})
-
-export {Transaction, ProofTransaction, CODTransaction};
+export {Transaction, ProofTransaction};

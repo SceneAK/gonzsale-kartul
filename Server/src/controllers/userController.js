@@ -15,6 +15,25 @@ const signUp = async (req, res) => {
     return res.json(user);
 }
 
+const guest = async (req, res) => {
+    const {email, phone, name} = req.body;
+    const {user, authToken} = await userServices.findOrCreateGuest(email, name, phone);
+    setAuthTokenCookie(res, authToken);
+    return res.json(user);
+}
+
+const editRole = async (req, res) => {
+    const {id, role} = req.params;
+    await userServices.editRole(id, role, req.decodedAuthToken.id);
+    return res.send("Role granted");
+}
+
+const editUser = async (req, res) => {
+    const {name, phone, email} = req.body;
+    await userServices.editUser(req.decodedAuthToken.id, name, phone, email);
+    return res.send("User edited");
+}
+
 const refresh = async (req, res) => {
     const newToken = await userServices.refresh(req.decodedAuthToken);
     setAuthTokenCookie(res, newToken);
@@ -36,5 +55,7 @@ function setAuthTokenCookie(res, authToken)
 export default {
     signIn,
     signUp,
+    editRole,
+    guest,
     refresh
 };

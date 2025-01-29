@@ -6,19 +6,22 @@ import transactionServices from './transactionServices.js';
 import userServices from './userServices.js';
 const { Order } = await initializePromise;
 
-const WITH_ITEMS = [
+const ITEMS_AND_TRANSAC = [
     {...transactionServices.include('serve')}, 
-    {...orderItemServices.include('serve')}
+    {...orderItemServices.include('serve')},
 ];
 const ATTRIBUTES = ['id', 'storeId', 'customerId', 'createdAt'];
+
 async function fetchOrder(id) // todo: check if user has association with the order
 {
     const order = await Order.findByPk(id, {
-        include: WITH_ITEMS,
+        include: [...ITEMS_AND_TRANSAC, userServices.include('contacts')],
         attributes: ATTRIBUTES
     });
     
     if(!order) throw new ApplicationError('Order not found', 404);
+
+    order.total = await calculateTotal(order.OrderItems);
     return order.toJSON();
     
 }
@@ -27,7 +30,7 @@ async function fetchIncomingOrders(storeOwnerUserId)
     const storeId = await storeServices.fetchStoreIdOfUser(storeOwnerUserId);
     const orders = await Order.findAll({ 
         where: { storeId },
-        include: [...WITH_ITEMS, userServices.include('contacts')],
+        include: userServices.include('contacts'),
         attributes: ATTRIBUTES
     });
     return orders.map(order => order.toJSON());
@@ -37,7 +40,7 @@ async function fetchOrders(customerId)
 {
     const orders = await Order.findAll({ 
         where: { customerId }, 
-        include: [...WITH_ITEMS, storeServices.include('just-name')],
+        include: [...ITEMS_AND_TRANSAC, storeServices.include('just-name')],
         attributes: ATTRIBUTES
     });
     return orders.map(order => order.toJSON());
@@ -55,9 +58,24 @@ async function createOrder(orderItems, customerId) // please refactor
     return orderItems;
 }
 
+async function calculateOrderTotal(orderId)
+{
+    const orderItems = await orderItemServices.fetchOrderItems(orderId);
+    return calculateTotal(orderItems);
+}
+function calculateTotal(orderItems)
+{
+    let total = 0;
+    for (const item of orderItems) {
+        total += item.quantity * item.unitPrice;
+    }
+    return total;
+}
+
 export default {
     fetchOrder,
     fetchOrders,
     fetchIncomingOrders,
-    createOrder
+    createOrder,
+    calculateOrderTotal
 }
