@@ -9,7 +9,7 @@ async function fetchOrderItems(orderId)
     return items.map(item => item.toJSON());
 }
 
-async function createOrderItems(orderItems)
+async function create(orderItems)
 {
     await OrderItem.bulkCreate(orderItems);
 }
@@ -34,14 +34,30 @@ async function fetchProductsOfOrderItems(orderItems)
     return await productServices.fetchProductsPlain(productIds);
 }
 
+async function updateStatus(id, status)
+{
+    return await OrderItem.update({status}, {where: {id}});
+}
+
+async function updateStatusesByProduct(productId, status)
+{
+    return await OrderItem.update({status}, {where: {productId}});
+}
+
+const ATTRIBUTES = ['id', 'quantity', 'unitPrice', 'notes', 'status'];
 function include(level)
 {
     switch (level) {
+        case 'serveWithProduct':
+            return {
+                model: OrderItem,
+                attributes: ATTRIBUTES,
+                include: productServices.include('serveBasicWithImages')
+            }
         case 'serve':
             return {
                 model: OrderItem,
-                attributes: ['id', 'quantity', 'unitPrice', 'notes', 'status'],
-                include: productServices.include('serve')
+                attributes: ATTRIBUTES
             }
         default:
             return {
@@ -50,4 +66,4 @@ function include(level)
     }
 }
 
-export default {fetchOrderItems, completeAndValidate, createOrderItems, include}
+export default {fetchOrderItems, completeAndValidate, create, updateStatus, updateStatusesByProduct, include}

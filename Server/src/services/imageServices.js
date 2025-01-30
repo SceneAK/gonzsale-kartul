@@ -54,7 +54,7 @@ function include(level)
         case 'serve':
             return { model: Image, attributes: ['id', 'path']};
         default:
-            return { model: Image };
+                return { model: Image };
     }
     
 }

@@ -115,12 +115,12 @@ const ALL_INCLUDES = [
 function include(level)
 {
     switch (level) {
-        case 'just-name':
+        case 'serveName':
             return {
                 model: Store,
                 attributes: ['name']
             }
-        case 'serve':
+        case 'serveWithAll':
             return {
                 model: Store,
                 include: ALL_INCLUDES,
@@ -128,8 +128,7 @@ function include(level)
             }
         default:
             return {
-                model: Store,
-                include: ALL_INCLUDES
+                model: Store
             }
     }
 }

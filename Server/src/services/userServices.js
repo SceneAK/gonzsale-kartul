@@ -55,7 +55,8 @@ async function signUp(email, password, name, phone)
     }catch(err)
     {
         if(err instanceof UniqueConstraintError){
-            throw new ApplicationError('Email not unique', 400)
+            const message = err.errors[0]?.message;
+            throw new ApplicationError(message, 400)
         }
         throw err;
     }
@@ -75,16 +76,15 @@ async function findOrCreateGuest(email, name, phone)
     const [user] = await User.findOrCreate({
         where: {email}, 
         defaults: { name, phone, email, password: null },
-        attributes: SERVE_ATTRIBUTES, 
         raw: true
     })
-    
+    delete user.password, user.updatedAt;
     return signReturnObject(user);
 }
 async function isGuest(userId)
 {
     const user = await _fetchUser(userId, {attributes: ['password']});
-    return user.passsword == null;
+    return user.password == null;
 }
 
 async function refresh(decodedAuthToken)
@@ -94,11 +94,11 @@ async function refresh(decodedAuthToken)
 
 async function editRole(id, role, requesterId)
 {
-    const role = await fetchUserRole(requesterId);
-    if(role != ROLES.Admin) throw new ApplicationError("Unauthorized", 401);
+    const requesterRole = await fetchUserRole(requesterId);
+    if(requesterRole != ROLES.Admin) throw new ApplicationError("Unauthorized", 401);
     
-    if(isGuest(id)) throw new ApplicationError("Cannot edit role of guest", 400);
-
+    if(await isGuest(id)) throw new ApplicationError("Cannot edit role of guest", 400);
+    
     await User.update({role}, {where: {id}});
 }
 

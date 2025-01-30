@@ -20,7 +20,7 @@ async function fetchProofTransaction(transactionId)
         attributes: [],
         include: imageServices.include('serve')
     });
-    if(!model) throw new ApplicationError('No associated proof transaction?', 500);
+    if(!model) throw new ApplicationError('No associated proof transaction found', 500);
 
     return model.toJSON();
 }
@@ -28,7 +28,7 @@ async function fetchProofTransaction(transactionId)
 function include(level)
 {
     switch (level) {
-        case 'serve':
+        case 'serveWithImage':
             return {
                 model: ProofTransaction,
                 attributes: [],

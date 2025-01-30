@@ -4,14 +4,14 @@ import ApplicationError from '../common/errors.js';
 import { getInstance } from '../database/sequelize.js';
 const sequelize = getInstance();
 
-async function createTransaction(transactionData, method, userId)
+async function createTransaction(transactionData, method, requesterId)
 {
     const extService = getExtensionForTransactionMethod(method);
 
     let combined;
     await sequelize.transaction(async t => {
-        const transaction = await transactionServices.createTransaction( { ...transactionData, method } );
-        const extTransaction = await extService.create(transactionData, transaction.id, userId);
+        const transaction = await transactionServices.createTransaction( { ...transactionData, method }, requesterId );
+        const extTransaction = await extService.create(transactionData, transaction.id, requesterId);
         
         delete extTransaction.transactionId;
         combined = { ...transaction, ...extTransaction};

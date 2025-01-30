@@ -7,8 +7,8 @@ import { Op } from 'sequelize';
 import fs from 'fs';
 const { Product } = await databaseInitializePromise;
 
-const GENERAL_ATTRIUTES = ['id', 'storeId', 'name', 'category', 'price', 'unit', 'availability'];
-const SERVE_ATTRIBUTES = ['id', 'name', 'description', 'category', 'price', 'unit', 'availability'];
+const BASIC_ATTRIBUTES = ['id', 'name'];
+const GENERAL_ATTRIUTES = [...BASIC_ATTRIBUTES, 'storeId', 'category', 'price', 'unit', 'availability'];
 
 async function fetchPublicProducts(filter) 
 {
@@ -17,8 +17,8 @@ async function fetchPublicProducts(filter)
         attributes: GENERAL_ATTRIUTES,
         where: whereClause,
         include: [
-            { ...productImageServices.include('serve-image') },
-            { ...storeServices.include('just-name'), where: storeWhereClause }
+            { ...productImageServices.include('serve') },
+            { ...storeServices.include('justName'), where: storeWhereClause }
         ]
     });
     return products.map(product => product.toJSON());
@@ -34,7 +34,7 @@ async function fetchProductsFromStore(storeId)
     const products = await Product.findAll({
         attributes: GENERAL_ATTRIUTES,
         include: [
-            { ...productImageServices.include('serve-image') }
+            { ...productImageServices.include('serve') }
         ],
         where: {storeId}
     });
@@ -43,10 +43,10 @@ async function fetchProductsFromStore(storeId)
 
 async function fetchProduct(id){
     const product = await _fetchProduct(id, {
-        attributes: SERVE_ATTRIBUTES,
+        attributes: [...BASIC_ATTRIBUTES, 'description', 'category', 'price', 'unit', 'availability'],
         include: [
-            {...storeServices.include('serve')},
-            {...productImageServices.include('serve-image')}
+            {...storeServices.include('serveWithAll')},
+            {...productImageServices.include('serve')}
         ]
     });
     return product.toJSON();
@@ -158,11 +158,11 @@ async function convertToWhereClauses(filter)
 function include(level)
 {
     switch (level) {
-        case 'serve':
+        case 'serveBasicWithImages':
             return {
                 model: Product,
-                attributes: ['id', 'name'],
-                include: productImageServices.include('serve-image')
+                attributes: BASIC_ATTRIBUTES,
+                include: productImageServices.include('serve')
             }
         default:
             return {

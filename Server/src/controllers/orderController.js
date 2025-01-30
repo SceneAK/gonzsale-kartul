@@ -2,8 +2,8 @@ import { orderServices } from '../services/index.js';
 import { convertAllPathsToURLs } from '../common/pathToURLConverter.js';
 
 const fetchOrder = async (req, res) => {
-    const {id} = req.param;
-    const result = await orderServices.fetchOrder(id);
+    const {id} = req.params;
+    const result = await orderServices.fetchOrderIncludeAll(id);
     convertAllPathsToURLs(req.protocol, req.hostname, result);
     res.json(result);
 }
@@ -18,12 +18,7 @@ const fetchOrders = async (req, res) => {
 
 const createOrder = async(req, res) => {
     await orderServices.createOrder(req.body.OrderItems, req.decodedAuthToken.id)
-    res.json({result: 'created'});
+    res.json( { result: 'created' } );
 }
 
-const updateOrderStatus = async (req, res) => {
-    
-}
-
-
-export default {fetchOrder, fetchOrders, fetchIncomingOrders, createOrder, updateOrderStatus}
+export default {fetchOrder, fetchOrders, fetchIncomingOrders, createOrder}

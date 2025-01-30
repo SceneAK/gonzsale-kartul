@@ -8,23 +8,30 @@ const { Order } = await initializePromise;
 
 const ITEMS_AND_TRANSAC = [
     {...transactionServices.include('serve')}, 
-    {...orderItemServices.include('serve')},
+    {...orderItemServices.include('serveWithProduct')},
 ];
 const ATTRIBUTES = ['id', 'storeId', 'customerId', 'createdAt'];
 
-async function fetchOrder(id) // todo: check if user has association with the order
+async function fetchOrderIncludeAll(id) 
 {
-    const order = await Order.findByPk(id, {
+    const orderModel = await _fetchOrder(id, {
         include: [...ITEMS_AND_TRANSAC, userServices.include('contacts')],
         attributes: ATTRIBUTES
     });
-    
-    if(!order) throw new ApplicationError('Order not found', 404);
-
-    order.total = await calculateTotal(order.OrderItems);
-    return order.toJSON();
-    
+    orderModel.total = await calculateTotal(orderModel.OrderItems);
+    return orderModel.toJSON();
 }
+async function fetchOrder(id)
+{   
+    return (await _fetchOrder(id, { attributes: ATTRIBUTES } )).toJSON();
+}
+async function _fetchOrder(id, options)
+{
+    const orderModel = await Order.findByPk(id, options);
+    if(!orderModel) throw new ApplicationError('Order not found', 404);
+    return orderModel;
+}
+
 async function fetchIncomingOrders(storeOwnerUserId)
 {
     const storeId = await storeServices.fetchStoreIdOfUser(storeOwnerUserId);
@@ -40,7 +47,7 @@ async function fetchOrders(customerId)
 {
     const orders = await Order.findAll({ 
         where: { customerId }, 
-        include: [...ITEMS_AND_TRANSAC, storeServices.include('just-name')],
+        include: [...ITEMS_AND_TRANSAC, storeServices.include('serveName')],
         attributes: ATTRIBUTES
     });
     return orders.map(order => order.toJSON());
@@ -53,7 +60,7 @@ async function createOrder(orderItems, customerId) // please refactor
         const commonStoreId = await orderItemServices.completeAndValidate(orderItems, orderModel.id);
         orderModel.storeId = commonStoreId;
         await orderModel.save();
-        await orderItemServices.createOrderItems(orderItems);
+        await orderItemServices.create(orderItems);
     })
     return orderItems;
 }
@@ -72,10 +79,25 @@ function calculateTotal(orderItems)
     return total;
 }
 
+function include(level)
+{
+    switch (level) {
+        case 'serve':
+            return {
+                model: Order,
+                attributes: ATTRIBUTES
+            }
+        default:
+            return { model: Order }
+    }
+}
+
 export default {
+    fetchOrderIncludeAll,
     fetchOrder,
     fetchOrders,
     fetchIncomingOrders,
     createOrder,
-    calculateOrderTotal
+    calculateOrderTotal,
+    include
 }

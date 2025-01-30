@@ -49,7 +49,7 @@ async function _createProductImages(files, productId, userId, imagesToImageDatas
 function include(level)
 {
     switch (level) {
-        case 'serve-image':
+        case 'serve':
             return {
                 model: ProductImage,
                 attributes: ['priority'],

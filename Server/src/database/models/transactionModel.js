@@ -15,6 +15,10 @@ const Transaction = sequelize.define('Transaction', {
         type: DataTypes.UUID,
         allowNull: false
     },
+    amount: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false
+    },
     method: {
         type: DataTypes.ENUM('PROOF-BASED', 'CASH-ON-DELIVERY'),
         allowNull: false,
