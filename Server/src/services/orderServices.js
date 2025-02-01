@@ -12,14 +12,16 @@ const ITEMS_AND_TRANSAC = [
 ];
 const ATTRIBUTES = ['id', 'storeId', 'customerId', 'createdAt'];
 
-async function fetchOrderIncludeAll(id) 
+async function fetchOrderIncludeAll(id)
 {
     const orderModel = await _fetchOrder(id, {
         include: [...ITEMS_AND_TRANSAC, userServices.include('contacts')],
         attributes: ATTRIBUTES
     });
-    orderModel.total = await calculateTotal(orderModel.OrderItems);
-    return orderModel.toJSON();
+    const order = orderModel.toJSON();
+    includeStatus(order);
+    order.total = await calculateTotal(orderModel.OrderItems);
+    return order;
 }
 async function fetchOrder(id)
 {   
@@ -35,12 +37,18 @@ async function _fetchOrder(id, options)
 async function fetchIncomingOrders(storeOwnerUserId)
 {
     const storeId = await storeServices.fetchStoreIdOfUser(storeOwnerUserId);
-    const orders = await Order.findAll({ 
+    const orderModels = await Order.findAll({ 
         where: { storeId },
-        include: userServices.include('contacts'),
+        include: {...userServices.include('contacts'), ...orderItemServices.include('serve')},
         attributes: ATTRIBUTES
     });
-    return orders.map(order => order.toJSON());
+    return orderModels.map(model => {
+        const order = model.toJSON();
+        
+        includeStatus(order);
+        delete order.OrderItems;
+        return order;
+    });
 }
 
 async function fetchOrders(customerId)
@@ -67,7 +75,7 @@ async function createOrder(orderItems, customerId) // please refactor
 
 async function calculateOrderTotal(orderId)
 {
-    const orderItems = await orderItemServices.fetchOrderItems(orderId);
+    const orderItems = await orderItemServices.fetchOrderItems({orderId}, ['quantity', 'unitPrice']);
     return calculateTotal(orderItems);
 }
 function calculateTotal(orderItems)
@@ -77,6 +85,22 @@ function calculateTotal(orderItems)
         total += item.quantity * item.unitPrice;
     }
     return total;
+}
+
+function includeStatus(order)
+{
+    order.status = calculateOverallStatus(order.OrderItems);
+}
+function calculateOverallStatus(items)
+{
+    let overallStatus = items[0].status;
+    items.some(item => {
+        if(item.status != overallStatus) {
+            overallStatus = 'MIXED';
+            return true;
+        }
+    });
+    return overallStatus;
 }
 
 function include(level)
@@ -99,5 +123,6 @@ export default {
     fetchIncomingOrders,
     createOrder,
     calculateOrderTotal,
+    calculateOverallStatus,
     include
 }

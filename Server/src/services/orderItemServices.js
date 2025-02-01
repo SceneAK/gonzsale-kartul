@@ -1,12 +1,19 @@
 import initializePromise from '../database/initialize.js';
 import productServices from './productServices.js';
 import ApplicationError from '../common/errors.js';
+import storeServices from './storeServices.js';
 const { OrderItem } = await initializePromise;
 
-async function fetchOrderItems(orderId)
+async function fetchOrderItems(where, attributes = ATTRIBUTES)
 {
-    const items = await OrderItem.findAll({ where: { orderId } })
+    const items = await OrderItem.findAll({ where, attributes })
     return items.map(item => item.toJSON());
+}
+async function fetchByPk(id, attributes = ATTRIBUTES)
+{
+    const model = await OrderItem.findByPk(id, { attributes });
+    if(!model) throw new ApplicationError("Order item not found", 404);
+    return model.toJSON();
 }
 
 async function create(orderItems)
@@ -34,14 +41,54 @@ async function fetchProductsOfOrderItems(orderItems)
     return await productServices.fetchProductsPlain(productIds);
 }
 
-async function updateStatus(id, status)
+async function updateStatus(id, status, requesterId)
 {
+    const orderItem = await fetchByPk(id, ['status', 'productId']);
+    await ensureRequesterBelongsProduct(orderItem.productId, requesterId);
+    validateStatusTransition(orderItem.status, status);
+
     return await OrderItem.update({status}, {where: {id}});
 }
 
-async function updateStatusesByProduct(productId, status)
+async function updateStatusesByProduct(productId, status, requesterId)
 {
-    return await OrderItem.update({status}, {where: {productId}});
+    await ensureRequesterBelongsProduct(productId, requesterId);
+
+    const orderItems = await OrderItem.findAll({ where: { productId }, raw: true })
+
+    const valids = [];
+    for (const item of orderItems) {
+        if(isValidStatusTransition(item.status, status))
+        {
+            valids.push({...item, status});
+        }
+    }
+    
+    await OrderItem.bulkCreate(valids, {updateOnDuplicate: ['status']});
+}
+
+async function ensureRequesterBelongsProduct(productId, requesterId)
+{
+    const result = await productBelongsToUser(productId, requesterId);
+    if(!result) throw new ApplicationError("Product does not belong to user", 400);
+}
+async function productBelongsToUser(productId, requesterId)
+{
+    const products = await productServices.fetchProductsPlain([productId]);
+    const storeId = await storeServices.fetchStoreIdOfUser(requesterId);
+    return products[0].storeId == storeId;
+}
+
+function validateStatusTransition(current, request)
+{
+    if(!isValidStatusTransition(current, request)) throw new ApplicationError("Invalid status transition", 400);
+}
+function isValidStatusTransition(current, request)
+{
+    const statusOrder = ['PENDING', 'PROCESSING', 'READY', 'COMPLETED', 'CANCELLED'];
+    const correcOrder = statusOrder.indexOf(current) < statusOrder.indexOf(request);
+    const notCompleted = current != 'COMPLETED';
+    return correcOrder && notCompleted;
 }
 
 const ATTRIBUTES = ['id', 'quantity', 'unitPrice', 'notes', 'status'];

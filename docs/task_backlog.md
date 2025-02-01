@@ -22,11 +22,11 @@ Please sort by importance
 # BACKEND
 ## Test & Debug
 > Change orderitem status
-> Calculate overall order status
 
 ## orders
-> Change orderitem status
+> Cleanly seperate the routes. 
 > Calculate overall order status
+- Order Items of the same order must have unique items. cannot order the same item twice in two orderItems
 - Mailing Customers when order status changes, when product gets deleted, when  
 
 ## users
@@ -42,6 +42,7 @@ Please sort by importance
 ## Refactor
 - Rework productImage creation and priority so that whoever uses the service completes the data first (with an exported function) before passing it to productImageServices
 - Custom Error classes extending ApplicationError
+- Move logic that creates circular dependency to OrderManagementServices: orderItemServices.UpdateStatus + orderServices.createOrder()
 
 ## Extended Less Important Backlog
 - Statistical Analysis for Seller Account

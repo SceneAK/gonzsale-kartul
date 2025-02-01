@@ -1,15 +1,17 @@
 import { convertAllPathsToURLs } from '../common/index.js';
-import { productServices } from '../services/index.js';
+import { productServices, storeServices } from '../services/index.js';
 
 const fetchProducts = async (req, res) => {
+    const where = req.query;
+    if(where.category == '') delete where.category;
     const products = await productServices.fetchPublicProducts(req.query);
     products.forEach( product => transform(product, req));
     res.json(products);
 }
 
 const fetchOwnedProducts =  async (req, res) => {
-    
-    const products = await productServices.fetchProductsFromStoreOfUser(req.decodedAuthToken.id);
+    const storeId = await storeServices.fetchStoreIdOfUser(req.decodedAuthToken.id);
+    const products = await productServices.fetchProductsOfStore(storeId);
     products.forEach( product => transform(product, req));
     res.json(products);
 }

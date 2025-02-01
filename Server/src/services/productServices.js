@@ -10,33 +10,27 @@ const { Product } = await databaseInitializePromise;
 const BASIC_ATTRIBUTES = ['id', 'name'];
 const GENERAL_ATTRIUTES = [...BASIC_ATTRIBUTES, 'storeId', 'category', 'price', 'unit', 'availability'];
 
-async function fetchPublicProducts(filter) 
+async function fetchPublicProducts(where, attributes = GENERAL_ATTRIUTES)
 {
-    const { whereClause, storeWhereClause } = await convertToWhereClauses(filter);
     const products = await Product.scope('Public').findAll({
-        attributes: GENERAL_ATTRIUTES,
-        where: whereClause,
+        attributes,
+        where,
         include: [
             { ...productImageServices.include('serve') },
-            { ...storeServices.include('justName'), where: storeWhereClause }
+            { ...storeServices.include('justName') }
         ]
     });
     return products.map(product => product.toJSON());
 }
 
-async function fetchProductsFromStoreOfUser(userId)
-{
-    const storeId = await storeServices.fetchStoreIdOfUser(userId);
-    return await fetchProductsFromStore(storeId);
-}
-async function fetchProductsFromStore(storeId)
+async function fetchProductsOfStore(storeId)
 {
     const products = await Product.findAll({
         attributes: GENERAL_ATTRIUTES,
+        where: {storeId},
         include: [
-            { ...productImageServices.include('serve') }
-        ],
-        where: {storeId}
+            { ...productImageServices.include('serve-image') }
+        ]
     });
     return products.map(product => product.toJSON());
 }
@@ -130,31 +124,6 @@ function isId(str)
     return str.length == UUIDV4_HYPH_LEN;
 }
 
-async function convertToWhereClauses(filter) 
-{
-    let whereClause = {};
-    let storeWhereClause = {};
-    const { name, category, storeName, storeId } = filter;
-
-    if(name)
-    {
-        whereClause = { ...whereClause, name: { [Op.like]: `${name}%` } };
-    }
-    if(category)
-    {
-        whereClause = { ...whereClause, category: { [Op.like]: `${category}%` } };
-    }
-    if(storeId)
-    {
-        storeWhereClause = { ...storeWhereClause, storeId };
-    }
-    if(storeName)
-    {
-        storeWhereClause = { ...storeWhereClause, storeName: { [Op.like]: `${storeName}%` } };
-    }
-    return { whereClause, storeWhereClause };
-}
-
 function include(level)
 {
     switch (level) {
@@ -173,7 +142,7 @@ function include(level)
 
 export default {
     fetchPublicProducts,
-    fetchProductsFromStoreOfUser,
+    fetchProductsOfStore,
     fetchProduct,
     fetchProductsPlain,
     createProduct,
