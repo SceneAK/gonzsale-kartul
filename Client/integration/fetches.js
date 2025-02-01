@@ -35,8 +35,7 @@ async function signUp(name, phone, email, password) {
         email, 
         password
     });
-    const res = await jsonRequestResponse('/user/signup', 'POST', body, 'include');
-    return await res.text();
+    return await jsonRequestResponse('/user/signup', 'POST', body, 'include');
 }
 const user = { signIn, signUp } // both returns cookies
 //#endregion
@@ -116,29 +115,55 @@ const product = {fetchProduct, fetchProducts, fetchOwnedProducts, createProduct,
 //#endregion
 
 //#region Order
-async function fetchOrders() // auth
+async function fetchOrder(id) // auth
 {
-    return await jsonResponse('/order', "GET", null, 'include');
+    return await jsonResponse(`/order/${id}`, "GET", null, 'include');
+}
+async function fetchMyOrders() // auth
+{
+    return await jsonResponse('/order/my', "GET", null, 'include');
 }
 async function fetchIncomingOrders() // auth & store
 {
     return await jsonResponse('/order/incoming', "GET", null, 'include');
 }
-async function placeOrder(formdata)// auth
+async function createOrder(data)// auth
 {
-    return await jsonResponse('/order', "POST", formdata, 'include');   
+    return await jsonRequestResponse('/order', "POST", JSON.stringify(data), 'include');   
 }
-async function placeOrderGuest(formdata)
+async function updateItemStatus(id, status)
 {
-    return await jsonResponse('/order/guest', "POST", formdata);
+    return await jsonResponse(`/order/item/${id}/status`, "PATCH", JSON.stringify({status}), 'include');
 }
-const order = {fetchOrders, fetchIncomingOrders, placeOrder, placeOrderGuest};
+async function updateItemStatusByProduct(id, status)
+{
+    return await jsonResponse(`/order/item/by-product/${id}/status`, "PATCH", JSON.stringify({status}), 'include');
+}
+const order = {fetchOrder, fetchMyOrders, fetchIncomingOrders, createOrder, updateItemStatus, updateItemStatusByProduct};
 //#endregion
 
+//#region Transaction
+async function fetchTransaction(id) // auth
+{
+    return await jsonResponse(`/transaction/${id}`, "GET", null, 'include');
+}
 
+async function createProofTransaction(orderId, formdata) // auth
+{
+    return await jsonResponse(`/transaction/${orderId}/proof`, "POST", formdata, 'include');
+}
+
+async function createCODTransaction(orderId, data) // auth
+{
+    return await jsonResponse(`/transaction/${orderId}/cod`, "POST", JSON.stringify(data), 'include');
+}
+
+const transaction = {fetchTransaction, createProofTransaction, createCODTransaction};
+//#endregion
 export {
     user,
     store,
     product,
-    order
+    order,
+    transaction
 }

@@ -625,7 +625,7 @@
                                 <th>Buyer Name</th>
                                 <th>Product</th>
                                 <th>Quantity</th>
-                                <th>Total Price</th>
+                                <th>Date Created</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -838,29 +838,31 @@
             loader.style.display = 'block'; // Show loader
 
             try {
-                const orders = await order.fetchIncomingOrders(); // Replace with actual API if necessary
+                const orders = await order.fetchIncomingOrders(); 
                 orderTableBody.innerHTML = ''; // Clear existing rows
 
                 orders.forEach(order => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                <td>${order.id}</td>
-                <td>${order.User.name}</td>
-                <td>First Item: ${order.OrderItems[0]?.Product?.name}</td>
-                <td>First Item: ${order.OrderItems[0]?.quantity}</td>
-                <td>${order.Transaction ? order.Transaction.id : " No Transaction Made "}</td>
-                <td class="${order.status === 'COMPLETED' ? 'status-completed' : 'status-pending'}">
-                    ${order.order_status}
-                </td>
-                <td>
-                    <button class="action-btn complete-btn" onclick="markOrderAsCompleted('${order.order_id}')">
-                        Mark as Completed
-                    </button>
-                    <button class="action-btn delete-btn" onclick="deleteOrder('${order.order_id}')">
-                        Delete
-                    </button>
-                </td>
-            `;
+
+                const createdAt = new Date(order.createdAt);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.User.name}</td>
+                    <td>Multiple Products.</td>
+                    <td>Multiple Products.</td>
+                    <td>${createdAt.toLocaleDateString()}</td>
+                    <td class="${order.status === 'COMPLETED' ? 'status-completed' : 'status-pending'}">
+                        ${order.status}
+                    </td>
+                    <td>
+                        <button class="action-btn complete-btn" onclick="markOrderAsCompleted('${order.order_id}')">
+                            Mark as Completed
+                        </button>
+                        <button class="action-btn delete-btn" onclick="deleteOrder('${order.order_id}')">
+                            Delete
+                        </button>
+                    </td>
+                `;
                     orderTableBody.appendChild(row);
                 });
             } catch (error) {

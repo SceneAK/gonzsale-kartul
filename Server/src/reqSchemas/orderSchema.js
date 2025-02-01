@@ -1,16 +1,11 @@
 import Joi from "joi";
+import orderItemSchema from "./orderItemSchema.js";
 import { UUID } from "./common.js";
-
-const ORDER_ITEM = Joi.object({
-    productId: UUID.required(),
-    quantity: Joi.number().integer().positive().required(),
-    notes: Joi.string()
-});
 
 const createOrderSchema = {
     body: Joi.object({
-        OrderItems: Joi.array().min(1).items(ORDER_ITEM).required()
-    }) 
+        OrderItems: Joi.array().min(1).items(orderItemSchema.orderItem).required()
+    }).required() 
 }
 
 const updateSchema = {

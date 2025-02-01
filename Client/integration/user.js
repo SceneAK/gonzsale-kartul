@@ -22,7 +22,9 @@ export function hookSignIn(signInButton, emailInput, passwordInput)
 export function hookSignUp(signUpButton, nameInput, phoneInput, emailInput, passwordInput)
 {
     signUpButton.addEventListener('click', async function(event){
+        alert('signup');
         const userInfo = await user.signUp(nameInput.value, phoneInput.value, emailInput.value, passwordInput.value);
+        alert(JSON.stringify(userInfo));
         trackSignin(userInfo);
     });
 }

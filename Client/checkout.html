@@ -169,7 +169,9 @@
     </div>
 
     <script type="module" src="integration/uiManagement.js" defer></script>
-    <script>
+    <script type="module" defer>
+        import { order, store, transaction } from './integration/fetches.js';
+
         const cart = JSON.parse(localStorage.getItem('cart') || '[]'); // Get cart data from localStorage
         const orderSummaryContainer = document.getElementById('order-summary');
         const finishOrdersButton = document.getElementById('finish-orders-btn');
@@ -186,17 +188,17 @@
         if (loginDetail.name && loginDetail.email && loginDetail.phone) {
             // Replace input fields with text or p elements
             buyerInfoContainer.innerHTML = `
-        <p><strong>Full Name:</strong> ${loginDetail.name}</p>
-        <p><strong>Phone Number:</strong> ${loginDetail.phone}</p>
-        <p><strong>Email:</strong> ${loginDetail.email}</p>
-        <button id="change-details-btn" style="margin-top: 10px; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Change Details</button>
-    `;
+                <p><strong>Full Name:</strong> ${loginDetail.name}</p>
+                <p><strong>Phone Number:</strong> ${loginDetail.phone}</p>
+                <p><strong>Email:</strong> ${loginDetail.email}</p>
+                <button id="change-details-btn" style="margin-top: 10px; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Change Details</button>
+            `;
 
             // Add event listener to the "Change Details" button
             document.getElementById('change-details-btn').addEventListener('click', () => {
                 window.location.href = 'profile-management.html';
             });
-        } else {
+        } else { // The fuck is all this for?
             // If not logged in or details are missing, show input fields as usual
             const fullNameInput = document.getElementById('full-name');
             const phoneInput = document.getElementById('phone-number');
@@ -211,62 +213,66 @@
 
         // Group cart items by store_id
         const groupedCart = cart.reduce((groups, item) => {
-            if (!groups[item.store_id]) {
-                groups[item.store_id] = {
-                    store_name: item.store_name,
-                    payment_method: item.payment_method,
-                    payment_info: item.payment_info,
+            const {store_id, store_name, ...productInfo} = item;
+            if (!groups[store_id]) {
+                groups[store_id] = {
+                    store_name: store_name,
                     items: [],
                     total: 0
                 };
             }
 
             // Push item with its quantity and calculate the total cost
-            groups[item.store_id].items.push(item);
-            groups[item.store_id].total += item.price * item.quantity; // Total includes quantity
+            groups[item.store_id].items.push(productInfo);
+            groups[item.store_id].total += item.product_price * item.quantity; // Total includes quantity
             return groups;
         }, {});
+        // Fetch and include store info for each group
+        for(const storeId in groupedCart){
+            const storeInfo = await store.fetchStore(storeId);
+            groupedCart[storeId] = {...groupedCart[storeId], ...storeInfo};
+        }
 
 
         // Render order summary
         function renderOrderSummary() {
-            let allUploadsComplete = true;
-
             orderSummaryContainer.innerHTML = ''; // Clear existing content
 
-            Object.values(groupedCart).forEach((group, index) => {
+            for(const storeId in groupedCart)
+            {
+                const group = groupedCart[storeId];
                 const storeSection = document.createElement('div');
                 storeSection.classList.add('store-section');
 
                 storeSection.innerHTML = `
-            <div class="store-header">From store: ${group.store_name}</div>
-            <div class="product-list">
-                ${group.items.map(item => `
-                    <div class="product-item">
-                        <span>${item.name} (x${item.quantity})</span>
-                        <span>Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</span>
+                    <div class="store-header">From store: ${group.store_name}</div>
+                    <div class="product-list">
+                        ${group.items.map(item => `
+                            <div class="product-item">
+                                <span>${item.name} (x${item.quantity})</span>
+                                <span>Rp ${(item.product_price * item.quantity).toLocaleString('id-ID')}</span>
+                            </div>
+                        `).join('')}
                     </div>
-                `).join('')}
-            </div>
-            <div class="total-price">Total: Rp ${group.total.toLocaleString('id-ID')}</div>
-            <div class="payment-details">
-                Nomer Rekening: ${group.payment_method || 'Not Provided'}<br>
-                Payment Information: ${group.payment_info || 'Not Provided'}
-            </div>
-            <div class="upload-container">
-                <label for="proof-${index}">Upload Bukti Pembayaran:</label>
-                <input type="file" id="proof-${index}" name="proof-${index}" accept=".jpg,.jpeg,.png" required>
-            </div>
-        `;
+                    <div class="total-price">Total: Rp ${group.total.toLocaleString('id-ID')}</div>
+                    <div class="payment-details">
+                        Account Number : ${group.bankAccount || 'Not Provided'}<br>
+                        Payment Information : ${group.bankName || 'Not Provided'}
+                    </div>
+                    <div class="upload-container">
+                        <label for="proof-${storeId}">Upload Bukti Pembayaran:</label>
+                        <input type="file" id="proof-${storeId}" name="proof-${storeId}" accept=".jpg,.jpeg,.png" required>
+                    </div>
+                `;
 
-                const fileInput = storeSection.querySelector(`#proof-${index}`);
+                const fileInput = storeSection.querySelector(`#proof-${storeId}`);
                 fileInput.addEventListener('change', () => checkUploads());
 
                 orderSummaryContainer.appendChild(storeSection);
-            });
+            }
 
             function checkUploads() {
-                allUploadsComplete = Array.from(orderSummaryContainer.querySelectorAll('input[type="file"]')).every(input => input.files.length > 0);
+                const allUploadsComplete = Array.from(orderSummaryContainer.querySelectorAll('input[type="file"]')).every(input => input.files.length > 0);
                 finishOrdersButton.disabled = !allUploadsComplete;
             }
 
@@ -276,8 +282,41 @@
         renderOrderSummary();
 
         // Handle Finish Orders Button
-        finishOrdersButton.addEventListener('click', () => {
-            alert('Order Submitted!');
+        finishOrdersButton.addEventListener('click', async () => {
+            console.log("EST");
+            // Ensure the user is logged in. If not, call user.guest() first
+            const loginDetail = JSON.parse(localStorage.getItem('loginDetail') || '{}');
+            if (!loginDetail.name || !loginDetail.email || !loginDetail.phone) {
+                alert("Please log in to complete your order.");
+                window.location.href = 'login.html';
+                return;
+            }
+
+            for(const storeId in groupedCart)
+            {
+                const OrderItems = groupedCart[storeId].items.map(item => ({
+                    productId: item.id,
+                    quantity: item.quantity,
+                    notes: item.notes
+                }));
+                const orderId = await order.createOrder({ OrderItems });
+
+                const proofFile = document.getElementById(`proof-${storeId}`).files[0];
+                const formdata = new FormData();
+                formdata.append('type', "PAYMENT");
+                formdata.append('file', proofFile);
+                try
+                {
+                    await transaction.createProofTransaction(orderId, formdata);
+                }catch(err) {
+                    alert("Fatal error: Failed to upload proof of payment. Please contact the website admins.");
+                    return;
+                }
+            }
+
+            alert("Orders have been successfully placed!");
+            localStorage.removeItem('cart');
+            window.location.href = 'order-confirmation.html';
         });
     </script>
 </body>

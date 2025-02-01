@@ -291,14 +291,14 @@
         import { product } from './integration/fetches.js';
 
         // Function to add items to the cart
-        window.addToCart = function (name, product_price, imgSrc, store_id, store_name) {
+        window.addToCart = function (id, name, product_price, imgSrc, store_id, store_name) {
             const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            const existingItemIndex = cart.findIndex(item => item.name === name && item.store_id === store_id);
+            const existingItemIndex = cart.findIndex(item => item.id === id);
 
             if (existingItemIndex > -1) {
                 cart[existingItemIndex].quantity += 1;
             } else {
-                cart.push({ name, product_price, imgSrc, store_id, store_name, quantity: 1 });
+                cart.push({ id, name, product_price, imgSrc, store_id, store_name, quantity: 1 });
             }
 
             localStorage.setItem('cart', JSON.stringify(cart));
@@ -327,12 +327,13 @@
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('item');
 
+                const firstImg = product.ProductImages[0]?.url;
                 itemDiv.innerHTML = `
-                    <img src="${product.ProductImages[0]?.url}" alt="${product.name}">
+                    <img src="${firstImg}" alt="${product.name}">
                     <p>${product.name}</p>
                     <p class="store-name">Store: ${product.Store.name}</p>
                     <p>Rp ${product.price.toLocaleString('id-ID')} / ${product.unit}</p>
-                    <button class="add-to-cart" onclick="addToCart('${product.name}', ${product.price}, '${product.ProductImages[0]?.url}', '${product.storeId}', '${product.Store.name}')">Add to Cart</button>
+                    <button class="add-to-cart" onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${firstImg}', '${product.storeId}', '${product.Store.name}')">Add to Cart</button>
                 `;
                 container.appendChild(itemDiv);
             });

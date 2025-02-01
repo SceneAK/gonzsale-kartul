@@ -13,24 +13,19 @@ Please sort by importance
 - Single product page
 - Store page (single)
 
-## Integration
-> Get Orders page Integration
-> Place Order Integration
+## Integrationn
 - Automatic refresh token
 - Create Store Page Integration 
 
 # BACKEND
 ## Test & Debug
-> Change orderitem status
 
 ## orders
-> Cleanly seperate the routes. 
-> Calculate overall order status
 - Order Items of the same order must have unique items. cannot order the same item twice in two orderItems
 - Mailing Customers when order status changes, when product gets deleted, when  
 
 ## users
--    edit user profile
+- edit user profile
 - change password
 
 ## Implement product variants

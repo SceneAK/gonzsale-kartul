@@ -17,8 +17,8 @@ const fetchOrders = async (req, res) => {
 };
 
 const createOrder = async(req, res) => {
-    await orderServices.createOrder(req.body.OrderItems, req.decodedAuthToken.id)
-    res.json( { result: 'created' } );
+    const result = await orderServices.createOrder(req.body.OrderItems, req.decodedAuthToken.id)
+    res.json( result );
 }
 
 export default {fetchOrder, fetchOrders, fetchIncomingOrders, createOrder}

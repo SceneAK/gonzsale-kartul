@@ -39,7 +39,7 @@ async function fetchIncomingOrders(storeOwnerUserId)
     const storeId = await storeServices.fetchStoreIdOfUser(storeOwnerUserId);
     const orderModels = await Order.findAll({ 
         where: { storeId },
-        include: {...userServices.include('contacts'), ...orderItemServices.include('serve')},
+        include: [userServices.include('contacts'), orderItemServices.include('serve')],
         attributes: ATTRIBUTES
     });
     return orderModels.map(model => {
@@ -63,14 +63,17 @@ async function fetchOrders(customerId)
 
 async function createOrder(orderItems, customerId) // please refactor
 {
+    let id;
     await Order.sequelize.transaction( async t => {
         const orderModel = Order.build({customerId});
-        const commonStoreId = await orderItemServices.completeAndValidate(orderItems, orderModel.id);
+        id = orderModel.id;
+        
+        const commonStoreId = await orderItemServices.completeAndValidate(orderItems, id);
         orderModel.storeId = commonStoreId;
         await orderModel.save();
         await orderItemServices.create(orderItems);
     })
-    return orderItems;
+    return id;
 }
 
 async function calculateOrderTotal(orderId)
