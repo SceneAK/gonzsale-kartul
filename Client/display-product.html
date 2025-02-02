@@ -2,145 +2,191 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Details</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Details</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
 
-        .product-container {
-            max-width: 800px;
-            margin: 50px auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+    .product-container {
+      max-width: 800px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
 
-        .product-img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
+    .breadcrumb {
+      font-size: 14px;
+      margin-bottom: 15px;
+      color: #555;
+    }
 
-        .product-name {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
+    .breadcrumb a {
+      text-decoration: none;
+      color: #0073e6;
+    }
 
-        .product-description {
-            font-size: 16px;
-            color: #555;
-        }
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
 
-        .product-price {
-            font-size: 18px;
-            color: #ff9900;
-            margin: 15px 0;
-        }
+    .product-img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
 
-        .add-to-cart-btn {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
+    .product-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
 
-        .add-to-cart-btn:hover {
-            background-color: #218838;
-        }
-    </style>
+    .product-description {
+      font-size: 16px;
+      color: #555;
+    }
+
+    .product-price {
+      font-size: 18px;
+      color: #ff9900;
+      margin: 15px 0;
+    }
+
+    .quantity-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 15px 0;
+    }
+
+    .quantity-input {
+      width: 50px;
+      padding: 5px;
+      text-align: center;
+    }
+
+    .add-to-cart-btn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .add-to-cart-btn:hover {
+      background-color: #218838;
+    }
+  </style>
 </head>
 
 <body>
-    <!-- Header placeholder -->
-    <div id="header"></div>
-    <div class="content-wrapper">
-        <div class="product-container">
-            <img id="product-img" src="" alt="Product Image" class="product-img">
-            <h1 id="product-name" class="product-name"></h1>
-            <p id="product-description" class="product-description"></p>
-            <p id="product-price" class="product-price"></p>
-            <input id="quantity-input" type="number" min="1" value="1" class="quantity-input">
-            <button id="add-to-cart-btn" class="add-to-cart-btn">Add to Cart</button>
-        </div>
+  <!-- Header placeholder -->
+  <div id="header"></div>
+
+  <div class="content-wrapper">
+    <div class="product-container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a> / <a href="catalog.html#Clothing">Clothing</a> / <span id="product-category">Category</span>
+      </div>
+
+      <!-- Product image will be loaded here using the first image logic -->
+      <img id="product-img" src="" alt="Product Image" class="product-img" />
+
+      <h1 id="product-name" class="product-name"></h1>
+      <p id="product-price" class="product-price"></p>
+
+      <div class="quantity-container">
+        <label for="quantity-input">Quantity:</label>
+        <input id="quantity-input" type="number" min="1" value="1" class="quantity-input" />
+      </div>
+
+      <button id="add-to-cart-btn" class="add-to-cart-btn">Add to Cart</button>
+
+      <h2>Description</h2>
+      <p id="product-description" class="product-description"></p>
     </div>
+  </div>
 
-    <!-- Footer placeholder -->
-    <div id="footer"></div>
+  <!-- Footer placeholder -->
+  <div id="footer"></div>
 
-    <script type="module" src="integration/uiManagement.js"></script>
-    <script type="module">
-        import { product } from './integration/fetches.js';
-        document.addEventListener('DOMContentLoaded', async function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id');
+  <script type="module" src="integration/uiManagement.js"></script>
+  <script type="module">
+    import { product } from './integration/fetches.js';
 
-            if (!id) {
-                alert('No product ID provided.');
-                return;
-            }
+    document.addEventListener('DOMContentLoaded', async function () {
+      // Get the product ID from the URL query string
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
 
-            try {
+      if (!id) {
+        alert('No product ID provided.');
+        return;
+      }
 
-                const productInfo = await product.getProduct(id);
-                console.log(productInfo);
-                // Populate product details on the page
-                document.getElementById('product-img').src = productInfo.product_imgSrc;
-                document.getElementById('product-name').textContent = productInfo.product_name;
-                document.getElementById('product-description').textContent = productInfo.product_description;
-                document.getElementById('product-price').textContent =
-                    `Rp ${productInfo.product_price.toLocaleString('id-ID')} / ${productInfo.product_unit}`;
+      try {
+        // Use product.fetchProduct (not getProduct) to fetch the product details
+        const productInfo = await product.fetchProduct(id);
+        console.log('Fetched product:', productInfo);
 
-                // Add to Cart functionality
-                document.getElementById('add-to-cart-btn').addEventListener('click', () => {
-                    const quantity = parseInt(document.getElementById('quantity-input').value, 10) || 1; // Default to 1 if no input
+        // Use the same method as catalog.html to get the first image
+        const firstImg = productInfo.ProductImages && productInfo.ProductImages.length > 0
+          ? productInfo.ProductImages[0].url
+          : 'placeholder.jpg';
 
-                    if (quantity < 1) {
-                        alert('Quantity must be at least 1.');
-                        return;
-                    }
+        // Populate product details
+        document.getElementById('product-img').src = firstImg;
+        document.getElementById('product-name').textContent = productInfo.product_name;
+        document.getElementById('product-description').textContent = productInfo.product_description;
+        document.getElementById('product-price').textContent =
+          `Rp ${productInfo.product_price.toLocaleString('id-ID')} / ${productInfo.product_unit}`;
+        document.getElementById('product-category').textContent = productInfo.product_category;
 
-                    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-                    const existingItemIndex = cart.findIndex(item => item.id === productInfo.product_id);
+        // Add to Cart functionality
+        document.getElementById('add-to-cart-btn').addEventListener('click', () => {
+          const quantity = parseInt(document.getElementById('quantity-input').value, 10) || 1;
 
-                    if (existingItemIndex > -1) {
-                        // Update quantity if item already exists in the cart
-                        cart[existingItemIndex].quantity += quantity;
-                    } else {
-                        // Add new item to the cart
-                        cart.push({
-                            id: productInfo.product_id,
-                            name: productInfo.product_name,
-                            price: productInfo.product_price,
-                            imgSrc: productInfo.product_imgSrc,
-                            quantity: quantity,
-                            store_id: productInfo.store_id,
-                            store_name: productInfo.store_name
-                        });
+          if (quantity < 1) {
+            alert('Quantity must be at least 1.');
+            return;
+          }
 
-                    }
+          const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+          const existingItemIndex = cart.findIndex(item => item.id === productInfo.product_id);
 
-                    // Save updated cart to localStorage
-                    localStorage.setItem('cart', JSON.stringify(cart));
-                    alert(`${quantity} x ${productInfo.product_name} has been added to your cart!`);
-                });
+          if (existingItemIndex > -1) {
+            cart[existingItemIndex].quantity += quantity;
+          } else {
+            cart.push({
+              id: productInfo.product_id,
+              name: productInfo.product_name,
+              price: productInfo.product_price,
+              imgSrc: firstImg,
+              quantity: quantity,
+              store_id: productInfo.store_id,
+              store_name: productInfo.store_name
+            });
+          }
 
-            } catch (error) {
-                console.error('Error loading product details:', error);
-            }
+          localStorage.setItem('cart', JSON.stringify(cart));
+          alert(`${quantity} x ${productInfo.product_name} has been added to your cart!`);
         });
-    </script>
+      } catch (error) {
+        console.error('Error loading product details:', error);
+      }
+    });
+  </script>
 </body>
 
 </html>

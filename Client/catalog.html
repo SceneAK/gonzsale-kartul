@@ -326,18 +326,33 @@
             products.forEach(product => {
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('item');
+                itemDiv.style.cursor = 'pointer'; // Indicate that the item is clickable
 
-                const firstImg = product.ProductImages[0]?.url;
+                // Add a click listener on the entire item div
+                itemDiv.addEventListener('click', function (e) {
+                    // Prevent navigation when clicking the Add to Cart button
+                    if (e.target.closest('.add-to-cart')) {
+                        return;
+                    }
+                    // Navigate to display-product.html with the product id in the query string
+                    window.location.href = `display-product.html?id=${product.id}`;
+                });
+
+                const firstImg = product.ProductImages[0]?.url || 'placeholder.jpg'; // fallback image if needed
+
+                // Set the inner HTML of the item.
+                // Note: The Add to Cart button also calls event.stopPropagation() so its click does not bubble up.
                 itemDiv.innerHTML = `
-                    <img src="${firstImg}" alt="${product.name}">
-                    <p>${product.name}</p>
-                    <p class="store-name">Store: ${product.Store.name}</p>
-                    <p>Rp ${product.price.toLocaleString('id-ID')} / ${product.unit}</p>
-                    <button class="add-to-cart" onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${firstImg}', '${product.storeId}', '${product.Store.name}')">Add to Cart</button>
-                `;
+            <img src="${firstImg}" alt="${product.name}">
+            <p>${product.name}</p>
+            <p class="store-name">Store: ${product.Store.name}</p>
+            <p>Rp ${product.price.toLocaleString('id-ID')} / ${product.unit}</p>
+            <button class="add-to-cart" onclick="event.stopPropagation(); addToCart('${product.id}', '${product.name}', ${product.price}, '${firstImg}', '${product.storeId}', '${product.Store.name}')">Add to Cart</button>
+            `;
                 container.appendChild(itemDiv);
             });
         }
+
 
         async function openCategory(categoryName) {
             const container = document.getElementById(categoryToIdPair[categoryName.toLowerCase()]);

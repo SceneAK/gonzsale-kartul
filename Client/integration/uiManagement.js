@@ -34,9 +34,6 @@ function toggleDropdownState(loginDetails) {
                 <button onclick="window.location.href='profile-management.html'" style="width: 100%; padding: 10px; margin-bottom: 5px;">
                     Profile Management
                 </button>
-                <button onclick="window.location.href='order-history.html'" style="width: 100%; padding: 10px; margin-bottom: 5px;">
-                    Order History
-                </button>
                 ${isStoreManager
                     ? `<button onclick="window.location.href='store-management.html'" style="width: 100%; padding: 10px; margin-bottom: 5px;">
                             Manage Store
