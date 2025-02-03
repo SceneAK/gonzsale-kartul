@@ -77,13 +77,293 @@
             border: 1px solid #ddd;
         }
 
-        .edit-link {
-            color: #007bff;
-            text-decoration: none;
+        /* Edit Profile Button */
+        .edit-profile-btn {
+            display: inline-block;
+            padding: 10px 15px;
+            font-size: 1em;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 10px;
         }
 
-        .edit-link:hover {
-            text-decoration: underline;
+        .edit-profile-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Edit Profile Modal */
+        #edit-profile-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        /* Edit Profile Modal Title */
+        #edit-profile-modal h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* Edit Profile Form Fields */
+        #edit-profile-form label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #edit-profile-form input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+
+        /* Edit Profile Form Buttons */
+        #edit-profile-form .form-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        #edit-profile-form .form-buttons button {
+            padding: 10px 15px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 48%;
+        }
+
+        #edit-profile-form .save-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        #edit-profile-form .save-btn:hover {
+            background-color: #218838;
+        }
+
+        #edit-profile-form .cancel-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        #edit-profile-form .cancel-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* Change Password Section */
+        /* Change Password Title */
+        #change-password h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* Change Password Form Layout */
+        #change-password-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Form Labels */
+        #change-password-form label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Form Input Fields */
+        #change-password-form input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        /* Change Password Buttons */
+        #change-password-form .form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* Save Button */
+        #change-password-form .save-btn {
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #change-password-form .save-btn:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        /* Cancel Button */
+        #change-password-form .cancel-btn {
+            background-color: #dc3545;
+            color: white;
+            font-weight: bold;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #change-password-form .cancel-btn:hover {
+            background-color: #c82333;
+            transform: scale(1.05);
+        }
+
+        /* Order History Styling */
+        #order-history {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* Scrollable Content Section */
+        #order-history-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 49vh;
+            padding-right: 10px;
+        }
+
+        /* Add a scrollbar style */
+        #order-history-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #order-history-container::-webkit-scrollbar-track {
+            background: #f4f4f4;
+            border-radius: 8px;
+        }
+
+        #order-history-container::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 8px;
+        }
+
+        #order-history-container::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+
+        .order-section {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-header {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .order-header .status-indicator {
+            width: 10px;
+            height: 10px;
+            background: #28a745;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .order-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px 0;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .order-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .order-item-details {
+            flex-grow: 1;
+        }
+
+        .order-item-details p {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .order-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .order-buttons button {
+            flex: 1;
+            padding: 8px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .order-buttons .view-details {
+            background: #007bff;
+            color: white;
+        }
+
+        .order-buttons .view-details:hover {
+            background: #0056b3;
+        }
+
+        .order-buttons .message-seller {
+            background: #ff9900;
+            color: white;
+        }
+
+        .order-buttons .message-seller:hover {
+            background: #e68a00;
         }
 
         .content-section {
@@ -111,10 +391,7 @@
             <!-- Personal Information Section -->
             <div id="personal-info" class="content-section">
                 <h1>My Account Summary</h1>
-                <p class="summary">
-                    This is your account summary. You can change your personal information and manage the options
-                    available for your account.
-                </p>
+                <p class="summary">Manage your personal details.</p>
                 <table class="info-table">
                     <tr>
                         <td><strong>Full Name</strong></td>
@@ -129,8 +406,24 @@
                         <td id="phone">Loading...</td>
                     </tr>
                 </table>
-                <a href="#edit-profile" class="edit-link">Edit</a>
+                <button class="edit-profile-btn" onclick="openEditProfileModal()">Edit Profile</button>
             </div>
+
+            <!-- Hidden Edit Profile Modal -->
+            <div id="edit-profile-modal" style="display: none;">
+                <h2>Edit Profile</h2>
+                <form id="edit-profile-form">
+                    <label for="edit-name">Full Name</label>
+                    <input type="text" id="edit-name" required />
+
+                    <label for="edit-phone">Phone</label>
+                    <input type="text" id="edit-phone" required />
+
+                    <button type="submit" class="save-btn">Save</button>
+                    <button type="button" class="cancel-btn" onclick="closeEditProfileModal()">Cancel</button>
+                </form>
+            </div>
+
 
             <!-- Change Password Section -->
             <div id="change-password" class="content-section">
@@ -148,14 +441,17 @@
                         <label for="confirm-password">Confirm New Password</label>
                         <input type="password" id="confirm-password" required />
                     </div>
-                    <button type="submit">Change Password</button>
+                    <button type="submit" class="save-btn">Change Password</button>
                 </form>
             </div>
 
             <!-- Order History Section -->
             <div id="order-history" class="content-section">
                 <h2>Order History</h2>
-                <p>Your order history will be displayed here.</p>
+                <p id="order-count">Loading orders...</p>
+                <div class="order-history-container" id="order-history-container">
+                    <!-- Orders will be dynamically added here -->
+                </div>
             </div>
         </div>
     </div>
@@ -165,140 +461,185 @@
     <script type="module" src="integration/uiManagement.js" defer></script>
     <!-- Tab Management Script -->
     <script type="module">
-        // Function to update the active menu link and content section
-        function showSection(sectionId) {
-            // Update active state for menu links
-            document.querySelectorAll('.menu-link').forEach(link => {
-                if (link.getAttribute('href') === '#' + sectionId) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
-
-            // Update active state for content sections
-            document.querySelectorAll('.content-section').forEach(section => {
-                if (section.id === sectionId) {
-                    section.classList.add('active');
-                } else {
-                    section.classList.remove('active');
-                }
-            });
-        }
-
-        // Handler that reads the hash and shows the appropriate section
-        function handleHashChange() {
-            let hash = window.location.hash.substring(1);
-            if (!hash) {
-                hash = 'personal-info';
-            }
-            // If the hash is for order history, call the dedicated function
-            if (hash === 'order-history') {
-                showOrderHistory();
-            } else {
-                showSection(hash);
-            }
-        }
-
-        // Listen for hash changes
-        window.addEventListener('hashchange', handleHashChange);
-
-        // On initial load, update the displayed section and populate personal info
         document.addEventListener('DOMContentLoaded', () => {
+            // ✅ Attach the modal functions to window (fixes "not defined" issue)
+            window.openEditProfileModal = function () {
+                const modal = document.getElementById('edit-profile-modal');
+                if (modal) {
+                    modal.style.display = 'block';
+                } else {
+                    console.error('Edit Profile Modal not found!');
+                }
+            };
+
+            window.closeEditProfileModal = function () {
+                const modal = document.getElementById('edit-profile-modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                } else {
+                    console.error('Edit Profile Modal not found!');
+                }
+            };
+
+            // ✅ Ensure modal closes when switching sections
+            function showSection(sectionId) {
+                document.querySelectorAll('.menu-link').forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === `#${sectionId}`);
+                });
+
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.toggle('active', section.id === sectionId);
+                });
+
+                // ✅ Ensure modal closes when navigating away
+                window.closeEditProfileModal();
+
+                // ✅ Hide Order History when switching sections
+                const orderHistoryContent = document.getElementById("order-history");
+                if (orderHistoryContent) {
+                    orderHistoryContent.style.display = sectionId === "order-history" ? "block" : "none";
+                }
+            }
+
+            function handleHashChange() {
+                let hash = window.location.hash.substring(1) || 'personal-info';
+
+                if (hash === 'order-history') {
+                    showSection(hash);
+                    loadOrderHistory(); // Only load when active
+                } else {
+                    showSection(hash);
+                }
+            }
+
+            window.addEventListener('hashchange', handleHashChange);
             handleHashChange();
 
-            // Populate personal info from localStorage (if available)
+            // Populate personal info from localStorage
             const userData = JSON.parse(localStorage.getItem('loginDetail'));
             if (userData) {
                 document.getElementById('name').textContent = userData.name;
                 document.getElementById('email').textContent = userData.email;
                 document.getElementById('phone').textContent = userData.phone;
             }
-        });
 
-        // Function to display the Order History tab and fetch order data from the backend
-        function showOrderHistory() {
-            // Update active state for menu links and content sections for Order History
-            document.querySelectorAll('.menu-link').forEach(link => {
-                if (link.getAttribute('href') === '#order-history') {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
+            // Attach event listener for the Edit Profile form
+            const editProfileForm = document.getElementById('edit-profile-form');
+            if (editProfileForm) {
+                editProfileForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    alert('Profile updated!');
+                    window.closeEditProfileModal();
+                });
+            }
 
-            document.querySelectorAll('.content-section').forEach(section => {
-                if (section.id === 'order-history') {
-                    section.classList.add('active');
-                } else {
-                    section.classList.remove('active');
-                }
-            });
-
-            // Load and display order history data from the backend
-            loadOrderHistory();
-        }
-
-        // Asynchronous function to fetch orders from the backend
-        async function loadOrderHistory() {
-            try {
-                // Replace '/api/orders' with the correct endpoint for your backend.
-                const response = await fetch('/api/orders', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+            // Order History Handling
+            function showOrderHistory() {
+                document.querySelectorAll('.menu-link').forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === '#order-history');
                 });
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch order history');
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.toggle('active', section.id === 'order-history');
+                });
+
+                window.closeEditProfileModal(); // Ensure modal closes when switching to order history
+
+                loadOrderHistory();
+            }
+
+            async function loadOrderHistory() {
+                const orderContainer = document.getElementById("order-history-container");
+                const orderCount = document.getElementById("order-count");
+
+                // Mock order data (Replace this with API fetch if needed)
+                const orders = [
+                    {
+                        status: "READY",
+                        date: "Arrives tomorrow",
+                        time: "7am - 7pm",
+                        items: [
+                            { name: "Stupid Shirt", imgSrc: "product-image1.jpg" },
+                            { name: "Evan Cake merch", imgSrc: "product-image2.jpg" }
+                        ]
+                    },
+                    {
+                        status: "COMPLETED",
+                        items: [
+                            { name: "gyatt", imgSrc: "product-image3.jpg" },
+                            { name: "gyatt merch", imgSrc: "product-image4.jpg" }
+                        ]
+                    },
+                    {
+                        status: "COMPLETED",
+                        items: [{ name: "HP BEKAS OPPO", imgSrc: "product-image5.jpg" }]
+                    }
+                ];
+
+                // Clear existing content
+                orderContainer.innerHTML = "";
+
+                if (orders.length === 0) {
+                    orderCount.textContent = "No orders found.";
+                    return;
                 }
 
-                // Assuming the response returns an array of orders
-                const orders = await response.json();
-                renderOrderHistory(orders);
-            } catch (error) {
-                console.error('Error loading order history:', error);
-                document.getElementById('order-history').innerHTML =
-                    '<p>Error loading order history.</p>';
-            }
-        }
+                orderCount.textContent = `${orders.length} orders`;
 
-        // Function to render the order history data into the Order History section
-        function renderOrderHistory(orders) {
-            // Check if there are any orders returned
-            if (!orders || orders.length === 0) {
-                document.getElementById('order-history').innerHTML = '<p>No orders found.</p>';
-                return;
-            }
+                // Loop through mock orders
+                orders.forEach(order => {
+                    const orderSection = document.createElement("div");
+                    orderSection.classList.add("order-section");
 
-            // Build the HTML for the order history.
-            // This example assumes each order has properties: id, date, total, status,
-            // and an OrderItems array (each with productId, quantity, and optional notes)
-            let html = '<h2>Order History</h2>';
-            orders.forEach(order => {
-                html += `<div class="order">
-          <h3>Order #${order.id}</h3>
-          <p>Date: ${order.date}</p>
-          <p>Total: ${order.total}</p>
-          <p>Status: ${order.status}</p>`;
+                    // Order header
+                    const orderHeader = document.createElement("div");
+                    orderHeader.classList.add("order-header");
+                    orderHeader.innerHTML = `<span class="status-indicator"></span> ${order.status}`;
+                    orderSection.appendChild(orderHeader);
 
-                if (order.OrderItems && order.OrderItems.length > 0) {
-                    html += `<h4>Items:</h4><ul>`;
-                    order.OrderItems.forEach(item => {
-                        html += `<li>
-              Product ID: ${item.productId}, 
-              Quantity: ${item.quantity}${item.notes ? `, Notes: ${item.notes}` : ''}
-            </li>`;
+                    // Order items
+                    const orderItemsContainer = document.createElement("div");
+                    orderItemsContainer.classList.add("order-items");
+
+                    order.items.forEach(item => {
+                        const orderItem = document.createElement("div");
+                        orderItem.classList.add("order-item");
+
+                        const productImg = document.createElement("img");
+                        productImg.src = item.imgSrc;
+                        productImg.alt = item.name;
+
+                        const itemDetails = document.createElement("div");
+                        itemDetails.classList.add("order-item-details");
+                        itemDetails.innerHTML = `<p><strong>${item.name}</strong></p>`;
+
+                        orderItem.appendChild(productImg);
+                        orderItem.appendChild(itemDetails);
+                        orderItemsContainer.appendChild(orderItem);
                     });
-                    html += `</ul>`;
-                }
-                html += `</div>`;
-            });
 
-            // Insert the generated HTML into the order history container
-            document.getElementById('order-history').innerHTML = html;
-        }
+                    orderSection.appendChild(orderItemsContainer);
+
+                    // Buttons
+                    const buttonContainer = document.createElement("div");
+                    buttonContainer.classList.add("order-buttons");
+
+                    const viewDetailsButton = document.createElement("button");
+                    viewDetailsButton.classList.add("view-details");
+                    viewDetailsButton.textContent = "View order details";
+
+                    const messageSellerButton = document.createElement("button");
+                    messageSellerButton.classList.add("message-seller");
+                    messageSellerButton.textContent = "Message Seller";
+
+                    buttonContainer.appendChild(viewDetailsButton);
+                    buttonContainer.appendChild(messageSellerButton);
+                    orderSection.appendChild(buttonContainer);
+
+                    orderContainer.appendChild(orderSection);
+                });
+            }
+        });
     </script>
 </body>
 
