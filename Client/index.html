@@ -4,77 +4,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GonzSale</title>
+    <title>GonzSale - Promotions</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
+            overflow-x: hidden;
         }
 
-        /* Wrapper to hold content and footer */
         .content-wrapper {
-            flex: 1;
             display: flex;
             flex-direction: column;
-            min-height: 35vh;
-        }
-
-        .featured-products {
+            align-items: center;
             padding: 20px;
-            background-color: #fff;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-sizing: border-box;
         }
 
-        .featured-item {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 20px;
-            background-color: #fafafa;
+        /* Grand Opening Banner */
+        .big-banner {
+            width: 100%;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            box-sizing: border-box;
         }
 
-        .featured-item h2 {
-            margin-top: 0;
+        .big-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
-        .preorder-btn {
-            padding: 10px 15px;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Stacked banners with animation */
+        .promo-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            width: 100%;
+            max-width: 900px;
+            box-sizing: border-box;
+        }
+
+        /* Enlarged banner styling */
+        .promo-banner {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .promo-banner:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .promo-banner:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .promo-banner img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .promo-banner:hover img {
+            transform: scale(1.05);
+        }
+
+        .promo-text {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            font-size: 1.5rem;
+            max-width: 80%;
+        }
+
+        .shop-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 18px;
             background-color: #ff9900;
-            color: #fff;
-            border: none;
-            cursor: pointer;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .shop-btn:hover {
+            background-color: #e08900;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding: 10px;
+            }
+
+            .big-banner {
+                height: 200px;
+            }
+
+            .promo-text {
+                font-size: 1.2rem;
+                padding: 10px;
+            }
+
+            .shop-btn {
+                font-size: 1rem;
+                padding: 8px 12px;
+            }
         }
     </style>
 </head>
+
 <header>
-    <!-- Header placeholder -->
     <div id="header"></div>
 </header>
 
 <body>
-    <!-- Content Wrapper -->
     <div class="content-wrapper">
-        <!-- Main content -->
-        <div class="featured-products">
-            <div class="featured-item">
-                <h2>Coilover Workshirt</h2>
-                <p>Immediate to Preorder</p>
-                <button class="preorder-btn">Preorder Now</button>
-            </div>
-            <div class="featured-item">
-                <h2>"Praise The Lord" Bundle</h2>
-                <p>Featured Bundle by Ignatius Pio Binawan</p>
-                <button class="preorder-btn">Preorder Now</button>
-            </div>
+        <!-- Grand Opening Banner -->
+        <div class="big-banner">
+            <img src="assets/images/grandopening.jpg" alt="Grand Opening">
         </div>
 
-        <!-- Footer placeholder -->
-        <div id="footer"></div>
+        <h1>Exclusive Promotions</h1>
+
+        <!-- Stacked Promo Banners with Animations -->
+        <div class="promo-grid">
+            <div class="promo-banner">
+                <img src="assets/images/banner1.jpg" alt="Promo 1">
+                <div class="promo-text">
+                    <h2>A Dopey Delight!</h2>
+                    <a href="product-page.html" class="shop-btn">SHOP NOW</a>
+                </div>
+            </div>
+
+            <div class="promo-banner">
+                <img src="assets/images/banner2.jpg" alt="Promo 2">
+                <div class="promo-text">
+                    <h2>Limited Edition Merch</h2>
+                    <a href="product-page.html" class="shop-btn">SHOP NOW</a>
+                </div>
+            </div>
+
+            <div class="promo-banner">
+                <img src="assets/images/banner3.jpg" alt="Promo 3">
+                <div class="promo-text">
+                    <h2>Exclusive School Gear</h2>
+                    <a href="product-page.html" class="shop-btn">SHOP NOW</a>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <div id="footer"></div>
 
     <script type="module" src="integration/uiManagement.js" defer></script>
-
 </body>
 
 </html>
