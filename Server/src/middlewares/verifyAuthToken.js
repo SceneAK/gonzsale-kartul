@@ -1,15 +1,15 @@
 import {ApplicationError} from '../common/index.js';
 import { tokenAuthServices } from '../services/index.js';
 
-const verify = async (req, res, next) => { 
+const verify = (required = true) => async (req, res, next) => { 
     const { authToken } = req.signedCookies;
     
     try {
         req.decodedAuthToken = await tokenAuthServices.verifyAuthToken(authToken);
-        next()
     } catch (jwtErr) {
-        throw new ApplicationError("Failed to verify authentication token", 401);
+        if(required) throw new ApplicationError("Failed to verify authentication token, Sign-In is Required.", 401);
     }
+    next()
 }
 
 export default verify;

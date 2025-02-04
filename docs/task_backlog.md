@@ -18,14 +18,29 @@ Please sort by importance
 - Create Store Page Integration 
 
 # BACKEND
-## Test & Debug
-
 ## orders
-- Order Items of the same order must have unique items. cannot order the same item twice in two orderItems
-- Mailing Customers when order status changes, when product gets deleted, when  
+- Mailing Customers when order status changes, when product gets deleted 
+> Implement Pagination
+(To Test)
+DONE Order table needs customerName, customerEmail, customerPhone
+DONE Order requires customerDetail = {customerId, customerName, customerDetail, customerPhone}
+DONE Place Order Guest simply uses this in the body
+DONE Place Order Logged In uses this but the controller makes a trip to fetch via userSerivces first.
+
+## Request Home page Items (promotional content)
+
+## products
+> Implement Pagination
+
+## Re-CAPTCHA
+> Figure out requirements
+- Write System
+- User & Guest Creation
+- Checkout Page
 
 ## users
-- edit user profile
+DONE edit user profile
+DONE Implement Pagination
 - change password
 
 ## Implement product variants
@@ -41,8 +56,7 @@ Please sort by importance
 
 ## Extended Less Important Backlog
 - Statistical Analysis for Seller Account
-- Request Home page Items (promotional content)
-- Implement signout (set cookie as expired)
+- Implement propper signout & blacklisting 
 - Payment Gateway
 - Use paranoid delete
 - AI generated product titles lmaoo

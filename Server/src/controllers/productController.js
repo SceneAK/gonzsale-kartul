@@ -2,16 +2,17 @@ import { convertAllPathsToURLs } from '../common/index.js';
 import { productServices, storeServices } from '../services/index.js';
 
 const fetchProducts = async (req, res) => {
-    const where = req.query;
+    const {page, ...where} = req.query;
     if(where.category == '') delete where.category;
-    const products = await productServices.fetchPublicProducts(req.query);
+    const products = await productServices.fetchPublicProducts(page, where);
     products.forEach( product => transform(product, req));
     res.json(products);
 }
 
 const fetchOwnedProducts =  async (req, res) => {
+    const {page} = req.query;
     const storeId = await storeServices.fetchStoreIdOfUser(req.decodedAuthToken.id);
-    const products = await productServices.fetchProductsOfStore(storeId);
+    const products = await productServices.fetchProductsOfStore(storeId, page);
     products.forEach( product => transform(product, req));
     res.json(products);
 }

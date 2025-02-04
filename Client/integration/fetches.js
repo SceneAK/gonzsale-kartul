@@ -43,11 +43,16 @@ const user = { signIn, signUp } // both returns cookies
 //#region Store
 async function fetchStore(id)
 {
-    return await jsonRequestResponse(`/store/${id}`, "GET");
+    const store = await jsonRequestResponse(`/store/${id}`, "GET");
+    store.image = transformUrl(store.image.url);
+    return store;
 }
 async function fetchOwnedStore() {
     try {
-        return await jsonRequestResponse(`/store`, "GET", null, 'include');
+        const store = await jsonRequestResponse(`/store`, "GET", null, 'include');
+        store.image.url = transformUrl(store.image?.url);
+        console.log(store);
+        return store;
     } catch (error) {
         if (error.message.includes("No store owned")) {
             return null; // Gracefully handle "No store owned" by returning null

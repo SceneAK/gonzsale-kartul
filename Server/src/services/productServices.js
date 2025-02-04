@@ -3,14 +3,14 @@ import databaseInitializePromise from '../database/initialize.js'
 import productImageServices from './productImageServices.js';
 import storeServices from './storeServices.js';
 import variantServices from './variantServices.js';
-import { Op } from 'sequelize';
 import fs from 'fs';
+import { paginationOption } from '../common/index.js';
 const { Product } = await databaseInitializePromise;
 
 const BASIC_ATTRIBUTES = ['id', 'name'];
 const GENERAL_ATTRIUTES = [...BASIC_ATTRIBUTES, 'storeId', 'category', 'price', 'unit', 'availability'];
 
-async function fetchPublicProducts(where, attributes = GENERAL_ATTRIUTES)
+async function fetchPublicProducts(page = 1, where = {}, attributes = GENERAL_ATTRIUTES)
 {
     const products = await Product.scope('Public').findAll({
         attributes,
@@ -18,19 +18,21 @@ async function fetchPublicProducts(where, attributes = GENERAL_ATTRIUTES)
         include: [
             { ...productImageServices.include('serve') },
             { ...storeServices.include('justName') }
-        ]
+        ],
+        ...paginationOption(page)
     });
     return products.map(product => product.toJSON());
 }
 
-async function fetchProductsOfStore(storeId)
+async function fetchProductsOfStore(storeId, page)
 {
     const products = await Product.findAll({
         attributes: GENERAL_ATTRIUTES,
         where: {storeId},
         include: [
             { ...productImageServices.include('serve-image') }
-        ]
+        ],
+        ...paginationOption(page)
     });
     return products.map(product => product.toJSON());
 }

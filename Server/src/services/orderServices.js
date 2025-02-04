@@ -3,19 +3,19 @@ import initializePromise from '../database/initialize.js';
 import orderItemServices from './orderItemServices.js';
 import storeServices from './storeServices.js';
 import transactionServices from './transactionServices.js';
-import userServices from './userServices.js';
+import { paginationOption } from '../common/pagination.js';
 const { Order } = await initializePromise;
 
 const ITEMS_AND_TRANSAC = [
     {...transactionServices.include('serve')}, 
     {...orderItemServices.include('serveWithProduct')},
 ];
-const ATTRIBUTES = ['id', 'storeId', 'customerId', 'createdAt'];
+const ATTRIBUTES = ['id', 'storeId', 'customerId', 'customerName', 'customerPhone', 'customerEmail', 'createdAt'];
 
 async function fetchOrderIncludeAll(id)
 {
     const orderModel = await _fetchOrder(id, {
-        include: [...ITEMS_AND_TRANSAC, userServices.include('contacts')],
+        include: ITEMS_AND_TRANSAC,
         attributes: ATTRIBUTES
     });
     const order = orderModel.toJSON();
@@ -34,13 +34,14 @@ async function _fetchOrder(id, options)
     return orderModel;
 }
 
-async function fetchIncomingOrders(storeOwnerUserId)
+async function fetchIncomingOrders(storeOwnerUserId, page = 1)
 {
     const storeId = await storeServices.fetchStoreIdOfUser(storeOwnerUserId);
     const orderModels = await Order.findAll({ 
+        include: orderItemServices.include('serve'), // for status calculation
         where: { storeId },
-        include: [userServices.include('contacts'), orderItemServices.include('serve')],
-        attributes: ATTRIBUTES
+        attributes: ATTRIBUTES,
+        ...paginationOption(page)
     });
     return orderModels.map(model => {
         const order = model.toJSON();
@@ -51,21 +52,22 @@ async function fetchIncomingOrders(storeOwnerUserId)
     });
 }
 
-async function fetchOrders(customerId)
+async function fetchOrders(customerId, page = 1)
 {
     const orders = await Order.findAll({ 
         where: { customerId }, 
         include: [...ITEMS_AND_TRANSAC, storeServices.include('serveName')],
-        attributes: ATTRIBUTES
+        attributes: ATTRIBUTES,
+        ...paginationOption(page)
     });
     return orders.map(order => order.toJSON());
 };
 
-async function createOrder(orderItems, customerId) // please refactor
+async function createOrder(orderItems, customerDetails) // please refactor
 {
     let id;
     await Order.sequelize.transaction( async t => {
-        const orderModel = Order.build({customerId});
+        const orderModel = Order.build(customerDetails);
         id = orderModel.id;
         
         const commonStoreId = await orderItemServices.completeAndValidate(orderItems, id);

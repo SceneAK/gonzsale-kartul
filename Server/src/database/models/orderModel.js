@@ -12,7 +12,18 @@ const Order = sequelize.define('Order', {
         primaryKey: true
     },
     customerId: {
-        type: DataTypes.UUID,
+        type: DataTypes.UUID
+    },
+    customerName: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    customerEmail: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    customerPhone: {
+        type: DataTypes.STRING,
         allowNull: false
     },
     storeId: {

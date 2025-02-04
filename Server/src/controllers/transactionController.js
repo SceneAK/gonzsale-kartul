@@ -10,7 +10,7 @@ const fetchTransaction = async (req, res)=> {
 
 const createCODTransaction = async(req, res) => {
     const body = {...req.body, orderId: req.params.orderId};
-    await extendedTransactionServices.createTransaction(req.body, 'CASH-ON-DELIVERY', req.decodedAuthToken.id)
+    await extendedTransactionServices.createTransaction(body, 'CASH-ON-DELIVERY', req.decodedAuthToken.id)
     res.json({result: 'created'});
 }
 const createProofTransaction = async(req, res) => {

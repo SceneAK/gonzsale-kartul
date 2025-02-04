@@ -1,6 +1,12 @@
 import { userServices } from '../services/index.js';
 import 'cookie-parser';
 
+const fetchUsers = async (req, res) => {
+    const {page, ...where} = req.query;
+    const users = await userServices.fetchUsers(req.decodedAuthToken.id, page, where);
+    return res.json(users);
+}
+
 const signIn = async (req, res) => {
     const {email, password} = req.body;
     const {user, authToken} = await userServices.signIn(email, password);
@@ -9,15 +15,8 @@ const signIn = async (req, res) => {
 }
 
 const signUp = async (req, res) => {
-    const {email, password, name, phone} = req.body;
-    const {user, authToken} = await userServices.signUp(email, password, name, phone)
-    setAuthTokenCookie(res, authToken);
-    return res.json(user);
-}
-
-const guest = async (req, res) => {
-    const {email, phone, name} = req.body;
-    const {user, authToken} = await userServices.findOrCreateGuest(email, name, phone);
+    const {password, ...contactData} = req.body;
+    const {user, authToken} = await userServices.signUp(contactData, password)
     setAuthTokenCookie(res, authToken);
     return res.json(user);
 }
@@ -28,16 +27,23 @@ const editRole = async (req, res) => {
     return res.send("Role granted");
 }
 
-const editUser = async (req, res) => {
-    const {name, phone, email} = req.body;
-    await userServices.editUser(req.decodedAuthToken.id, name, phone, email);
-    return res.send("User edited");
+const editContacts = async (req, res) => {
+    await userServices.editContacts(req.body, req.decodedAuthToken.id);
+    return res.send("Contacts edited");
 }
 
 const refresh = async (req, res) => {
     const newToken = await userServices.refresh(req.decodedAuthToken);
     setAuthTokenCookie(res, newToken);
     res.send("Refreshed token");
+}
+
+const expireCookie = async (req, res) => {
+    res.cookie(AUTH_TOKEN_NAME, {
+        ...cookieOptions,
+        expires: new Date(0)
+    })
+    res.send("Cookie Set Expired");
 }
 
 const AUTH_TOKEN_NAME = 'authToken';
@@ -53,9 +59,11 @@ function setAuthTokenCookie(res, authToken)
 }
 
 export default {
+    fetchUsers,
     signIn,
     signUp,
     editRole,
-    guest,
-    refresh
+    editContacts,
+    refresh,
+    expireCookie
 };

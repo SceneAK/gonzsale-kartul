@@ -24,13 +24,15 @@ async function create(orderItems)
 async function completeAndValidate(orderItems, orderId)
 {
     const products = await fetchProductsOfOrderItems(orderItems);
-
+    const productIds = [];
     for (let i = 0; i < orderItems.length; i++) {
+        if(productIds.includes(orderItems[i].productId)) throw new ApplicationError("Order contains duplicate product", 400);
         if(products[i].availability == 'UNAVAILABLE') throw new ApplicationError("Order contains unavailable product", 400);
         if(products[i].storeId != products[0].storeId) throw new ApplicationError("Order contains products of mixed store origin", 400);
 
         const unitPrice = products[i].price;
         orderItems[i] = {...orderItems[i], orderId, unitPrice};
+        productIds.push(orderItems[i].productId);
     }
     return products[0].storeId;
 }

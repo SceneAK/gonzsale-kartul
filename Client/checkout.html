@@ -198,7 +198,7 @@
             document.getElementById('change-details-btn').addEventListener('click', () => {
                 window.location.href = 'profile-management.html';
             });
-        } else { // The fuck is all this for?
+        } else {                            // The fuck is all this for?
             // If not logged in or details are missing, show input fields as usual
             const fullNameInput = document.getElementById('full-name');
             const phoneInput = document.getElementById('phone-number');
@@ -281,14 +281,14 @@
 
         renderOrderSummary();
 
-        // Handle Finish Orders Button
-        finishOrdersButton.addEventListener('click', async () => {
-            console.log("EST");
-            // Ensure the user is logged in. If not, call user.guest() first
-            const loginDetail = JSON.parse(localStorage.getItem('loginDetail') || '{}');
-            if (!loginDetail.name || !loginDetail.email || !loginDetail.phone) {
-                alert("Please log in to complete your order.");
-                window.location.href = 'login.html';
+        finishOrdersButton.addEventListener('click', async () => {            
+
+            if (!localStorage.getItem('loginDetail')) 
+            {
+                const fullNameInput = document.getElementById('full-name');
+                const phoneInput = document.getElementById('phone-number');
+                const emailInput = document.getElementById('email');
+                // create guest account    
                 return;
             }
 
@@ -302,22 +302,27 @@
                 const orderId = await order.createOrder({ OrderItems });
 
                 const proofFile = document.getElementById(`proof-${storeId}`).files[0];
-                const formdata = new FormData();
-                formdata.append('type', "PAYMENT");
-                formdata.append('file', proofFile);
-                try
-                {
-                    await transaction.createProofTransaction(orderId, formdata);
-                }catch(err) {
-                    alert("Fatal error: Failed to upload proof of payment. Please contact the website admins.");
-                    return;
-                }
+                await handleTransaction(orderId, proofFile);
             }
 
             alert("Orders have been successfully placed!");
             localStorage.removeItem('cart');
             window.location.href = 'order-confirmation.html';
         });
+
+        async function handleTransaction(orderId, proofFile)
+        {
+            const formdata = new FormData();
+            formdata.append('type', "PAYMENT");
+            formdata.append('file', proofFile);
+            try
+            {
+                await transaction.createProofTransaction(orderId, formdata);
+            }catch(err) {
+                alert("Fatal error: Failed to upload proof of payment. Please contact the website admins.");
+                return;
+            }
+        }
     </script>
 </body>
 <footer>

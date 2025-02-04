@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'; 
 import tokenAuthServices from './tokenAuthServices.js';
 import databaseInitializePromise from '../database/initialize.js'
-import {ApplicationError} from '../common/index.js';
+import { ApplicationError, paginationOption } from '../common/index.js';
 import { UniqueConstraintError } from 'sequelize';
 const { User } = await databaseInitializePromise;
 
@@ -26,6 +26,16 @@ async function _fetchUser(id, options)
     return userModel;
 }
 
+async function fetchUsers(requesterId, page = 1, where = {})
+{
+    await ensureAdmin(requesterId);
+    return await User.findAll( {
+        attributes: SERVE_ATTRIBUTES,
+        ...paginationOption(page), 
+        where
+    });
+}
+
 async function signIn(email, password)
 {
     const user = await User.findOne({ where: {email}, raw: true});
@@ -38,17 +48,12 @@ async function signIn(email, password)
     return signReturnObject(user);
 }
 
-async function signUp(email, password, name, phone)
+async function signUp(contactData, password)
 {
     const hashed = await bcrypt.hash(password, SALT_ROUNDS);
     try
     {
-        const userModel = await User.create({
-            email,
-            name,
-            phone,
-            password: hashed
-        });
+        const userModel = await User.create({...contactData, password: hashed});
         const user = userModel.toJSON();
         filterOnly(user, SERVE_ATTRIBUTES);
         return signReturnObject(user);
@@ -71,41 +76,31 @@ function filterOnly(obj, keys)
     }
 }
 
-async function findOrCreateGuest(email, name, phone)
+async function editContacts(contactData, id)
 {
-    const [user] = await User.findOrCreate({
-        where: {email}, 
-        defaults: { name, phone, email, password: null },
-        raw: true
-    })
-    delete user.password, user.updatedAt;
-    return signReturnObject(user);
+    return await User.update(contactData, {where: { id } } );;
 }
-async function isGuest(userId)
+
+async function editRole(id, role, requesterId)
 {
-    const user = await _fetchUser(userId, {attributes: ['password']});
-    return user.password == null;
+    await ensureAdmin(requesterId);
+    await User.update({role}, {where: {id}});
+}
+
+async function ensureAdmin(requesterId)
+{
+    const requesterRole = await fetchUserRole(requesterId);
+    if(requesterRole != ROLES.Admin) throw new ApplicationError("Unauthorized", 401);
+}
+async function fetchUserRole(userId)
+{
+    const userModel = await _fetchUser(userId, {attributes: ['role']});
+    return userModel.role;
 }
 
 async function refresh(decodedAuthToken)
 {
     return createAuthToken(decodedAuthToken);
-}
-
-async function editRole(id, role, requesterId)
-{
-    const requesterRole = await fetchUserRole(requesterId);
-    if(requesterRole != ROLES.Admin) throw new ApplicationError("Unauthorized", 401);
-    
-    if(await isGuest(id)) throw new ApplicationError("Cannot edit role of guest", 400);
-    
-    await User.update({role}, {where: {id}});
-}
-
-async function fetchUserRole(userId)
-{
-    const userModel = await _fetchUser(userId, {attributes: ['role']});
-    return userModel.role;
 }
 
 async function signReturnObject(user)
@@ -144,11 +139,12 @@ function include(level)
 export default {
     ROLES,
     fetchUser,
+    fetchUsers,
     fetchUserRole,
     signIn,
     signUp,
-    findOrCreateGuest,
     editRole,
+    editContacts,
     refresh,
     include
 };
