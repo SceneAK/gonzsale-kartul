@@ -1,5 +1,6 @@
 const baseUrl = "http://localhost:3000/api";
 
+//#region Fetching
 async function request(endpoint, method, body = null, credentials = 'omit', headers = {})
 {
     const res = await fetch(`${baseUrl}${endpoint}`, {
@@ -23,6 +24,8 @@ async function jsonRequestResponse(endpoint, method, body = null, credentials = 
 {
     return await jsonResponse(endpoint, method, body, credentials, {'Content-Type': 'application/json', ...headers})
 }
+//#endregion
+
 //#region User
 async function signIn(email, password) {
     const body = JSON.stringify({email, password});
@@ -37,7 +40,18 @@ async function signUp(name, phone, email, password) {
     });
     return await jsonRequestResponse('/user/signup', 'POST', body, 'include');
 }
-const user = { signIn, signUp } // both returns cookies
+async function editContacts(contacts) {
+    return await request('/user/edit', 'POST', JSON.stringify(contacts), 'include');
+}
+async function refresh()
+{
+    return await request('/user/refresh', 'POST', null, 'include');
+}
+async function expireCookie()
+{
+    return await request('/user/expire', 'POST', null, 'include');
+}
+const user = { signIn, signUp, editContacts, refresh, expireCookie } // both returns cookies
 //#endregion
 
 //#region Store
@@ -50,8 +64,7 @@ async function fetchStore(id)
 async function fetchOwnedStore() {
     try {
         const store = await jsonRequestResponse(`/store`, "GET", null, 'include');
-        store.image.url = transformUrl(store.image?.url);
-        console.log(store);
+        store.image.url = transformUrl(store.image?.url); // remove in production
         return store;
     } catch (error) {
         if (error.message.includes("No store owned")) {
@@ -73,10 +86,10 @@ const store = {fetchStore, fetchOwnedStore, createStore, editStore};
 //#endregion
 
 //#region Product
-async function fetchProducts(category, others = {})
+async function fetchProducts(category, others = {}, page = 1)
 {
     const paramsObj = { category, ...others};
-    const products = await jsonRequestResponse(`/product/search?${toQueryString(paramsObj)}`, "GET"); 
+    const products = await jsonRequestResponse(`/product/search?page=${page}&${toQueryString(paramsObj)}`, "GET"); 
     products.forEach( product => transformProductImagesUrls(product)) ;
     return products;
 }
@@ -93,7 +106,7 @@ async function fetchOwnedProducts() // auth
 
 async function fetchProduct(id)
 {
-    const product = await jsonRequestResponse(`/product/single/${id}`, "GET")
+    const product = await jsonRequestResponse(`/product/${id}`, "GET")
     transformProductImagesUrls(product);
     return product;
 }
@@ -124,13 +137,13 @@ async function fetchOrder(id) // auth
 {
     return await jsonResponse(`/order/${id}`, "GET", null, 'include');
 }
-async function fetchMyOrders() // auth
+async function fetchMyOrders(page = 1) // auth
 {
-    return await jsonResponse('/order/my', "GET", null, 'include');
+    return await jsonResponse(`/order/my?page=${page}`, "GET", null, 'include');
 }
-async function fetchIncomingOrders() // auth & store
+async function fetchIncomingOrders(page = 1) // auth & store
 {
-    return await jsonResponse('/order/incoming', "GET", null, 'include');
+    return await jsonResponse(`/order/incoming?page${page}`, "GET", null, 'include');
 }
 async function createOrder(data)// auth
 {
@@ -165,6 +178,7 @@ async function createCODTransaction(orderId, data) // auth
 
 const transaction = {fetchTransaction, createProofTransaction, createCODTransaction};
 //#endregion
+
 export {
     user,
     store,

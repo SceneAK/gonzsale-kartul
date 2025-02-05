@@ -3,7 +3,7 @@ import { productServices, storeServices } from '../services/index.js';
 
 const fetchProducts = async (req, res) => {
     const {page, ...where} = req.query;
-    if(where.category == '') delete where.category;
+    if(where.category == '' || where.category.toLowerCase() == 'all') delete where.category;
     const products = await productServices.fetchPublicProducts(page, where);
     products.forEach( product => transform(product, req));
     res.json(products);

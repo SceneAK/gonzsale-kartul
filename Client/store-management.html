@@ -657,10 +657,53 @@
 
                 if (!userStore) {
                     // No store exists: Show "Create Store" form
+                    const user = JSON.parse(localStorage.getItem('loginDetail'));
+                    if(user.role == 'STORE_MANAGER')
+                    {
+                        storeContainer.innerHTML = getCreateStoreHtml();
+                        // Handle "Create Store" form submission
+                        document.getElementById("create-store-form").addEventListener("submit", async function (event) {
+                            event.preventDefault();
+
+                            const formData = new FormData(this);
+
+                            try {
+                                const response = await store.createStore(formData);
+                                if (!response.ok) throw new Error("Failed to create store");
+                                alert("Store created successfully!");
+                                loadStore(); // Reload store data
+                            } catch (error) {
+                                console.error("Error creating store:", error);
+                                alert("There was an error creating the store. Please try again.");
+                            }
+                        });
+                    }else{
+                        storeContainer.innerHTML = "Contact Admins to be granted Store Manager Role";
+                    }
+                } else {
+                    // Store exists: Show store details
                     storeContainer.innerHTML = `
+                <div class="store-details">
+                    <h2>${userStore.name}</h2>
+                    <p>${userStore.description}</p>
+                    <img src="${userStore.image?.url}" alt="${userStore.name}" style="width: 100%; max-width: 300px; border-radius: 8px;">
+                    <p><strong>Bank Account:</strong> ${userStore.bankAccount}</p>
+                    <p><strong>Bank Name:</strong> ${userStore.bankName}</p>
+                    <button onclick="editStore()">Edit Store</button>
+                </div>
+            `;
+                }
+            } catch (error) {
+                console.error("Error loading store:", error);
+                storeContainer.innerHTML = `<p>Failed to load store data. Please try again later.</p>`;
+            }
+        }
+        function getCreateStoreHtml()
+        {
+            return `
                 <div class="form-wrapper">
                     <div class="create-store-container">
-                        <h1>Create Store</h1>
+                        Please Create a store first...
                         <form id="create-store-form" enctype="multipart/form-data">
                             <div>
                                 <label for="name">Store Name:</label>
@@ -692,40 +735,6 @@
                     </div>
                 </div>
             `;
-
-                    // Handle "Create Store" form submission
-                    document.getElementById("create-store-form").addEventListener("submit", async function (event) {
-                        event.preventDefault();
-
-                        const formData = new FormData(this);
-
-                        try {
-                            const response = await store.createStore(formData);
-                            if (!response.ok) throw new Error("Failed to create store");
-                            alert("Store created successfully!");
-                            loadStore(); // Reload store data
-                        } catch (error) {
-                            console.error("Error creating store:", error);
-                            alert("There was an error creating the store. Please try again.");
-                        }
-                    });
-                } else {
-                    // Store exists: Show store details
-                    storeContainer.innerHTML = `
-                <div class="store-details">
-                    <h2>${userStore.name}</h2>
-                    <p>${userStore.description}</p>
-                    <img src="${userStore.image?.url}" alt="${userStore.name}" style="width: 100%; max-width: 300px; border-radius: 8px;">
-                    <p><strong>Bank Account:</strong> ${userStore.bankAccount}</p>
-                    <p><strong>Bank Name:</strong> ${userStore.bankName}</p>
-                    <button onclick="editStore()">Edit Store</button>
-                </div>
-            `;
-                }
-            } catch (error) {
-                console.error("Error loading store:", error);
-                storeContainer.innerHTML = `<p>Failed to load store data. Please try again later.</p>`;
-            }
         }
 
         // Placeholder function for editing store

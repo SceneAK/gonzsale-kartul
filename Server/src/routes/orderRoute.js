@@ -1,14 +1,14 @@
 import express from 'express';
 const router = express.Router();
 
-import { verify, validatePassReq} from '../middlewares/index.js';
-import { orderSchemas } from '../reqSchemas/index.js';
+import { verify, validatePassReq, validate} from '../middlewares/index.js';
+import { orderSchemas, page } from '../reqSchemas/index.js';
 import { order } from '../controllers/index.js'
 import orderItemRoute from './orderItemRoute.js'
 
-router.get('/incoming', verify(), order.fetchIncomingOrders);
+router.get('/incoming', verify(), validate(page), order.fetchIncomingOrders);
 
-router.get('/my', verify(), order.fetchOrders);
+router.get('/my', verify(), validate(page), order.fetchOrders);
 
 router.get('/:id', order.fetchOrder);
 

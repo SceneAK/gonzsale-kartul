@@ -9,38 +9,30 @@ Please sort by importance
 - Retest all functions
 
 # FRONTEND
+
+- Create Store Looks Ugly
 ## Missing Pages
-- Single product page
 - Store page (single)
 
 ## Integrationn
-- Automatic refresh token
-- Create Store Page Integration 
+.Automatic refresh token
+DONE Integrated Order & Guest Orders
 
 # BACKEND
 ## orders
 - Mailing Customers when order status changes, when product gets deleted 
-> Implement Pagination
-(To Test)
-DONE Order table needs customerName, customerEmail, customerPhone
-DONE Order requires customerDetail = {customerId, customerName, customerDetail, customerPhone}
-DONE Place Order Guest simply uses this in the body
-DONE Place Order Logged In uses this but the controller makes a trip to fetch via userSerivces first.
 
 ## Request Home page Items (promotional content)
 
-## products
-> Implement Pagination
+## Fix
+DONE Transaction Order does not require UserID
 
 ## Re-CAPTCHA
-> Figure out requirements
 - Write System
 - User & Guest Creation
 - Checkout Page
 
 ## users
-DONE edit user profile
-DONE Implement Pagination
 - change password
 
 ## Implement product variants

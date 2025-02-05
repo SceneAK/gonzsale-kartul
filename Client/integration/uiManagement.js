@@ -1,3 +1,4 @@
+import { user } from "./fetches.js";
 import { hookSignIn } from "./user.js";
 
 // 1) Load external HTML file into a div
@@ -28,7 +29,7 @@ function toggleDropdownState(loginDetails) {
             editForm.innerHTML = `
                 <div style="text-align: center; padding: 10px;">
                     <p>Welcome, <strong>${loginDetails.name || 'User'}</strong></p>
-                    <p style="color: #555;">Role: ${isStoreManager ? 'Store Manager' : 'Buyer'}</p>
+                    <p style="color: #555;">Role: ${isStoreManager ? 'Store Manager' : 'User'}</p>
                 </div>
                 <hr>
                 <button onclick="window.location.href='profile-management.html'" style="width: 100%; padding: 10px; margin-bottom: 5px;">
@@ -50,9 +51,11 @@ function toggleDropdownState(loginDetails) {
             const logoutButton = editForm.querySelector('#logoutButton');
             if (logoutButton) {
                 logoutButton.addEventListener('click', () => {
-                    localStorage.removeItem('loginDetail');
-                    alert('You have logged out successfully.');
-                    window.location.reload(); // Refresh to reset the state
+                    user.expireCookie().then( () => {
+                        localStorage.removeItem('loginDetail');
+                        alert('You have logged out successfully.');
+                        window.location.reload()
+                    });
                 });
             }
 

@@ -291,14 +291,14 @@
         import { product } from './integration/fetches.js';
 
         // Function to add items to the cart
-        window.addToCart = function (id, name, product_price, imgSrc, store_id, store_name) {
+        window.addToCart = function (id, name, price, imgSrc, store_id, store_name) {
             const cart = JSON.parse(localStorage.getItem('cart') || '[]');
             const existingItemIndex = cart.findIndex(item => item.id === id);
 
             if (existingItemIndex > -1) {
                 cart[existingItemIndex].quantity += 1;
             } else {
-                cart.push({ id, name, product_price, imgSrc, store_id, store_name, quantity: 1 });
+                cart.push({ id, name, price, imgSrc, store_id, store_name, quantity: 1 });
             }
 
             localStorage.setItem('cart', JSON.stringify(cart));
@@ -374,7 +374,7 @@
             selectedTab.style.display = "block";
 
             console.log(categoryName);
-            const products = await product.fetchProducts(categoryName != 'All' ? categoryName : "");
+            const products = await product.fetchProducts(categoryName);
 
             // Finally, populate the container with the combined (or single) set of items
             populateItems(container, products);

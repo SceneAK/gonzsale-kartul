@@ -4,3 +4,4 @@ export { default as transactionSchemas } from './transactionSchema.js';
 export { default as storeSchemas } from './storeSchema.js';
 export { default as orderSchemas } from './orderSchema.js';
 export { default as orderItemSchemas } from './orderItemSchema.js';
+export { default as page } from './pageSchema.js'

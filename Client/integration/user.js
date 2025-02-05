@@ -1,5 +1,8 @@
 import { user } from "./fetches.js";
 
+const REFRESH_INTERVAL_MS = 1000 * 60 * 40; // 40 menit
+setInterval(user.refresh(), REFRESH_INTERVAL_MS);
+
 function trackSignin(userInfo)
 {
     localStorage.setItem('loginDetail', JSON.stringify({
@@ -22,9 +25,15 @@ export function hookSignIn(signInButton, emailInput, passwordInput)
 export function hookSignUp(signUpButton, nameInput, phoneInput, emailInput, passwordInput)
 {
     signUpButton.addEventListener('click', async function(event){
-        alert('signup');
         const userInfo = await user.signUp(nameInput.value, phoneInput.value, emailInput.value, passwordInput.value);
-        alert(JSON.stringify(userInfo));
         trackSignin(userInfo);
+    });
+}
+
+export function hookSignOut(signOutButton)
+{
+    signOutButton.addEventListener('click', async function(event){
+        await user.expireCookie();
+        localStorage.clear();
     });
 }

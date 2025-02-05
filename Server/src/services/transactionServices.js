@@ -27,9 +27,9 @@ async function validateCreateData(createData, requesterId)
     const associatedOrder = await orderServices.fetchOrder(orderId);
     
     if(findType(existingTransactions, type)) throw new ApplicationError(`${type} transaction already exists for this order`, 400);
+
     if(type === 'PAYMENT') 
     {
-        if(associatedOrder.customerId !== requesterId) throw new ApplicationError(`Only the customer can make PAYMENT transactions`, 400);
         createData.amount = await orderServices.calculateOrderTotal(orderId);
     }else{
         const storeId = await storeServices.fetchStoreIdOfUser(requesterId);

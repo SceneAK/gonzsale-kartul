@@ -2,11 +2,12 @@ import Joi from "joi";
 import { UUID } from "./common.js";
 
 const fetchFilteredSchema = {
-    body: Joi.object({
-    name: Joi.string(),
-    category: Joi.string(),
-    storeId: UUID,
-    storeName: Joi.string(),
+    query: Joi.object({
+        page: Joi.number().min(1),
+        name: Joi.string(),
+        category: Joi.string(),
+        storeId: UUID,
+        storeName: Joi.string()
     })
 }
 

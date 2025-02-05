@@ -1,20 +1,23 @@
-import { ApplicationError, getRelative }from '../common/index.js'
+import { ApplicationError, getRelative, logger }from '../common/index.js'
 import databaseInitializePromise from '../database/initialize.js'
 import userStorageServices from './userStorageServices.js';
 const { Image } = await databaseInitializePromise;
 
-async function createImages(files, userId)
+async function createImages(files, userId = null) 
 {
     const imageDatas = files.map( file => {
         if (!isImage(file)) throw new ApplicationError('File is not an Image', 400);
         const rel = getRelative(file.path);
         return { path: rel };
     });
-    console.log("ImageServices LINE 13")
-    console.log(imageDatas);
     const imageModels = await Image.bulkCreate(imageDatas);
-    console.log("ImageServices LINE 16")
-    await userStorageServices.trackUsedFiles(files, userId);
+
+    if(userId)
+    {
+        await userStorageServices.trackUsedFiles(files, userId);
+    }else{
+        logger.info(`Guest Creates Untracked Image: ${JSON.stringify(imageModels)}`)
+    }
     return imageModels.map( model => model.toJSON() );;
 }
 async function createImagesKeepInvalids(fileArray, userId)

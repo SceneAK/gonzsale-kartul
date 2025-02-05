@@ -102,12 +102,12 @@
             cart.forEach((item, index) => {
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('cart-item');
-
+                
                 itemDiv.innerHTML = `
                     <img src="${item.imgSrc}" alt="${item.name}" style="width: 100px; height: auto; margin-right: 10px;">
                     <div class="cart-item-details">
                         <h3>${item.name}</h3>
-                        <p><strong>Price:</strong> Rp ${item.product_price.toLocaleString('id-ID')}</p>
+                        <p><strong>Price:</strong> Rp ${item.price?.toLocaleString('id-ID')}</p>
                         <p><strong>Quantity:</strong> ${item.quantity || 1}</p>
                         <button class="remove-button" onclick="removeFromCart(${index})">Remove</button>
                     </div>

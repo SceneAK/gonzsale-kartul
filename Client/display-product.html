@@ -101,7 +101,7 @@
       </div>
 
       <!-- Product image will be loaded here using the first image logic -->
-      <img id="product-img" src="" alt="Product Image" class="product-img" />
+      <img id="product-img" src="" alt="Product Image" class="product-img" style="max-width: 50%; max-height: 35%;" />
 
       <h1 id="product-name" class="product-name"></h1>
       <p id="product-price" class="product-price"></p>
@@ -147,11 +147,11 @@
 
         // Populate product details
         document.getElementById('product-img').src = firstImg;
-        document.getElementById('product-name').textContent = productInfo.product_name;
-        document.getElementById('product-description').textContent = productInfo.product_description;
+        document.getElementById('product-name').textContent = productInfo.name;
+        document.getElementById('product-description').textContent = productInfo.description;
         document.getElementById('product-price').textContent =
-          `Rp ${productInfo.product_price.toLocaleString('id-ID')} / ${productInfo.product_unit}`;
-        document.getElementById('product-category').textContent = productInfo.product_category;
+          `Rp ${productInfo.price?.toLocaleString('id-ID')} / ${productInfo.unit}`;
+        document.getElementById('product-category').textContent = productInfo.category;
 
         // Add to Cart functionality
         document.getElementById('add-to-cart-btn').addEventListener('click', () => {
@@ -163,24 +163,24 @@
           }
 
           const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-          const existingItemIndex = cart.findIndex(item => item.id === productInfo.product_id);
+          const existingItemIndex = cart.findIndex(item => item.id === productInfo.id);
 
           if (existingItemIndex > -1) {
             cart[existingItemIndex].quantity += quantity;
           } else {
             cart.push({
-              id: productInfo.product_id,
-              name: productInfo.product_name,
-              price: productInfo.product_price,
+              id: productInfo.id,
+              name: productInfo.name,
+              price: productInfo.price,
               imgSrc: firstImg,
               quantity: quantity,
-              store_id: productInfo.store_id,
-              store_name: productInfo.store_name
+              store_id: productInfo.storeId,
+              store_name: productInfo.Store?.name
             });
           }
 
           localStorage.setItem('cart', JSON.stringify(cart));
-          alert(`${quantity} x ${productInfo.product_name} has been added to your cart!`);
+          alert(`${quantity} x ${productInfo.name} has been added to your cart!`);
         });
       } catch (error) {
         console.error('Error loading product details:', error);
