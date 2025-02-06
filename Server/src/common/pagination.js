@@ -1,4 +1,4 @@
-export function paginationOption(page, limit = 50)
+export function paginationOption(page, limit = 40)
 {
     return {
         limit,

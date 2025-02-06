@@ -24,7 +24,7 @@ async function fetchPublicProducts(page = 1, where = {}, attributes = GENERAL_AT
     return products.map(product => product.toJSON());
 }
 
-async function fetchProductsOfStore(storeId, page)
+async function fetchProductsOfStore(storeId, page = 1)
 {
     const products = await Product.findAll({
         attributes: GENERAL_ATTRIUTES,

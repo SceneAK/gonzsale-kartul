@@ -18,12 +18,45 @@ async function request(endpoint, method, body = null, credentials = 'omit', head
 async function jsonResponse(endpoint, method, body = null, credentials = 'omit', headers = {})
 {
     const req = await request(endpoint, method, body, credentials,headers)
-    return req.json();
+    const result = await req.json();
+    tryIncludePortAll(result)
+    return result;
 }
 async function jsonRequestResponse(endpoint, method, body = null, credentials = 'omit', headers = {})
 {
     return await jsonResponse(endpoint, method, body, credentials, {'Content-Type': 'application/json', ...headers})
 }
+//#region temporary
+function tryIncludePortAll(input, port = '3000')
+{
+    if(isArray(input))
+    {
+        input.forEach( element => {
+            tryIncludePortAll(element, port);
+        })
+    }else if(isObject(input))
+    {
+        for(const key in input)
+        {
+            if(key === 'url')
+            {
+                const insertIndex = input[key].indexOf("localhost") + 9;
+                input[key] = input[key].slice(0, insertIndex) + ":3000" + input[key].slice(insertIndex);
+            }else{
+                tryIncludePortAll(input[key], port)
+            }
+        }
+    }
+}
+function isObject(value)
+{
+    return value && typeof value === 'object';
+}
+function isArray(value)
+{
+    return Array.isArray(value)
+}
+//#endregion
 //#endregion
 
 //#region User
@@ -58,13 +91,11 @@ const user = { signIn, signUp, editContacts, refresh, expireCookie } // both ret
 async function fetchStore(id)
 {
     const store = await jsonRequestResponse(`/store/${id}`, "GET");
-    store.image = transformUrl(store.image.url);
     return store;
 }
 async function fetchOwnedStore() {
     try {
         const store = await jsonRequestResponse(`/store`, "GET", null, 'include');
-        store.image.url = transformUrl(store.image?.url); // remove in production
         return store;
     } catch (error) {
         if (error.message.includes("No store owned")) {
@@ -89,8 +120,7 @@ const store = {fetchStore, fetchOwnedStore, createStore, editStore};
 async function fetchProducts(category, others = {}, page = 1)
 {
     const paramsObj = { category, ...others};
-    const products = await jsonRequestResponse(`/product/search?page=${page}&${toQueryString(paramsObj)}`, "GET"); 
-    products.forEach( product => transformProductImagesUrls(product)) ;
+    const products = await jsonRequestResponse(`/product/search?page=${page}&${toQueryString(paramsObj)}`, "GET");
     return products;
 }
 function toQueryString(obj)
@@ -107,19 +137,7 @@ async function fetchOwnedProducts() // auth
 async function fetchProduct(id)
 {
     const product = await jsonRequestResponse(`/product/${id}`, "GET")
-    transformProductImagesUrls(product);
     return product;
-}
-function transformProductImagesUrls(product)
-{
-    for (let i = 0; i < product.ProductImages.length; i++) {
-        product.ProductImages[i].url = transformUrl(product.ProductImages[i].url);
-    }
-}
-function transformUrl(str)
-{
-    const insertIndex = str.indexOf("localhost") + 9;
-    return str.slice(0, insertIndex) + ":3000" + str.slice(insertIndex);
 }
 async function createProduct(formdata) // auth & store
 {
@@ -143,7 +161,7 @@ async function fetchMyOrders(page = 1) // auth
 }
 async function fetchIncomingOrders(page = 1) // auth & store
 {
-    return await jsonResponse(`/order/incoming?page${page}`, "GET", null, 'include');
+    return await jsonResponse(`/order/incoming?page=${page}`, "GET", null, 'include');
 }
 async function createOrder(data)// auth
 {
@@ -151,11 +169,11 @@ async function createOrder(data)// auth
 }
 async function updateItemStatus(id, status)
 {
-    return await jsonResponse(`/order/item/${id}/status`, "PATCH", JSON.stringify({status}), 'include');
+    return await jsonRequestResponse(`/order/item/${id}/status`, "PATCH", JSON.stringify({status}), 'include');
 }
 async function updateItemStatusByProduct(id, status)
 {
-    return await jsonResponse(`/order/item/by-product/${id}/status`, "PATCH", JSON.stringify({status}), 'include');
+    return await jsonRequestResponse(`/order/item/by-product/${id}/status`, "PATCH", JSON.stringify({status}), 'include');
 }
 const order = {fetchOrder, fetchMyOrders, fetchIncomingOrders, createOrder, updateItemStatus, updateItemStatusByProduct};
 //#endregion

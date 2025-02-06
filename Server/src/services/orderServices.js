@@ -7,8 +7,8 @@ import { paginationOption } from '../common/pagination.js';
 const { Order } = await initializePromise;
 
 const ITEMS_AND_TRANSAC = [
-    {...transactionServices.include('serve')}, 
-    {...orderItemServices.include('serveWithProduct')},
+    transactionServices.include('serve'), 
+    orderItemServices.include('serveWithProduct'),
 ];
 const ATTRIBUTES = ['id', 'storeId', 'customerId', 'customerName', 'customerPhone', 'customerEmail', 'createdAt'];
 
@@ -19,8 +19,7 @@ async function fetchOrderIncludeAll(id)
         attributes: ATTRIBUTES
     });
     const order = orderModel.toJSON();
-    includeStatus(order);
-    order.total = await calculateTotal(orderModel.OrderItems);
+    includeAditionalFields(order);
     return order;
 }
 async function fetchOrder(id)
@@ -38,18 +37,28 @@ async function fetchIncomingOrders(storeOwnerUserId, page = 1)
 {
     const storeId = await storeServices.fetchStoreIdOfUser(storeOwnerUserId);
     const orderModels = await Order.findAll({ 
-        include: orderItemServices.include('serve'), // for status calculation
+        include: [
+            transactionServices.include('serve'),
+            orderItemServices.include('serve')
+        ],
         where: { storeId },
         attributes: ATTRIBUTES,
         ...paginationOption(page)
     });
+
+
     return orderModels.map(model => {
         const order = model.toJSON();
-        
-        includeStatus(order);
+        includeAditionalFields(order);
         delete order.OrderItems;
         return order;
     });
+}
+function includeAditionalFields(order)
+{
+    order.status = calculateOverallStatus(order.OrderItems);
+    order.total = calculateTotal(order.OrderItems);
+    order.numberOfItems = order.OrderItems.length;
 }
 
 async function fetchOrders(customerId, page = 1)
@@ -92,10 +101,6 @@ function calculateTotal(orderItems)
     return total;
 }
 
-function includeStatus(order)
-{
-    order.status = calculateOverallStatus(order.OrderItems);
-}
 function calculateOverallStatus(items)
 {
     let overallStatus = items[0].status;
