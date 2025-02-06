@@ -13,10 +13,8 @@
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
-            /* Prevents overflow issues globally */
         }
 
-        /* Container that centers form content */
         .signup-wrapper {
             flex: 1;
             display: flex;
@@ -26,11 +24,9 @@
             box-sizing: border-box;
         }
 
-        /* Outer box for register form */
         .register-container {
             width: 100%;
             max-width: 500px;
-            /* Limits the width for larger screens */
             padding: 20px;
             background-color: #fff;
             border-radius: 8px;
@@ -38,9 +34,6 @@
             box-sizing: border-box;
         }
 
-        /* Scope your form elements to avoid conflicts:
-       - We use .register-container form to make sure these styles apply
-         ONLY to the form inside our .register-container. */
         .register-container form {
             display: flex;
             flex-direction: column;
@@ -54,10 +47,9 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
-        /* Buttons inside this particular form/container */
         .register-container form button {
             padding: 10px 20px;
             font-size: 1em;
@@ -65,10 +57,8 @@
             border-radius: 4px;
             cursor: pointer;
             margin-right: 10px;
-            /* Example spacing if you want it */
         }
 
-        /* If you want distinct styles for button[type="button"] vs. button[type="submit"] */
         .register-container form button[type="button"] {
             background-color: #ccc;
             color: #333;
@@ -83,7 +73,6 @@
             background-color: #45a049;
         }
 
-        /* Footer styles */
         #footer {
             background-color: #333;
             color: #fff;
@@ -104,7 +93,6 @@
             text-decoration: underline;
         }
 
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .register-container {
                 padding: 15px;
@@ -119,22 +107,16 @@
 </head>
 
 <body>
-    <!-- Header -->
     <div id="header">
         <p>Header Placeholder</p>
     </div>
 
-    <!-- Main Content -->
     <div class="signup-wrapper">
         <div class="register-container">
             <h1>Register</h1>
             <p><strong>Please provide the following information</strong></p>
             <p><span class="required">*</span> denotes required fields</p>
 
-            <!-- 
-        Notice how the input elements are now 100% 
-        *scoped* by the .register-container form CSS above.
-      -->
             <form id="register-form">
                 <label for="signupFullName"><span class="required">*</span> Full Name:</label>
                 <input type="text" id="signupFullName" name="signupFullName" required>
@@ -148,8 +130,13 @@
                 <label for="signupPassword"><span class="required">*</span> Password:</label>
                 <input type="password" id="signupPassword" name="signupPassword" required>
 
+                <label for="signupConfirmPassword"><span class="required">*</span> Confirm Password:</label>
+                <input type="password" id="signupConfirmPassword" name="signupConfirmPassword" required
+                    oninput="checkPasswordMatch()">
+                <p id="passwordMatchMessage" style="color: red; display: none;">Passwords do not match</p>
+
                 <p class="password-instructions">
-                    Your password must be between 3 to 300 characters inclusive
+                    Your password must be between 3 to 300 characters inclusive.
                 </p>
 
                 <div class="form-buttons">
@@ -160,25 +147,44 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <div id="footer">
         <p>&copy; 2024 My Website | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
     </div>
 
-    <!-- JavaScript -->
     <script type="module">
         import { hookSignUp } from './integration/user.js';
 
-        // Grab the renamed elements
         const registerButton = document.getElementById('signupSubmitButton');
         const registerFullName = document.getElementById('signupFullName');
         const registerPhone = document.getElementById('signupPhone');
         const registerEmail = document.getElementById('signupEmail');
         const registerPassword = document.getElementById('signupPassword');
 
-        // Pass them into your sign-up hook
         hookSignUp(registerButton, registerFullName, registerPhone, registerEmail, registerPassword);
+
+        document.getElementById('register-form').addEventListener('submit', function (event) {
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+            if (password !== confirmPassword) {
+                event.preventDefault(); // Prevent form submission
+                alert("Passwords do not match. Please try again.");
+            }
+        });
+
+        function checkPasswordMatch() {
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            const message = document.getElementById('passwordMatchMessage');
+
+            if (password !== confirmPassword) {
+                message.style.display = "block";
+            } else {
+                message.style.display = "none";
+            }
+        }
     </script>
+
     <script type="module" src="integration/uiManagement.js" defer></script>
 </body>
 

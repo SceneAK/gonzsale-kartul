@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transaction Image</title>
+  <style>
+    /* Basic styling to center the image and use a dark background */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      display: block;
+    }
+    /* Optional: a close button */
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <button class="close-btn" onclick="window.close();">Close</button>
+  <img id="transactionImage" alt="Transaction Image" />
+  
+  <script>
+    // Helper function to get the value of a query parameter by name
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+    
+    // Get the image URL from the query parameter "src"
+    const imageUrl = getQueryParam('src');
+    
+    if (imageUrl) {
+      document.getElementById('transactionImage').src = imageUrl;
+    } else {
+      document.body.innerHTML = '<p style="color: #fff;">No image URL provided.</p>';
+    }
+  </script>
+</body>
+</html>

@@ -59,6 +59,7 @@
             padding: 20px;
             overflow-y: auto;
             box-sizing: border-box;
+            flex: 1;
         }
 
         .content-section {
@@ -68,6 +69,35 @@
         /* Show only the active content section */
         .content-section.active {
             display: block;
+        }
+
+        /*DASHBOARD STYLING*/
+        .dashboard-metrics {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-metric {
+            flex: 1;
+            /* Each card takes equal width */
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-metric h2 {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-metric span {
+            font-size: 2em;
+            color: #ff9900;
+            font-weight: bold;
         }
 
         /*STORE STYLING*/
@@ -110,6 +140,84 @@
             background-color: #0056b3;
         }
 
+        /* Container for centering the form */
+        .form-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            background: #f5f5f5;
+            /* light background to contrast the form */
+            min-height: 70vh;
+        }
+
+        /* Store form card style */
+        .create-store-container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* Heading style */
+        .create-store-container h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Style for each form group */
+        .create-store-container .form-group {
+            margin-bottom: 15px;
+        }
+
+        /* Label styling */
+        .create-store-container label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        /* Input, textarea, and file input styling */
+        .create-store-container input[type="text"],
+        .create-store-container textarea,
+        .create-store-container input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: border-color 0.3s ease;
+        }
+
+        /* Focus effect for inputs */
+        .create-store-container input[type="text"]:focus,
+        .create-store-container textarea:focus,
+        .create-store-container input[type="file"]:focus {
+            border-color: #ff9900;
+            outline: none;
+        }
+
+        /* Submit button styling */
+        .create-store-container button[type="submit"] {
+            width: 100%;
+            background-color: #ff9900;
+            color: #fff;
+            padding: 12px;
+            font-size: 1em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Button hover effect */
+        .create-store-container button[type="submit"]:hover {
+            background-color: #e68a00;
+        }
 
         /*PRODUCT TAB STYLES*/
         .product-table {
@@ -164,11 +272,13 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 400px;
+            width: 90%;
+            max-width: 500px;
             background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            overflow: hidden;
         }
 
         .modal.active {
@@ -210,7 +320,6 @@
         .modal {
             display: none;
             position: fixed;
-            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
@@ -329,8 +438,23 @@
         }
 
         @media (min-width: 768px) {
+            .modal {
+                /* Ensure the modal fits within the viewport */
+                max-height: 90vh;
+                overflow-y: auto;
+                /* Optionally, adjust transform so it sits a bit higher */
+                transform: translate(-50%, -40%);
+                /* Reduce horizontal padding if needed */
+                width: 95%;
+            }
+
             .add-product-form-container {
-                padding: 40px;
+                padding: 20px;
+            }
+
+            /* Optionally, reduce gap between form fields */
+            .add-product-form {
+                gap: 10px;
             }
         }
 
@@ -428,6 +552,39 @@
             background-color: #c82333;
         }
 
+        /*PAGINATION NEXT/PREVIOUS*/
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            gap: 10px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            background-color: #ff9900;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background-color: #e68a00;
+        }
+
+        .pagination button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #page-info {
+            font-size: 1em;
+            color: #333;
+        }
+
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             table {
@@ -480,15 +637,15 @@
 
                 // Replace its content
                 contentWrapper.innerHTML = `
-                    <div style="text-align: center; margin-top: 50px;">
-                        <h1>Access Restricted</h1>
-                        <p>You must be logged in to access this page.</p>
-                        <button onclick="window.location.href='signup.html'" 
-                            style="padding: 10px 20px; font-size: 16px; background-color: #ff9900; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
-                            Sign Up / Log In
-                        </button>
-                    </div>
-                `;
+                        <div style="text-align: center; margin-top: 50px;">
+                            <h1>Access Restricted</h1>
+                            <p>You must be logged in to access this page.</p>
+                            <button onclick="window.location.href='signup.html'" 
+                                style="padding: 10px 20px; font-size: 16px; background-color: #ff9900; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
+                                Sign Up / Log In
+                            </button>
+                        </div>
+                    `;
 
                 // Optional: Style the wrapper to center the content
                 contentWrapper.style.display = 'flex';
@@ -517,8 +674,16 @@
             <!-- Dashboard Section -->
             <div id="dashboard" class="content-section active">
                 <h1>Dashboard</h1>
-                <div>Total Orders: <span id="total-orders">0</span></div>
-                <div>Total Revenue: <span id="total-revenue">0</span></div>
+                <div class="dashboard-metrics">
+                    <div class="dashboard-metric">
+                        <h2>Total Orders</h2>
+                        <span id="total-orders">0</span>
+                    </div>
+                    <div class="dashboard-metric">
+                        <h2>Total Revenue</h2>
+                        <span id="total-revenue">0</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Store Section -->
@@ -601,6 +766,55 @@
                             </div>
                         </form>
                     </div>
+                    <!-- Edit Product Modal -->
+                    <div class="modal" id="edit-product-modal">
+                        <div class="add-product-form-container">
+                            <h1>Edit Product</h1>
+                            <form id="edit-product-form" class="add-product-form">
+                                <input type="hidden" id="edit-product-id" name="product_id">
+
+                                <label for="edit-product-name">Product Name:</label>
+                                <input type="text" id="edit-product-name" name="name" required>
+
+                                <label for="edit-product-category">Category:</label>
+                                <select id="edit-product-category" name="category" required>
+                                    <option value="Shirts">Shirts</option>
+                                    <option value="Pants">Pants</option>
+                                    <option value="Accessories">Accessories</option>
+                                    <option value="Food">Food</option>
+                                    <option value="Drinks">Drinks</option>
+                                </select>
+
+                                <label for="edit-product-description">Description:</label>
+                                <textarea id="edit-product-description" name="description" required></textarea>
+
+                                <label for="edit-product-price">Price & Unit</label>
+                                <div>
+                                    <input type="number" id="edit-product-price" name="price" required
+                                        style="width: 70%;">
+                                    <input type="text" id="edit-product-unit" name="unit" required style="width: 20%;">
+                                </div>
+
+                                <label for="edit-product-images">Change Image:</label>
+                                <input type="file" id="edit-product-images" name="images" accept=".jpg,.jpeg,.png,.gif"
+                                    multiple>
+                                <div class="image-preview-container" id="edit-image-preview-container"></div>
+
+                                <label for="edit-product-availability">Availability:</label>
+                                <select id="edit-product-availability" name="availability" required>
+                                    <option value="AVAILABLE">Available</option>
+                                    <option value="UNAVAILABLE">Unavailable</option>
+                                    <option value="PREORDER">Pre-Order</option>
+                                </select>
+
+                                <div class="add-product-form-buttons">
+                                    <button type="button" onclick="closeEditProductModal()">Cancel</button>
+                                    <button type="submit">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -616,6 +830,7 @@
                                 <th>Total Items</th>
                                 <th>Date Created</th>
                                 <th>Transaction</th>
+                                <th>Transaction Image</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -624,6 +839,12 @@
                             <!-- Orders will be populated dynamically -->
                         </tbody>
                     </table>
+                </div>
+                <!-- Pagination Placeholder -->
+                <div class="pagination">
+                    <button id="prev-page" disabled>&lt;</button>
+                    <span id="page-info">Page 1</span>
+                    <button id="next-page">&gt;</button>
                 </div>
             </div>
         </div>
@@ -663,8 +884,7 @@
                 if (!userStore) {
                     // No store exists: Show "Create Store" form
                     const user = JSON.parse(localStorage.getItem('loginDetail'));
-                    if(user.role == 'STORE_MANAGER')
-                    {
+                    if (user.role == 'STORE_MANAGER') {
                         storeContainer.innerHTML = getCreateStoreHtml();
                         // Handle "Create Store" form submission
                         document.getElementById("create-store-form").addEventListener("submit", async function (event) {
@@ -682,64 +902,63 @@
                                 alert("There was an error creating the store. Please try again.");
                             }
                         });
-                    }else{
+                    } else {
                         storeContainer.innerHTML = "Contact Admins to be granted Store Manager Role";
                     }
                 } else {
                     // Store exists: Show store details
                     storeContainer.innerHTML = `
-                <div class="store-details">
-                    <h2>${userStore.name}</h2>
-                    <p>${userStore.description}</p>
-                    <img src="${userStore.image?.url}" alt="${userStore.name}" style="width: 100%; max-width: 300px; border-radius: 8px;">
-                    <p><strong>Bank Account:</strong> ${userStore.bankAccount}</p>
-                    <p><strong>Bank Name:</strong> ${userStore.bankName}</p>
-                    <button onclick="editStore()">Edit Store</button>
-                </div>
-            `;
+                    <div class="store-details">
+                        <h2>${userStore.name}</h2>
+                        <p>${userStore.description}</p>
+                        <img src="${userStore.image?.url}" alt="${userStore.name}" style="width: 100%; max-width: 300px; border-radius: 8px;">
+                        <p><strong>Bank Account:</strong> ${userStore.bankAccount}</p>
+                        <p><strong>Bank Name:</strong> ${userStore.bankName}</p>
+                        <button onclick="editStore()">Edit Store</button>
+                    </div>
+                `;
                 }
             } catch (error) {
                 console.error("Error loading store:", error);
                 storeContainer.innerHTML = `<p>Failed to load store data. Please try again later.</p>`;
             }
         }
-        function getCreateStoreHtml()
-        {
+        function getCreateStoreHtml() {
             return `
-                <div class="form-wrapper">
-                    <div class="create-store-container">
-                        Please Create a store first...
-                        <form id="create-store-form" enctype="multipart/form-data">
-                            <div>
-                                <label for="name">Store Name:</label>
-                                <input type="text" id="name" name="name" placeholder="Enter store name" required>
-                            </div>
+    <div class="form-wrapper">
+      <div class="create-store-container">
+        <h2>Create Your Store</h2>
+        <form id="create-store-form" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="name">Store Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter store name" required>
+          </div>
 
-                            <div>
-                                <label for="description">Description:</label>
-                                <textarea id="description" name="description" rows="4" placeholder="Enter store description" required></textarea>
-                            </div>
+          <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="4" placeholder="Enter store description" required></textarea>
+          </div>
 
-                            <div>
-                                <label for="imageFile">Image:</label>
-                                <input type="file" id="imageFile" name="imageFile" accept="image/*" required>
-                            </div>
+          <div class="form-group">
+            <label for="imageFile">Image:</label>
+            <input type="file" id="imageFile" name="imageFile" accept="image/*" required>
+          </div>
 
-                            <div>
-                                <label for="bankAccount">Bank Account:</label>
-                                <input type="text" id="bankAccount" name="bankAccount" placeholder="Enter bank account number" required>
-                            </div>
+          <div class="form-group">
+            <label for="bankAccount">Bank Account:</label>
+            <input type="text" id="bankAccount" name="bankAccount" placeholder="Enter bank account number" required>
+          </div>
 
-                            <div>
-                                <label for="bankName">Bank Name:</label>
-                                <input type="text" id="bankName" name="bankName" placeholder="Enter bank name" required>
-                            </div>
+          <div class="form-group">
+            <label for="bankName">Bank Name:</label>
+            <input type="text" id="bankName" name="bankName" placeholder="Enter bank name" required>
+          </div>
 
-                            <button type="submit">Create Store</button>
-                        </form>
-                    </div>
-                </div>
-            `;
+          <button type="submit">Create Store</button>
+        </form>
+      </div>
+    </div>
+  `;
         }
 
         // Placeholder function for editing store
@@ -762,16 +981,16 @@
             const productList = document.getElementById('product-list');
 
             productList.innerHTML = products.map(product => `
-                <tr>
-                    <td>${product.name}</td>
-                    <td>${product.category.toLocaleString('id-ID')}</td>
-                    <td>Rp ${product.price.toLocaleString('id-ID')}</td>
-                    <td>
-                        <button onclick="editProduct('${product.productId}')">Edit</button>
-                        <button onclick="deleteProduct('${product.productId}')">Delete</button>
-                    </td>
-                </tr>
-            `).join('');
+        <tr>
+            <td>${product.name}</td>
+            <td>${product.category}</td>
+            <td>Rp ${product.price.toLocaleString('id-ID')}</td>
+            <td>
+                <button class="edit-btn" onclick="openEditProductModal('${product.product_id}')">Edit</button>
+                <button class="delete-btn" onclick="deleteProduct('${product.product_id}')">Delete</button>
+            </td>
+        </tr>
+    `).join('');
         }
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -829,6 +1048,52 @@
             });
         });
 
+        // Open Edit Product Modal
+        window.openEditProductModal = async function (productId) {
+            const productDetails = await product.getProduct(productId);
+
+            document.getElementById('edit-product-id').value = productId;
+            document.getElementById('edit-product-name').value = productDetails.product_name;
+            document.getElementById('edit-product-category').value = productDetails.product_category;
+            document.getElementById('edit-product-description').value = productDetails.product_description;
+            document.getElementById('edit-product-price').value = productDetails.product_price;
+            document.getElementById('edit-product-unit').value = productDetails.product_unit;
+            document.getElementById('edit-product-availability').value = productDetails.product_canOrder;
+
+            // Load images into preview
+            const previewContainer = document.getElementById('edit-image-preview-container');
+            previewContainer.innerHTML = ""; // Clear previous previews
+            productDetails.product_imgSrc.forEach(src => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.classList.add('image-preview');
+                previewContainer.appendChild(img);
+            });
+
+            // Show the modal
+            document.getElementById('edit-product-modal').classList.add('active');
+        };
+
+        // Close Edit Product Modal
+        window.closeEditProductModal = function () {
+            document.getElementById('edit-product-modal').classList.remove('active');
+        };
+
+        document.getElementById('edit-product-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const productId = document.getElementById('edit-product-id').value;
+            const formData = new FormData(this);
+
+            try {
+                await product.editProduct(formData, productId);
+                closeEditProductModal();
+                loadProducts(); // Reload the product list
+            } catch (error) {
+                console.error("Error updating product:", error);
+                alert("Failed to update the product. Please try again.");
+            }
+        });
 
         // Load orders data
         async function loadOrders() {
@@ -852,24 +1117,22 @@
                         <td>${order.numberOfItems}</td>
                         <td>${createdAt.toLocaleDateString()}</td>
                         <td>${transactionImage}</td>
-                        <td class=${getStatusClass(order.status)}>
+                        <td>
+                            ${(order.Transactions.length > 0 && order.Transactions[0].method === 'PROOF-BASED')
+                            ? `<button class="action-btn" onclick="openTransactionImage('${order.Transactions[0].id}')">View Image</button>`
+                            : 'N/A'
+                        }
+                        </td>
+                        <td class="${getStatusClass(order.status)}">
                             ${order.status}
                         </td>
                         <td>
-                            <!--
-                            <button class="action-btn complete-btn" onclick="markOrderAsCompleted('${order.id}')">
-                                Mark as Completed
-                            </button>
-                            <button class="action-btn delete-btn" onclick="deleteOrder('${order.id}')">
-                                Delete
-                            </button>
-                            -->
-
                             <button class="action-btn expand-btn" onclick="toggleOrderDetails('${order.id}', this)">
                                 Expand
                             </button>
                         </td>
                     `;
+
                     orderTableBody.appendChild(row);
 
                     // Create a hidden details row that will be toggled
@@ -884,22 +1147,22 @@
 
                     // Check if the order has an items array with details
                     detailCell.innerHTML = `
-                        <div><strong>${order.customerName}'s Order:</strong></div>
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: #ff9900; color: #fff;">
-                                    <th style="padding: 5px; border: 1px solid #ddd;">Product</th>
-                                    <th style="padding: 5px; border: 1px solid #ddd;">Quantity</th>
-                                    <th style="padding: 5px; border: 1px solid #ddd;">Price</th>
-                                    <th style="padding: 5px; border: 1px solid #ddd;">Status</th>
-                                    <th style="padding: 5px; border: 1px solid #ddd;">Update</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                        <div class="transactionDetails" style="max-width: 30%; max-height: 40%;margin: auto;"></div>
-                    `;
+                            <div><strong>${order.customerName}'s Order:</strong></div>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #ff9900; color: #fff;">
+                                        <th style="padding: 5px; border: 1px solid #ddd;">Product</th>
+                                        <th style="padding: 5px; border: 1px solid #ddd;">Quantity</th>
+                                        <th style="padding: 5px; border: 1px solid #ddd;">Price</th>
+                                        <th style="padding: 5px; border: 1px solid #ddd;">Status</th>
+                                        <th style="padding: 5px; border: 1px solid #ddd;">Update</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <div class="transactionDetails" style="max-width: 30%; max-height: 40%;margin: auto;"></div>
+                        `;
 
                     detailRow.appendChild(detailCell);
                     orderTableBody.appendChild(detailRow);
@@ -910,8 +1173,7 @@
                 loader.style.display = 'none'; // Hide loader
             }
         }
-        function getStatusClass(status)
-        {
+        function getStatusClass(status) {
             switch (status) {
                 case 'COMPLETED':
                     return 'status-completed';
@@ -936,65 +1198,69 @@
         };
 
         const cachedOrders = {};
-        async function populatetDetailRow(orderId, detailRow)
-        {
-            if(!cachedOrders[orderId]) cachedOrders[orderId] = await order.fetchOrder(orderId);
+        async function populatetDetailRow(orderId, detailRow) {
+            if (!cachedOrders[orderId]) cachedOrders[orderId] = await order.fetchOrder(orderId);
             const fullOrder = cachedOrders[orderId];
 
             const tbody = detailRow.querySelector('tbody');
             tbody.innerHTML = '';
 
-            fullOrder.OrderItems.forEach( orderItem => {
+            fullOrder.OrderItems.forEach(orderItem => {
                 tbody.innerHTML += `
-                    <tr style="border: 1px solid #ddd;" id="tbodyrow-${orderItem.id}">
-                        <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.Product.name}</td>
-                        <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.quantity}</td>
-                        <td style="padding: 5px; border: 1px solid #ddd;">Rp ${orderItem.unitPrice.toLocaleString('id-ID')}</td>
-                        <td style="padding: 5px; border: 1px solid #ddd;" class=${getStatusClass(orderItem.status)}>
-                            ${orderItem.status}
-                        </td>
-                        <td style="padding: 5px; border: 1px solid #ddd;">
-                            <select>
-                                <option value="PENDING" disable selected>PENDING</option>
-                                <option value="READY">READY</option>
-                                <option value="COMPLETED">COMPLETED</option>
-                            </select>
-                        </td>
-                    </tr>
-                `;
+                        <tr style="border: 1px solid #ddd;" id="tbodyrow-${orderItem.id}">
+                            <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.Product.name}</td>
+                            <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.quantity}</td>
+                            <td style="padding: 5px; border: 1px solid #ddd;">Rp ${orderItem.unitPrice.toLocaleString('id-ID')}</td>
+                            <td style="padding: 5px; border: 1px solid #ddd;" class=${getStatusClass(orderItem.status)}>
+                                ${orderItem.status}
+                            </td>
+                            <td style="padding: 5px; border: 1px solid #ddd;">
+                                <select>
+                                    <option value="PENDING" disable selected>PENDING</option>
+                                    <option value="READY">READY</option>
+                                    <option value="COMPLETED">COMPLETED</option>
+                                </select>
+                            </td>
+                        </tr>
+                    `;
                 const selectElement = document.getElementById(`tbodyrow-${orderItem.id}`);
                 selectElement.addEventListener('change', (event) => {
                     const newStatus = event.target.value;
-                    if(newStatus != orderItem.status)
-                    {
+                    if (newStatus != orderItem.status) {
                         const currentStatusClass = getStatusClass(orderItem.status);
-                        order.updateItemStatus(orderItem.id, newStatus).then( () => {
+                        order.updateItemStatus(orderItem.id, newStatus).then(() => {
                             cachedOrders[orderId] = undefined;
 
                             const tableRow = event.target.parentElement.parentElement;
                             const statusTd = tableRow.querySelector(`.${currentStatusClass}`);
-                            
+
                             statusTd.className = getStatusClass(newStatus);
                             statusTd.innerHTML = newStatus;
-                        }).catch( err => {
+                        }).catch(err => {
                             event.target.value = orderItem.status;
                         });
                     }
                 });
             });
-            
-
-            if(fullOrder.Transactions[0]?.method == 'PROOF-BASED')
-            {
-                const id = fullOrder.Transactions[0]?.id;
-                const proofTransaction = await transaction.fetchTransaction(id);
-                const transactionDetailsDiv = detailRow.querySelector('.transactionDetails');
-                transactionDetailsDiv.innerHTML = `
-                    <img src="${proofTransaction.Image.url}" style="width: 100%; max-width: 100%; max-height: 100%;">
-                `
-            }
         }
-        
+
+        window.openTransactionImage = async function (transactionId) {
+            try {
+                // Fetch the transaction details using your existing transaction module
+                const proofTransaction = await transaction.fetchTransaction(transactionId);
+                if (proofTransaction && proofTransaction.Image && proofTransaction.Image.url) {
+                    const imageUrl = proofTransaction.Image.url;
+                    // Open a separate page and pass the image URL via a query parameter
+                    window.open('image.html?src=' + encodeURIComponent(imageUrl), '_blank');
+                } else {
+                    alert('No transaction image found.');
+                }
+            } catch (error) {
+                console.error('Error fetching transaction image:', error);
+                alert('Failed to fetch transaction image.');
+            }
+        };
+
 
         async function markOrderAsCompleted(orderId) {
             // Logic to mark an order as completed

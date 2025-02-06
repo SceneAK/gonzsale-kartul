@@ -51,7 +51,7 @@ function toggleDropdownState(loginDetails) {
             const logoutButton = editForm.querySelector('#logoutButton');
             if (logoutButton) {
                 logoutButton.addEventListener('click', () => {
-                    user.expireCookie().then( () => {
+                    user.expireCookie().then(() => {
                         localStorage.removeItem('loginDetail');
                         alert('You have logged out successfully.');
                         window.location.reload()
@@ -216,6 +216,13 @@ function initializeMenuToggle() {
         }
     }, /* { once: true } */);
 }
+
+window.addEventListener('hashchange', function () {
+    const sideMenu = document.getElementById('sideMenu');
+    if (sideMenu.classList.contains('open')) {
+        sideMenu.classList.remove('open');
+    }
+});
 
 /***************************************************
  * Hooking Sign-In
