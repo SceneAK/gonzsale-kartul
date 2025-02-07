@@ -1,23 +1,37 @@
 import { user } from "./fetches.js";
 
 const REFRESH_INTERVAL_MS = 1000 * 60 * 40; // 40 menit
-setInterval(user.refresh(), REFRESH_INTERVAL_MS);
+let refresherId;
+const autoRefresher = () => {
+    if(localStorage.getItem('loginDetail'))
+    {
+        user.refresh().catch( () => {
+            clearInterval(refresherId);
+            localStorage.clear();
+            window.location.reload();
+        })
+    }
+}
 
-function trackSignin(userInfo)
+function updateUserInfo(userInfo)
 {
-    localStorage.setItem('loginDetail', JSON.stringify({
-        ...userInfo,
-        time: Date.now()
-    }));
-    console.log(JSON.parse(localStorage.getItem('loginDetail')));
+    localStorage.setItem('loginDetail', JSON.stringify(userInfo));
+    clearInterval(refresherId);
+    refresherId = setInterval(autoRefresher, REFRESH_INTERVAL_MS);
+    window.location.reload();
+}
+
+export async function refreshAndUpdate()
+{
+    const userInfo = await user.refresh();
+    updateUserInfo(userInfo);
 }
 
 export function hookSignIn(signInButton, emailInput, passwordInput)
 {
     signInButton.addEventListener('click', async function(event){
         const userInfo = await user.signIn(emailInput.value, passwordInput.value);
-        trackSignin(userInfo);
-        window.location.reload();
+        updateUserInfo(userInfo);
     });
 
 }
@@ -26,7 +40,7 @@ export function hookSignUp(signUpButton, nameInput, phoneInput, emailInput, pass
 {
     signUpButton.addEventListener('click', async function(event){
         const userInfo = await user.signUp(nameInput.value, phoneInput.value, emailInput.value, passwordInput.value);
-        trackSignin(userInfo);
+        updateUserInfo(userInfo);
     });
 }
 

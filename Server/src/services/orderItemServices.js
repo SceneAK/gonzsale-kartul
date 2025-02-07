@@ -43,6 +43,8 @@ async function fetchProductsOfOrderItems(orderItems)
     return await productServices.fetchProductsPlain(productIds);
 }
 
+const statusOrder = ['PENDING', 'PROCESSING', 'READY', 'COMPLETED', 'CANCELLED'];
+
 async function updateStatus(id, status, requesterId)
 {
     const orderItem = await fetchByPk(id, ['status', 'productId']);
@@ -85,15 +87,29 @@ function validateStatusTransition(current, request)
 {
     if(!isValidStatusTransition(current, request)) throw new ApplicationError("Invalid status transition", 400);
 }
+
 function isValidStatusTransition(current, request)
 {
-    const statusOrder = ['PENDING', 'PROCESSING', 'READY', 'COMPLETED', 'CANCELLED'];
     const correcOrder = statusOrder.indexOf(current) < statusOrder.indexOf(request);
     const notCompleted = current != 'COMPLETED';
     return correcOrder && notCompleted;
 }
 
+function createStatusSortLiteral(statusOrder)
+{
+    let literal = 'CASE ';
+    statusOrder.forEach( (status, index) => {
+        literal += `WHEN status = ${status} THEN ${index+1} `;
+    })
+    literal += `END`;
+    return OrderItem.sequelize.literal(literal);
+}
+
 const ATTRIBUTES = ['id', 'quantity', 'unitPrice', 'notes', 'status'];
+
+const statusSortLiteral = createStatusSortLiteral(statusOrder)
+const order = [[statusSortLiteral, 'ASC']]
+
 function include(level)
 {
     switch (level) {
@@ -101,12 +117,14 @@ function include(level)
             return {
                 model: OrderItem,
                 attributes: ATTRIBUTES,
-                include: productServices.include('serveBasicWithImages')
+                include: productServices.include('serveBasicWithImages'),
+                order
             }
         case 'serve':
             return {
                 model: OrderItem,
-                attributes: ATTRIBUTES
+                attributes: ATTRIBUTES,
+                order
             }
         default:
             return {
@@ -115,4 +133,12 @@ function include(level)
     }
 }
 
-export default {fetchOrderItems, completeAndValidate, create, updateStatus, updateStatusesByProduct, include}
+export default {
+    fetchOrderItems, 
+    completeAndValidate, 
+    create, 
+    updateStatus, 
+    updateStatusesByProduct, 
+    statusOrder,
+    include
+}

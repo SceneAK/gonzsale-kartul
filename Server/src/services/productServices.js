@@ -4,7 +4,7 @@ import productImageServices from './productImageServices.js';
 import storeServices from './storeServices.js';
 import variantServices from './variantServices.js';
 import fs from 'fs';
-import { paginationOption } from '../common/index.js';
+import { paginationOption, reformatFindCountAll } from '../common/index.js';
 const { Product } = await databaseInitializePromise;
 
 const BASIC_ATTRIBUTES = ['id', 'name'];
@@ -12,7 +12,7 @@ const GENERAL_ATTRIUTES = [...BASIC_ATTRIBUTES, 'storeId', 'category', 'price', 
 
 async function fetchPublicProducts(page = 1, where = {}, attributes = GENERAL_ATTRIUTES)
 {
-    const products = await Product.scope('Public').findAll({
+    let result = await Product.scope('Public').findAndCountAll({
         attributes,
         where,
         include: [
@@ -21,12 +21,12 @@ async function fetchPublicProducts(page = 1, where = {}, attributes = GENERAL_AT
         ],
         ...paginationOption(page)
     });
-    return products.map(product => product.toJSON());
+    return reformatFindCountAll(result, page).itemsToJSON();
 }
 
 async function fetchProductsOfStore(storeId, page = 1)
 {
-    const products = await Product.findAll({
+    const result = await Product.findAndCountAll({
         attributes: GENERAL_ATTRIUTES,
         where: {storeId},
         include: [
@@ -34,7 +34,7 @@ async function fetchProductsOfStore(storeId, page = 1)
         ],
         ...paginationOption(page)
     });
-    return products.map(product => product.toJSON());
+    return reformatFindCountAll(result, page).itemsToJSON();
 }
 
 async function fetchProduct(id){

@@ -33,9 +33,9 @@ const editContacts = async (req, res) => {
 }
 
 const refresh = async (req, res) => {
-    const newToken = await userServices.refresh(req.decodedAuthToken);
-    setAuthTokenCookie(res, newToken);
-    res.send("Refreshed token");
+    const {user, authToken} = await userServices.refresh(req.decodedAuthToken);
+    setAuthTokenCookie(res, authToken);
+    res.json(user);
 }
 
 const expireCookie = async (req, res) => {

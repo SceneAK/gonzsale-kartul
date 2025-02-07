@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'; 
 import tokenAuthServices from './tokenAuthServices.js';
 import databaseInitializePromise from '../database/initialize.js'
-import { ApplicationError, paginationOption } from '../common/index.js';
+import { ApplicationError, paginationOption, reformatFindCountAll } from '../common/index.js';
 import { UniqueConstraintError } from 'sequelize';
 const { User } = await databaseInitializePromise;
 
@@ -29,11 +29,12 @@ async function _fetchUser(id, options)
 async function fetchUsers(requesterId, page = 1, where = {})
 {
     await ensureAdmin(requesterId);
-    return await User.findAll( {
+    const result = await User.findAndCountAll( {
         attributes: SERVE_ATTRIBUTES,
         ...paginationOption(page), 
         where
     });
+    return reformatFindCountAll(result, page);
 }
 
 async function signIn(email, password)
@@ -66,6 +67,7 @@ async function signUp(contactData, password)
         throw err;
     }
 }
+
 function filterOnly(obj, keys)
 {
     for (const key in obj) {
@@ -100,15 +102,16 @@ async function fetchUserRole(userId)
 
 async function refresh(decodedAuthToken)
 {
-    return createAuthToken(decodedAuthToken);
+    const user = await fetchUser(decodedAuthToken.id);
+    return signReturnObject(user);
 }
 
-async function signReturnObject(user)
+function signReturnObject(user)
 {
-    const authToken = await createAuthToken(user);
+    const authToken = createAuthToken(user);
     return {user, authToken};
 }
-async function createAuthToken(user)
+function createAuthToken(user)
 {
     return tokenAuthServices.signPayload({
         id: user.id,

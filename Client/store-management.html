@@ -551,6 +551,10 @@
         .delete-btn:hover {
             background-color: #c82333;
         }
+        .orderIdCopy:hover{
+            cursor: pointer;
+            color: blue;
+        }
 
         /*PAGINATION NEXT/PREVIOUS*/
         .pagination {
@@ -977,7 +981,8 @@
 
         // Load products data
         async function loadProducts() {
-            const products = await product.fetchOwnedProducts();
+            const result = await product.fetchOwnedProducts();
+            const products = result.items;
             const productList = document.getElementById('product-list');
 
             productList.innerHTML = products.map(product => `
@@ -1102,7 +1107,8 @@
             loader.style.display = 'block'; // Show loader
 
             try {
-                const orders = await order.fetchIncomingOrders();
+                const result = await order.fetchIncomingOrders();
+                const orders = result.items;
 
                 orderTableBody.innerHTML = ''; // Clear existing rows
 
@@ -1147,7 +1153,7 @@
 
                     // Check if the order has an items array with details
                     detailCell.innerHTML = `
-                            <div><strong>${order.customerName}'s Order:</strong></div>
+                            <div><strong class="orderIdCopy">${order.customerName}'s Order:</strong></div>
                             <table style="width: 100%; border-collapse: collapse;">
                                 <thead>
                                     <tr style="background: #ff9900; color: #fff;">
@@ -1162,8 +1168,15 @@
                                 </tbody>
                             </table>
                             <div class="transactionDetails" style="max-width: 30%; max-height: 40%;margin: auto;"></div>
+                        <div class="extraOrderDetails" style="margin: auto;"> 
+                            <p>Customer Contacts</p>
+                            <p>${order.customerEmail} || ${order.customerPhone}</p>
+                        </div>
                         `;
-
+                    const title = detailCell.querySelector('strong');
+                    title.addEventListener('click', event => {
+                        copyToClipboard(order.id)
+                    })
                     detailRow.appendChild(detailCell);
                     orderTableBody.appendChild(detailRow);
                 });
@@ -1182,6 +1195,10 @@
                 default:
                     return 'status-pending';
             }
+        }
+        function copyToClipboard(text)
+        {
+            navigator.clipboard.writeText(text)
         }
 
         window.toggleOrderDetails = function (orderId, buttonElement) {

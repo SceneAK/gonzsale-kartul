@@ -34,8 +34,6 @@ The following will contain some notable logic, design decisions/quirks, and bugs
 - verify() authenticates signedCookies.token, then fills the *decodedAuthToken* in req, intended to be run before an operation requiring authentication, throwing an error otherwise
 
 ## Services
-### User
-- Users with NULL passwords are considered guest users. They are users who have put their email for an order, but have yet to register.
 ### Product
 
 ### Order
@@ -45,7 +43,7 @@ The following will contain some notable logic, design decisions/quirks, and bugs
 - The normal checkAuthToken returns the ID or an error. Used for Logins and such
 ### User
 **- Not expicit, but userServices returns signed tokens upon signin/singup. Other services expect this token decoded in req.decodedAuthToken by the verify() middleware**
-- Schema's regex allows passwords and names to have chinese japanese characters, why the heck not?
+- Schema's regex allows passwords and names to have chinese japanese characters, cause why the heck not?
 ### Store
 - As per the schema, storeData expects name, description, bankAccount, bankName. Files expects imageFile, qrImageFile.
 

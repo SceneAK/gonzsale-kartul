@@ -3,7 +3,7 @@ import initializePromise from '../database/initialize.js';
 import orderItemServices from './orderItemServices.js';
 import storeServices from './storeServices.js';
 import transactionServices from './transactionServices.js';
-import { paginationOption } from '../common/pagination.js';
+import { paginationOption, reformatFindCountAll } from '../common/pagination.js';
 const { Order } = await initializePromise;
 
 const ITEMS_AND_TRANSAC = [
@@ -11,6 +11,7 @@ const ITEMS_AND_TRANSAC = [
     orderItemServices.include('serveWithProduct'),
 ];
 const ATTRIBUTES = ['id', 'storeId', 'customerId', 'customerName', 'customerPhone', 'customerEmail', 'createdAt'];
+const order = [['createdAt', 'DESC']]
 
 async function fetchOrderIncludeAll(id)
 {
@@ -36,23 +37,25 @@ async function _fetchOrder(id, options)
 async function fetchIncomingOrders(storeOwnerUserId, page = 1)
 {
     const storeId = await storeServices.fetchStoreIdOfUser(storeOwnerUserId);
-    const orderModels = await Order.findAll({ 
+
+    let result = await Order.findAndCountAll({ 
         include: [
             transactionServices.include('serve'),
             orderItemServices.include('serve')
         ],
         where: { storeId },
         attributes: ATTRIBUTES,
-        ...paginationOption(page)
+        order,
+        ...paginationOption(page, 10)
     });
-
-
-    return orderModels.map(model => {
-        const order = model.toJSON();
+    result = reformatFindCountAll(result, page).itemsToJSON();
+    
+    result.items.forEach(order => {
         includeAditionalFields(order);
         delete order.OrderItems;
-        return order;
     });
+    sortByStatus(result.items);
+    return result;
 }
 function includeAditionalFields(order)
 {
@@ -60,16 +63,22 @@ function includeAditionalFields(order)
     order.total = calculateTotal(order.OrderItems);
     order.numberOfItems = order.OrderItems.length;
 }
+function sortByStatus(orders)
+{
+    const priority = orderItemServices.statusOrder;
+    orders.sort((a, b) => priority.indexOf(a.status) - priority.indexOf(b.status));
+}
 
 async function fetchOrders(customerId, page = 1)
 {
-    const orders = await Order.findAll({ 
+    const result = await Order.findAndCountAll({ 
         where: { customerId }, 
         include: [...ITEMS_AND_TRANSAC, storeServices.include('serveName')],
         attributes: ATTRIBUTES,
-        ...paginationOption(page)
+        order,
+        ...paginationOption(page, 10)
     });
-    return orders.map(order => order.toJSON());
+    return reformatFindCountAll(result, page).itemsToJSON();
 };
 
 async function createOrder(orderItems, customerDetails) // please refactor

@@ -38,10 +38,8 @@ async function reorderProductImages(imageIds, productId)
 
 async function _createProductImages(files, productId, userId, imagesToImageDatas)
 {
-    console.log("ProductImageServices LINE 41")
     const images = await imageServices.createImages(files, userId);
     const imageDatas = images.map(imagesToImageDatas);
-    console.log("ProductimageServices LINE 44")
     const productImageModels = await ProductImage.bulkCreate(imageDatas);
     return productImageModels.map( model => model.toJSON());
 }

@@ -16,16 +16,25 @@ Please sort by importance
 
 ## Integrationn
 .Automatic refresh token
+DONE User Edit Profile
+> Product Edit
 DONE Integrated Order & Guest Orders
 
 # BACKEND
+## Rework pagination
+DONE Make paginated results return a consistent format of max_pages.
+
+## Implement product variants
+
 ## orders
-- Mailing Customers when order status changes, when product gets deleted 
+> My orders integration
+> Mailing Customers when order status changes, when product gets deleted 
 
 ## Request Home page Items (promotional content)
+> Design the system
 
-## Fix
-DONE Transaction Order does not require UserID
+## Preorder specific data
+- Make frontend tell you if it's preorder
 
 ## Re-CAPTCHA
 - Write System
@@ -33,15 +42,13 @@ DONE Transaction Order does not require UserID
 - Checkout Page
 
 ## users
+DONE Admin options in the website itself
 - change password
-
-## Implement product variants
 
 ## Optimize update logic for product variant and product images
 
-## Preorder specific data
-
 ## Refactor
+> order & order item refactor: move the statusOrder to model and link everything (yes the schema too) to it. Then make a function to get the storeId of orderItems, remove completeAndValidate.
 - Rework productImage creation and priority so that whoever uses the service completes the data first (with an exported function) before passing it to productImageServices
 - Custom Error classes extending ApplicationError
 - Move logic that creates circular dependency to OrderManagementServices: orderItemServices.UpdateStatus + orderServices.createOrder()

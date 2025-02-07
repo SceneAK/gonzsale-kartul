@@ -373,8 +373,9 @@
             }
             selectedTab.style.display = "block";
 
-            console.log(categoryName);
-            const products = await product.fetchProducts(categoryName);
+            const result = await product.fetchProducts(categoryName); 
+            console.log(result);
+            const products = result.items;
 
             // Finally, populate the container with the combined (or single) set of items
             populateItems(container, products);

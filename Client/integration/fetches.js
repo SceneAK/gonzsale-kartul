@@ -1,4 +1,4 @@
-const baseUrl = "http://localhost:3000/api";
+const baseUrl = window.location.origin + '/api';
 
 //#region Fetching
 async function request(endpoint, method, body = null, credentials = 'omit', headers = {})
@@ -17,8 +17,8 @@ async function request(endpoint, method, body = null, credentials = 'omit', head
 }
 async function jsonResponse(endpoint, method, body = null, credentials = 'omit', headers = {})
 {
-    const req = await request(endpoint, method, body, credentials,headers)
-    const result = await req.json();
+    const res = await request(endpoint, method, body, credentials, headers)
+    const result = await res.json();
     tryIncludePortAll(result)
     return result;
 }
@@ -26,6 +26,12 @@ async function jsonRequestResponse(endpoint, method, body = null, credentials = 
 {
     return await jsonResponse(endpoint, method, body, credentials, {'Content-Type': 'application/json', ...headers})
 }
+async function jsonRequest(endpoint, method, body = null, credentials = 'omit', headers = {})
+{
+    return await request(endpoint, method, body, credentials,{'Content-Type': 'application/json', ...headers});
+}
+const fetching = {request, jsonRequest, jsonResponse, jsonRequestResponse};
+
 //#region temporary
 function tryIncludePortAll(input, port = '3000')
 {
@@ -74,11 +80,11 @@ async function signUp(name, phone, email, password) {
     return await jsonRequestResponse('/user/signup', 'POST', body, 'include');
 }
 async function editContacts(contacts) {
-    return await request('/user/edit', 'POST', JSON.stringify(contacts), 'include');
+    return await jsonRequest('/user/edit', 'PATCH', JSON.stringify(contacts), 'include');
 }
 async function refresh()
 {
-    return await request('/user/refresh', 'POST', null, 'include');
+    return await jsonResponse('/user/refresh', 'POST', null, 'include');
 }
 async function expireCookie()
 {
@@ -198,6 +204,7 @@ const transaction = {fetchTransaction, createProofTransaction, createCODTransact
 //#endregion
 
 export {
+    fetching,
     user,
     store,
     product,
