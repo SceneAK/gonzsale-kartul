@@ -98,37 +98,39 @@
             margin: 10px 0;
         }
 
-        .item button,
-        .item a {
+        /* Button styles */
+        .item button {
             display: inline-block;
             padding: 8px 12px;
             margin: 5px;
             font-size: 14px;
             font-weight: bold;
             text-align: center;
-            text-decoration: none;
+            border: none;
             border-radius: 4px;
-            transition: background-color 0.2s ease-in-out;
-        }
-
-        .item button {
+            cursor: pointer;
             background-color: #28a745;
             color: white;
-            border: none;
-            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
         }
 
         .item button:hover {
             background-color: #218838;
         }
 
+        /* Link styles (ensures store name is a normal link, not a button) */
         .item a {
-            background-color: #007bff;
-            color: white;
+            color: #818181;
+            text-decoration: none;
+            font-weight: normal;
+            padding: 0;
+            margin: 0;
+            background: none;
+            display: inline;
         }
 
         .item a:hover {
-            background-color: #0056b3;
+            color: #363636;
         }
 
         /* Active class for the selected tablink */
@@ -345,7 +347,7 @@
                 itemDiv.innerHTML = `
             <img src="${firstImg}" alt="${product.name}">
             <p>${product.name}</p>
-            <p class="store-name">Store: ${product.Store.name}</p>
+            <p class="store-name">Store: <a href="display-store.html?id=${product.storeId}">${product.Store.name}</a></p>
             <p>Rp ${product.price.toLocaleString('id-ID')} / ${product.unit}</p>
             <button class="add-to-cart" onclick="event.stopPropagation(); addToCart('${product.id}', '${product.name}', ${product.price}, '${firstImg}', '${product.storeId}', '${product.Store.name}')">Add to Cart</button>
             `;
@@ -373,7 +375,7 @@
             }
             selectedTab.style.display = "block";
 
-            const result = await product.fetchProducts(categoryName); 
+            const result = await product.fetchProducts(categoryName);
             console.log(result);
             const products = result.items;
 

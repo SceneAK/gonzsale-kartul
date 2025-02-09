@@ -2,10 +2,11 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GonzSale - Promotions</title>
     <style>
+        /* Global Styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -43,46 +44,7 @@
             display: block;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* Stacked banners with animation */
-        .promo-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            width: 100%;
-            max-width: 900px;
-            box-sizing: border-box;
-        }
-
-        /* Enlarged banner styling */
-        .promo-banner {
-            position: relative;
-            overflow: hidden;
-            border-radius: 10px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 0.6s ease-out forwards;
-        }
-
-        .promo-banner:nth-child(2) {
-            animation-delay: 0.3s;
-        }
-
-        .promo-banner:nth-child(3) {
-            animation-delay: 0.6s;
-        }
-
+        /* Animation Keyframes */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -95,17 +57,82 @@
             }
         }
 
-        .promo-banner img {
+        /* Promo Grid */
+        .promo-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            width: 100%;
+            max-width: 900px;
+            box-sizing: border-box;
+        }
+
+        /* Promo Banner with Image Slider */
+        .promo-banner {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* Stagger animation delays */
+        .promo-banner:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .promo-banner:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        /* Image Slider Container */
+        .image-slider {
+            position: relative;
+            width: 100%;
+        }
+
+        /* Slider Image */
+        .slider-image {
             width: 100%;
             height: auto;
             border-radius: 10px;
-            transition: transform 0.3s ease-in-out;
+            transition: opacity 0.5s ease-in-out;
         }
 
-        .promo-banner:hover img {
-            transform: scale(1.05);
+        /* Slider Buttons */
+        .prev-btn,
+        .next-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 2rem;
+            padding: 10px;
+            border-radius: 5px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
         }
 
+        .prev-btn:hover,
+        .next-btn:hover {
+            opacity: 1;
+        }
+
+        .prev-btn {
+            left: 10px;
+        }
+
+        .next-btn {
+            right: 10px;
+        }
+
+        /* Promo Text & Button */
         .promo-text {
             position: absolute;
             bottom: 20px;
@@ -116,6 +143,18 @@
             border-radius: 5px;
             font-size: 1.5rem;
             max-width: 80%;
+        }
+
+        .promo-text h2 {
+            margin: 0;
+        }
+
+        /* Seller Subheading */
+        .seller-name {
+            font-size: 1rem;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            color: #ccc;
         }
 
         .shop-btn {
@@ -135,6 +174,7 @@
             background-color: #e08900;
         }
 
+        /* Responsive Adjustments */
         @media (max-width: 768px) {
             .content-wrapper {
                 padding: 10px;
@@ -153,53 +193,151 @@
                 font-size: 1rem;
                 padding: 8px 12px;
             }
+
+            .seller-name {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 
-<header>
-    <div id="header"></div>
-</header>
-
 <body>
+    <header>
+        <div id="header"></div>
+    </header>
     <div class="content-wrapper">
         <!-- Grand Opening Banner -->
         <div class="big-banner">
-            <img src="assets/images/grandopening.jpg" alt="Grand Opening">
+            <img src="assets/images/grandopening.jpg" alt="Grand Opening" />
         </div>
-
         <h1>Exclusive Promotions</h1>
-
-        <!-- Stacked Promo Banners with Animations -->
-        <div class="promo-grid">
-            <div class="promo-banner">
-                <img src="assets/images/banner1.jpg" alt="Promo 1">
-                <div class="promo-text">
-                    <h2>A Dopey Delight!</h2>
-                    <a href="product-page.html" class="shop-btn">SHOP NOW</a>
-                </div>
-            </div>
-
-            <div class="promo-banner">
-                <img src="assets/images/banner2.jpg" alt="Promo 2">
-                <div class="promo-text">
-                    <h2>Limited Edition Merch</h2>
-                    <a href="product-page.html" class="shop-btn">SHOP NOW</a>
-                </div>
-            </div>
-
-            <div class="promo-banner">
-                <img src="assets/images/banner3.jpg" alt="Promo 3">
-                <div class="promo-text">
-                    <h2>Exclusive School Gear</h2>
-                    <a href="product-page.html" class="shop-btn">SHOP NOW</a>
-                </div>
-            </div>
-        </div>
+        <!-- Container for dynamically generated promo banners -->
+        <div class="promo-grid" id="promoGrid"></div>
     </div>
-
     <div id="footer"></div>
+    <!-- JavaScript to dynamically generate banners and set up sliders -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Step 1. Define promo info for each store.
+            const storePromos = [
+                {
+                    storeName: "store1", // used in the image file name and seller subheading
+                    promoText: "Alvin Kalcer Abis!!!",
+                    storeUrl: "store1.html",
+                    bannerCount: 4  // store1 has 4 banner images
+                },
+                {
+                    storeName: "store2",
+                    promoText: "Totebag EL PASO",
+                    storeUrl: "store2.html",
+                    bannerCount: 1 // no carousel buttons for a single banner image
+                },
+                {
+                    storeName: "store3",
+                    promoText: "Foods and Stickers",
+                    storeUrl: "store3.html",
+                    bannerCount: 2
+                }
+            ];
 
+            // Step 2. Select the promo grid container.
+            const promoGrid = document.getElementById("promoGrid");
+
+            // Step 3. Loop through each store and create the banner HTML.
+            storePromos.forEach((store) => {
+                // Create the outer promo banner container.
+                const bannerDiv = document.createElement("div");
+                bannerDiv.classList.add("promo-banner");
+
+                // Create the image slider container.
+                const sliderDiv = document.createElement("div");
+                sliderDiv.classList.add("image-slider");
+
+                // Only create carousel buttons if more than one banner exists.
+                let prevBtn = null;
+                let nextBtn = null;
+                if (store.bannerCount > 1) {
+                    // Create the Previous button.
+                    prevBtn = document.createElement("button");
+                    prevBtn.classList.add("prev-btn");
+                    prevBtn.innerHTML = "&#10094;";
+                    sliderDiv.appendChild(prevBtn);
+                }
+
+                // Create the slider image element and set its initial source.
+                const imageElement = document.createElement("img");
+                imageElement.classList.add("slider-image");
+                imageElement.src = `assets/images/banner_${store.storeName}_1.jpg`;
+                sliderDiv.appendChild(imageElement);
+
+                if (store.bannerCount > 1) {
+                    // Create the Next button.
+                    nextBtn = document.createElement("button");
+                    nextBtn.classList.add("next-btn");
+                    nextBtn.innerHTML = "&#10095;";
+                    sliderDiv.appendChild(nextBtn);
+                }
+
+                // Append the slider container to the promo banner.
+                bannerDiv.appendChild(sliderDiv);
+
+                // Create the promo text container.
+                const promoTextDiv = document.createElement("div");
+                promoTextDiv.classList.add("promo-text");
+
+                // Create and add the promo heading.
+                const heading = document.createElement("h2");
+                heading.textContent = store.promoText;
+                promoTextDiv.appendChild(heading);
+
+                // Create and add the seller subheading.
+                const sellerName = document.createElement("p");
+                sellerName.classList.add("seller-name");
+                sellerName.textContent = store.storeName;
+                promoTextDiv.appendChild(sellerName);
+
+                // Create and add the shop link.
+                const shopLink = document.createElement("a");
+                shopLink.classList.add("shop-btn");
+                shopLink.href = store.storeUrl;
+                shopLink.textContent = "SHOP NOW";
+                promoTextDiv.appendChild(shopLink);
+
+                // Append the promo text container to the banner.
+                bannerDiv.appendChild(promoTextDiv);
+
+                // Append the entire banner to the promo grid.
+                promoGrid.appendChild(bannerDiv);
+
+                // Step 4. Build an array of image URLs for the slider.
+                const images = [];
+                for (let i = 1; i <= store.bannerCount; i++) {
+                    images.push(`assets/images/banner_${store.storeName}_${i}.jpg`);
+                }
+
+                // If there is more than one image, set up carousel functionality.
+                if (images.length > 1) {
+                    let currentIndex = 0;
+                    function updateImage(newIndex) {
+                        imageElement.style.opacity = 0;
+                        setTimeout(() => {
+                            imageElement.src = images[newIndex];
+                            imageElement.style.opacity = 1;
+                        }, 300);
+                    }
+                    nextBtn.addEventListener("click", function () {
+                        currentIndex = (currentIndex + 1) % images.length;
+                        updateImage(currentIndex);
+                    });
+                    prevBtn.addEventListener("click", function () {
+                        currentIndex = (currentIndex - 1 + images.length) % images.length;
+                        updateImage(currentIndex);
+                    });
+                }
+            });
+        });
+    </script>
+    <!-- Other scripts (if any) -->
     <script type="module" src="integration/uiManagement.js" defer></script>
 </body>
 

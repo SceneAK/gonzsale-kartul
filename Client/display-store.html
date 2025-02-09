@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Store Information</title>
+    <style>
+        /* Revised CSS */
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #eaeaea;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .store-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .store-img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            object-fit: cover;
+        }
+
+        .store-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .store-description {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .products-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .products-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+
+        .product-item h3 {
+            margin: 0 0 5px;
+            font-size: 20px;
+        }
+
+        .product-item p {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .product-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .product-item img {
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header"></div>
+    <div class="store-container">
+        <!-- Here we expect the store API to return an object with a 'name', 'description',
+         and an associated 'image' object (with a 'url' property) -->
+        <img id="store-img" class="store-img" src="" alt="Store Image">
+        <h1 id="store-name" class="store-name"></h1>
+        <p id="store-description" class="store-description"></p>
+    </div>
+    <div class="products-container">
+        <h2>Products</h2>
+        <div id="product-list"></div>
+    </div>
+    <div id="footer"></div>
+
+    <script type="module" src="integration/uiManagement.js"></script>
+    <script type="module">
+        import { store, product } from './fetches.js';
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const storeId = urlParams.get('id');
+
+            if (!storeId) {
+                alert('No store ID provided.');
+                return;
+            }
+
+            try {
+                // Fetch store details using the fetchStore() function from fetches.js.
+                const storeInfo = await store.fetchStore(storeId);
+                // Set the image source – if the API returns an associated image via 'image', use its url.
+                document.getElementById('store-img').src = storeInfo.image && storeInfo.image.url
+                    ? storeInfo.image.url
+                    : 'placeholder.jpg';
+                // Set store name and description.
+                document.getElementById('store-name').textContent = storeInfo.name;
+                document.getElementById('store-description').textContent = storeInfo.description;
+
+                // Fetch products for this store. We assume your API supports filtering by store_id.
+                const productsResult = await product.fetchProducts('all', { store_id: storeId });
+                // Depending on your API, products may be returned directly as an array or wrapped inside an 'items' property.
+                const products = Array.isArray(productsResult) ? productsResult : productsResult.items;
+                const productList = document.getElementById('product-list');
+
+                if (!products || products.length === 0) {
+                    productList.innerHTML = '<p>No products available.</p>';
+                } else {
+                    productList.innerHTML = products.map(prod => `
+            <div class="product-item">
+              <img src="${prod.ProductImages && prod.ProductImages.length > 0 ? prod.ProductImages[0].url : 'placeholder.jpg'}" alt="${prod.name}">
+              <div>
+                <h3>${prod.name}</h3>
+                <p>Rp ${prod.price.toLocaleString('id-ID')}</p>
+              </div>
+            </div>
+          `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading store details:', error);
+            }
+        });
+    </script>
+</body>
+
+</html>
