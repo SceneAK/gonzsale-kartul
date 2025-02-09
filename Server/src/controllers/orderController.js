@@ -13,7 +13,7 @@ const fetchIncomingOrders = async (req, res) => {
     const { page, ...additionalWhere} = req.query ? req.query : {};
     const result = await orderServices.fetchIncomingOrders(req.decodedAuthToken.id, page, additionalWhere)
     result.items.forEach( order => transformOrder(order))
-    res.json();
+    res.json(result);
 }
 
 const fetchOrders = async (req, res) => {

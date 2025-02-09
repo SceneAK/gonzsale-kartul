@@ -2,8 +2,8 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Seller Management Hub</title>
     <style>
         body {
@@ -53,7 +53,6 @@
             color: white;
         }
 
-
         /* Main Content */
         .content {
             padding: 20px;
@@ -71,7 +70,7 @@
             display: block;
         }
 
-        /*DASHBOARD STYLING*/
+        /* DASHBOARD STYLING */
         .dashboard-metrics {
             display: flex;
             gap: 20px;
@@ -80,7 +79,6 @@
 
         .dashboard-metric {
             flex: 1;
-            /* Each card takes equal width */
             background-color: #fff;
             border-radius: 8px;
             padding: 20px;
@@ -100,7 +98,7 @@
             font-weight: bold;
         }
 
-        /*STORE STYLING*/
+        /* STORE STYLING */
         .store-details {
             background-color: #fff;
             padding: 20px;
@@ -147,7 +145,6 @@
             align-items: center;
             padding: 40px;
             background: #f5f5f5;
-            /* light background to contrast the form */
             min-height: 70vh;
         }
 
@@ -219,7 +216,7 @@
             background-color: #e68a00;
         }
 
-        /*PRODUCT TAB STYLES*/
+        /* PRODUCT TAB STYLES */
         .product-table {
             width: 100%;
             border-collapse: collapse;
@@ -316,26 +313,6 @@
             color: white;
         }
 
-        /* Modal Wrapper */
-        .modal {
-            display: none;
-            position: fixed;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 500px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            overflow: hidden;
-        }
-
-        /* Active State to Display Modal */
-        .modal.active {
-            display: block;
-        }
-
         /* Modal Content Wrapper */
         .add-product-form-container {
             padding: 30px;
@@ -387,7 +364,7 @@
         .add-product-form input[type="number"]:focus,
         .add-product-form textarea:focus,
         .add-product-form select:focus {
-            border-color: #4CAF50;
+            border-color: #4caf50;
             box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
             outline: none;
         }
@@ -429,7 +406,7 @@
         }
 
         .add-product-form-buttons button[type="submit"] {
-            background-color: #4CAF50;
+            background-color: #4caf50;
             color: white;
         }
 
@@ -439,12 +416,9 @@
 
         @media (min-width: 768px) {
             .modal {
-                /* Ensure the modal fits within the viewport */
                 max-height: 90vh;
                 overflow-y: auto;
-                /* Optionally, adjust transform so it sits a bit higher */
                 transform: translate(-50%, -40%);
-                /* Reduce horizontal padding if needed */
                 width: 95%;
             }
 
@@ -452,7 +426,6 @@
                 padding: 20px;
             }
 
-            /* Optionally, reduce gap between form fields */
             .add-product-form {
                 gap: 10px;
             }
@@ -463,7 +436,6 @@
                 width: 500px;
             }
         }
-
 
         /* ORDER TABLE STYLES */
         table {
@@ -479,10 +451,8 @@
         th,
         td {
             padding: 15px;
-            /* Consistent spacing for cells */
             text-align: center;
             border: 1px solid #ddd;
-            /* Light border for separation */
         }
 
         th {
@@ -551,12 +521,13 @@
         .delete-btn:hover {
             background-color: #c82333;
         }
-        .orderIdCopy:hover{
+
+        .orderIdCopy:hover {
             cursor: pointer;
             color: blue;
         }
 
-        /*PAGINATION NEXT/PREVIOUS*/
+        /* PAGINATION NEXT/PREVIOUS */
         .pagination {
             display: flex;
             justify-content: center;
@@ -633,11 +604,11 @@
 
 <body>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginDetails = localStorage.getItem('loginDetail');
+        document.addEventListener("DOMContentLoaded", () => {
+            const loginDetails = localStorage.getItem("loginDetail");
             if (!loginDetails) {
                 // Select the content wrapper
-                const contentWrapper = document.querySelector('.container');
+                const contentWrapper = document.querySelector(".container");
 
                 // Replace its content
                 contentWrapper.innerHTML = `
@@ -652,14 +623,13 @@
                     `;
 
                 // Optional: Style the wrapper to center the content
-                contentWrapper.style.display = 'flex';
-                contentWrapper.style.justifyContent = 'center';
-                contentWrapper.style.alignItems = 'center';
-                contentWrapper.style.height = '100%';
+                contentWrapper.style.display = "flex";
+                contentWrapper.style.justifyContent = "center";
+                contentWrapper.style.alignItems = "center";
+                contentWrapper.style.height = "100%";
             }
         });
     </script>
-
 
     <div id="header">Header Content Here</div>
 
@@ -698,7 +668,6 @@
                 </div>
             </div>
 
-
             <!-- Products Section -->
             <div id="products" class="content-section">
                 <h1>Manage Products</h1>
@@ -720,106 +689,6 @@
                         <!-- Existing Products Will Be Populated Dynamically -->
                     </tbody>
                 </table>
-
-                <!-- Modal for Add Product -->
-                <div class="modal" id="add-product-modal">
-                    <div class="add-product-form-container">
-                        <h1>Add New Product</h1>
-                        <form id="add-product-form" class="add-product-form">
-                            <label for="product-name">Nama Produk:</label>
-                            <input type="text" id="product-name" name="name" placeholder="Masukkan nama produk"
-                                required />
-
-                            <label for="product-category">Kategori:</label>
-                            <select id="product-category" name="category" required>
-                                <option value="" disabled selected>Pilih kategori</option>
-                                <option value="Shirts">Baju</option>
-                                <option value="Pants">Celana</option>
-                                <option value="Accessories">Aksesoris</option>
-                                <option value="Food">Makanan</option>
-                                <option value="Drinks">Minuman</option>
-                            </select>
-
-                            <label for="product-description">Deskripsi:</label>
-                            <textarea id="product-description" name="description" placeholder="Deskripsi produk"
-                                required></textarea>
-
-                            <label for="product-price">Harga & Unit</label>
-                            <div>
-                                <input type="number" id="product-price" name="price" placeholder="Masukkan harga"
-                                    required style="padding-right: 0%; width: 70%;" />
-                                <input type="text" id="product-unit" name="unit" value="Unit" placeholder="Satuan..."
-                                    required style="width: 20%;" />
-                            </div>
-
-                            <label for="product-images">Tambah Gambar:</label>
-                            <input type="file" id="product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple
-                                required />
-                            <div class="image-preview-container" id="image-preview-container"></div>
-
-                            <label for="product-availability">Availability:</label>
-                            <select id="product-availability" name="availability" required>
-                                <option value="AVAILABLE">Available</option>
-                                <option value="UNAVAILABLE">Unavailable</option>
-                                <option value="PREORDER">Pre-Order</option>
-                            </select>
-
-                            <div class="add-product-form-buttons">
-                                <button type="button" onclick="closeAddProductModal()">Cancel</button>
-                                <button type="submit">Tambah Produk</button>
-                            </div>
-                        </form>
-                    </div>
-                    <!-- Edit Product Modal -->
-                    <div class="modal" id="edit-product-modal">
-                        <div class="add-product-form-container">
-                            <h1>Edit Product</h1>
-                            <form id="edit-product-form" class="add-product-form">
-                                <input type="hidden" id="edit-product-id" name="product_id">
-
-                                <label for="edit-product-name">Product Name:</label>
-                                <input type="text" id="edit-product-name" name="name" required>
-
-                                <label for="edit-product-category">Category:</label>
-                                <select id="edit-product-category" name="category" required>
-                                    <option value="Shirts">Shirts</option>
-                                    <option value="Pants">Pants</option>
-                                    <option value="Accessories">Accessories</option>
-                                    <option value="Food">Food</option>
-                                    <option value="Drinks">Drinks</option>
-                                </select>
-
-                                <label for="edit-product-description">Description:</label>
-                                <textarea id="edit-product-description" name="description" required></textarea>
-
-                                <label for="edit-product-price">Price & Unit</label>
-                                <div>
-                                    <input type="number" id="edit-product-price" name="price" required
-                                        style="width: 70%;">
-                                    <input type="text" id="edit-product-unit" name="unit" required style="width: 20%;">
-                                </div>
-
-                                <label for="edit-product-images">Change Image:</label>
-                                <input type="file" id="edit-product-images" name="images" accept=".jpg,.jpeg,.png,.gif"
-                                    multiple>
-                                <div class="image-preview-container" id="edit-image-preview-container"></div>
-
-                                <label for="edit-product-availability">Availability:</label>
-                                <select id="edit-product-availability" name="availability" required>
-                                    <option value="AVAILABLE">Available</option>
-                                    <option value="UNAVAILABLE">Unavailable</option>
-                                    <option value="PREORDER">Pre-Order</option>
-                                </select>
-
-                                <div class="add-product-form-buttons">
-                                    <button type="button" onclick="closeEditProductModal()">Cancel</button>
-                                    <button type="submit">Save Changes</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                </div>
             </div>
 
             <!-- Orders Section -->
@@ -856,6 +725,100 @@
 
     <div id="footer"></div>
 
+    <!-- Modal for Add Product (Separated as a sibling) -->
+    <div class="modal" id="add-product-modal">
+        <div class="add-product-form-container">
+            <h1>Add New Product</h1>
+            <form id="add-product-form" class="add-product-form">
+                <label for="product-name">Nama Produk:</label>
+                <input type="text" id="product-name" name="name" placeholder="Masukkan nama produk" required />
+
+                <label for="product-category">Kategori:</label>
+                <select id="product-category" name="category" required>
+                    <option value="" disabled selected>Pilih kategori</option>
+                    <option value="Shirts">Baju</option>
+                    <option value="Pants">Celana</option>
+                    <option value="Accessories">Aksesoris</option>
+                    <option value="Food">Makanan</option>
+                    <option value="Drinks">Minuman</option>
+                </select>
+
+                <label for="product-description">Deskripsi:</label>
+                <textarea id="product-description" name="description" placeholder="Deskripsi produk"
+                    required></textarea>
+
+                <label for="product-price">Harga & Unit</label>
+                <div>
+                    <input type="number" id="product-price" name="price" placeholder="Masukkan harga" required
+                        style="padding-right: 0%; width: 70%;" />
+                    <input type="text" id="product-unit" name="unit" value="Unit" placeholder="Satuan..." required
+                        style="width: 20%;" />
+                </div>
+
+                <label for="product-images">Tambah Gambar:</label>
+                <input type="file" id="product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple required />
+                <div class="image-preview-container" id="image-preview-container"></div>
+
+                <label for="product-availability">Availability:</label>
+                <select id="product-availability" name="availability" required>
+                    <option value="AVAILABLE">Available</option>
+                    <option value="UNAVAILABLE">Unavailable</option>
+                    <option value="PREORDER">Pre-Order</option>
+                </select>
+
+                <div class="add-product-form-buttons">
+                    <button type="button" onclick="closeAddProductModal()">Cancel</button>
+                    <button type="submit">Tambah Produk</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Edit Product (Separated as a sibling) -->
+    <div class="modal" id="edit-product-modal">
+        <div class="add-product-form-container">
+            <h1>Edit Product</h1>
+            <form id="edit-product-form" class="add-product-form">
+                <label for="edit-product-name">Product Name:</label>
+                <input type="text" id="edit-product-name" name="name" required>
+
+                <label for="edit-product-category">Category:</label>
+                <select id="edit-product-category" name="category" required>
+                    <option value="Shirts">Shirts</option>
+                    <option value="Pants">Pants</option>
+                    <option value="Accessories">Accessories</option>
+                    <option value="Food">Food</option>
+                    <option value="Drinks">Drinks</option>
+                </select>
+
+                <label for="edit-product-description">Description:</label>
+                <textarea id="edit-product-description" name="description" required></textarea>
+
+                <label for="edit-product-price">Price & Unit</label>
+                <div>
+                    <input type="number" id="edit-product-price" name="price" required style="width: 70%;">
+                    <input type="text" id="edit-product-unit" name="unit" required style="width: 20%;">
+                </div>
+
+                <label for="edit-product-images">Change Image:</label>
+                <input type="file" id="edit-product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple>
+                <div class="image-preview-container" id="edit-image-preview-container"></div>
+
+                <label for="edit-product-availability">Availability:</label>
+                <select id="edit-product-availability" name="availability" required>
+                    <option value="AVAILABLE">Available</option>
+                    <option value="UNAVAILABLE">Unavailable</option>
+                    <option value="PREORDER">Pre-Order</option>
+                </select>
+
+                <div class="add-product-form-buttons">
+                    <button type="button" onclick="closeEditProductModal()">Cancel</button>
+                    <button type="submit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script type="module" defer>
         import { mockApi } from './frontendTest/mockApi.js'
         import { store, product, order, transaction } from './integration/fetches.js'
@@ -863,51 +826,50 @@
         // Hash-based navigation
         document.querySelectorAll('.menu-link').forEach(link => {
             link.addEventListener('click', function () {
-                document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
-                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'))
+                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'))
 
-                this.classList.add('active');
-                const sectionId = this.getAttribute('href').substring(1);
-                document.getElementById(sectionId).classList.add('active');
+                this.classList.add('active')
+                const sectionId = this.getAttribute('href').substring(1)
+                document.getElementById(sectionId).classList.add('active')
 
                 if (sectionId === 'orders') {
-                    loadOrders(); // Load orders when the Orders section is active
+                    loadOrders() // Load orders when the Orders section is active
                 }
-            });
-        });
-
+            })
+        })
 
         // Load store data
         async function loadStore() {
-            const storeContainer = document.getElementById("store-container");
+            const storeContainer = document.getElementById("store-container")
 
             try {
                 // Fetch the user's store
-                const userStore = await store.fetchOwnedStore();
+                const userStore = await store.fetchOwnedStore()
 
                 if (!userStore) {
                     // No store exists: Show "Create Store" form
-                    const user = JSON.parse(localStorage.getItem('loginDetail'));
+                    const user = JSON.parse(localStorage.getItem('loginDetail'))
                     if (user.role == 'STORE_MANAGER') {
-                        storeContainer.innerHTML = getCreateStoreHtml();
+                        storeContainer.innerHTML = getCreateStoreHtml()
                         // Handle "Create Store" form submission
                         document.getElementById("create-store-form").addEventListener("submit", async function (event) {
-                            event.preventDefault();
+                            event.preventDefault()
 
-                            const formData = new FormData(this);
+                            const formData = new FormData(this)
 
                             try {
-                                const response = await store.createStore(formData);
-                                if (!response.ok) throw new Error("Failed to create store");
-                                alert("Store created successfully!");
-                                loadStore(); // Reload store data
+                                const response = await store.createStore(formData)
+                                if (!response.ok) throw new Error("Failed to create store")
+                                alert("Store created successfully!")
+                                loadStore() // Reload store data
                             } catch (error) {
-                                console.error("Error creating store:", error);
-                                alert("There was an error creating the store. Please try again.");
+                                console.error("Error creating store:", error)
+                                alert("There was an error creating the store. Please try again.")
                             }
-                        });
+                        })
                     } else {
-                        storeContainer.innerHTML = "Contact Admins to be granted Store Manager Role";
+                        storeContainer.innerHTML = "Contact Admins to be granted Store Manager Role"
                     }
                 } else {
                     // Store exists: Show store details
@@ -920,13 +882,14 @@
                         <p><strong>Bank Name:</strong> ${userStore.bankName}</p>
                         <button onclick="editStore()">Edit Store</button>
                     </div>
-                `;
+                `
                 }
             } catch (error) {
-                console.error("Error loading store:", error);
-                storeContainer.innerHTML = `<p>Failed to load store data. Please try again later.</p>`;
+                console.error("Error loading store:", error)
+                storeContainer.innerHTML = `<p>Failed to load store data. Please try again later.</p>`
             }
         }
+
         function getCreateStoreHtml() {
             return `
     <div class="form-wrapper">
@@ -962,169 +925,177 @@
         </form>
       </div>
     </div>
-  `;
+  `
         }
 
         // Placeholder function for editing store
         function editStore() {
-            alert("Edit store functionality coming soon!");
+            alert("Edit store functionality coming soon!")
         }
 
         // Initialize the Store tab on page load
         document.addEventListener("DOMContentLoaded", () => {
-            const hash = window.location.hash.substring(1);
+            const hash = window.location.hash.substring(1)
             if (hash === "store") {
-                loadStore();
+                loadStore()
             }
-        });
-
+        })
 
         // Load products data
         async function loadProducts() {
-            const result = await product.fetchOwnedProducts();
-            const products = result.items;
-            const productList = document.getElementById('product-list');
+            const result = await product.fetchOwnedProducts()
+            const products = result.items
+            const productList = document.getElementById('product-list')
 
-            productList.innerHTML = products.map(product => `
+            productList.innerHTML = products
+                .map(
+                    product => `
         <tr>
             <td>${product.name}</td>
             <td>${product.category}</td>
             <td>Rp ${product.price.toLocaleString('id-ID')}</td>
             <td>
-                <button class="edit-btn" onclick="openEditProductModal('${product.product_id}')">Edit</button>
-                <button class="delete-btn" onclick="deleteProduct('${product.product_id}')">Delete</button>
+                <button class="edit-btn" onclick="openEditProductModal('${product.id}')">Edit</button>
+                <button class="delete-btn" onclick="deleteProduct('${product.id}')">Delete</button>
             </td>
         </tr>
-    `).join('');
+    `
+                )
+                .join('')
         }
 
         document.addEventListener("DOMContentLoaded", () => {
             // Open Add Product Modal
             window.openAddProductModal = function () {
-                document.getElementById('add-product-modal').classList.add('active');
-            };
+                document.getElementById('add-product-modal').classList.add('active')
+            }
 
             // Close Add Product Modal
             window.closeAddProductModal = function () {
-                document.getElementById('add-product-modal').classList.remove('active');
-            };
+                document.getElementById('add-product-modal').classList.remove('active')
+            }
 
-            document.addEventListener("click", (event) => {
-                const modalContent = document.querySelector(".add-product-form-container");
+            document.addEventListener("click", event => {
+                const modalContent = document.querySelector(".add-product-form-container")
                 if (modalContent.classList.contains("active") && !modalContent.contains(event.target)) {
-                    closeAddProductModal();
+                    closeAddProductModal()
                 }
-            });
+            })
 
-            // Image Preview
+            // Image Preview for Add Product Modal
             document.getElementById('product-images').addEventListener('change', function () {
-                const previewContainer = document.getElementById('image-preview-container');
-                previewContainer.innerHTML = ""; // Clear existing previews
+                const previewContainer = document.getElementById('image-preview-container')
+                previewContainer.innerHTML = "" // Clear existing previews
 
-                Array.from(this.files).forEach((file) => {
+                Array.from(this.files).forEach(file => {
                     if (file.type.match("image.*")) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.classList.add('image-preview');
-                            previewContainer.appendChild(img);
-                        };
-                        reader.readAsDataURL(file);
+                        const reader = new FileReader()
+                        reader.onload = e => {
+                            const img = document.createElement('img')
+                            img.src = e.target.result
+                            img.classList.add('image-preview')
+                            previewContainer.appendChild(img)
+                        }
+                        reader.readAsDataURL(file)
                     }
-                });
-            });
+                })
+            })
 
             // Handle Add Product Form Submission
             document.getElementById('add-product-form').addEventListener('submit', async function (event) {
-                event.preventDefault();
-                const formData = new FormData(this);
+                event.preventDefault()
+                const formData = new FormData(this)
 
                 try {
                     const response = await product.createProduct(formData)
-                    this.reset(); // Clear the form
-                    document.getElementById('image-preview-container').innerHTML = ""; // Clear previews
-                    closeAddProductModal();
-                    loadProducts(); // Reload the products list
+                    this.reset() // Clear the form
+                    document.getElementById('image-preview-container').innerHTML = "" // Clear previews
+                    closeAddProductModal()
+                    loadProducts() // Reload the products list
                 } catch (error) {
-                    console.error("Error adding product:", error);
-                    alert("There was an error adding the product. Please try again.");
+                    console.error("Error adding product:", error)
+                    alert("There was an error adding the product. Please try again.")
                 }
-            });
-        });
+            })
+        })
 
+        let editingProductId
         // Open Edit Product Modal
         window.openEditProductModal = async function (productId) {
-            const productDetails = await product.getProduct(productId);
+            const productDetails = await product.fetchProduct(productId)
+            editingProductId = productId
 
-            document.getElementById('edit-product-id').value = productId;
-            document.getElementById('edit-product-name').value = productDetails.product_name;
-            document.getElementById('edit-product-category').value = productDetails.product_category;
-            document.getElementById('edit-product-description').value = productDetails.product_description;
-            document.getElementById('edit-product-price').value = productDetails.product_price;
-            document.getElementById('edit-product-unit').value = productDetails.product_unit;
-            document.getElementById('edit-product-availability').value = productDetails.product_canOrder;
+            document.getElementById('edit-product-name').value = productDetails.name
+            document.getElementById('edit-product-category').value = productDetails.category
+            document.getElementById('edit-product-description').value = productDetails.description
+            document.getElementById('edit-product-price').value = productDetails.price
+            document.getElementById('edit-product-unit').value = productDetails.unit
+            document.getElementById('edit-product-availability').value = productDetails.availability
 
-            // Load images into preview
-            const previewContainer = document.getElementById('edit-image-preview-container');
-            previewContainer.innerHTML = ""; // Clear previous previews
-            productDetails.product_imgSrc.forEach(src => {
-                const img = document.createElement('img');
-                img.src = src;
-                img.classList.add('image-preview');
-                previewContainer.appendChild(img);
-            });
+            // Load images into preview for Edit Product Modal
+            const previewContainer = document.getElementById('edit-image-preview-container')
+            previewContainer.innerHTML = "" // Clear previous previews
+            productDetails.ProductImages?.forEach(src => {
+                const img = document.createElement('img')
+                img.src = src.url
+                img.classList.add('image-preview')
+                previewContainer.appendChild(img)
+            })
 
-            // Show the modal
-            document.getElementById('edit-product-modal').classList.add('active');
-        };
+            // Show the edit modal
+            document.getElementById('edit-product-modal').classList.add('active')
+
+            console.log(productDetails)
+        }
 
         // Close Edit Product Modal
         window.closeEditProductModal = function () {
-            document.getElementById('edit-product-modal').classList.remove('active');
-        };
+            document.getElementById('edit-product-modal').classList.remove('active')
+        }
 
         document.getElementById('edit-product-form').addEventListener('submit', async function (event) {
-            event.preventDefault();
+            event.preventDefault()
 
-            const productId = document.getElementById('edit-product-id').value;
-            const formData = new FormData(this);
+            const formData = new FormData(this)
 
             try {
-                await product.editProduct(formData, productId);
-                closeEditProductModal();
-                loadProducts(); // Reload the product list
+                await product.editProduct(formData, editingProductId)
+                closeEditProductModal()
+                loadProducts() // Reload the product list
             } catch (error) {
-                console.error("Error updating product:", error);
-                alert("Failed to update the product. Please try again.");
+                console.error("Error updating product:", error)
+                alert("Failed to update the product. Please try again.")
             }
-        });
+        })
 
         // Load orders data
         async function loadOrders() {
-            const orderTableBody = document.getElementById('order-table-body');
-            const loader = document.getElementById('loader');
-            loader.style.display = 'block'; // Show loader
+            const orderTableBody = document.getElementById('order-table-body')
+            const loader = document.getElementById('loader')
+            loader.style.display = 'block' // Show loader
 
             try {
-                const result = await order.fetchIncomingOrders();
-                const orders = result.items;
+                const result = await order.fetchIncomingOrders()
+                const orders = result.items
 
-                orderTableBody.innerHTML = ''; // Clear existing rows
+                orderTableBody.innerHTML = '' // Clear existing rows
 
                 orders.forEach(order => {
-                    const createdAt = new Date(order.createdAt);
-                    const transactionImage = order.Transactions.length > 0 ? `Payment ${order.Transactions[0].method.toLowerCase()}` : 'Missing';
+                    const createdAt = new Date(order.createdAt)
+                    const transactionImage =
+                        order.Transactions.length > 0
+                            ? `Payment ${order.Transactions[0].method.toLowerCase()}`
+                            : 'Missing'
 
                     // Create the main order row
-                    const row = document.createElement('tr');
+                    const row = document.createElement('tr')
                     row.innerHTML = `
                         <td>${order.customerName}</td>
                         <td>${order.numberOfItems}</td>
                         <td>${createdAt.toLocaleDateString()}</td>
                         <td>${transactionImage}</td>
                         <td>
-                            ${(order.Transactions.length > 0 && order.Transactions[0].method === 'PROOF-BASED')
+                            ${order.Transactions.length > 0 && order.Transactions[0].method === 'PROOF-BASED'
                             ? `<button class="action-btn" onclick="openTransactionImage('${order.Transactions[0].id}')">View Image</button>`
                             : 'N/A'
                         }
@@ -1137,21 +1108,20 @@
                                 Expand
                             </button>
                         </td>
-                    `;
+                    `
 
-                    orderTableBody.appendChild(row);
+                    orderTableBody.appendChild(row)
 
                     // Create a hidden details row that will be toggled
-                    const detailRow = document.createElement('tr');
-                    detailRow.style.display = 'none';
-                    detailRow.classList.add('order-details');
-                    detailRow.id = 'details-' + order.id;
+                    const detailRow = document.createElement('tr')
+                    detailRow.style.display = 'none'
+                    detailRow.classList.add('order-details')
+                    detailRow.id = 'details-' + order.id
 
-                    const detailCell = document.createElement('td');
-                    detailCell.colSpan = 7; // Spans across all table columns
-                    detailCell.style = 'width: 100%;';
+                    const detailCell = document.createElement('td')
+                    detailCell.colSpan = 7
+                    detailCell.style = 'width: 100%;'
 
-                    // Check if the order has an items array with details
                     detailCell.innerHTML = `
                             <div><strong class="orderIdCopy">${order.customerName}'s Order:</strong></div>
                             <table style="width: 100%; border-collapse: collapse;">
@@ -1168,59 +1138,60 @@
                                 </tbody>
                             </table>
                             <div class="transactionDetails" style="max-width: 30%; max-height: 40%;margin: auto;"></div>
-                        <div class="extraOrderDetails" style="margin: auto;"> 
-                            <p>Customer Contacts</p>
-                            <p>${order.customerEmail} || ${order.customerPhone}</p>
-                        </div>
-                        `;
-                    const title = detailCell.querySelector('strong');
+                            <div class="extraOrderDetails" style="margin: auto;"> 
+                                <p>Customer Contacts</p>
+                                <p>${order.customerEmail} || ${order.customerPhone}</p>
+                            </div>
+                        `
+                    const title = detailCell.querySelector('strong')
                     title.addEventListener('click', event => {
                         copyToClipboard(order.id)
                     })
-                    detailRow.appendChild(detailCell);
-                    orderTableBody.appendChild(detailRow);
-                });
+                    detailRow.appendChild(detailCell)
+                    orderTableBody.appendChild(detailRow)
+                })
             } catch (error) {
-                console.error('Error loading orders:', error);
+                console.error('Error loading orders:', error)
             } finally {
-                loader.style.display = 'none'; // Hide loader
+                loader.style.display = 'none' // Hide loader
             }
         }
+
         function getStatusClass(status) {
             switch (status) {
                 case 'COMPLETED':
-                    return 'status-completed';
+                    return 'status-completed'
                 case 'READY':
-                    return 'status-ready';
+                    return 'status-ready'
                 default:
-                    return 'status-pending';
+                    return 'status-pending'
             }
         }
-        function copyToClipboard(text)
-        {
+
+        function copyToClipboard(text) {
             navigator.clipboard.writeText(text)
         }
 
         window.toggleOrderDetails = function (orderId, buttonElement) {
-            const detailRow = document.getElementById('details-' + orderId);
+            const detailRow = document.getElementById('details-' + orderId)
 
             if (detailRow.style.display === 'none' || detailRow.style.display === '') {
-                detailRow.style.display = 'table-row';
-                buttonElement.innerText = 'Collapse';
-                populatetDetailRow(orderId, detailRow);
+                detailRow.style.display = 'table-row'
+                buttonElement.innerText = 'Collapse'
+                populatetDetailRow(orderId, detailRow)
             } else {
-                detailRow.style.display = 'none';
-                buttonElement.innerText = 'Expand';
+                detailRow.style.display = 'none'
+                buttonElement.innerText = 'Expand'
             }
-        };
+        }
 
-        const cachedOrders = {};
+        const cachedOrders = {}
         async function populatetDetailRow(orderId, detailRow) {
-            if (!cachedOrders[orderId]) cachedOrders[orderId] = await order.fetchOrder(orderId);
-            const fullOrder = cachedOrders[orderId];
+            if (!cachedOrders[orderId]) cachedOrders[orderId] = await order.fetchOrder(orderId)
+            const fullOrder = cachedOrders[orderId]
 
-            const tbody = detailRow.querySelector('tbody');
-            tbody.innerHTML = '';
+            const tbody = detailRow.querySelector('tbody')
+            tbody.innerHTML = ''
 
             fullOrder.OrderItems.forEach(orderItem => {
                 tbody.innerHTML += `
@@ -1239,62 +1210,59 @@
                                 </select>
                             </td>
                         </tr>
-                    `;
-                const selectElement = document.getElementById(`tbodyrow-${orderItem.id}`);
-                selectElement.addEventListener('change', (event) => {
-                    const newStatus = event.target.value;
+                    `
+                const selectElement = document.getElementById(`tbodyrow-${orderItem.id}`)
+                selectElement.addEventListener('change', event => {
+                    const newStatus = event.target.value
                     if (newStatus != orderItem.status) {
-                        const currentStatusClass = getStatusClass(orderItem.status);
-                        order.updateItemStatus(orderItem.id, newStatus).then(() => {
-                            cachedOrders[orderId] = undefined;
+                        const currentStatusClass = getStatusClass(orderItem.status)
+                        order.updateItemStatus(orderItem.id, newStatus)
+                            .then(() => {
+                                cachedOrders[orderId] = undefined
 
-                            const tableRow = event.target.parentElement.parentElement;
-                            const statusTd = tableRow.querySelector(`.${currentStatusClass}`);
+                                const tableRow = event.target.parentElement.parentElement
+                                const statusTd = tableRow.querySelector(`.${currentStatusClass}`)
 
-                            statusTd.className = getStatusClass(newStatus);
-                            statusTd.innerHTML = newStatus;
-                        }).catch(err => {
-                            event.target.value = orderItem.status;
-                        });
+                                statusTd.className = getStatusClass(newStatus)
+                                statusTd.innerHTML = newStatus
+                            })
+                            .catch(err => {
+                                event.target.value = orderItem.status
+                            })
                     }
-                });
-            });
+                })
+            })
         }
 
         window.openTransactionImage = async function (transactionId) {
             try {
-                // Fetch the transaction details using your existing transaction module
-                const proofTransaction = await transaction.fetchTransaction(transactionId);
+                const proofTransaction = await transaction.fetchTransaction(transactionId)
                 if (proofTransaction && proofTransaction.Image && proofTransaction.Image.url) {
-                    const imageUrl = proofTransaction.Image.url;
-                    // Open a separate page and pass the image URL via a query parameter
-                    window.open('image.html?src=' + encodeURIComponent(imageUrl), '_blank');
+                    const imageUrl = proofTransaction.Image.url
+                    window.open('image.html?src=' + encodeURIComponent(imageUrl), '_blank')
                 } else {
-                    alert('No transaction image found.');
+                    alert('No transaction image found.')
                 }
             } catch (error) {
-                console.error('Error fetching transaction image:', error);
-                alert('Failed to fetch transaction image.');
+                console.error('Error fetching transaction image:', error)
+                alert('Failed to fetch transaction image.')
             }
-        };
-
+        }
 
         async function markOrderAsCompleted(orderId) {
-            // Logic to mark an order as completed
-            alert(`Marking order ${orderId} as completed!`);
+            alert(`Marking order ${orderId} as completed!`)
         }
 
         async function deleteOrder(orderId) {
             if (confirm(`Are you sure you want to delete order ${orderId}?`)) {
-                // Logic to delete the order
-                alert(`Order ${orderId} deleted.`);
+                alert(`Order ${orderId} deleted.`)
             }
         }
 
         // Initial Load
-        loadStore();
-        loadProducts();
-        loadOrders();
+        loadStore()
+        loadProducts()
+        loadOrders()
     </script>
     <script type="module" src="integration/uiManagement.js" defer></script>
 </body>

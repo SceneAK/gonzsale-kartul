@@ -461,17 +461,17 @@
     <script type="module" src="integration/uiManagement.js" defer></script>
     <!-- Tab Management Script -->
     <script type="module">
-        import {refreshAndUpdate} from './integration/user.js';
-        import {user, order} from './integration/fetches.js';
+        import { refreshAndUpdate } from './integration/user.js';
+        import { user, order } from './integration/fetches.js';
         const editProfileModal = document.getElementById('edit-profile-modal');
 
         editProfileModal.addEventListener('submit', () => {
             const phone = document.getElementById('edit-phone').value;
             const name = document.getElementById('edit-name').value;
-            user.editContacts({name, phone}).then( () => {
+            user.editContacts({ name, phone }).then(() => {
                 window.closeEditProfileModal();
                 refreshAndUpdate();
-            }).catch(err=> {
+            }).catch(err => {
                 throw err;
             });
         })
@@ -578,7 +578,7 @@
 
                 orderCount.textContent = `${orders.length} orders`;
 
-                // Loop through mock orders
+                // Loop through orders
                 orders.forEach(order => {
                     const orderSection = document.createElement("div");
                     orderSection.classList.add("order-section");
@@ -598,7 +598,7 @@
                         orderItem.classList.add("order-item");
 
                         const productImg = document.createElement("img");
-                        productImg.src = item.Product.Image?.url;
+                        productImg.src = item.Product.Image?.url || "assets/images/placeholder.png";
                         productImg.alt = item.Product.name;
 
                         const itemDetails = document.createElement("div");
@@ -616,21 +616,27 @@
                     const buttonContainer = document.createElement("div");
                     buttonContainer.classList.add("order-buttons");
 
-                    const viewDetailsButton = document.createElement("button");
-                    viewDetailsButton.classList.add("view-details");
-                    viewDetailsButton.textContent = "View order details";
+                    const viewStoreButton = document.createElement("button");
+                    viewStoreButton.classList.add("view-details");
+                    viewStoreButton.textContent = "View Store";
 
-                    const messageSellerButton = document.createElement("button");
-                    messageSellerButton.classList.add("message-seller");
-                    messageSellerButton.textContent = "Message Seller";
+                    // Ensure the store_id is retrieved correctly
+                    const storeId = order.storeId;
+                    if (storeId) {
+                        viewStoreButton.onclick = () => {
+                            window.location.href = `display-store.html?id=${storeId}`;
+                        };
+                    } else {
+                        viewStoreButton.disabled = true;
+                        viewStoreButton.textContent = "Store Not Found";
+                    }
 
-                    buttonContainer.appendChild(viewDetailsButton);
-                    buttonContainer.appendChild(messageSellerButton);
+                    buttonContainer.appendChild(viewStoreButton);
                     orderSection.appendChild(buttonContainer);
-
                     orderContainer.appendChild(orderSection);
                 });
             }
+
         });
     </script>
 </body>
