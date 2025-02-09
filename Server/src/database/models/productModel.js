@@ -75,27 +75,4 @@ ProductImage.belongsTo(Product, {foreignKey: 'productId'});
 Image.hasOne(ProductImage, {foreignKey: 'imageId'});
 ProductImage.belongsTo(Image, {foreignKey: 'imageId'});
 
-const Variant = sequelize.define('Variant', {
-    id:{
-        type: DataTypes.UUID,
-        allowNull: false,
-        primaryKey: true
-    },
-    productId: {
-        type: DataTypes.UUID,
-        allowNull: false
-    },
-    type: {
-        type: DataTypes.STRING(20),
-        allowNull: false
-    },
-    value: {
-        type: DataTypes.STRING(30),
-        allowNull: false
-    }
-})
-
-Product.hasMany(Variant, {foreignKey: 'productId'})
-Variant.belongsTo(Product, {foreignKey: 'productId'})
-
-export { Product, ProductImage, Variant };
+export { Product, ProductImage };

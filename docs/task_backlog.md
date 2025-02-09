@@ -9,26 +9,22 @@ Please sort by importance
 - Retest all functions
 
 # FRONTEND
-
-- Create Store Looks Ugly
 ## Missing Pages
 - Store page (single)
 
 ## Integrationn
 .Automatic refresh token
-DONE User Edit Profile
+> My orders integration
 > Product Edit
-DONE Integrated Order & Guest Orders
+> Bulk Order status updating
 
 # BACKEND
-## Rework pagination
-DONE Make paginated results return a consistent format of max_pages.
-
 ## Implement product variants
+- 
 
 ## orders
-> My orders integration
 > Mailing Customers when order status changes, when product gets deleted 
+> Filter based on product (get count)
 
 ## Request Home page Items (promotional content)
 > Design the system
@@ -48,7 +44,6 @@ DONE Admin options in the website itself
 ## Optimize update logic for product variant and product images
 
 ## Refactor
-> order & order item refactor: move the statusOrder to model and link everything (yes the schema too) to it. Then make a function to get the storeId of orderItems, remove completeAndValidate.
 - Rework productImage creation and priority so that whoever uses the service completes the data first (with an exported function) before passing it to productImageServices
 - Custom Error classes extending ApplicationError
 - Move logic that creates circular dependency to OrderManagementServices: orderItemServices.UpdateStatus + orderServices.createOrder()

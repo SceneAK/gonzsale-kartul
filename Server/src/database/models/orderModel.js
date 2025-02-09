@@ -1,5 +1,5 @@
 import { DataTypes, getInstance } from "../sequelize.js";
-import { Product, Variant } from "./productModel.js";
+import { Product } from "./productModel.js";
 import Store from './storeModel.js';
 import { User } from "./userModel.js";
 const sequelize = getInstance();
@@ -15,17 +15,10 @@ const Order = sequelize.define('Order', {
         type: DataTypes.UUID
     },
     customerName: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.STRING(30)
     },
-    customerEmail: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    customerPhone: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
+    customerEmail: userAttributes.email,
+    customerPhone: userAttributes.phone,
     storeId: {
         type: DataTypes.UUID,
         allowNull: false
@@ -36,6 +29,8 @@ Store.hasMany(Order, {foreignKey: 'storeId'})
 
 Order.belongsTo(User, {foreignKey: 'customerId'})
 User.hasMany(Order, {foreignKey: 'customerId'})
+
+const productAttributes = Product.getAttributes();
 
 const OrderItem = sequelize.define('OrderItem', {
     id: {
@@ -52,11 +47,11 @@ const OrderItem = sequelize.define('OrderItem', {
         type: DataTypes.UUID,
         allowNull: false
     },
+    productName: productAttributes.name,
+    productDescription: productAttributes.description,
+    productPrice: productAttributes.price,
+    productUnit: productAttributes.unit,
     quantity: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
-    },
-    unitPrice: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false
     },
@@ -76,26 +71,4 @@ Order.hasMany(OrderItem, {foreignKey: 'orderId'} )
 OrderItem.belongsTo(Product, {foreignKey: 'productId'})
 Product.hasMany(OrderItem, {foreignKey: 'productId'})
 
-const OrderItemVariant = sequelize.define('OrderItemVariant', {
-    id:{
-        type: DataTypes.INTEGER.UNSIGNED,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    orderItemId:{
-        type: DataTypes.UUID,
-        allowNull: false
-    },
-    variantId: {
-        type: DataTypes.UUID,
-        allowNull: false
-    }
-})
-
-OrderItemVariant.belongsTo(OrderItem, {foreignKey: 'orderItemId'})
-OrderItem.hasMany(OrderItemVariant, {foreignKey: 'orderItemId'})
-
-OrderItemVariant.belongsTo(Variant, {foreignKey: 'variantId'});
-Variant.hasMany(OrderItemVariant, {foreignKey: 'variantId'});
-
-export {Order, OrderItem, OrderItemVariant};
+export {Order, OrderItem};

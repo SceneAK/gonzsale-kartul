@@ -34,7 +34,7 @@ async function _fetchOrder(id, options)
     return orderModel;
 }
 
-async function fetchIncomingOrders(storeOwnerUserId, page = 1)
+async function fetchIncomingOrders(storeOwnerUserId, page = 1, where = {})
 {
     const storeId = await storeServices.fetchStoreIdOfUser(storeOwnerUserId);
 
@@ -43,7 +43,7 @@ async function fetchIncomingOrders(storeOwnerUserId, page = 1)
             transactionServices.include('serve'),
             orderItemServices.include('serve')
         ],
-        where: { storeId },
+        where: { storeId, ...where },
         attributes: ATTRIBUTES,
         order,
         ...paginationOption(page, 10)

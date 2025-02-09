@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import tokenAuthServices from './tokenAuthServices.js';
 import databaseInitializePromise from '../database/initialize.js'
 import { ApplicationError, paginationOption, reformatFindCountAll } from '../common/index.js';
-import { UniqueConstraintError } from 'sequelize';
+import { col, UniqueConstraintError, where } from 'sequelize';
 const { User } = await databaseInitializePromise;
 
 const SALT_ROUNDS = 8;
@@ -39,7 +39,7 @@ async function fetchUsers(requesterId, page = 1, where = {})
 
 async function signIn(email, password)
 {
-    const user = await User.findOne({ where: {email}, raw: true});
+    const user = await User.findOne({ where: where(col('email'), '=', email), raw: true }); // Refer to backend_doc
     if(!user) throw new ApplicationError("Email not found", 404);
 
     const match = await bcrypt.compare(password, user.password);;

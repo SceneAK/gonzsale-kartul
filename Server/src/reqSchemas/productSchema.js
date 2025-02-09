@@ -24,7 +24,7 @@ const bodySchema = Joi.object({
 
 const createProductSchema = {
     body: bodySchema.fork(['name', 'category', 'price', 'unit', 'availability'], schema => schema.required()).required(),
-    files: Joi.array().exist()
+    files: Joi.array().max(10).exist()
 }
 
 const editProductSchema = {
@@ -35,7 +35,7 @@ const editProductSchema = {
 }
 
 export default {
-    getProducts: fetchFilteredSchema,
+    fetchProducts: fetchFilteredSchema,
     createProduct: createProductSchema,
     editProduct: editProductSchema
 };

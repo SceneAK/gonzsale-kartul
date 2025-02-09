@@ -6,7 +6,7 @@ import { orderSchemas, page } from '../reqSchemas/index.js';
 import { order } from '../controllers/index.js'
 import orderItemRoute from './orderItemRoute.js'
 
-router.get('/incoming', verify(), validate(page), order.fetchIncomingOrders);
+router.get('/incoming', verify(), validate(orderSchemas.fetchIncoming), order.fetchIncomingOrders);
 
 router.get('/my', verify(), validate(page), order.fetchOrders);
 

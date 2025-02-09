@@ -2,6 +2,7 @@ import Joi from "joi";
 import orderItemSchema from "./orderItemSchema.js";
 import userSchema from "./userSchema.js";
 import { UUID } from "./common.js";
+import page from "./pageSchema.js";
 
 const createOrderSchema = (req) => ({
     body: Joi.object({
@@ -23,7 +24,16 @@ const updateSchema = {
     }).required()
 }
 
+const fetchIncomingSchema = {
+    query: page.query.append({
+        productId: UUID,
+        notes: Joi.string()
+
+    })
+}
+
 export default {
     createOrder: createOrderSchema,
-    update: updateSchema
+    update: updateSchema,
+    fetchIncoming: fetchIncomingSchema
 };

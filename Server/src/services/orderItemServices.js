@@ -91,8 +91,8 @@ function validateStatusTransition(current, request)
 function isValidStatusTransition(current, request)
 {
     const correcOrder = statusOrder.indexOf(current) < statusOrder.indexOf(request);
-    const notCompleted = current != 'COMPLETED';
-    return correcOrder && notCompleted;
+    const completedOrCancelled = current == 'COMPLETED' || current == 'CANCELLED';
+    return correcOrder && !completedOrCancelled;
 }
 
 function createStatusSortLiteral(statusOrder)

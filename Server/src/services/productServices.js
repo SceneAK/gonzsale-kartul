@@ -2,7 +2,6 @@ import ApplicationError from '../common/errors.js';
 import databaseInitializePromise from '../database/initialize.js'
 import productImageServices from './productImageServices.js';
 import storeServices from './storeServices.js';
-import variantServices from './variantServices.js';
 import fs from 'fs';
 import { paginationOption, reformatFindCountAll } from '../common/index.js';
 const { Product } = await databaseInitializePromise;
@@ -63,13 +62,12 @@ async function _fetchProduct(id, option)
 
 async function createProduct(userId, data) 
 {
-    const {productData, files, variants} = data;
+    const {productData, files} = data;
     const storeId = await storeServices.fetchStoreIdOfUser(userId);
 
     await Product.sequelize.transaction(async t => {
         const product = await Product.create({ ...productData, storeId });
         await productImageServices.createProductImagesAuto(files, product.id);
-        if(variants) await variantServices.createVariants(variants, product.id);
     });
     return { result: 'created product' };
 }
