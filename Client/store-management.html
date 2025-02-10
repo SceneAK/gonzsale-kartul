@@ -516,6 +516,7 @@
             background-color: #dc3545;
             color: #fff;
             transition: background-color 0.2s ease-in-out;
+            margin-left: 5px;
         }
 
         .delete-btn:hover {
@@ -560,44 +561,54 @@
             color: #333;
         }
 
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            table {
-                font-size: 0.85em;
-            }
-
-            th,
-            td {
-                padding: 10px;
-            }
+        /* SEARCH BAR STYLES */
+        .search-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            justify-content: center;
         }
 
-        @media (max-width: 480px) {
+        .search-container input {
+            padding: 10px;
+            width: 250px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: border-color 0.3s ease-in-out;
+        }
 
-            table,
-            th,
-            td {
-                display: block;
-                width: 100%;
-            }
+        .search-container input:focus {
+            border-color: #ff9900;
+            outline: none;
+        }
 
-            th {
-                display: none;
-            }
+        .search-counter {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1em;
+            color: #555;
+        }
 
-            td {
-                text-align: right;
-                padding-left: 50%;
-                position: relative;
-            }
+        /* BULK ACTION BUTTONS */
+        .bulk-actions {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-            td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 10px;
-                text-align: left;
-                font-weight: bold;
-            }
+        .bulk-actions button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .bulk-actions button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -621,7 +632,6 @@
                             </button>
                         </div>
                     `;
-
                 // Optional: Style the wrapper to center the content
                 contentWrapper.style.display = "flex";
                 contentWrapper.style.justifyContent = "center";
@@ -671,10 +681,8 @@
             <!-- Products Section -->
             <div id="products" class="content-section">
                 <h1>Manage Products</h1>
-
                 <!-- Add Product Button -->
                 <button class="add-product-btn" onclick="openAddProductModal()">+ Add Product</button>
-
                 <!-- Product Table -->
                 <table class="product-table">
                     <thead>
@@ -694,6 +702,22 @@
             <!-- Orders Section -->
             <div id="orders" class="content-section">
                 <h1>Orders</h1>
+                <!-- Search Bar Container -->
+                <div class="search-container">
+                    <input type="text" id="search-product" placeholder="Search by Product Name..."
+                        oninput="filterOrders()">
+                    <input type="text" id="search-notes" placeholder="Search by Order Notes..."
+                        oninput="filterOrders()">
+                </div>
+                <!-- Search Results Counter -->
+                <div class="search-counter">
+                    Showing <span id="counter-value">0</span> orders
+                </div>
+                <!-- Bulk Action Buttons -->
+                <div class="bulk-actions">
+                    <button onclick="bulkUpdateStatus('COMPLETED')">Bulk Mark as Completed</button>
+                    <button onclick="bulkUpdateStatus('READY')">Bulk Mark as Ready</button>
+                </div>
                 <div class="loader" id="loader">Loading orders...</div>
                 <div style="overflow-x: auto;">
                     <table id="order-table">
@@ -704,6 +728,7 @@
                                 <th>Date Created</th>
                                 <th>Transaction</th>
                                 <th>Transaction Image</th>
+                                <th>Order Notes</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -732,7 +757,6 @@
             <form id="add-product-form" class="add-product-form">
                 <label for="product-name">Nama Produk:</label>
                 <input type="text" id="product-name" name="name" placeholder="Masukkan nama produk" required />
-
                 <label for="product-category">Kategori:</label>
                 <select id="product-category" name="category" required>
                     <option value="" disabled selected>Pilih kategori</option>
@@ -742,11 +766,9 @@
                     <option value="Food">Makanan</option>
                     <option value="Drinks">Minuman</option>
                 </select>
-
                 <label for="product-description">Deskripsi:</label>
                 <textarea id="product-description" name="description" placeholder="Deskripsi produk"
                     required></textarea>
-
                 <label for="product-price">Harga & Unit</label>
                 <div>
                     <input type="number" id="product-price" name="price" placeholder="Masukkan harga" required
@@ -754,18 +776,15 @@
                     <input type="text" id="product-unit" name="unit" value="Unit" placeholder="Satuan..." required
                         style="width: 20%;" />
                 </div>
-
                 <label for="product-images">Tambah Gambar:</label>
                 <input type="file" id="product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple required />
                 <div class="image-preview-container" id="image-preview-container"></div>
-
                 <label for="product-availability">Availability:</label>
                 <select id="product-availability" name="availability" required>
                     <option value="AVAILABLE">Available</option>
                     <option value="UNAVAILABLE">Unavailable</option>
                     <option value="PREORDER">Pre-Order</option>
                 </select>
-
                 <div class="add-product-form-buttons">
                     <button type="button" onclick="closeAddProductModal()">Cancel</button>
                     <button type="submit">Tambah Produk</button>
@@ -781,7 +800,6 @@
             <form id="edit-product-form" class="add-product-form">
                 <label for="edit-product-name">Product Name:</label>
                 <input type="text" id="edit-product-name" name="name" required>
-
                 <label for="edit-product-category">Category:</label>
                 <select id="edit-product-category" name="category" required>
                     <option value="Shirts">Shirts</option>
@@ -790,27 +808,22 @@
                     <option value="Food">Food</option>
                     <option value="Drinks">Drinks</option>
                 </select>
-
                 <label for="edit-product-description">Description:</label>
                 <textarea id="edit-product-description" name="description" required></textarea>
-
                 <label for="edit-product-price">Price & Unit</label>
                 <div>
                     <input type="number" id="edit-product-price" name="price" required style="width: 70%;">
                     <input type="text" id="edit-product-unit" name="unit" required style="width: 20%;">
                 </div>
-
                 <label for="edit-product-images">Change Image:</label>
                 <input type="file" id="edit-product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple>
                 <div class="image-preview-container" id="edit-image-preview-container"></div>
-
                 <label for="edit-product-availability">Availability:</label>
                 <select id="edit-product-availability" name="availability" required>
                     <option value="AVAILABLE">Available</option>
                     <option value="UNAVAILABLE">Unavailable</option>
                     <option value="PREORDER">Pre-Order</option>
                 </select>
-
                 <div class="add-product-form-buttons">
                     <button type="button" onclick="closeEditProductModal()">Cancel</button>
                     <button type="submit">Save Changes</button>
@@ -828,11 +841,9 @@
             link.addEventListener('click', function () {
                 document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'))
                 document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'))
-
                 this.classList.add('active')
                 const sectionId = this.getAttribute('href').substring(1)
                 document.getElementById(sectionId).classList.add('active')
-
                 if (sectionId === 'orders') {
                     loadOrders() // Load orders when the Orders section is active
                 }
@@ -842,27 +853,20 @@
         // Load store data
         async function loadStore() {
             const storeContainer = document.getElementById("store-container")
-
             try {
-                // Fetch the user's store
                 const userStore = await store.fetchOwnedStore()
-
                 if (!userStore) {
-                    // No store exists: Show "Create Store" form
                     const user = JSON.parse(localStorage.getItem('loginDetail'))
                     if (user.role == 'STORE_MANAGER') {
                         storeContainer.innerHTML = getCreateStoreHtml()
-                        // Handle "Create Store" form submission
                         document.getElementById("create-store-form").addEventListener("submit", async function (event) {
                             event.preventDefault()
-
                             const formData = new FormData(this)
-
                             try {
                                 const response = await store.createStore(formData)
                                 if (!response.ok) throw new Error("Failed to create store")
                                 alert("Store created successfully!")
-                                loadStore() // Reload store data
+                                loadStore()
                             } catch (error) {
                                 console.error("Error creating store:", error)
                                 alert("There was an error creating the store. Please try again.")
@@ -872,7 +876,6 @@
                         storeContainer.innerHTML = "Contact Admins to be granted Store Manager Role"
                     }
                 } else {
-                    // Store exists: Show store details
                     storeContainer.innerHTML = `
                     <div class="store-details">
                         <h2>${userStore.name}</h2>
@@ -900,27 +903,22 @@
             <label for="name">Store Name:</label>
             <input type="text" id="name" name="name" placeholder="Enter store name" required>
           </div>
-
           <div class="form-group">
             <label for="description">Description:</label>
             <textarea id="description" name="description" rows="4" placeholder="Enter store description" required></textarea>
           </div>
-
           <div class="form-group">
             <label for="imageFile">Image:</label>
             <input type="file" id="imageFile" name="imageFile" accept="image/*" required>
           </div>
-
           <div class="form-group">
             <label for="bankAccount">Bank Account:</label>
             <input type="text" id="bankAccount" name="bankAccount" placeholder="Enter bank account number" required>
           </div>
-
           <div class="form-group">
             <label for="bankName">Bank Name:</label>
             <input type="text" id="bankName" name="bankName" placeholder="Enter bank name" required>
           </div>
-
           <button type="submit">Create Store</button>
         </form>
       </div>
@@ -933,7 +931,6 @@
             alert("Edit store functionality coming soon!")
         }
 
-        // Initialize the Store tab on page load
         document.addEventListener("DOMContentLoaded", () => {
             const hash = window.location.hash.substring(1)
             if (hash === "store") {
@@ -946,10 +943,7 @@
             const result = await product.fetchOwnedProducts()
             const products = result.items
             const productList = document.getElementById('product-list')
-
-            productList.innerHTML = products
-                .map(
-                    product => `
+            productList.innerHTML = products.map(product => `
         <tr>
             <td>${product.name}</td>
             <td>${product.category}</td>
@@ -959,34 +953,25 @@
                 <button class="delete-btn" onclick="deleteProduct('${product.id}')">Delete</button>
             </td>
         </tr>
-    `
-                )
-                .join('')
+      `).join('')
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Open Add Product Modal
             window.openAddProductModal = function () {
                 document.getElementById('add-product-modal').classList.add('active')
             }
-
-            // Close Add Product Modal
             window.closeAddProductModal = function () {
                 document.getElementById('add-product-modal').classList.remove('active')
             }
-
             document.addEventListener("click", event => {
                 const modalContent = document.querySelector(".add-product-form-container")
                 if (modalContent.classList.contains("active") && !modalContent.contains(event.target)) {
                     closeAddProductModal()
                 }
             })
-
-            // Image Preview for Add Product Modal
             document.getElementById('product-images').addEventListener('change', function () {
                 const previewContainer = document.getElementById('image-preview-container')
-                previewContainer.innerHTML = "" // Clear existing previews
-
+                previewContainer.innerHTML = ""
                 Array.from(this.files).forEach(file => {
                     if (file.type.match("image.*")) {
                         const reader = new FileReader()
@@ -1000,18 +985,15 @@
                     }
                 })
             })
-
-            // Handle Add Product Form Submission
             document.getElementById('add-product-form').addEventListener('submit', async function (event) {
                 event.preventDefault()
                 const formData = new FormData(this)
-
                 try {
                     const response = await product.createProduct(formData)
-                    this.reset() // Clear the form
-                    document.getElementById('image-preview-container').innerHTML = "" // Clear previews
+                    this.reset()
+                    document.getElementById('image-preview-container').innerHTML = ""
                     closeAddProductModal()
-                    loadProducts() // Reload the products list
+                    loadProducts()
                 } catch (error) {
                     console.error("Error adding product:", error)
                     alert("There was an error adding the product. Please try again.")
@@ -1020,48 +1002,38 @@
         })
 
         let editingProductId
-        // Open Edit Product Modal
         window.openEditProductModal = async function (productId) {
             const productDetails = await product.fetchProduct(productId)
             editingProductId = productId
-
             document.getElementById('edit-product-name').value = productDetails.name
             document.getElementById('edit-product-category').value = productDetails.category
             document.getElementById('edit-product-description').value = productDetails.description
             document.getElementById('edit-product-price').value = productDetails.price
             document.getElementById('edit-product-unit').value = productDetails.unit
             document.getElementById('edit-product-availability').value = productDetails.availability
-
-            // Load images into preview for Edit Product Modal
             const previewContainer = document.getElementById('edit-image-preview-container')
-            previewContainer.innerHTML = "" // Clear previous previews
+            previewContainer.innerHTML = ""
             productDetails.ProductImages?.forEach(src => {
                 const img = document.createElement('img')
                 img.src = src.url
                 img.classList.add('image-preview')
                 previewContainer.appendChild(img)
             })
-
-            // Show the edit modal
             document.getElementById('edit-product-modal').classList.add('active')
-
             console.log(productDetails)
         }
 
-        // Close Edit Product Modal
         window.closeEditProductModal = function () {
             document.getElementById('edit-product-modal').classList.remove('active')
         }
 
         document.getElementById('edit-product-form').addEventListener('submit', async function (event) {
             event.preventDefault()
-
             const formData = new FormData(this)
-
             try {
                 await product.editProduct(formData, editingProductId)
                 closeEditProductModal()
-                loadProducts() // Reload the product list
+                loadProducts()
             } catch (error) {
                 console.error("Error updating product:", error)
                 alert("Failed to update the product. Please try again.")
@@ -1072,23 +1044,19 @@
         async function loadOrders() {
             const orderTableBody = document.getElementById('order-table-body')
             const loader = document.getElementById('loader')
-            loader.style.display = 'block' // Show loader
-
+            loader.style.display = 'block'
             try {
                 const result = await order.fetchIncomingOrders()
                 const orders = result.items
-
-                orderTableBody.innerHTML = '' // Clear existing rows
-
+                orderTableBody.innerHTML = ""
                 orders.forEach(order => {
                     const createdAt = new Date(order.createdAt)
-                    const transactionImage =
-                        order.Transactions.length > 0
-                            ? `Payment ${order.Transactions[0].method.toLowerCase()}`
-                            : 'Missing'
-
-                    // Create the main order row
+                    const transactionImage = order.Transactions.length > 0
+                        ? `Payment ${order.Transactions[0].method.toLowerCase()}`
+                        : 'Missing'
+                    // Main order row
                     const row = document.createElement('tr')
+                    row.classList.add("main-order-row")
                     row.innerHTML = `
                         <td>${order.customerName}</td>
                         <td>${order.numberOfItems}</td>
@@ -1100,33 +1068,29 @@
                             : 'N/A'
                         }
                         </td>
-                        <td class="${getStatusClass(order.status)}">
-                            ${order.status}
-                        </td>
+                        <td>${order.orderNotes || ""}</td>
+                        <td class="${getStatusClass(order.status)}">${order.status}</td>
                         <td>
                             <button class="action-btn expand-btn" onclick="toggleOrderDetails('${order.id}', this)">
                                 Expand
                             </button>
                         </td>
                     `
-
                     orderTableBody.appendChild(row)
-
-                    // Create a hidden details row that will be toggled
+                    // Detail row for order items
                     const detailRow = document.createElement('tr')
                     detailRow.style.display = 'none'
                     detailRow.classList.add('order-details')
                     detailRow.id = 'details-' + order.id
-
                     const detailCell = document.createElement('td')
-                    detailCell.colSpan = 7
+                    detailCell.colSpan = 8
                     detailCell.style = 'width: 100%;'
-
                     detailCell.innerHTML = `
                             <div><strong class="orderIdCopy">${order.customerName}'s Order:</strong></div>
                             <table style="width: 100%; border-collapse: collapse;">
                                 <thead>
                                     <tr style="background: #ff9900; color: #fff;">
+                                        <th style="padding: 5px; border: 1px solid #ddd;">Select</th>
                                         <th style="padding: 5px; border: 1px solid #ddd;">Product</th>
                                         <th style="padding: 5px; border: 1px solid #ddd;">Quantity</th>
                                         <th style="padding: 5px; border: 1px solid #ddd;">Price</th>
@@ -1137,23 +1101,21 @@
                                 <tbody>
                                 </tbody>
                             </table>
-                            <div class="transactionDetails" style="max-width: 30%; max-height: 40%;margin: auto;"></div>
+                            <div class="transactionDetails" style="max-width: 30%; max-height: 40%; margin: auto;"></div>
                             <div class="extraOrderDetails" style="margin: auto;"> 
                                 <p>Customer Contacts</p>
                                 <p>${order.customerEmail} || ${order.customerPhone}</p>
                             </div>
                         `
-                    const title = detailCell.querySelector('strong')
-                    title.addEventListener('click', event => {
-                        copyToClipboard(order.id)
-                    })
                     detailRow.appendChild(detailCell)
                     orderTableBody.appendChild(detailRow)
                 })
+                // After populating rows, update the search filter (only main rows) so that detail rows remain collapsed.
+                filterOrders()
             } catch (error) {
                 console.error('Error loading orders:', error)
             } finally {
-                loader.style.display = 'none' // Hide loader
+                loader.style.display = 'none'
             }
         }
 
@@ -1174,7 +1136,6 @@
 
         window.toggleOrderDetails = function (orderId, buttonElement) {
             const detailRow = document.getElementById('details-' + orderId)
-
             if (detailRow.style.display === 'none' || detailRow.style.display === '') {
                 detailRow.style.display = 'table-row'
                 buttonElement.innerText = 'Collapse'
@@ -1189,48 +1150,47 @@
         async function populatetDetailRow(orderId, detailRow) {
             if (!cachedOrders[orderId]) cachedOrders[orderId] = await order.fetchOrder(orderId)
             const fullOrder = cachedOrders[orderId]
-
             const tbody = detailRow.querySelector('tbody')
-            tbody.innerHTML = ''
-
+            tbody.innerHTML = ""
             fullOrder.OrderItems.forEach(orderItem => {
                 tbody.innerHTML += `
                         <tr style="border: 1px solid #ddd;" id="tbodyrow-${orderItem.id}">
+                            <td style="padding: 5px; border: 1px solid #ddd;">
+                              <input type="checkbox" class="bulk-checkbox" data-order-item-id="${orderItem.id}">
+                            </td>
                             <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.Product.name}</td>
                             <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.quantity}</td>
                             <td style="padding: 5px; border: 1px solid #ddd;">Rp ${orderItem.unitPrice.toLocaleString('id-ID')}</td>
-                            <td style="padding: 5px; border: 1px solid #ddd;" class=${getStatusClass(orderItem.status)}>
-                                ${orderItem.status}
-                            </td>
+                            <td style="padding: 5px; border: 1px solid #ddd;" class="${getStatusClass(orderItem.status)}">${orderItem.status}</td>
                             <td style="padding: 5px; border: 1px solid #ddd;">
-                                <select>
-                                    <option value="PENDING" disable selected>PENDING</option>
-                                    <option value="READY">READY</option>
-                                    <option value="COMPLETED">COMPLETED</option>
-                                </select>
+                              <select class="status-select" data-order-item-id="${orderItem.id}">
+                                  <option value="PENDING" ${orderItem.status === "PENDING" ? "selected" : ""}>PENDING</option>
+                                  <option value="READY" ${orderItem.status === "READY" ? "selected" : ""}>READY</option>
+                                  <option value="COMPLETED" ${orderItem.status === "COMPLETED" ? "selected" : ""}>COMPLETED</option>
+                                  <option value="CANCELED" ${orderItem.status === "CANCELED" ? "selected" : ""}>CANCELED</option>
+                              </select>
+                              <button class="delete-btn" onclick="deleteOrderItem('${orderItem.id}')">Delete</button>
                             </td>
                         </tr>
                     `
-                const selectElement = document.getElementById(`tbodyrow-${orderItem.id}`)
-                selectElement.addEventListener('change', event => {
-                    const newStatus = event.target.value
-                    if (newStatus != orderItem.status) {
-                        const currentStatusClass = getStatusClass(orderItem.status)
-                        order.updateItemStatus(orderItem.id, newStatus)
-                            .then(() => {
-                                cachedOrders[orderId] = undefined
-
-                                const tableRow = event.target.parentElement.parentElement
-                                const statusTd = tableRow.querySelector(`.${currentStatusClass}`)
-
-                                statusTd.className = getStatusClass(newStatus)
-                                statusTd.innerHTML = newStatus
-                            })
-                            .catch(err => {
-                                event.target.value = orderItem.status
-                            })
-                    }
-                })
+                const selectElement = document.querySelector(`#tbodyrow-${orderItem.id} .status-select`)
+                if (selectElement) {
+                    selectElement.addEventListener('change', event => {
+                        const newStatus = event.target.value
+                        if (newStatus !== orderItem.status) {
+                            order.updateItemStatus(orderItem.id, newStatus)
+                                .then(() => {
+                                    const statusTd = document.querySelector(`#tbodyrow-${orderItem.id} td:nth-child(5)`)
+                                    statusTd.textContent = newStatus
+                                    statusTd.className = getStatusClass(newStatus)
+                                    orderItem.status = newStatus
+                                })
+                                .catch(err => {
+                                    event.target.value = orderItem.status
+                                })
+                        }
+                    })
+                }
             })
         }
 
@@ -1257,6 +1217,60 @@
             if (confirm(`Are you sure you want to delete order ${orderId}?`)) {
                 alert(`Order ${orderId} deleted.`)
             }
+        }
+
+        // Delete a single order item
+        function deleteOrderItem(orderItemId) {
+            if (confirm('Are you sure you want to delete this order item?')) {
+                // Stub: Call your API to delete the order item here.
+                alert('Order item ' + orderItemId + ' deleted.')
+                const row = document.getElementById(`tbodyrow-${orderItemId}`)
+                if (row) row.remove()
+            }
+        }
+
+        // Bulk update status for selected order items
+        async function bulkUpdateStatus(newStatus) {
+            const checkboxes = document.querySelectorAll('.bulk-checkbox:checked')
+            for (const checkbox of checkboxes) {
+                const orderItemId = checkbox.getAttribute('data-order-item-id')
+                try {
+                    await order.updateItemStatus(orderItemId, newStatus)
+                    const row = document.getElementById(`tbodyrow-${orderItemId}`)
+                    if (row) {
+                        const statusTd = row.children[4]
+                        statusTd.textContent = newStatus
+                        statusTd.className = getStatusClass(newStatus)
+                        const select = row.querySelector('.status-select')
+                        if (select) {
+                            select.value = newStatus
+                        }
+                    }
+                } catch (err) {
+                    console.error('Bulk update failed for order item ', orderItemId, err)
+                }
+            }
+        }
+
+        // Filter orders (only main order rows, not detail rows)
+        function filterOrders() {
+            const productSearchValue = document.getElementById("search-product").value.toLowerCase();
+            const notesSearchValue = document.getElementById("search-notes").value.toLowerCase();
+            const orderRows = document.querySelectorAll("#order-table-body tr:not(.order-details)");
+            let visibleCount = 0;
+            orderRows.forEach(row => {
+                const productCell = row.querySelector("td:nth-child(1)"); // Customer Name
+                const notesCell = row.querySelector("td:nth-child(6)"); // Order Notes column
+                const productMatch = productCell?.textContent.toLowerCase().includes(productSearchValue);
+                const notesMatch = notesCell ? notesCell.textContent.toLowerCase().includes(notesSearchValue) : false;
+                if (productMatch || notesMatch) {
+                    row.style.display = "";
+                    visibleCount++;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+            document.getElementById("counter-value").textContent = visibleCount;
         }
 
         // Initial Load

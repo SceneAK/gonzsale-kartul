@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Cart</title>
     <style>
-        /* Adjustments are made to avoid overriding existing header and footer styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f9f9f9;
@@ -36,9 +35,43 @@
         }
 
         .cart-item {
+            display: flex;
+            align-items: flex-start;
             padding: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            background-color: #fdfdfd;
+        }
+
+        .cart-item img {
+            width: 100px;
+            height: auto;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .cart-item a {
+            text-decoration: none;
+            color: #0073e6;
+        }
+
+        .cart-item a:hover {
+            text-decoration: underline;
+        }
+
+        .cart-item-details {
+            flex-grow: 1;
+        }
+
+        .cart-item textarea {
+            width: 100%;
+            height: 50px;
+            margin-top: 10px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            resize: vertical;
         }
 
         .empty-message {
@@ -69,7 +102,6 @@
 </head>
 
 <body>
-    <!-- Placeholder for existing header -->
     <div id="header"></div>
     <div class="content-wrapper">
         <div class="cart-container">
@@ -80,16 +112,19 @@
                 Checkout</a>
         </div>
     </div>
-    <!-- Placeholder for existing footer -->
     <div id="footer"></div>
 
     <script type="module" src="integration/uiManagement.js" defer></script>
     <script type="module">
+        import { product } from "./integration/fetches.js";
+
         const cart = JSON.parse(localStorage.getItem('cart') || '[]');
         const cartItemsContainer = document.getElementById('cart-items');
         const emptyMessage = document.getElementById('empty-message');
 
-        function displayCart() {
+        async function displayCart() {
+            cartItemsContainer.innerHTML = '';
+
             if (cart.length === 0) {
                 emptyMessage.style.display = 'block';
                 document.getElementById('checkout-button').style.display = 'none';
@@ -99,30 +134,54 @@
             emptyMessage.style.display = 'none';
             document.getElementById('checkout-button').style.display = 'block';
 
-            cart.forEach((item, index) => {
+            for (let i = 0; i < cart.length; i++) {
+                let item = cart[i];
+
+                // Fetch product details if description is missing
+                if (!item.description) {
+                    try {
+                        const productDetails = await product.fetchProduct(item.id);
+                        item.description = productDetails.description || "No description available";
+                        localStorage.setItem('cart', JSON.stringify(cart)); // Save updated cart
+                    } catch (error) {
+                        console.error(`Failed to fetch description for ${item.id}:`, error);
+                        item.description = "Failed to load description";
+                    }
+                }
+
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('cart-item');
-                
+
                 itemDiv.innerHTML = `
-                    <img src="${item.imgSrc}" alt="${item.name}" style="width: 100px; height: auto; margin-right: 10px;">
+                    <a href="display-product.html?id=${item.id}">
+                        <img src="${item.imgSrc}" alt="${item.name}" />
+                    </a>
                     <div class="cart-item-details">
-                        <h3>${item.name}</h3>
+                        <h3><a href="display-product.html?id=${item.id}">${item.name}</a></h3>
+                        <p><strong>Description:</strong> ${item.description}</p>
                         <p><strong>Price:</strong> Rp ${item.price?.toLocaleString('id-ID')}</p>
                         <p><strong>Quantity:</strong> ${item.quantity || 1}</p>
-                        <button class="remove-button" onclick="removeFromCart(${index})">Remove</button>
+                        <textarea placeholder="Add special instructions..." oninput="updateNote(${i}, this.value)">${item.notes || ''}</textarea>
+                        <button class="remove-button" onclick="removeFromCart(${i})">Remove</button>
                     </div>
                 `;
                 cartItemsContainer.appendChild(itemDiv);
-            });
+            }
         }
 
         function removeFromCart(index) {
-            cart.splice(index, 1); // Remove the item at the specified index
-            localStorage.setItem('cart', JSON.stringify(cart)); // Update localStorage
-            cartItemsContainer.innerHTML = ''; // Clear current items
-            displayCart(); // Redisplay updated cart
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            displayCart();
         }
+
+        function updateNote(index, note) {
+            cart[index].notes = note;
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
         window.removeFromCart = removeFromCart;
+        window.updateNote = updateNote;
 
         displayCart();
     </script>
