@@ -26,22 +26,76 @@
             box-sizing: border-box;
         }
 
-        /* Grand Opening Banner */
         .big-banner {
             width: 100%;
             height: 300px;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            text-align: center;
+            background: url('assets/images/bigbanner.webp') center/cover no-repeat;
+            color: white;
             box-sizing: border-box;
         }
 
-        .big-banner img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
+        .big-banner-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+        }
+
+        .big-banner-title {
+            font-size: 3rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin: 0;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .big-banner-subtitle {
+            font-size: 1.5rem;
+            margin-top: 10px;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .big-banner-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background-color: white;
+            color: #ff6600;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+
+        .big-banner-button:hover {
+            background-color: #ffcc99;
+            color: #d9534f;
+        }
+
+        @media (max-width: 768px) {
+            .big-banner {
+                height: 200px;
+            }
+
+            .big-banner-title {
+                font-size: 1.4rem;
+            }
+
+            .big-banner-subtitle {
+                font-size: 0.8rem;
+            }
+
+            .big-banner-button {
+                font-size: 0.6rem;
+                padding: 10px 20px;
+            }
         }
 
         /* Animation Keyframes */
@@ -208,7 +262,11 @@
     <div class="content-wrapper">
         <!-- Grand Opening Banner -->
         <div class="big-banner">
-            <img src="assets/images/grandopening.jpg" alt="Grand Opening" />
+            <div class="big-banner-content">
+                <h1 class="big-banner-title">SELAMAT DATANG DI GONZSALE</h1>
+                <p class="big-banner-subtitle">Terbuka eksklusif sampai 10 Maret 2025</p>
+                <a href="categories.html" class="big-banner-button">Mulai Belanja</a>
+            </div>
         </div>
         <h1>Exclusive Promotions</h1>
         <!-- Container for dynamically generated promo banners -->

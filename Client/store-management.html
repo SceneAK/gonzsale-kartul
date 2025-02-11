@@ -266,7 +266,7 @@
         .modal {
             display: none;
             position: fixed;
-            top: 50%;
+            top: 41%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
@@ -282,13 +282,22 @@
             display: block;
         }
 
-        .modal input,
+        .modal input, textarea {
+            width: calc(100%-16px);
+            margin-bottom: 15px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
         .modal select {
             width: 100%;
             margin-bottom: 15px;
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            box-sizing: border-box;
         }
 
         .modal-buttons {

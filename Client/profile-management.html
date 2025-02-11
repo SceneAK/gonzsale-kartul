@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile Management</title>
     <style>
+        /* Global Styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -13,25 +14,41 @@
             background-color: #f4f4f4;
         }
 
+        /* The container now wraps the profile management section (and is relative) */
         .container {
-            display: flex;
-            height: 70vh;
+            position: relative;
+            padding: 20px;
+            /* Adjust min-height as needed (leaving room for header/footer) */
+            min-height: calc(100vh - 150px);
         }
 
-        .side-menu {
+        /* Wrapper for profile management content */
+        .profile-management {
+            position: relative;
+        }
+
+        .profile-side-menu {
             width: 250px;
             background: #fff;
             padding: 20px;
             border-right: 1px solid #ddd;
             box-sizing: border-box;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
         }
 
-        .side-menu h2 {
+        .profile-side-menu .close-icon {
+            display: none;
+        }
+
+        .profile-side-menu h2 {
             font-size: 18px;
             margin-bottom: 15px;
         }
 
-        .side-menu a {
+        .profile-side-menu a {
             display: block;
             padding: 10px;
             text-decoration: none;
@@ -40,17 +57,18 @@
             margin-bottom: 10px;
         }
 
-        .side-menu a.active,
-        .side-menu a:hover {
+        .profile-side-menu a.active,
+        .profile-side-menu a:hover {
             background: #ff9900;
             color: white;
         }
 
+        /* Content Styles */
         .content {
-            flex-grow: 1;
-            padding: 30px;
+            padding: 60px 30px 30px 30px;
             background: #fff;
-            margin: 20px;
+            margin-left: 270px;
+            /* Leaves room for the side menu on desktop */
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
@@ -77,7 +95,6 @@
             border: 1px solid #ddd;
         }
 
-        /* Edit Profile Button */
         .edit-profile-btn {
             display: inline-block;
             padding: 10px 15px;
@@ -110,14 +127,12 @@
             z-index: 1000;
         }
 
-        /* Edit Profile Modal Title */
         #edit-profile-modal h2 {
             font-size: 1.5em;
             margin-bottom: 15px;
             color: #333;
         }
 
-        /* Edit Profile Form Fields */
         #edit-profile-form label {
             font-weight: bold;
             display: block;
@@ -133,7 +148,6 @@
             margin-bottom: 15px;
         }
 
-        /* Edit Profile Form Buttons */
         #edit-profile-form .form-buttons {
             display: flex;
             justify-content: space-between;
@@ -168,28 +182,24 @@
         }
 
         /* Change Password Section */
-        /* Change Password Title */
         #change-password h2 {
             font-size: 1.5em;
             margin-bottom: 15px;
             color: #333;
         }
 
-        /* Change Password Form Layout */
         #change-password-form {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
-        /* Form Labels */
         #change-password-form label {
             font-weight: bold;
             display: block;
             margin-bottom: 5px;
         }
 
-        /* Form Input Fields */
         #change-password-form input {
             width: 100%;
             padding: 10px;
@@ -198,7 +208,6 @@
             box-sizing: border-box;
         }
 
-        /* Change Password Buttons */
         #change-password-form .form-buttons {
             display: flex;
             justify-content: flex-end;
@@ -206,7 +215,6 @@
             margin-top: 15px;
         }
 
-        /* Save Button */
         #change-password-form .save-btn {
             background-color: #28a745;
             color: white;
@@ -223,7 +231,6 @@
             transform: scale(1.05);
         }
 
-        /* Cancel Button */
         #change-password-form .cancel-btn {
             background-color: #dc3545;
             color: white;
@@ -247,7 +254,6 @@
             height: 100%;
         }
 
-        /* Scrollable Content Section */
         #order-history-container {
             flex-grow: 1;
             overflow-y: auto;
@@ -255,7 +261,6 @@
             padding-right: 10px;
         }
 
-        /* Add a scrollbar style */
         #order-history-container::-webkit-scrollbar {
             width: 8px;
         }
@@ -373,84 +378,143 @@
         .content-section.active {
             display: block;
         }
+
+        /* --- Mobile-Specific Styles --- */
+        @media (max-width: 768px) {
+
+            /* The side menu slides in/out on mobile within the profile-management wrapper */
+            .profile-side-menu {
+                position: absolute;
+                left: -260px;
+                /* Start hidden offscreen */
+                top: 0;
+                height: 100%;
+                z-index: 1000;
+                transition: left 0.3s ease-in-out;
+                background: #fff;
+            }
+
+            .profile-side-menu.open {
+                left: 0;
+            }
+
+            /* Mobile Menu Toggle Button */
+            .profile-menu-toggle {
+                display: block;
+                font-size: 24px;
+                cursor: pointer;
+                padding: 10px;
+                background: #ff9900;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                z-index: 1100;
+            }
+
+            /* On mobile, remove left margin from content */
+            .content {
+                margin-left: 0;
+            }
+        }
+
+        /* Close button styling inside the side menu */
+        .profile-side-menu .close-icon {
+            display: block;
+            font-size: 20px;
+            cursor: pointer;
+            text-align: right;
+            padding-bottom: 10px;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Header is loaded via uimanagement.js -->
     <div id="header"></div>
 
     <div class="container">
-        <div class="side-menu">
-            <h2>My Account</h2>
-            <a href="#personal-info" class="menu-link">Personal Information</a>
-            <a href="#change-password" class="menu-link">Change Password</a>
-            <a href="#order-history" class="menu-link">Order History</a>
-        </div>
+        <div class="profile-management">
+            <!-- Mobile Menu Toggle Button (now contained within the profile management wrapper) -->
+            <div class="profile-menu-toggle" onclick="toggleProfileMenu()">☰</div>
 
-        <div class="content">
-            <!-- Personal Information Section -->
-            <div id="personal-info" class="content-section">
-                <h1>My Account Summary</h1>
-                <p class="summary">Manage your personal details.</p>
-                <table class="info-table">
-                    <tr>
-                        <td><strong>Full Name</strong></td>
-                        <td id="name">Loading...</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Email</strong></td>
-                        <td id="email">Loading...</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Phone</strong></td>
-                        <td id="phone">Loading...</td>
-                    </tr>
-                </table>
-                <button class="edit-profile-btn" onclick="openEditProfileModal()">Edit Profile</button>
+            <!-- Side Menu -->
+            <div class="profile-side-menu" id="profileSideMenu">
+                <span class="close-icon" onclick="toggleProfileMenu()">✖</span>
+                <h2>My Account</h2>
+                <a href="#personal-info" class="menu-link">Personal Information</a>
+                <a href="#change-password" class="menu-link">Change Password</a>
+                <a href="#order-history" class="menu-link">Order History</a>
             </div>
 
-            <!-- Hidden Edit Profile Modal -->
-            <div id="edit-profile-modal" style="display: none;">
-                <h2>Edit Profile</h2>
-                <form id="edit-profile-form">
-                    <label for="edit-name">Full Name</label>
-                    <input type="text" id="edit-name" required />
+            <div class="content">
+                <!-- Personal Information Section -->
+                <div id="personal-info" class="content-section">
+                    <h1>My Account Summary</h1>
+                    <p class="summary">Manage your personal details.</p>
+                    <table class="info-table">
+                        <tr>
+                            <td><strong>Full Name</strong></td>
+                            <td id="name">Loading...</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Email</strong></td>
+                            <td id="email">Loading...</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phone</strong></td>
+                            <td id="phone">Loading...</td>
+                        </tr>
+                    </table>
+                    <button class="edit-profile-btn" onclick="openEditProfileModal()">Edit Profile</button>
+                </div>
 
-                    <label for="edit-phone">Phone</label>
-                    <input type="text" id="edit-phone" required />
+                <!-- Hidden Edit Profile Modal -->
+                <div id="edit-profile-modal">
+                    <h2>Edit Profile</h2>
+                    <form id="edit-profile-form">
+                        <label for="edit-name">Full Name</label>
+                        <input type="text" id="edit-name" required />
 
-                    <button type="submit" class="save-btn">Save</button>
-                    <button type="button" class="cancel-btn" onclick="closeEditProfileModal()">Cancel</button>
-                </form>
-            </div>
+                        <label for="edit-phone">Phone</label>
+                        <input type="text" id="edit-phone" required />
 
+                        <div class="form-buttons">
+                            <button type="submit" class="save-btn">Save</button>
+                            <button type="button" class="cancel-btn" onclick="closeEditProfileModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
 
-            <!-- Change Password Section -->
-            <div id="change-password" class="content-section">
-                <h2>Change Password</h2>
-                <form id="change-password-form">
-                    <div class="form-group">
-                        <label for="current-password">Current Password</label>
-                        <input type="password" id="current-password" required />
+                <!-- Change Password Section -->
+                <div id="change-password" class="content-section">
+                    <h2>Change Password</h2>
+                    <form id="change-password-form">
+                        <div class="form-group">
+                            <label for="current-password">Current Password</label>
+                            <input type="password" id="current-password" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password">New Password</label>
+                            <input type="password" id="new-password" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm New Password</label>
+                            <input type="password" id="confirm-password" required />
+                        </div>
+                        <button type="submit" class="save-btn">Change Password</button>
+                    </form>
+                </div>
+
+                <!-- Order History Section -->
+                <div id="order-history" class="content-section">
+                    <h2>Order History</h2>
+                    <p id="order-count">Loading orders...</p>
+                    <div class="order-history-container" id="order-history-container">
+                        <!-- Orders will be dynamically added here -->
                     </div>
-                    <div class="form-group">
-                        <label for="new-password">New Password</label>
-                        <input type="password" id="new-password" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="confirm-password">Confirm New Password</label>
-                        <input type="password" id="confirm-password" required />
-                    </div>
-                    <button type="submit" class="save-btn">Change Password</button>
-                </form>
-            </div>
-
-            <!-- Order History Section -->
-            <div id="order-history" class="content-section">
-                <h2>Order History</h2>
-                <p id="order-count">Loading orders...</p>
-                <div class="order-history-container" id="order-history-container">
-                    <!-- Orders will be dynamically added here -->
                 </div>
             </div>
         </div>
@@ -458,6 +522,7 @@
 
     <div id="footer"></div>
 
+    <!-- Existing Scripts -->
     <script type="module" src="integration/uiManagement.js" defer></script>
     <!-- Tab Management Script -->
     <script type="module">
@@ -474,9 +539,10 @@
             }).catch(err => {
                 throw err;
             });
-        })
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
-            // ✅ Attach the modal functions to window (fixes "not defined" issue)
+            // Attach modal functions to window
             window.openEditProfileModal = function () {
                 const modal = document.getElementById('edit-profile-modal');
                 if (modal) {
@@ -494,7 +560,7 @@
                 }
             };
 
-            // ✅ Ensure modal closes when switching sections
+            // Ensure modal closes when switching sections
             function showSection(sectionId) {
                 document.querySelectorAll('.menu-link').forEach(link => {
                     link.classList.toggle('active', link.getAttribute('href') === `#${sectionId}`);
@@ -504,10 +570,10 @@
                     section.classList.toggle('active', section.id === sectionId);
                 });
 
-                // ✅ Ensure modal closes when navigating away
+                // Ensure modal closes when navigating away
                 window.closeEditProfileModal();
 
-                // ✅ Hide Order History when switching sections
+                // Hide Order History when switching sections
                 const orderHistoryContent = document.getElementById("order-history");
                 if (orderHistoryContent) {
                     orderHistoryContent.style.display = sectionId === "order-history" ? "block" : "none";
@@ -620,7 +686,6 @@
                     viewStoreButton.classList.add("view-details");
                     viewStoreButton.textContent = "View Store";
 
-                    // Ensure the store_id is retrieved correctly
                     const storeId = order.storeId;
                     if (storeId) {
                         viewStoreButton.onclick = () => {
@@ -636,8 +701,24 @@
                     orderContainer.appendChild(orderSection);
                 });
             }
-
         });
+    </script>
+
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+        function toggleProfileMenu() {
+            const menu = document.getElementById("profileSideMenu");
+            const menuToggle = document.querySelector(".profile-menu-toggle");
+
+            menu.classList.toggle("open");
+
+            // Hide the toggle button when the menu is open, show it otherwise
+            if (menu.classList.contains("open")) {
+                menuToggle.style.display = "none";
+            } else {
+                menuToggle.style.display = "block";
+            }
+        }
     </script>
 </body>
 
