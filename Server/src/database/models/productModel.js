@@ -3,7 +3,7 @@ import Store from './storeModel.js';
 import Image from "./imageModel.js";
 const sequelize = getInstance();
 
-const Product = sequelize.define('Product', {
+const productAttributes = {
     id: {
         type: DataTypes.UUID,
         allowNull: false,
@@ -25,30 +25,21 @@ const Product = sequelize.define('Product', {
         type: DataTypes.STRING(150),
         allowNull: false
     },
-    price: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
-    },
-    unit: {
-        type: DataTypes.STRING(50),
-        allowNull: false
-    },
-    availability: {
-        type: DataTypes.ENUM('AVAILABLE', 'UNAVAILABLE', 'PREORDER'),
+    isAvailable: {
+        type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: 'UNAVAILABLE'
+        defaultValue: false
     }
-}, {
+};
+const Product = sequelize.define('Product', productAttributes, {
     scopes:{
-        Public: {
+        Available: {
             where: {
-                [Sequelize.Op.or]: [
-                    {availability: 'AVAILABLE'},
-                    {availability: 'PREORDER'}
-                ]
+                isAvailable: true
             }
         }
-    }
+    },
+    paranoid: true
 });
 
 Store.hasMany(Product, {foreignKey: 'storeId'})
@@ -69,10 +60,56 @@ const ProductImage = sequelize.define('ProductImage', {
     }
 });
 
-Product.hasMany(ProductImage, {foreignKey: 'productId'});
-ProductImage.belongsTo(Product, {foreignKey: 'productId'});
+Product.hasMany(ProductImage, { foreignKey: 'productId' });
+ProductImage.belongsTo(Product, { foreignKey: 'productId' });
 
 Image.hasOne(ProductImage, {foreignKey: 'imageId'});
 ProductImage.belongsTo(Image, {foreignKey: 'imageId'});
 
-export { Product, ProductImage };
+const variantAttributes = {
+    id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4
+    },
+    productId: {
+        type: DataTypes.UUID,
+        allowNull: false
+    },
+    name: {
+        type: DataTypes.STRING(50),
+        allowNull: false
+    },
+    stock: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false
+    },
+    price: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false
+    },
+    unit: {
+        type: DataTypes.STRING(50),
+        allowNull: false
+    },
+    isDefault: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+    }
+}
+const Variant = sequelize.define('Variant', variantAttributes , {
+    paranoid: true,
+    indexes: [
+        {
+            name: 'composite',
+            unique: true,
+            fields: ['productId', 'name']
+        }
+    ]
+});
+
+Variant.belongsTo(Product, {foreignKey: 'productId'});
+Product.hasMany(Variant, {foreignKey: 'productId'})
+
+export { Product, ProductImage, Variant, productAttributes, variantAttributes };

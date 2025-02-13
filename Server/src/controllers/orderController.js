@@ -1,4 +1,4 @@
-import { orderServices, userServices } from '../services/index.js';
+import { orderServices, storeServices, userServices } from '../services/index.js';
 import { convertAllPathsToURLs } from '../common/pathToURLConverter.js';
 import { productTransform } from './transformer/index.js';
 
@@ -10,8 +10,9 @@ const fetchOrder = async (req, res) => {
 }
 
 const fetchIncomingOrders = async (req, res) => {
-    const { page, ...additionalWhere} = req.query ? req.query : {};
-    const result = await orderServices.fetchIncomingOrders(req.decodedAuthToken.id, page, additionalWhere)
+    const { page, ...whereOrderItems} = req.query ? req.query : {};
+    
+    const result = await orderServices.fetchIncomingOrders(req.decodedAuthToken.storeId, page, whereOrderItems)
     result.items.forEach( order => transformOrder(order))
     res.json(result);
 }
@@ -32,6 +33,13 @@ const createOrder = async(req, res) => {
     res.json( result );
 }
 
+const deleteOrder = async (req, res) => {
+    const {id} = req.params;
+    
+    const result = await orderServices.deleteOrder(id, req.decodedAuthToken.storeId);
+    res.json({result});
+}
+
 function transformOrder(order)
 {
     const product = order.OrderItems?.[0].Product;
@@ -41,7 +49,6 @@ function transformOrder(order)
             productTransform.flattenProductImages(orderItem.Product);
         })
     }
-    console.log(order);
 }
 
 async function fetchAsCustomerInfo(userId)
@@ -55,4 +62,4 @@ async function fetchAsCustomerInfo(userId)
     }
 }
 
-export default {fetchOrder, fetchOrders, fetchIncomingOrders, createOrder}
+export default {fetchOrder, fetchOrders, fetchIncomingOrders, createOrder, deleteOrder}

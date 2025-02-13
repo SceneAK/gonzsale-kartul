@@ -17,17 +17,30 @@ Please sort by importance
 > My orders integration
 > Product Edit
 > Bulk Order status updating
+> Reintegrate literally everything that involves product & orders
 
 # BACKEND
-## Implement product variants
-- 
+## Implement Product Variants
+DONE Product Image independence
+DONE Product & Default VariantCreation
+DONE Variant Creation
+DONE Reworked product fetching
+DONE Order placing
+    DONE Cancel order stock replenishment logic
+DONE Variant Editting
+    DONE Variant isDefault logic
+DONE Retest Product Editting
+DONE Variant soft deletion
+DONE Order soft deletion
+DONE Image Deletion
+DONE Include storeId in decodedAuthToken
 
 ## orders
-> Mailing Customers when order status changes, when product gets deleted 
-> Filter based on product (get count)
+DONE Filter based on variant, based on product, based on orderNotes (get count too)
+. Mailing Customers when order status changes, when product gets deleted 
 
 ## Request Home page Items (promotional content)
-> Design the system
+- Design the system
 
 ## Preorder specific data
 - Make frontend tell you if it's preorder
@@ -44,6 +57,7 @@ DONE Admin options in the website itself
 ## Optimize update logic for product variant and product images
 
 ## Refactor
+- Rethink route file structure? It feels overcomplicated / weird
 - Rework productImage creation and priority so that whoever uses the service completes the data first (with an exported function) before passing it to productImageServices
 - Custom Error classes extending ApplicationError
 - Move logic that creates circular dependency to OrderManagementServices: orderItemServices.UpdateStatus + orderServices.createOrder()

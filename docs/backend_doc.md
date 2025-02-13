@@ -16,7 +16,7 @@ This site was made with Node.Js and Express simply because the first tutorial I 
 ## Database
 ### Sequelize
 - Uses CLS namespace to make transactions easier
-#### IMPORTANT: Do not use .get(), use toJSON() instead. 
+#### Do not use .get(), use toJSON() instead. 
     28 Jan 2025 GET /store's fetchStoreOfUser(uid) returns with model.get(). Calling this endpoint and then attempting to create product threw an error at Image.bulkCreate. GET /store returns the complete data, which means all is/should be resolved. The cause must be persistent across requests.
     What I've ruled out: 
         - Transactions: I've removed them, error persists
@@ -43,6 +43,8 @@ This site was made with Node.Js and Express simply because the first tutorial I 
 - The normal checkAuthToken returns the ID or an error. Used for Logins and such
 ### User
 - Schema's regex allows passwords and names to have chinese japanese characters, cause why the heck not?
+#### User.FindOne literal where
+- For some reason, one random time, User.findOne consistently ignores the where clause and returns the first row of the users table. Setting where { email: 'name@domain.com'} directly didn't even work. Only using where literals worked.
 
 ### Store
 - As per the schema, storeData expects name, description, bankAccount, bankName. Files expects imageFile, qrImageFile.

@@ -859,8 +859,7 @@
                             const formData = new FormData(this)
 
                             try {
-                                const response = await store.createStore(formData)
-                                if (!response.ok) throw new Error("Failed to create store")
+                                await store.createStore(formData)
                                 alert("Store created successfully!")
                                 loadStore() // Reload store data
                             } catch (error) {

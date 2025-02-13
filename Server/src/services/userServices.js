@@ -46,7 +46,7 @@ async function signIn(email, password)
     if(!match) throw new ApplicationError("Failed to Authenticate", 401);
     
     filterOnly(user, SERVE_ATTRIBUTES);
-    return signReturnObject(user);
+    return user;
 }
 
 async function signUp(contactData, password)
@@ -57,7 +57,7 @@ async function signUp(contactData, password)
         const userModel = await User.create({...contactData, password: hashed});
         const user = userModel.toJSON();
         filterOnly(user, SERVE_ATTRIBUTES);
-        return signReturnObject(user);
+        return user;
     }catch(err)
     {
         if(err instanceof UniqueConstraintError){
@@ -102,21 +102,7 @@ async function fetchUserRole(userId)
 
 async function refresh(decodedAuthToken)
 {
-    const user = await fetchUser(decodedAuthToken.id);
-    return signReturnObject(user);
-}
-
-function signReturnObject(user)
-{
-    const authToken = createAuthToken(user);
-    return {user, authToken};
-}
-function createAuthToken(user)
-{
-    return tokenAuthServices.signPayload({
-        id: user.id,
-        role: user.role
-    })
+    return await fetchUser(decodedAuthToken.id);
 }
 
 function include(level)

@@ -15,17 +15,6 @@ async function fetchStore(id)
     return storeModel.toJSON();
 }
 
-async function fetchStoreOfUser(userId)
-{
-    const storeModel = await Store.findOne({ 
-        where: { userId },
-        include: ALL_INCLUDES,
-        attributes: SERVE_ATTRIBUTES
-    });
-    if(!storeModel) throw new ApplicationError('No store owned', 404);
-    return storeModel.toJSON();
-}
-
 async function fetchStoreIdOfUser(userId) {
     const store = await Store.findOne({ 
         where: { userId }, 
@@ -49,16 +38,16 @@ async function createStore(storeData, files, userId)
     return { result: 'created' };
 }
 
-async function updateStore(storeData, files, userId)
+async function updateStore(storeData, files, requester)
 {
-    const store = await Store.findOne({where: { userId }});
+    const store = await fetchStore(requester.storeId);
     
-    const updateData = { ...storeData, userId };
+    const updateData = { ...storeData, userId: requester.id };
     await Store.sequelize.transaction( async t => {
 
         await handleImage('imageId', updateData.imageAction, files.imageFile?.[0], store, updateData);
         await handleImage('qrImageId', updateData.qrImageAction, files.qrImageFile?.[0], store, updateData);
-        await store.update(updateData);
+        await Store.update(updateData, {where: { storeId: store.id } });
     });
 
     return { result: 'updated' };
@@ -132,4 +121,4 @@ function include(level)
             }
     }
 }
-export default  { fetchStore, fetchStoreOfUser, fetchStoreIdOfUser, createStore, updateStore, include }
+export default  { fetchStore, fetchStoreIdOfUser, createStore, updateStore, include }

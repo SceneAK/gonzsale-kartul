@@ -1,7 +1,7 @@
 import { DataTypes, getInstance } from "../sequelize.js";
 const sequelize = getInstance();
 
-const User = sequelize.define('User', {
+const userAttributes = {
     id: {
         type: DataTypes.UUID,
         allowNull: false,
@@ -34,13 +34,15 @@ const User = sequelize.define('User', {
         allowNull: false,
         defaultValue: DataTypes.NOW
     }
-}, {
+}
+const User = sequelize.define('User', userAttributes, {
     indexes: [
         {
             unique: true,
             fields: ['email']
         }
-    ]
+    ],
+    paranoid: true
 });
 
 const UserStorage = sequelize.define('UserStorage', {
@@ -57,4 +59,4 @@ const UserStorage = sequelize.define('UserStorage', {
     }
 })
 
-export {User, UserStorage};
+export {User, UserStorage, userAttributes};

@@ -6,7 +6,7 @@ const fetchProducts = async (req, res) => {
     const {page, ...where} = req.query;
     if(where.category == '' || where.category?.toLowerCase() == 'all') delete where.category;
 
-    const result = await productServices.fetchPublicProducts(page, where);
+    const result = await productServices.fetchAvailableProducts(page, where);
     
     result.items.forEach( product => transform(product, req));
     res.json(result);
@@ -14,9 +14,7 @@ const fetchProducts = async (req, res) => {
 
 const fetchOwnedProducts =  async (req, res) => {
     const {page} = req.query;
-    const storeId = await storeServices.fetchStoreIdOfUser(req.decodedAuthToken.id);
-
-    const result = await productServices.fetchProductsOfStore(storeId, page);
+    const result = await productServices.fetchProductsOfStore(req.decodedAuthToken.storeId, page);
 
     result.items.forEach( product => transform(product, req));
     res.json(result);
@@ -30,28 +28,21 @@ const fetchProduct = async (req, res) => {
 }
 
 const createProduct = async (req, res) => {
-    const { body, files, decodedAuthToken } = req;
-    const { variants, ...productData } = body;
+    const { body, decodedAuthToken } = req;
+    const { defaultVariantData, ...productData } = body;
 
-    const result = await productServices.createProduct(decodedAuthToken.id, {
+    const result = await productServices.createProduct({
         productData,
-        files,
-        variants
-    });
+        defaultVariantData
+    }, decodedAuthToken.storeId);
     res.json(result);
 }
 
 const editProduct = async(req, res) => {
     const { id } = req.params;
-    const { body, files, decodedAuthToken } = req;
-    const { variants, actionJson, ...productData } = body;
-    const actions = JSON.parse(actionJson);
-    const result = await productServices.editProduct(id, decodedAuthToken.id, {
-        productData,
-        files,
-        actions,
-        variants
-    });
+    const { body, decodedAuthToken } = req;
+
+    const result = await productServices.editProduct(id, decodedAuthToken.storeId, body);
     res.json(result);
 }
 

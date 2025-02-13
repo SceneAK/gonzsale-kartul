@@ -1,4 +1,4 @@
-import { userServices } from '../services/index.js';
+import { userServices, tokenAuthServices, storeServices } from '../services/index.js';
 import 'cookie-parser';
 
 const fetchUsers = async (req, res) => {
@@ -9,15 +9,15 @@ const fetchUsers = async (req, res) => {
 
 const signIn = async (req, res) => {
     const {email, password} = req.body;
-    const {user, authToken} = await userServices.signIn(email, password);
-    setAuthTokenCookie(res, authToken);
+    const user = await userServices.signIn(email, password);
+    await setAuthTokenCookie(res, user);
     return res.json(user);
 }
 
 const signUp = async (req, res) => {
     const {password, ...contactData} = req.body;
-    const {user, authToken} = await userServices.signUp(contactData, password)
-    setAuthTokenCookie(res, authToken);
+    const user = await userServices.signUp(contactData, password)
+    await setAuthTokenCookie(res, user);
     return res.json(user);
 }
 
@@ -33,8 +33,8 @@ const editContacts = async (req, res) => {
 }
 
 const refresh = async (req, res) => {
-    const {user, authToken} = await userServices.refresh(req.decodedAuthToken);
-    setAuthTokenCookie(res, authToken);
+    const user = await userServices.refresh(req.decodedAuthToken);
+    await setAuthTokenCookie(res, user);
     res.json(user);
 }
 
@@ -53,9 +53,24 @@ const cookieOptions = {
     secure: false, // enable on production
     sameSite: 'Strict'
 }
-function setAuthTokenCookie(res, authToken)
+async function setAuthTokenCookie(res, user)
 {
+    const payload = await buildPayload(user);
+    const authToken = tokenAuthServices.signPayload(payload);
     res.cookie(AUTH_TOKEN_NAME, authToken, cookieOptions);
+}
+async function buildPayload(user)
+{
+    const payload = {
+        id: user.id,
+        role: user.role
+    }
+    if(user.role == userServices.ROLES['StoreManager'])
+    {
+        payload.storeId = await storeServices.fetchStoreIdOfUser(user.id);
+        console.log(payload);
+    }
+    return payload;
 }
 
 export default {

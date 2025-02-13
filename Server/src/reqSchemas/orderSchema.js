@@ -20,16 +20,12 @@ const customerDetails = {
 const updateSchema = {
     body: Joi.object({
         orderItemId: UUID.required(),
-        status: Joi.string().valid('UNCOMPLETED', 'READY', 'COMPLETED', 'CANCELED').required()
+        status: Joi.string().valid('UNCOMPLETED', 'READY', 'COMPLETED', 'CANCELLED').required()
     }).required()
 }
 
 const fetchIncomingSchema = {
-    query: page.query.append({
-        productId: UUID,
-        notes: Joi.string()
-
-    })
+    query: Joi.object().max(5)
 }
 
 export default {
