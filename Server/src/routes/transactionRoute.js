@@ -10,6 +10,7 @@ const transactionUpload = createMulter({relativeDir: 'Transactions', keyName: 'f
 router.get('/:id', verify(), transaction.fetchTransaction);
 
 router.post('/:orderId/cod', validate(transactionSchemas.createCOD), transaction.createCODTransaction);
+        
 router.post('/:orderId/proof', verify(false), transactionUpload, validate(transactionSchemas.createProof), transaction.createProofTransaction);
 
 export default router;

@@ -9,8 +9,7 @@ const fetchStore = async (req, res) =>{
 }
 
 const fetchOwnedStore = async (req, res) =>{
-    const { decodedAuthToken } = req;
-    const store = await storeServices.fetchStoreOfUser(decodedAuthToken.id);
+    const store = await storeServices.fetchStore(req.decodedAuthToken.storeId);
     convertAllPathsToURLs(req.protocol, req.hostname, store);
     res.json(store);
 }
@@ -21,14 +20,13 @@ const createStore = async (req, res, next) =>
     const result = await storeServices.createStore(body, files, decodedAuthToken.id);
     
     logger.info('Created Store by User ', decodedAuthToken.id, '. Result: ', result);
-    
     res.json(result);
 }
 
 const updateStore = async (req, res) => 
 {
     const {decodedAuthToken, files, body} = req;
-    const result = await storeServices.updateStore(body, files, decodedAuthToken.id);
+    const result = await storeServices.updateStore(body, files, decodedAuthToken);
     res.json(result);
 }
 

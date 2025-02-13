@@ -2,6 +2,7 @@ import Joi from "joi";
 import orderItemSchema from "./orderItemSchema.js";
 import userSchema from "./userSchema.js";
 import { UUID } from "./common.js";
+import page from "./pageSchema.js";
 
 const createOrderSchema = (req) => ({
     body: Joi.object({
@@ -19,11 +20,16 @@ const customerDetails = {
 const updateSchema = {
     body: Joi.object({
         orderItemId: UUID.required(),
-        status: Joi.string().valid('UNCOMPLETED', 'READY', 'COMPLETED', 'CANCELED').required()
+        status: Joi.string().valid('UNCOMPLETED', 'READY', 'COMPLETED', 'CANCELLED').required()
     }).required()
+}
+
+const fetchIncomingSchema = {
+    query: Joi.object().max(5)
 }
 
 export default {
     createOrder: createOrderSchema,
-    update: updateSchema
+    update: updateSchema,
+    fetchIncoming: fetchIncomingSchema
 };

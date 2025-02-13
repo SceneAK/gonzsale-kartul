@@ -16,8 +16,8 @@ router.post('/refresh', verify(), user.refresh);
 
 router.post('/expire', user.expireCookie);
 
-router.patch('/edit', verify(), validate(userSchemas.editContacts), user.editContacts);
-
 router.patch('/:id/:role', verify(), user.editRole);
+
+router.patch('/', verify(), validate(userSchemas.editContacts), user.editContacts);
 
 export default router;

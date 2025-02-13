@@ -1,153 +1,75 @@
 import ApplicationError from '../common/errors.js';
-import databaseInitializePromise from '../database/initialize.js'
 import productImageServices from './productImageServices.js';
 import storeServices from './storeServices.js';
 import variantServices from './variantServices.js';
-import fs from 'fs';
-import { paginationOption, reformatFindCountAll } from '../common/index.js';
-const { Product } = await databaseInitializePromise;
+import baseProductServices from './baseProductServices.js';
 
-const BASIC_ATTRIBUTES = ['id', 'name'];
-const GENERAL_ATTRIUTES = [...BASIC_ATTRIBUTES, 'storeId', 'category', 'price', 'unit', 'availability'];
+const BASIC_ATTRIBUTES = ['id', 'name', 'isAvailable'];
+const INCLUDE_DEFAULT_AND_IMAGE = [
+    variantServices.include('serveDefault'),
+    productImageServices.include('serveOne'),
+]
 
-async function fetchPublicProducts(page = 1, where = {}, attributes = GENERAL_ATTRIUTES)
+async function fetchAvailableProducts(page = 1, where = {})
 {
-    let result = await Product.scope('Public').findAndCountAll({
-        attributes,
+    let result = await baseProductServices.fetchAndCountAll('Available', page, {
+        attributes: [...BASIC_ATTRIBUTES, 'storeId', 'category', 'isAvailable'],
         where,
         include: [
-            { ...productImageServices.include('serve') },
-            { ...storeServices.include('justName') }
-        ],
-        ...paginationOption(page)
+            ...INCLUDE_DEFAULT_AND_IMAGE,
+            storeServices.include('serveName'),
+        ]
     });
-    return reformatFindCountAll(result, page).itemsToJSON();
+    return result;
 }
 
 async function fetchProductsOfStore(storeId, page = 1)
 {
-    const result = await Product.findAndCountAll({
-        attributes: GENERAL_ATTRIUTES,
+    const result = await baseProductServices.fetchAndCountAll('default', page, {
+        attributes: [...BASIC_ATTRIBUTES, 'storeId', 'category', 'isAvailable'],
         where: {storeId},
-        include: [
-            { ...productImageServices.include('serve-image') }
-        ],
-        ...paginationOption(page)
+        include: INCLUDE_DEFAULT_AND_IMAGE
     });
-    return reformatFindCountAll(result, page).itemsToJSON();
-}
-
-async function fetchProduct(id){
-    const product = await _fetchProduct(id, {
-        attributes: [...BASIC_ATTRIBUTES, 'description', 'category', 'price', 'unit', 'availability'],
-        include: [
-            {...storeServices.include('serveWithAll')},
-            {...productImageServices.include('serve')}
-        ]
-    });
-    return product.toJSON();
-}
-
-async function fetchProductsPlain(ids)
-{
-    const products = await Product.findAll({where: { id: ids }})
-    return products.map(product => product.toJSON());
-}
-
-async function _fetchProduct(id, option)
-{
-    const result = await Product.findByPk(id, option);
-    if(!result) throw new Error('Product not found');
     return result;
 }
 
-async function createProduct(userId, data) 
-{
-    const {productData, files, variants} = data;
-    const storeId = await storeServices.fetchStoreIdOfUser(userId);
+async function fetchProduct(id){
+    const product =  await baseProductServices.fetchProduct(id, {
+        attributes: [...BASIC_ATTRIBUTES, 'description', 'category', 'isAvailable'],
+        include: [
+            variantServices.include('serve'),
+            productImageServices.include('serve'),
+            storeServices.include('serveWithAll')
+        ]
+    });   
+    return product;
+}
 
-    await Product.sequelize.transaction(async t => {
-        const product = await Product.create({ ...productData, storeId });
-        await productImageServices.createProductImagesAuto(files, product.id);
-        if(variants) await variantServices.createVariants(variants, product.id);
+async function createProduct(data, requesterStoreId) 
+{
+    let {productData, defaultVariantData} = data;
+    defaultVariantData = {...defaultVariantData, isDefault: true};
+
+    let product;
+    await baseProductServices.sequelize.transaction(async t => {
+        product = await baseProductServices._createProduct(storeId, productData);
+        await variantServices._createVariant(product.id, defaultVariantData)
     });
-    return { result: 'created product' };
+    return { productId: product?.id };
 }
 
-async function editProduct(id, userId, data) 
+async function editProduct(id, requesterStoreId, productData) 
 {
-    const {productData, files, actions, variants} = data;
-    const storeId = await storeServices.fetchStoreIdOfUser(userId);
-
-    await Product.sequelize.transaction(async t => {
-        const product = await Product.findByPk(id);
-
-        if (!product) throw new Error('Product not found');
-        if (product.storeId !== storeId) throw new Error('Unauthorized');
-
-        if(actions) await handleImageUpdate(id, userId, actions, files);
-        if(productData) await Product.update(productData, { where: { id } })
-    });
-
-    if(files.length != 0) {
-        files.forEach( file => fs.unlink(file, _ => _ ))
-    }
-    
-    return { result: 'updated product' };
-}
-async function handleImageUpdate(productId, userId, actions, files)
-{
-    const original = await productImageServices.fetchProductImages(productId);
-    const finalOrder = [];
-    
-    for (let index = 0; index < actions.length; index++) 
-    {
-        if(isId(actions[index]))
-        {
-            finalOrder.push(actions[index]);
-        }else{
-            const newFile = files.shift();
-            if(!newFile) throw new ApplicationError("number of files does not match required files", 400);
-
-            const [productImage] = await productImageServices.createProductImagesAuto([newFile], productId, userId);
-            finalOrder.push(productImage.imageId);
-        }
-        
-    }
-
-    const unhandled = original.filter( item => !finalOrder.includes(item.imageId) );
-    await productImageServices.deleteImages(unhandled.map( prdImg => prdImg.imageId ), userId);
-
-    await productImageServices.reorderProductImages(finalOrder, productId);
-}
-function isId(str)
-{
-    const UUIDV4_HYPH_LEN = 36;
-    return str.length == UUIDV4_HYPH_LEN;
+    await baseProductServices.ensureBelongsToStore(id, requesterStoreId);
+    const result = await baseProductServices.editProduct(id, productData);
+    return { result };
 }
 
-function include(level)
-{
-    switch (level) {
-        case 'serveBasicWithImages':
-            return {
-                model: Product,
-                attributes: BASIC_ATTRIBUTES,
-                include: productImageServices.include('serve')
-            }
-        default:
-            return {
-                model: Product
-            }
-    }
-}
 
 export default {
-    fetchPublicProducts,
+    fetchAvailableProducts,
     fetchProductsOfStore,
     fetchProduct,
-    fetchProductsPlain,
     createProduct,
-    editProduct,
-    include
+    editProduct
 };

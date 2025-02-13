@@ -9,29 +9,38 @@ Please sort by importance
 - Retest all functions
 
 # FRONTEND
-
-- Create Store Looks Ugly
 ## Missing Pages
 - Store page (single)
 
 ## Integrationn
 .Automatic refresh token
-DONE User Edit Profile
+> My orders integration
 > Product Edit
-DONE Integrated Order & Guest Orders
+> Bulk Order status updating
+> Reintegrate literally everything that involves product & orders
 
 # BACKEND
-## Rework pagination
-DONE Make paginated results return a consistent format of max_pages.
-
-## Implement product variants
+## Implement Product Variants
+DONE Product Image independence
+DONE Product & Default VariantCreation
+DONE Variant Creation
+DONE Reworked product fetching
+DONE Order placing
+    DONE Cancel order stock replenishment logic
+DONE Variant Editting
+    DONE Variant isDefault logic
+DONE Retest Product Editting
+DONE Variant soft deletion
+DONE Order soft deletion
+DONE Image Deletion
+DONE Include storeId in decodedAuthToken
 
 ## orders
-> My orders integration
-> Mailing Customers when order status changes, when product gets deleted 
+DONE Filter based on variant, based on product, based on orderNotes (get count too)
+. Mailing Customers when order status changes, when product gets deleted 
 
 ## Request Home page Items (promotional content)
-> Design the system
+- Design the system
 
 ## Preorder specific data
 - Make frontend tell you if it's preorder
@@ -48,7 +57,7 @@ DONE Admin options in the website itself
 ## Optimize update logic for product variant and product images
 
 ## Refactor
-> order & order item refactor: move the statusOrder to model and link everything (yes the schema too) to it. Then make a function to get the storeId of orderItems, remove completeAndValidate.
+- Rethink route file structure? It feels overcomplicated / weird
 - Rework productImage creation and priority so that whoever uses the service completes the data first (with an exported function) before passing it to productImageServices
 - Custom Error classes extending ApplicationError
 - Move logic that creates circular dependency to OrderManagementServices: orderItemServices.UpdateStatus + orderServices.createOrder()

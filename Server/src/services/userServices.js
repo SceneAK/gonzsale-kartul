@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import tokenAuthServices from './tokenAuthServices.js';
 import databaseInitializePromise from '../database/initialize.js'
 import { ApplicationError, paginationOption, reformatFindCountAll } from '../common/index.js';
-import { UniqueConstraintError } from 'sequelize';
+import { col, UniqueConstraintError, where } from 'sequelize';
 const { User } = await databaseInitializePromise;
 
 const SALT_ROUNDS = 8;
@@ -39,14 +39,14 @@ async function fetchUsers(requesterId, page = 1, where = {})
 
 async function signIn(email, password)
 {
-    const user = await User.findOne({ where: {email}, raw: true});
+    const user = await User.findOne({ where: where(col('email'), '=', email), raw: true }); // Refer to backend_doc
     if(!user) throw new ApplicationError("Email not found", 404);
 
     const match = await bcrypt.compare(password, user.password);;
     if(!match) throw new ApplicationError("Failed to Authenticate", 401);
     
     filterOnly(user, SERVE_ATTRIBUTES);
-    return signReturnObject(user);
+    return user;
 }
 
 async function signUp(contactData, password)
@@ -57,7 +57,7 @@ async function signUp(contactData, password)
         const userModel = await User.create({...contactData, password: hashed});
         const user = userModel.toJSON();
         filterOnly(user, SERVE_ATTRIBUTES);
-        return signReturnObject(user);
+        return user;
     }catch(err)
     {
         if(err instanceof UniqueConstraintError){
@@ -102,21 +102,7 @@ async function fetchUserRole(userId)
 
 async function refresh(decodedAuthToken)
 {
-    const user = await fetchUser(decodedAuthToken.id);
-    return signReturnObject(user);
-}
-
-function signReturnObject(user)
-{
-    const authToken = createAuthToken(user);
-    return {user, authToken};
-}
-function createAuthToken(user)
-{
-    return tokenAuthServices.signPayload({
-        id: user.id,
-        role: user.role
-    })
+    return await fetchUser(decodedAuthToken.id);
 }
 
 function include(level)

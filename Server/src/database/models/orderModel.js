@@ -1,7 +1,7 @@
 import { DataTypes, getInstance } from "../sequelize.js";
-import { Product, Variant } from "./productModel.js";
+import { productAttributes, Variant, variantAttributes } from "./productModel.js";
 import Store from './storeModel.js';
-import { User } from "./userModel.js";
+import { User, userAttributes } from "./userModel.js";
 const sequelize = getInstance();
 
 const Order = sequelize.define('Order', {
@@ -14,23 +14,14 @@ const Order = sequelize.define('Order', {
     customerId: {
         type: DataTypes.UUID
     },
-    customerName: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    customerEmail: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    customerPhone: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
+    customerName: userAttributes.name,
+    customerEmail: {...userAttributes.email, unique: false},
+    customerPhone: userAttributes.phone,
     storeId: {
         type: DataTypes.UUID,
         allowNull: false
     }
-})
+}, {paranoid: true})
 Order.belongsTo(Store, {foreignKey: 'storeId'})
 Store.hasMany(Order, {foreignKey: 'storeId'})
 
@@ -48,15 +39,16 @@ const OrderItem = sequelize.define('OrderItem', {
         type: DataTypes.UUID,
         allowNull: false
     },
-    productId: {
+    variantId: {
         type: DataTypes.UUID,
         allowNull: false
     },
+    productName: productAttributes.name,
+    productDescription: productAttributes.description,
+    variantName: variantAttributes.name,
+    variantPrice: variantAttributes.price,
+    variantUnit: variantAttributes.unit,
     quantity: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
-    },
-    unitPrice: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false
     },
@@ -64,38 +56,16 @@ const OrderItem = sequelize.define('OrderItem', {
         type: DataTypes.TEXT
     },
     status: {
-        type: DataTypes.ENUM('PENDING', 'READY', 'COMPLETED', 'CANCELED'),
+        type: DataTypes.ENUM('PENDING', 'READY', 'COMPLETED', 'CANCELLED'),
         allowNull: false,
         defaultValue: 'PENDING'
     }
-});
+}, {paranoid: true});
 
 OrderItem.belongsTo(Order, {foreignKey: 'orderId'} )
 Order.hasMany(OrderItem, {foreignKey: 'orderId'} )
 
-OrderItem.belongsTo(Product, {foreignKey: 'productId'})
-Product.hasMany(OrderItem, {foreignKey: 'productId'})
+OrderItem.belongsTo(Variant, { foreignKey: 'variantId' })
+Variant.hasMany(OrderItem, { foreignKey: 'variantId' })
 
-const OrderItemVariant = sequelize.define('OrderItemVariant', {
-    id:{
-        type: DataTypes.INTEGER.UNSIGNED,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    orderItemId:{
-        type: DataTypes.UUID,
-        allowNull: false
-    },
-    variantId: {
-        type: DataTypes.UUID,
-        allowNull: false
-    }
-})
-
-OrderItemVariant.belongsTo(OrderItem, {foreignKey: 'orderItemId'})
-OrderItem.hasMany(OrderItemVariant, {foreignKey: 'orderItemId'})
-
-OrderItemVariant.belongsTo(Variant, {foreignKey: 'variantId'});
-Variant.hasMany(OrderItemVariant, {foreignKey: 'variantId'});
-
-export {Order, OrderItem, OrderItemVariant};
+export {Order, OrderItem};

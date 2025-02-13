@@ -1,18 +1,23 @@
 # Notable Things
-The following will contain some notable logic, design decisions/quirks, and bugs of the backend app alongside other potentially helpful information. Things that are self explanitory / native to node.js will be omitted.
+The following will contain some notable logic, design decisions/quirks, and bugs of the backend node.js app alongside other potentially helpful information, since the developers have never created a fullstack system before this one. Things that are self explanitory / native to node.js will be skipped over.
+
 ## Setup
 - Install all node dependencies + MySQL Service
-- Edit .env file to include SECRET_KEY, JWT_SECRET_KEY, PORT, MYSQL_URI
 - Run Node Server/setups/secretKey.js to generate a secret key in console
+- Edit .env file to include SECRET_KEY, JWT_SECRET_KEY, PORT, MYSQL_URI
+- Run syncDb to sync with mysql, provide URI with sufficient privileges
+
+## Node.js
+This site was made with Node.Js and Express simply because the first tutorial I found on making e-commerce websites was one with MERN stack. We didn't consider how pricey it is to run node.js compared to something like codeigniter, it was too late to switch.
 
 ## ReqSchemas
 - JOI schema validation for incoming requests (yes, the entire request object)
 
 ## Database
 ### Sequelize
-- Uses CLS namespace to make transactions not a hassle
-#### IMPORTANT: Do not use .get(), use toJSON() instead. 
-    28 Jan 2025 GET /store's fetchStoreOfUser(uid) returns with model.get(). Calling this endpoint and then attempting to create product threw an error at Image.bulkCreate. GET /store returns the complete data, which means all is/should be resolved. Cause must be persistent across requests.
+- Uses CLS namespace to make transactions easier
+#### Do not use .get(), use toJSON() instead. 
+    28 Jan 2025 GET /store's fetchStoreOfUser(uid) returns with model.get(). Calling this endpoint and then attempting to create product threw an error at Image.bulkCreate. GET /store returns the complete data, which means all is/should be resolved. The cause must be persistent across requests.
     What I've ruled out: 
         - Transactions: I've removed them, error persists
         - CLS Namespaces: I've removed them, error persists
@@ -24,26 +29,23 @@ The following will contain some notable logic, design decisions/quirks, and bugs
         - Linked with specifically Image Creation: I haven't checked, but perhaps it's just image creation. I tried calling GET /store and then POST /signup, that worked just fine. Haven't tried anything else though.
 
 ## Middlewares
-## schemaValidator.js
-- validator itterates through these keys and validates the corresponding req keys' values use coersion to force convert types. Expect Formdata strings to be converted (except for objects)
-## multerUploads.js
+### multerUploads.js
 - Server immediately stores uploaded files to __dir/public/${relativeFilePath}
-- Access the files using gonzsale.com/source/${relativeFilePath}
-- Files are stored in the database as their relative path to the public directory: Controllers must buildUrl() from the relative path when sending them back to the client.
+- Access the files using {protocol}{host}/source/${relativeFilePath}
+- Files are stored in the database as their relative path to the public directory, controllers are expect to transform them into URLs
+
 ## verifyAuthToken.js
-- verify() authenticates signedCookies.token, then fills the *decodedAuthToken* in req, intended to be run before an operation requiring authentication, throwing an error otherwise
+- verify() authenticates signedCookies.token, then populates the *decodedAuthToken* in req, intended to be run before an operation requiring authentication, throwing an error if required = true
 
 ## Services
-### Product
-
-### Order
-
 ### Token Authentication
 - *Some route controllers expects this middleware to run right before and depends on decodedAuthToken.id.*
 - The normal checkAuthToken returns the ID or an error. Used for Logins and such
 ### User
-**- Not expicit, but userServices returns signed tokens upon signin/singup. Other services expect this token decoded in req.decodedAuthToken by the verify() middleware**
 - Schema's regex allows passwords and names to have chinese japanese characters, cause why the heck not?
+#### User.FindOne literal where
+- For some reason, one random time, User.findOne consistently ignores the where clause and returns the first row of the users table. Setting where { email: 'name@domain.com'} directly didn't even work. Only using where literals worked.
+
 ### Store
 - As per the schema, storeData expects name, description, bankAccount, bankName. Files expects imageFile, qrImageFile.
 

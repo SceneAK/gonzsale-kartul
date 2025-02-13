@@ -5,7 +5,7 @@ export { default as storeServices } from './storeServices.js';
 export { default as orderServices } from './orderServices.js';
 export { default as orderItemServices } from './orderItemServices.js';
 export { default as productServices } from './productServices.js';
-export { default as productImageServices } from './productImageServices.js';
 export { default as variantServices } from './variantServices.js';
+export { default as productImageServices } from './productImageServices.js';
 export { default as tokenAuthServices } from './tokenAuthServices.js';
 export { default as extendedTransactionServices } from './extendedTransactionServices.js';

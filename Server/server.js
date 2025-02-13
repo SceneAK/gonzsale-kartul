@@ -1,6 +1,6 @@
 import 'express-async-errors';
 import app from './app.js';
-import { userRoute, productRoute, storeRoute, orderRoute, transactionRoute } from './src/routes/index.js';
+import { userRoute, productRoute, storeRoute, orderRoute, transactionRoute, variantRoute } from './src/routes/index.js';
 import { onErrorFileDeletion } from './src/middlewares/multerUploads.js';
 import { logger } from './src/common/index.js';
 import errorHandler from './src/middlewares/errorHandler.js';
@@ -13,6 +13,7 @@ app.use('/api/user/', userRoute);
 app.use('/api/store/', storeRoute);
 app.use('/api/order/', orderRoute);
 app.use('/api/transaction/', transactionRoute);
+app.use('/api/variant/', variantRoute);
 
 // Handled Errors
 app.use(onErrorFileDeletion); // for multer

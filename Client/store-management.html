@@ -883,33 +883,40 @@
                 })
             })
 
-            // Load store data
-            async function loadStore() {
-                const storeContainer = document.getElementById("store-container")
-                try {
-                    const userStore = await store.fetchOwnedStore()
-                    if (!userStore) {
-                        const user = JSON.parse(localStorage.getItem('loginDetail'))
-                        if (user.role == 'STORE_MANAGER') {
-                            storeContainer.innerHTML = getCreateStoreHtml()
-                            document.getElementById("create-store-form").addEventListener("submit", async function (event) {
-                                event.preventDefault()
-                                const formData = new FormData(this)
-                                try {
-                                    const response = await store.createStore(formData)
-                                    if (!response.ok) throw new Error("Failed to create store")
-                                    alert("Store created successfully!")
-                                    loadStore()
-                                } catch (error) {
-                                    console.error("Error creating store:", error)
-                                    alert("There was an error creating the store. Please try again.")
-                                }
-                            })
-                        } else {
-                            storeContainer.innerHTML = "Contact Admins to be granted Store Manager Role"
-                        }
+        // Load store data
+        async function loadStore() {
+            const storeContainer = document.getElementById("store-container")
+
+            try {
+                // Fetch the user's store
+                const userStore = await store.fetchOwnedStore()
+
+                if (!userStore) {
+                    // No store exists: Show "Create Store" form
+                    const user = JSON.parse(localStorage.getItem('loginDetail'))
+                    if (user.role == 'STORE_MANAGER') {
+                        storeContainer.innerHTML = getCreateStoreHtml()
+                        // Handle "Create Store" form submission
+                        document.getElementById("create-store-form").addEventListener("submit", async function (event) {
+                            event.preventDefault()
+
+                            const formData = new FormData(this)
+
+                            try {
+                                await store.createStore(formData)
+                                alert("Store created successfully!")
+                                loadStore() // Reload store data
+                            } catch (error) {
+                                console.error("Error creating store:", error)
+                                alert("There was an error creating the store. Please try again.")
+                            }
+                        })
                     } else {
-                        storeContainer.innerHTML = `
+                        storeContainer.innerHTML = "Contact Admins to be granted Store Manager Role"
+                    }
+                } else {
+                    // Store exists: Show store details
+                    storeContainer.innerHTML = `
                     <div class="store-details">
                         <h2>${userStore.name}</h2>
                         <p>${userStore.description}</p>

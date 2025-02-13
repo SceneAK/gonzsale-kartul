@@ -41,7 +41,7 @@ const Store = sequelize.define('Store', {
         allowNull: false,
         defaultValue: DataTypes.NOW
     }
-});
+}, {paranoid: true});
 User.hasOne(Store, {foreignKey: 'userId'});
 Store.belongsTo(User, {foreignKey: 'userId'});
 

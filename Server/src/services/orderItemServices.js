@@ -1,86 +1,137 @@
 import initializePromise from '../database/initialize.js';
-import productServices from './productServices.js';
 import ApplicationError from '../common/errors.js';
-import storeServices from './storeServices.js';
+import variantServices from './variantServices.js';
+import baseOrderServices from './baseOrderServices.js';
 const { OrderItem } = await initializePromise;
 
-async function fetchOrderItems(where, attributes = ATTRIBUTES)
+async function _fetchByPk(id, options)
 {
-    const items = await OrderItem.findAll({ where, attributes })
-    return items.map(item => item.toJSON());
-}
-async function fetchByPk(id, attributes = ATTRIBUTES)
-{
-    const model = await OrderItem.findByPk(id, { attributes });
+    const model = await OrderItem.findByPk(id, options);
     if(!model) throw new ApplicationError("Order item not found", 404);
     return model.toJSON();
 }
 
-async function create(orderItems)
+async function _createOrderItems(orderItems, orderId, transaction)
 {
-    await OrderItem.bulkCreate(orderItems);
+    const orderItemsWithVariantProduct = await attatchAssociatedVariantProduct(orderItems);
+    validatePotentialOrderVariants(orderItemsWithVariantProduct);
+    
+    const completedOrderItems = await completeOrderItemsData(orderItemsWithVariantProduct, orderId);
+    
+    await OrderItem.bulkCreate(completedOrderItems, {transaction});
+    await stockUpdater.decrementCorrespondingStocks(orderItemsWithVariantProduct);
 }
-
-async function completeAndValidate(orderItems, orderId)
+async function attatchAssociatedVariantProduct(orderItems)
 {
-    const products = await fetchProductsOfOrderItems(orderItems);
-    const productIds = [];
-    for (let i = 0; i < orderItems.length; i++) {
-        if(productIds.includes(orderItems[i].productId)) throw new ApplicationError("Order contains duplicate product", 400);
-        if(products[i].availability == 'UNAVAILABLE') throw new ApplicationError("Order contains unavailable product", 400);
-        if(products[i].storeId != products[0].storeId) throw new ApplicationError("Order contains products of mixed store origin", 400);
-
-        const unitPrice = products[i].price;
-        orderItems[i] = {...orderItems[i], orderId, unitPrice};
-        productIds.push(orderItems[i].productId);
-    }
-    return products[0].storeId;
+    const variantIds = orderItems.map( item => item.variantId);
+    const variants = await variantServices.fetchVariantsIncludeProduct(variantIds);
+    
+    return orderItems.map( (item, index) => { 
+        if(item.variantId == variants[index].id)
+        {
+            return {...item, Variant: variants[index] }
+        }else{
+            throw new ApplicationError('One or more variants not found, causing mismatch of OrderItem-Variant attatchment', 404);
+        }
+    } )
 }
-
-async function fetchProductsOfOrderItems(orderItems)
+async function completeOrderItemsData(orderItemsWithVariantProduct, orderId)
 {
-    const productIds = orderItems.map( orderItem => orderItem.productId);
-    return await productServices.fetchProductsPlain(productIds);
+    return orderItemsWithVariantProduct.map( withVariantProduct => {
+        const { Variant, ...orderItemData } = withVariantProduct;
+        const { Product } = Variant;
+
+        return {
+            orderId,
+            ...orderItemData, 
+
+            variantName: Variant.name,
+            variantUnit: Variant.unit,
+            variantPrice: Variant.price,
+
+            productId: Product.id,
+            productName: Product.name,
+            productDescription: Product.description
+        };
+    })
+}
+function validatePotentialOrderVariants(orderItemsWithVariantProduct)
+{
+    const commonStoreId = orderItemsWithVariantProduct[0].Variant.Product.storeId;
+    const seenVariants = new Set();
+    orderItemsWithVariantProduct.forEach( orderItem => {
+        const { Variant, quantity, variantId } = orderItem;
+        const { Product } = Variant;
+
+        if(Variant.stock - quantity < 0) throw new ApplicationError(`Insufficient Stock: "${Product.name} - ${Variant.name}"`, 400);
+
+        if(!Product.isAvailable) throw new ApplicationError(`Order contains unavailable product "${Product.name}"`, 400);
+        if(Product.storeId != commonStoreId) throw new ApplicationError("Order contains products of mixed store origin", 400);
+        if(seenVariants.has(variantId)) throw new ApplicationError(`Order contains duplicate variant "${variantId}"`, 400);
+        seenVariants.add(variantId);
+    } )
 }
 
 const statusOrder = ['PENDING', 'PROCESSING', 'READY', 'COMPLETED', 'CANCELLED'];
 
-async function updateStatus(id, status, requesterId)
+async function updateStatus(id, status, requesterStoreId)
 {
-    const orderItem = await fetchByPk(id, ['status', 'productId']);
-    await ensureRequesterBelongsProduct(orderItem.productId, requesterId);
-    validateStatusTransition(orderItem.status, status);
+    const orderItemWithVariant = await _fetchByPk(id, {
+        attributes: ['status', 'quantity'], 
+        include: [
+            variantServices.include(),
+            baseOrderServices.include()
+        ]}
+    );
+    baseOrderServices.ensureStoreOwnsOrder(orderItemWithVariant.Order, requesterStoreId);
+    validateStatusTransition(orderItemWithVariant.status, status);
 
-    return await OrderItem.update({status}, {where: {id}});
+    let result;
+    await OrderItem.sequelize.transaction( async t => {
+        if(status == "CANCELLED") 
+        {
+            await stockUpdater.incrementCorrespondingStocks([orderItemWithVariant]);
+        }
+    
+        result = await OrderItem.update({status}, {where: {id}});
+    })
+    return result;
 }
-
-async function updateStatusesByProduct(productId, status, requesterId)
+async function updateStatusesByVariant(variantId, requestedStatus, requesterStoreId)
 {
-    await ensureRequesterBelongsProduct(productId, requesterId);
+    let orderItemsWithVariants = await OrderItem.findAll({ 
+        where: { variantId }, 
+        include: [variantServices.include(), baseOrderServices.include()]
+    })
+    if(orderItemsWithVariants.length == 0) return;
+    orderItemsWithVariants = orderItemsWithVariants.map( item => item.toJSON())
 
-    const orderItems = await OrderItem.findAll({ where: { productId }, raw: true })
+    baseOrderServices.ensureStoreOwnsOrder(orderItemsWithVariants[0].Order, requesterStoreId)
 
     const valids = [];
-    for (const item of orderItems) {
-        if(isValidStatusTransition(item.status, status))
+    orderItemsWithVariants.forEach( existing => {
+        if(isValidStatusTransition(existing.status, requestedStatus))
         {
-            valids.push({...item, status});
+            valids.push({...existing, status: requestedStatus});
         }
-    }
-    
-    await OrderItem.bulkCreate(valids, {updateOnDuplicate: ['status']});
+    })
+
+    let result;
+    await OrderItem.sequelize.transaction(async transaction => {
+        if(requestedStatus == "CANCELLED")
+        {
+            await stockUpdater.incrementCorrespondingStocks(valids, transaction);
+        }
+        
+        result = await OrderItem.bulkCreate(valids, { transaction, updateOnDuplicate: ['status'] });
+    })
+    return result;
 }
 
-async function ensureRequesterBelongsProduct(productId, requesterId)
+
+async function _deleteOrderItemsOfOrder(orderId)
 {
-    const result = await productBelongsToUser(productId, requesterId);
-    if(!result) throw new ApplicationError("Product does not belong to user", 400);
-}
-async function productBelongsToUser(productId, requesterId)
-{
-    const products = await productServices.fetchProductsPlain([productId]);
-    const storeId = await storeServices.fetchStoreIdOfUser(requesterId);
-    return products[0].storeId == storeId;
+    await OrderItem.destroy({where: {orderId}});
 }
 
 function validateStatusTransition(current, request)
@@ -91,8 +142,8 @@ function validateStatusTransition(current, request)
 function isValidStatusTransition(current, request)
 {
     const correcOrder = statusOrder.indexOf(current) < statusOrder.indexOf(request);
-    const notCompleted = current != 'COMPLETED';
-    return correcOrder && notCompleted;
+    const completedOrCancelled = current == 'COMPLETED' || current == 'CANCELLED';
+    return correcOrder && !completedOrCancelled;
 }
 
 function createStatusSortLiteral(statusOrder)
@@ -105,25 +156,15 @@ function createStatusSortLiteral(statusOrder)
     return OrderItem.sequelize.literal(literal);
 }
 
-const ATTRIBUTES = ['id', 'quantity', 'unitPrice', 'notes', 'status'];
-
 const statusSortLiteral = createStatusSortLiteral(statusOrder)
 const order = [[statusSortLiteral, 'ASC']]
 
 function include(level)
 {
     switch (level) {
-        case 'serveWithProduct':
-            return {
-                model: OrderItem,
-                attributes: ATTRIBUTES,
-                include: productServices.include('serveBasicWithImages'),
-                order
-            }
         case 'serve':
             return {
                 model: OrderItem,
-                attributes: ATTRIBUTES,
                 order
             }
         default:
@@ -134,11 +175,35 @@ function include(level)
 }
 
 export default {
-    fetchOrderItems, 
-    completeAndValidate, 
-    create, 
+    _createOrderItems, 
+    _deleteOrderItemsOfOrder,
     updateStatus, 
-    updateStatusesByProduct, 
+    updateStatusesByVariant, 
     statusOrder,
     include
 }
+
+class OrderItemStockUpdater {
+    constructor(variantServices)
+    {
+        this.variantServices = variantServices;
+    }
+    async incrementCorrespondingStocks(orderItemsWithVariant, transaction)
+    {
+        const reversed = orderItemsWithVariant.map( item => ( { ...item, quantity: -item.quantity } ) );
+        await this.decrementCorrespondingStocks(reversed, transaction)
+    }
+    async decrementCorrespondingStocks(orderItemsWithVariant, transaction)
+    {
+        const stockUpdateData = await this.buildStockUpdateData(orderItemsWithVariant);
+        await this.variantServices.bulkUpsertStock(stockUpdateData, transaction);
+    }
+    async buildStockUpdateData(orderItemsWithVariant)
+    {
+        return orderItemsWithVariant.map( orderItem => ({
+            ...orderItem.Variant,
+            stock: (orderItem.Variant.stock - orderItem.quantity)
+        }))
+    }
+}
+const stockUpdater = new OrderItemStockUpdater(variantServices)

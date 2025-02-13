@@ -1,0 +1,59 @@
+import ApplicationError from '../common/errors.js';
+import initializePromise from '../database/initialize.js';
+import { paginationOption, reformatFindCountAll } from '../common/pagination.js';
+const { Order } = await initializePromise;
+
+async function fetchAll(options)
+{
+    const results = await Order.findAll(options)
+    return results.map( result => result.toJSON());
+}
+async function fetchOrder(id, options)
+{   
+    const orderModel = await Order.findByPk(id, options);
+    if(!orderModel) throw new ApplicationError('Order not found', 404);
+    return orderModel.toJSON();
+}
+async function fetchAndCountAll(page, options)
+{
+    const result = await Order.findAndCountAll({
+        ...options,
+        ...paginationOption(page, 10)
+    });
+    return reformatFindCountAll(result, page).itemsToJSON();
+}
+
+async function _createOrder(customerDetails, storeId, options)
+{
+    const orderModel = await Order.create({...customerDetails, storeId}, options);
+    return orderModel.toJSON();
+}
+
+async function _deleteOrder(id)
+{
+    await Order.destroy({where: {id}});
+}
+
+function ensureStoreOwnsOrder(order, storeId)
+{
+    if(order.storeId != storeId) throw new ApplicationError("Order does not belong to this seller", 401);
+}
+
+function include(options)
+{
+    return { 
+        model: Order,
+        ...options
+    }
+}
+
+export default {
+    fetchOrder,
+    fetchAndCountAll,
+    fetchAll,
+    _createOrder,
+    _deleteOrder,
+    ensureStoreOwnsOrder,
+    include,
+    sequelize: Order.sequelize
+}

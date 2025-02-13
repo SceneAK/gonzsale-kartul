@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { UUID } from "./common.js";
+import variantSchema from './variantSchema.js';
 
 const fetchFilteredSchema = {
     query: Joi.object({
@@ -15,16 +16,13 @@ const bodySchema = Joi.object({
     name: Joi.string().min(1).max(50),
     description: Joi.string().min(1).max(400),
     category: Joi.string().min(1).max(40),
-    price: Joi.number().min(0),
-    unit: Joi.string().min(1).max(15),
-    availability: Joi.string().valid('UNAVAILABLE', 'AVAILABLE', 'PREORDER'),
-
-    variants: Joi.object().pattern(Joi.string(), Joi.array().items(Joi.string().min(1).max(50)))
+    isAvailable: Joi.bool()
 })
 
 const createProductSchema = {
-    body: bodySchema.fork(['name', 'category', 'price', 'unit', 'availability'], schema => schema.required()).required(),
-    files: Joi.array().exist()
+    body: bodySchema.fork(['name', 'category', 'isAvailable'], schema => schema.required()).append({
+        defaultVariantData: variantSchema.createVariant.body.required()
+    }).required()
 }
 
 const editProductSchema = {
@@ -35,7 +33,7 @@ const editProductSchema = {
 }
 
 export default {
-    getProducts: fetchFilteredSchema,
+    fetchProducts: fetchFilteredSchema,
     createProduct: createProductSchema,
     editProduct: editProductSchema
 };

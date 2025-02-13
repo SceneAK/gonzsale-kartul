@@ -1,67 +1,43 @@
-import ApplicationError from '../common/errors.js';
-import initializePromise from '../database/initialize.js';
+import baseOrderServices from './baseOrderServices.js';
 import orderItemServices from './orderItemServices.js';
 import storeServices from './storeServices.js';
 import transactionServices from './transactionServices.js';
-import { paginationOption, reformatFindCountAll } from '../common/pagination.js';
-const { Order } = await initializePromise;
+import variantServices from './variantServices.js';
+const sequelize = baseOrderServices.sequelize;
 
 const ITEMS_AND_TRANSAC = [
     transactionServices.include('serve'), 
-    orderItemServices.include('serveWithProduct'),
+    orderItemServices.include('serve'),
 ];
 const ATTRIBUTES = ['id', 'storeId', 'customerId', 'customerName', 'customerPhone', 'customerEmail', 'createdAt'];
-const order = [['createdAt', 'DESC']]
+const ORDER = [['createdAt', 'DESC']]
 
 async function fetchOrderIncludeAll(id)
 {
-    const orderModel = await _fetchOrder(id, {
+    const order = await baseOrderServices.fetchOrder(id, {
         include: ITEMS_AND_TRANSAC,
         attributes: ATTRIBUTES
     });
-    const order = orderModel.toJSON();
-    includeAditionalFields(order);
+    orderEnricher.summarizeOrderItems(order);
     return order;
 }
-async function fetchOrder(id)
-{   
-    return (await _fetchOrder(id, { attributes: ATTRIBUTES } )).toJSON();
-}
-async function _fetchOrder(id, options)
-{
-    const orderModel = await Order.findByPk(id, options);
-    if(!orderModel) throw new ApplicationError('Order not found', 404);
-    return orderModel;
-}
 
-async function fetchIncomingOrders(storeOwnerUserId, page = 1)
+async function fetchIncomingOrders(storeId, page = 1, whereOrderItem = {})
 {
-    const storeId = await storeServices.fetchStoreIdOfUser(storeOwnerUserId);
-
-    let result = await Order.findAndCountAll({ 
+    let result = await baseOrderServices.fetchAndCountAll(page, { 
         include: [
             transactionServices.include('serve'),
-            orderItemServices.include('serve')
+            {...orderItemServices.include('serve'), where: whereOrderItem}
         ],
         where: { storeId },
         attributes: ATTRIBUTES,
-        order,
-        ...paginationOption(page, 10)
+        order: ORDER
     });
-    result = reformatFindCountAll(result, page).itemsToJSON();
     
-    result.items.forEach(order => {
-        includeAditionalFields(order);
-        delete order.OrderItems;
-    });
+    result.items.forEach(order => orderEnricher.summarizeRemoveOrderItems(order) );
+
     sortByStatus(result.items);
     return result;
-}
-function includeAditionalFields(order)
-{
-    order.status = calculateOverallStatus(order.OrderItems);
-    order.total = calculateTotal(order.OrderItems);
-    order.numberOfItems = order.OrderItems.length;
 }
 function sortByStatus(orders)
 {
@@ -71,77 +47,85 @@ function sortByStatus(orders)
 
 async function fetchOrders(customerId, page = 1)
 {
-    const result = await Order.findAndCountAll({ 
+    return await baseOrderServices.fetchAndCountAll(page, { 
         where: { customerId }, 
         include: [...ITEMS_AND_TRANSAC, storeServices.include('serveName')],
         attributes: ATTRIBUTES,
-        order,
-        ...paginationOption(page, 10)
+        order: ORDER
     });
-    return reformatFindCountAll(result, page).itemsToJSON();
 };
 
-async function createOrder(orderItems, customerDetails) // please refactor
+async function createOrder(orderItems, customerDetails)
 {
-    let id;
-    await Order.sequelize.transaction( async t => {
-        const orderModel = Order.build(customerDetails);
-        id = orderModel.id;
-        
-        const commonStoreId = await orderItemServices.completeAndValidate(orderItems, id);
-        orderModel.storeId = commonStoreId;
-        await orderModel.save();
-        await orderItemServices.create(orderItems);
+    const firstVariant = await variantServices.fetchVariantIncludeProduct(orderItems[0].variantId);
+    const storeId = firstVariant.Product.storeId;
+    
+    let order;
+
+    await sequelize.transaction( async transaction => {
+        order = await baseOrderServices._createOrder(customerDetails, storeId, {transaction});
+        await orderItemServices._createOrderItems(orderItems, order.id, transaction);
     })
-    return id;
+    return order;
 }
 
 async function calculateOrderTotal(orderId)
 {
     const orderItems = await orderItemServices.fetchOrderItems({orderId}, ['quantity', 'unitPrice']);
-    return calculateTotal(orderItems);
-}
-function calculateTotal(orderItems)
-{
-    let total = 0;
-    for (const item of orderItems) {
-        total += item.quantity * item.unitPrice;
-    }
-    return total;
+    return orderEnricher.calculateTotal(orderItems);
 }
 
-function calculateOverallStatus(items)
+async function deleteOrder(id, requesterStoreId)
 {
-    let overallStatus = items[0].status;
-    items.some(item => {
-        if(item.status != overallStatus) {
-            overallStatus = 'MIXED';
-            return true;
-        }
-    });
-    return overallStatus;
+    const order = await baseOrderServices.fetchOrder(id);
+    baseOrderServices.ensureStoreOwnsOrder(order, requesterStoreId);
+
+    await sequelize.transaction( async t => {
+        await orderItemServices._deleteOrderItemsOfOrder(id);
+        await baseOrderServices._deleteOrder(id);
+    })
 }
 
-function include(level)
-{
-    switch (level) {
-        case 'serve':
-            return {
-                model: Order,
-                attributes: ATTRIBUTES
-            }
-        default:
-            return { model: Order }
-    }
-}
 
 export default {
     fetchOrderIncludeAll,
-    fetchOrder,
     fetchOrders,
     fetchIncomingOrders,
     createOrder,
-    calculateOrderTotal,
-    calculateOverallStatus,
-    include
+    deleteOrder,
+    calculateOrderTotal
 }
+
+class OrderEnricher {
+    summarizeRemoveOrderItems(order)
+    {
+        this.summarizeOrderItems(order);
+        delete order.OrderItems;
+    }
+    summarizeOrderItems(order)
+    {
+        order.status = this.calculateOverallStatus(order.OrderItems);
+        order.total = this.calculateTotal(order.OrderItems);
+        order.numberOfItems = order.OrderItems.length;
+    }
+    calculateTotal(orderItems)
+    {
+        let total = 0;
+        for (const item of orderItems) {
+            total += item.quantity * item.unitPrice;
+        }
+        return total;
+    }
+    calculateOverallStatus(items)
+    {
+        let overallStatus = items[0].status;
+        items.some(item => {
+            if(item.status != overallStatus) {
+                overallStatus = 'MIXED';
+                return true;
+            }
+        });
+        return overallStatus;
+    }
+}
+const orderEnricher = new OrderEnricher(); 

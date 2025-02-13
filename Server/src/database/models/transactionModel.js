@@ -3,7 +3,6 @@ import Image from "./imageModel.js";
 import { Order } from "./orderModel.js";
 const sequelize = getInstance();
 
-
 const Transaction = sequelize.define('Transaction', {
     id: {
         type: DataTypes.UUID,

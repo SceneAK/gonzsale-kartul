@@ -1,5 +1,5 @@
 import {ApplicationError} from '../common/index.js';
-import { tokenAuthServices } from '../services/index.js';
+import { storeServices, tokenAuthServices, userServices } from '../services/index.js';
 
 const verify = (required = true) => async (req, res, next) => { 
     const { authToken } = req.signedCookies;
@@ -11,5 +11,4 @@ const verify = (required = true) => async (req, res, next) => {
     }
     next()
 }
-
 export default verify;
