@@ -14,17 +14,15 @@
             background-color: #f4f4f4;
         }
 
+        #footer, #header {
+            z-index: 1200;
+        }
+
         /* The container now wraps the profile management section (and is relative) */
         .container {
             position: relative;
-            padding: 20px;
             /* Adjust min-height as needed (leaving room for header/footer) */
             min-height: calc(100vh - 150px);
-        }
-
-        /* Wrapper for profile management content */
-        .profile-management {
-            position: relative;
         }
 
         .profile-side-menu {
@@ -71,6 +69,7 @@
             /* Leaves room for the side menu on desktop */
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 900;
         }
 
         h1,
@@ -411,22 +410,21 @@
                 position: absolute;
                 top: 20px;
                 left: 20px;
-                z-index: 1100;
+                z-index: 1000;
             }
 
             /* On mobile, remove left margin from content */
             .content {
                 margin-left: 0;
             }
-        }
 
-        /* Close button styling inside the side menu */
-        .profile-side-menu .close-icon {
-            display: block;
-            font-size: 20px;
-            cursor: pointer;
-            text-align: right;
-            padding-bottom: 10px;
+            .profile-side-menu .close-icon {
+                display: block;
+                font-size: 20px;
+                cursor: pointer;
+                text-align: right;
+                padding-bottom: 10px;
+            }
         }
     </style>
 </head>
