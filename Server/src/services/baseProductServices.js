@@ -14,6 +14,12 @@ async function fetchAndCountAll(scope, page = 1, options)
 
 async function fetchProduct(id, options){
     const product = await Product.findByPk(id, options);
+    if(!product) throw new ApplicationError('Product of such id not found', 404);
+    return product.toJSON();
+}
+async function fetchOneProduct(options)
+{
+    const product = await Product.findOne(options);
     if(!product) throw new ApplicationError('Product not found', 404);
     return product.toJSON();
 }
@@ -33,6 +39,12 @@ async function _createProduct(storeId, productData)
 async function editProduct(id, productData) 
 {
     await Product.update(productData, { where: { id } })
+    return id;
+}
+
+async function _deleteProduct(id)
+{
+    await Product.destroy({where: {id}});
 }
 
 async function ensureBelongsToStore(productId, storeId)
@@ -56,9 +68,11 @@ function include(scope, options)
 export default {
     fetchAndCountAll,
     fetchProduct,
+    fetchOneProduct,
     fetchProducts,
     _createProduct,
     editProduct,
+    _deleteProduct,
     ensureProductBelongsToStore,
     ensureBelongsToStore,
     include,

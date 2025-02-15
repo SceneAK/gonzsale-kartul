@@ -13,6 +13,11 @@
       background-color: #f4f4f4;
     }
 
+    select{
+      font-family: Arial, sans-serif;
+      font-size: medium;
+    }
+
     .product-container {
       max-width: 800px;
       margin: 50px auto;
@@ -55,8 +60,8 @@
       color: #555;
     }
 
-    .product-price {
-      font-size: 18px;
+    .variant-price-unit {
+      font-size: x-large;
       color: #ff9900;
       margin: 15px 0;
     }
@@ -83,8 +88,12 @@
       cursor: pointer;
       font-size: 16px;
     }
+    .add-to-cart-btn:disabled{
+      background-color: gray;
+      cursor: not-allowed;
+    }
 
-    .add-to-cart-btn:hover {
+    .add-to-cart-btn:hover:enabled {
       background-color: #218838;
     }
   </style>
@@ -97,26 +106,32 @@
   <div class="content-wrapper">
     <div class="product-container">
       <div class="breadcrumb">
-        <a href="index.html">Home</a> / <a href="catalog.html#Clothing">Clothing</a> / <span
+        <a href="index.html">Home</a> / <span
           id="product-category">Category</span>
       </div>
 
       <!-- Product image will be loaded here using the first image logic -->
       <img id="product-img" src="" alt="Product Image" class="product-img" style="max-width: 50%; max-height: 35%;" />
 
-      <h1 id="product-name" class="product-name"></h1>
-      <p id="store-name"></p>
-      <p id="product-price" class="product-price"></p>
+      <div style="display: flex;">
+        <h1 id="product-name" class="product-name"></h1>
+        <h1 id="variant-name" class="product-name"></h1>
+      </div>
+      
+      <p style="width: 50%;" id="store-name"></p>
 
+      <p id="variant-price-unit" class="variant-price-unit"></p>
+      Variant: <select name="variantIndex" id="variant-select"></select>
+      <hr>
+      <h3>Description</h3>
+      <p id="product-description" class="product-description"></p>
+      <hr>
       <div class="quantity-container">
         <label for="quantity-input">Quantity:</label>
         <input id="quantity-input" type="number" min="1" value="1" class="quantity-input" />
-      </div>
+      </div>  
 
       <button id="add-to-cart-btn" class="add-to-cart-btn">Add to Cart</button>
-
-      <h2>Description</h2>
-      <p id="product-description" class="product-description"></p>
     </div>
   </div>
 
@@ -126,7 +141,10 @@
   <script type="module" src="integration/uiManagement.js"></script>
   <script type="module">
     import { product } from './integration/fetches.js';
+    import common from './common.js';
 
+    let productData;
+    let firstImgUrl;
     document.addEventListener('DOMContentLoaded', async function () {
       // Get the product ID from the URL query string
       const urlParams = new URLSearchParams(window.location.search);
@@ -137,69 +155,103 @@
         return;
       }
 
-      try {
-        // Fetch the product details
-        const productInfo = await product.fetchProduct(id);
-        console.log('Fetched product:', productInfo);
+      // Fetch the product details
+      productData = await product.fetchProduct(id);
+      firstImgUrl = productData.ProductImages && productData.ProductImages.length > 0
+            ? productData.ProductImages[0].url
+            : 'assets/images/placeholder.png';
+      
+      const firstVariant = await productData.Variants.filter(variant => variant.isDefault)[0];
+      loadProductData(productData);
+      loadVariantData(firstVariant);
+      initializeVariantSelect();
 
-        // Get the first image
-        const firstImg = productInfo.ProductImages && productInfo.ProductImages.length > 0
-          ? productInfo.ProductImages[0].url
-          : 'placeholder.jpg';
+      // Add to Cart functionality
+      document.getElementById('add-to-cart-btn').addEventListener('click', () => {
+        const quantity = parseInt(document.getElementById('quantity-input').value, 10) || 1;
 
-        // Populate product details
-        document.getElementById('product-img').src = firstImg;
-        document.getElementById('product-name').textContent = productInfo.name;
-        document.getElementById('product-description').textContent = productInfo.description;
-        document.getElementById('product-price').textContent =
-          `Rp ${productInfo.price?.toLocaleString('id-ID')} / ${productInfo.unit}`;
-        document.getElementById('product-category').textContent = productInfo.category;
+        if (quantity < 1) {
+          alert('Quantity must be at least 1.');
+          return;
+        }
 
+        
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const itemToAdd = buildCartItem(quantity);
+        const existingItemIndex = cart.findIndex(item => item.selectedVariant.id === itemToAdd.selectedVariant.id);
+
+        if (existingItemIndex > -1) {
+          const doesNotExeed = quantity + cart[existingItemIndex].quantity <= cart[existingItemIndex].variant.stock;
+          cart[existingItemIndex].quantity += doesNotExeed;
+        } else {
+          cart.push(itemToAdd);
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+        alert(`${quantity} x ${productData.name} has been added to your cart!`);
+      });
+    });
+    const variantSelect = document.getElementById('variant-select');
+    function initializeVariantSelect()
+    {
+      productData.Variants.forEach( (variant, index) => {
+        variantSelect.innerHTML += `
+          <option value="${index}" ${variant.isDefault ? "selected" : ""}>${variant.name}</option>     
+        `;
+      })
+      variantSelect.addEventListener('change', function (){
+        loadVariantData(getSelectedVariant());
+      })
+    }
+    function getSelectedVariant()
+    {
+      const selectedVariantIndex = variantSelect.value;
+      console.log(selectedVariantIndex);
+      return productData.Variants[selectedVariantIndex];
+    }
+    function buildCartItem(quantity)
+    {
+      return common.buildCartItem(productData, getSelectedVariant(), quantity);
+    }
+
+    function loadProductData(productData)
+    {   
+        document.getElementById('product-img').src = firstImgUrl;
+        document.getElementById('product-name').textContent = `${productData.name} |`;
+        document.getElementById('product-description').textContent = productData.description;
+        document.getElementById('product-category').textContent = productData.category;
+      
         // Store Name & Link to Store Details
         const storeNameElement = document.getElementById('store-name');
-        if (productInfo.store_id && productInfo.Store?.name) {
+        if (productData.Store) {
           storeNameElement.innerHTML = `
-        Sold by: <a href="display-store.html?id=${productInfo.storeId}" 
-        style="color: #0073e6; text-decoration: none; font-weight: bold;">
-          ${productInfo.Store.name}
-        </a>`;
+            Sold by: <a href="display-store.html?id=${productData.storeId}" 
+            style="color: #0073e6; text-decoration: none; font-weight: bold;">
+            ${productData.Store.name}
+          </a>`;
         } else {
           storeNameElement.textContent = "Store information unavailable.";
         }
-
-        // Add to Cart functionality
-        document.getElementById('add-to-cart-btn').addEventListener('click', () => {
-          const quantity = parseInt(document.getElementById('quantity-input').value, 10) || 1;
-
-          if (quantity < 1) {
-            alert('Quantity must be at least 1.');
-            return;
-          }
-
-          const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-          const existingItemIndex = cart.findIndex(item => item.id === productInfo.id);
-
-          if (existingItemIndex > -1) {
-            cart[existingItemIndex].quantity += quantity;
-          } else {
-            cart.push({
-              id: productInfo.id,
-              name: productInfo.name,
-              price: productInfo.price,
-              imgSrc: firstImg,
-              quantity: quantity,
-              store_id: productInfo.store_id,
-              store_name: productInfo.Store?.name
-            });
-          }
-
-          localStorage.setItem('cart', JSON.stringify(cart));
-          alert(`${quantity} x ${productInfo.name} has been added to your cart!`);
-        });
-      } catch (error) {
-        console.error('Error loading product details:', error);
       }
-    });
+
+      function loadVariantData(variantData)
+      {
+        const outOfStock = variantData.stock <= 0
+
+        document.getElementById('variant-name').textContent = `| ${variantData.name} ${outOfStock ? "(Out of Stock)" : ""}`;
+        document.getElementById('variant-price-unit').textContent =
+          `Rp ${variantData.price?.toLocaleString('id-ID')} / ${variantData.unit}`;
+        if(outOfStock)
+        {
+          document.getElementById('quantity-input').value = 0;
+          document.getElementById('quantity-input').disabled = true;
+        }else{
+          document.getElementById('quantity-input').value = 1;
+          document.getElementById('quantity-input').max = variantData.stock;
+        }
+        document.getElementById('add-to-cart-btn').disabled = outOfStock;
+        
+      }
   </script>
 </body>
 

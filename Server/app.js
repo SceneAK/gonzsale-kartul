@@ -27,7 +27,10 @@ app.use(httpLogger)
 app.use( (req, res, next) => {
     if(req.headers['content-type'] == 'application/json')
     {
-      express.json({limit: '1mb'})(req, res, next);
+      try
+      {
+        express.json({limit: '1mb'})(req, res, next);
+      }catch(err){next(err)}
     }else{
       next();
     }

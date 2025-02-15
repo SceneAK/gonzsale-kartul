@@ -64,12 +64,18 @@
             color: #333;
         }
 
-        .register-container form button[type="submit"] {
+        .register-container form button[type="submit"]:enabled {
             background-color: #4CAF50;
             color: white;
+            cursor: pointer;
+        }
+        .register-container form button[type="submit"]:disabled {
+            background-color: #ccc;
+            color: #333;
+            cursor: default;
         }
 
-        .register-container form button[type="submit"]:hover {
+        .register-container form button[type="submit"]:enabled:hover {
             background-color: #45a049;
         }
 
@@ -128,12 +134,12 @@
                 <input type="email" id="signupEmail" name="signupEmail" required>
 
                 <label for="signupPassword"><span class="required">*</span> Password:</label>
-                <input type="password" id="signupPassword" name="signupPassword" required>
+                <input type="password" id="signupPassword" name="signupPassword" required minlength="8">
 
                 <label for="signupConfirmPassword"><span class="required">*</span> Confirm Password:</label>
-                <input type="password" id="signupConfirmPassword" name="signupConfirmPassword" required
-                    oninput="checkPasswordMatch()">
-                <p id="passwordMatchMessage" style="color: red; display: none;">Passwords do not match</p>
+                <input type="password" id="signupConfirmPassword" name="signupConfirmPassword" required>
+
+                <p id="passwordMatchMessage" style="color: darkred; display: none; margin: 0%;">Passwords do not match</p>
 
                 <p class="password-instructions">
                     Your password must be between 3 to 300 characters inclusive.
@@ -141,7 +147,7 @@
 
                 <div class="form-buttons">
                     <button type="button" onclick="window.history.back()">Cancel</button>
-                    <button type="submit" id="signupSubmitButton">Register</button>
+                    <button type="submit" id="signupSubmitButton" disabled>Register</button>
                 </div>
             </form>
         </div>
@@ -152,37 +158,31 @@
     </div>
 
     <script type="module">
-        import { hookSignUp } from './integration/user.js';
+        import { signUp } from './integration/user.js';
 
+        const registerForm = document.getElementById('register-form');
         const registerButton = document.getElementById('signupSubmitButton');
         const registerFullName = document.getElementById('signupFullName');
         const registerPhone = document.getElementById('signupPhone');
         const registerEmail = document.getElementById('signupEmail');
         const registerPassword = document.getElementById('signupPassword');
 
-        hookSignUp(registerButton, registerFullName, registerPhone, registerEmail, registerPassword);
-
-        document.getElementById('register-form').addEventListener('submit', function (event) {
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('signupConfirmPassword').value;
-
-            if (password !== confirmPassword) {
-                event.preventDefault(); // Prevent form submission
-                alert("Passwords do not match. Please try again.");
-            }
-        });
-
-        function checkPasswordMatch() {
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+        const password = document.getElementById('signupPassword');
+        const confirmPassword = document.getElementById('signupConfirmPassword');
+        registerForm.addEventListener('input', function (event) {
             const message = document.getElementById('passwordMatchMessage');
 
-            if (password !== confirmPassword) {
-                message.style.display = "block";
-            } else {
-                message.style.display = "none";
-            }
-        }
+            const match = password.value === confirmPassword.value;
+            message.style.display = match ?  'none' : 'block';
+            registerButton.disabled = !match || !registerForm.checkValidity();
+        });
+        registerForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            try
+            {
+                await signUp(registerFullName, registerPhone, registerEmail, registerPassword);
+            }catch(err){ alert(err.message) }
+        })
     </script>
 
     <script type="module" src="integration/uiManagement.js" defer></script>

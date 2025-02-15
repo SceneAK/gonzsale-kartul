@@ -4,9 +4,9 @@ const DIGIT_6_MIN = 1000*1000;
 const DIGIT_15_MAX = 999999999999999;
 const NUMBERS_EN_JP_CN_SpecialChars = new RegExp('^[a-zA-Z0-9!@#$%^&*()_\\-+=\ \[\\] {}|;:\'",.<>?/\\u4e00-\\u9faf\\u3400-\\u4dbf\\u3000-\\u303f\\u3040-\\u309f\\u30a0-\\u30ff\\u31f0-\\u31ff\\u4e00-\\u9faf]{0,}$');
 const contacts = {
-    name: Joi.string().pattern(NUMBERS_EN_JP_CN_SpecialChars),
+    name: Joi.string().pattern(NUMBERS_EN_JP_CN_SpecialChars).min(2).max(35),
     phone: Joi.number().integer().min(DIGIT_6_MIN).max(DIGIT_15_MAX),
-    email: Joi.string().email()
+    email: Joi.string().email().max(320)
 }
 const contactsAllRequired = {
     name: contacts.name.required(),
@@ -33,7 +33,7 @@ const editContactsSchema = {
 
 export default {
     signIn: signInSchema,
-    singUp: signUpSchema,
+    signUp: signUpSchema,
     editContacts: editContactsSchema,
     contacts
 };

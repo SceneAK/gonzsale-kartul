@@ -8,25 +8,25 @@ const fetchVariant = async (req, res) => {
 const createVariant = async (req, res) => {
     const {productId} = req.params;
     const result = await variantServices.createVariant(productId, req.body, req.decodedAuthToken.storeId);
-    res.json({result});
+    res.json(result || {});
 }
 
 const editVariant = async (req, res) => {
     const {id} = req.params;
     const result = await variantServices.editVariant(id, req.body, req.decodedAuthToken.storeId);
-    res.json({result});
+    res.json(result || {});
 }
 
 const setDefault = async (req, res) => {
     const {id} = req.params;
     const result = await variantServices.setDefault(id, req.decodedAuthToken.storeId);
-    res.json({result});
+    res.json(result || {});
 }
 
 const deleteVariant = async (req, res) => {
     const {id} = req.params;
     const result = await variantServices.deleteVariant(id, req.decodedAuthToken.storeId);
-    res.json({result});
+    res.json(result || {});
 }
 
 export default {

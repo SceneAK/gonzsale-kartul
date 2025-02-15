@@ -77,11 +77,11 @@
             word-wrap: break-word;
         }
 
-        .product-list {
+        .variant-list {
             margin-bottom: 10px;
         }
 
-        .product-item {
+        .variant-item {
             display: flex;
             flex-direction: column;
             margin-bottom: 10px;
@@ -89,7 +89,7 @@
             border-bottom: 1px solid #eee;
         }
 
-        .product-item>div {
+        .variant-item>div {
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
@@ -197,11 +197,11 @@
 
         if (loginDetail.name && loginDetail.email && loginDetail.phone) {
             buyerInfoContainer.innerHTML = `
-    <p><strong>Full Name:</strong> ${loginDetail.name}</p>
-    <p><strong>Phone Number:</strong> ${loginDetail.phone}</p>
-    <p><strong>Email:</strong> ${loginDetail.email}</p>
-    <button id="change-details-btn" style="margin-top: 10px; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Change Details</button>
-  `;
+                <p><strong>Full Name:</strong> ${loginDetail.name}</p>
+                <p><strong>Phone Number:</strong> ${loginDetail.phone}</p>
+                <p><strong>Email:</strong> ${loginDetail.email}</p>
+                <button id="change-details-btn" style="margin-top: 10px; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Change Details</button>
+            `;
             document.getElementById('change-details-btn').addEventListener('click', () => {
                 window.location.href = 'profile-management.html';
             });
@@ -219,33 +219,22 @@
 
         // Group cart items by store_id
         const groupedCart = cart.reduce((groups, item) => {
-            const { store_id, store_name, ...productInfo } = item;
-            if (!groups[store_id]) {
-                groups[store_id] = {
-                    store_name: store_name,
+            const { product, selectedVariant, quantity } = item;
+            if (!groups[product.storeId]) {
+                groups[product.storeId] = {
+                    store: product.Store,
                     items: [],
                     total: 0
                 };
             }
-            groups[item.store_id].items.push(productInfo);
-            groups[item.store_id].total += item.price * item.quantity; // Total includes quantity
+            groups[product.storeId].items.push(item);
+            groups[product.storeId].total += selectedVariant.price * quantity;
             return groups;
         }, {});
 
         // Fetch and include store info for each group
         for (const storeId in groupedCart) {
-            try {
-                const storeInfo = await store.fetchStore(storeId);
-                groupedCart[storeId] = { ...groupedCart[storeId], ...storeInfo };
-            } catch (error) {
-                console.error(`Error fetching store ${storeId}: ${error.message}`);
-                // Set default payment details if the store is not found
-                groupedCart[storeId] = {
-                    ...groupedCart[storeId],
-                    bankAccount: "Not Provided",
-                    bankName: "Not Provided"
-                };
-            }
+            //  groupedCart[storeId].store = await store.fetchStore(storeId);
         }
 
         // Render order summary
@@ -258,22 +247,25 @@
                 storeSection.classList.add('store-section');
 
                 storeSection.innerHTML = `
-                    <div class="store-header">From store: ${group.store_name}</div>
-                    <div class="product-list">
+                    <div class="store-header">From store: ${group.store.name}</div>
+                    <div class="variant-list">
                         ${group.items.map(item => `
-                            <div class="product-item">
+                            <div class="variant-item">
                                 <div>
-                                  <span>${item.name} (x${item.quantity})</span>
-                                  <span>Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</span>
+                                  <span>${item.product.name} | ${item.selectedVariant.name} (x${item.quantity})</span>
+                                  <span>Rp ${(item.selectedVariant.price * item.quantity).toLocaleString('id-ID')}</span>
                                 </div>
-                                ${item.notes ? `<div class="order-note">Note: ${item.notes}</div>` : ''}
+                                <div class="order-note">${item.notes ? `Note: ${item.notes}` : ''}</div>
                             </div>
                         `).join('')}
                     </div>
-                    <div class="total-price">Total: Rp ${group.total.toLocaleString('id-ID')}</div>
-                    <div class="payment-details">
-                        Account Number : ${group.bankAccount || 'Not Provided'}<br>
-                        Payment Information : ${group.bankName || 'Not Provided'}
+                    <hr>
+                    <div>
+                        <div class="total-price" style="display: flex; justify-content: space-between">Total: <div>Rp ${group.total.toLocaleString('id-ID')}</div></div>
+                        <div class="payment-details">
+                            Account : ${group.store.bankAccount || 'Not Provided'}<br>
+                            Bank : ${group.store.bankName || 'Not Provided'}
+                        </div>
                     </div>
                     <div class="upload-container">
                         <label for="proof-${storeId}">Upload Bukti Pembayaran:</label>
@@ -299,25 +291,31 @@
 
         finishOrdersButton.addEventListener('click', async () => {
             for (const storeId in groupedCart) {
-                const orderId = await handleOrderCreation(storeId);
-
+                let createdOrder;
+                try
+                {
+                    createdOrder = await handleOrderCreation(storeId);
+                }catch(err){ alert(err.message); return; }
                 const proofFile = document.getElementById(`proof-${storeId}`).files[0];
-                await handleTransaction(orderId, proofFile);
+                await handleTransaction(createdOrder.id, proofFile);
             }
 
             alert("Orders have been successfully placed!");
             localStorage.removeItem('cart');
-            window.location.href = 'profile-management.html#order-history';
+            window.location.href = localStorage.getItem('loginDetail') ? 'profile-management.html#order-history' : '/';
         });
 
         async function handleOrderCreation(storeId) {
-            let body = localStorage.getItem('loginDetail') ? {} : { customerDetails: getCustomerData() };
+            const isLoggedIn =  localStorage.getItem('loginDetail');
+            let body = isLoggedIn ? {} : { customerDetails: getCustomerData() };
+
             const OrderItems = groupedCart[storeId].items.map(item => ({
-                productId: item.id,
+                variantId: item.selectedVariant.id,
                 quantity: item.quantity,
                 notes: item.notes
             }));
             body = { OrderItems, ...body };
+            console.log(body);
 
             const orderId = await order.createOrder(body);
             return orderId;
@@ -327,7 +325,6 @@
             const customerName = document.getElementById('full-name').value;
             const customerPhone = document.getElementById('phone-number').value;
             const customerEmail = document.getElementById('non-signin-email').value;
-            console.log(customerEmail);
             return { customerName, customerPhone, customerEmail }
         }
 

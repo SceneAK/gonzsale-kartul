@@ -1,3 +1,4 @@
+import { UUID } from "sequelize";
 import { DataTypes, getInstance } from "../sequelize.js";
 import { productAttributes, Variant, variantAttributes } from "./productModel.js";
 import Store from './storeModel.js';
@@ -14,9 +15,18 @@ const Order = sequelize.define('Order', {
     customerId: {
         type: DataTypes.UUID
     },
-    customerName: userAttributes.name,
-    customerEmail: {...userAttributes.email, unique: false},
-    customerPhone: userAttributes.phone,
+    customerName: {
+        type: userAttributes.name.type,
+        allowNull: false
+    },
+    customerEmail: {
+        type: userAttributes.email.type,
+        unique: false
+    },
+    customerPhone: {
+        type: userAttributes.phone.type,
+        allowNull: false
+    },
     storeId: {
         type: DataTypes.UUID,
         allowNull: false
@@ -43,11 +53,25 @@ const OrderItem = sequelize.define('OrderItem', {
         type: DataTypes.UUID,
         allowNull: false
     },
-    productName: productAttributes.name,
-    productDescription: productAttributes.description,
-    variantName: variantAttributes.name,
-    variantPrice: variantAttributes.price,
-    variantUnit: variantAttributes.unit,
+    productName: {
+        type: productAttributes.name.type,
+        allowNull: false
+    },
+    productDescription: {
+        type: productAttributes.description.type,
+    },
+    variantName: {
+        type: variantAttributes.name.type,
+        allowNull: false
+    },
+    variantPrice: {
+        type: variantAttributes.price.type,
+        allowNull: false
+    },
+    variantUnit: {
+        type: variantAttributes.unit.type,
+        allowNull: false
+    },
     quantity: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false

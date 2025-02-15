@@ -2,7 +2,8 @@ import Joi from "joi";
 import orderItemSchema from "./orderItemSchema.js";
 import userSchema from "./userSchema.js";
 import { UUID } from "./common.js";
-import page from "./pageSchema.js";
+import variantSchema from "./variantSchema.js";
+import productSchema from "./productSchema.js";
 
 const createOrderSchema = (req) => ({
     body: Joi.object({
@@ -25,7 +26,14 @@ const updateSchema = {
 }
 
 const fetchIncomingSchema = {
-    query: Joi.object().max(5)
+    query: Joi.object({
+        page: Joi.number().min(1),
+        variantId: UUID,
+        variantName: variantSchema.variantBody.name,
+        productName: productSchema.productBody.name,
+        ...customerDetails,
+        notes: Joi.string().max(999)
+    })
 }
 
 export default {

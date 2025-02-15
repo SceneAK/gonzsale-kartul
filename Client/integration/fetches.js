@@ -11,7 +11,7 @@ async function request(endpoint, method, body = null, credentials = 'omit', head
     });
     if (!res.ok) {
         const errorMessage = await res.text();
-        throw new Error(`Request failed: ${errorMessage}`);
+        throw new FetchError(`Request Fail, ${errorMessage}`, res);
     }
     return res;
 }
@@ -65,6 +65,14 @@ function isArray(value)
 //#endregion
 //#endregion
 
+//#region Util
+function toQueryString(obj)
+{
+    const queryParams = Object.keys(obj).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`).join("&");
+    return queryParams;
+}
+//#endregion
+
 //#region User
 async function signIn(email, password) {
     const body = JSON.stringify({email, password});
@@ -77,7 +85,8 @@ async function signUp(name, phone, email, password) {
         email, 
         password
     });
-    return await jsonRequestResponse('/user/signup', 'POST', body, 'include');
+    const result = await jsonRequestResponse('/user/signup', 'POST', body, 'include');
+    return result;
 }
 async function editContacts(contacts) {
     return await jsonRequest('/user/edit', 'PATCH', JSON.stringify(contacts), 'include');
@@ -104,7 +113,7 @@ async function fetchOwnedStore() {
         const store = await jsonRequestResponse(`/store`, "GET", null, 'include');
         return store;
     } catch (error) {
-        if (error.message.includes("No store owned")) {
+        if (error.status == 401) {
             return null; // Gracefully handle "No store owned" by returning null
         }
         throw error; // Re-throw other errors
@@ -113,7 +122,8 @@ async function fetchOwnedStore() {
 
 async function createStore(formdata) // auth
 {
-    return await jsonResponse(`/store`, "POST", formdata, 'include');
+    await jsonResponse(`/store`, "POST", formdata, 'include');
+    await user.refresh();
 }
 async function editStore(formdata)
 {
@@ -125,19 +135,15 @@ const store = {fetchStore, fetchOwnedStore, createStore, editStore};
 //#region Product
 async function fetchProducts(category, others = {}, page = 1)
 {
-    const paramsObj = { category, ...others};
-    const products = await jsonRequestResponse(`/product/search?page=${page}&${toQueryString(paramsObj)}`, "GET");
+    const paramsObj = { category, ...others, page};
+    const products = await jsonRequestResponse(`/product/search?${toQueryString(paramsObj)}`, "GET");
     return products;
 }
-function toQueryString(obj)
-{
-    const queryParams = Object.keys(obj).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`).join("&");
-    return queryParams;
-}
 
-async function fetchOwnedProducts() // auth
+async function fetchOwnedProducts(page = 1, filter={}) // auth
 {
-    return await jsonResponse(`/product/owned`, "GET", null, 'include'); 
+    const params = toQueryString({page, ...filter});
+    return await jsonResponse(`/product/owned?${params}`, "GET", null, 'include'); 
 }
 
 async function fetchProduct(id)
@@ -145,15 +151,39 @@ async function fetchProduct(id)
     const product = await jsonRequestResponse(`/product/${id}`, "GET")
     return product;
 }
-async function createProduct(formdata) // auth & store
+async function createProduct(productData) // auth & store
 {
-    return await jsonResponse(`/product`, "POST", formdata, 'include');
+    return await jsonRequestResponse(`/product`, "POST", JSON.stringify(productData), 'include');
 }
-async function editProduct(formdata, id) // auth & store
+async function createProductImages(productId, formData)
 {
-    return await jsonResponse(`/product/${id}`, "PATCH", formdata, 'include');
+    return await jsonResponse(`/product/${productId}/images`, 'POST', formData, 'include');
 }
-const product = {fetchProduct, fetchProducts, fetchOwnedProducts, createProduct, editProduct};
+async function editProduct(id, data) // auth & store
+{
+    return await jsonRequestResponse(`/product/${id}`, "PATCH", JSON.stringify(data), 'include');
+}
+async function deleteProduct(id)
+{
+    return await jsonRequest(`/product/${id}`, 'DELETE', null, 'include');
+}
+const product = {fetchProduct, fetchProducts, fetchOwnedProducts, createProduct, createProductImages, editProduct, deleteProduct};
+//#endregion
+
+//#region Variant
+async function createVariant(productId, data)
+{
+    return await jsonRequestResponse(`/product/${productId}/variant`, 'POST', JSON.stringify(data), 'include');
+}
+async function editVariant(id, data)
+{
+    return await jsonRequestResponse(`/variant/${id}/edit`, 'PATCH', JSON.stringify(data), 'include');
+}
+async function deleteVariant(id)
+{
+    return await jsonRequestResponse(`/variant/${id}`, 'DELETE', null, 'include');
+}
+const variant = {createVariant, editVariant, deleteVariant}
 //#endregion
 
 //#region Order
@@ -165,9 +195,10 @@ async function fetchMyOrders(page = 1) // auth
 {
     return await jsonResponse(`/order/my?page=${page}`, "GET", null, 'include');
 }
-async function fetchIncomingOrders(page = 1) // auth & store
+async function fetchIncomingOrders(page = 1, filter) // auth & store
 {
-    return await jsonResponse(`/order/incoming?page=${page}`, "GET", null, 'include');
+    const params = toQueryString({ page, ...filter});
+    return await jsonResponse(`/order/incoming?${params}`, "GET", null, 'include');
 }
 async function createOrder(data)// auth
 {
@@ -175,13 +206,14 @@ async function createOrder(data)// auth
 }
 async function updateItemStatus(id, status)
 {
-    return await jsonRequestResponse(`/order/item/${id}/status`, "PATCH", JSON.stringify({status}), 'include');
+    return await jsonRequestResponse(`/order/item/${id}/status/${status}`, "PATCH", null, 'include');
 }
-async function updateItemStatusByProduct(id, status)
+async function updateItemStatusWhere(where, status)
 {
-    return await jsonRequestResponse(`/order/item/by-product/${id}/status`, "PATCH", JSON.stringify({status}), 'include');
+    const query = toQueryString(where);
+    return await jsonRequestResponse(`/order/item/by-product/status/${status}?${query}`, "PATCH", null, 'include');
 }
-const order = {fetchOrder, fetchMyOrders, fetchIncomingOrders, createOrder, updateItemStatus, updateItemStatusByProduct};
+const order = {fetchOrder, fetchMyOrders, fetchIncomingOrders, createOrder, updateItemStatus, updateItemStatusWhere};
 //#endregion
 
 //#region Transaction
@@ -209,5 +241,18 @@ export {
     store,
     product,
     order,
-    transaction
+    transaction,
+    variant
 }
+
+
+class FetchError extends Error {
+    constructor(message, response) {
+        super(message);
+        this.name = 'FetchError';
+        this.status = response.status;
+        this.statusText = response.statusText;
+        this.url = response.url;
+    }
+}
+  

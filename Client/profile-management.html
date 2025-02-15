@@ -640,7 +640,7 @@
                     return;
                 }
 
-                orderCount.textContent = `${orders.length} orders`;
+                orderCount.textContent = `${orders.length} order(s)`;
 
                 // Loop through orders
                 orders.forEach(order => {
@@ -662,12 +662,12 @@
                         orderItem.classList.add("order-item");
 
                         const productImg = document.createElement("img");
-                        productImg.src = item.Product.Image?.url || "assets/images/placeholder.png";
-                        productImg.alt = item.Product.name;
+                        productImg.src = undefined || "assets/images/placeholder.png";
+                        productImg.alt = item.productName;
 
                         const itemDetails = document.createElement("div");
                         itemDetails.classList.add("order-item-details");
-                        itemDetails.innerHTML = `<p><strong>${item.Product.name}</strong></p>`;
+                        itemDetails.innerHTML = `<p><strong>${item.productName} | ${item.variantName}</strong></p>`;
 
                         orderItem.appendChild(productImg);
                         orderItem.appendChild(itemDetails);

@@ -20,7 +20,7 @@ async function fetchProductImage(id, options)
 }
 async function createProductImages(files, productId, requester)
 {
-    baseProductServices.ensureBelongsToStore(productId, requester.storeId);
+    await baseProductServices.ensureBelongsToStore(productId, requester.storeId);
     const existing = await ProductImage.findAll({ where: {productId}, raw: true });
     const lowestPriorityNumber = existing.length > 0 ? getLeastPrioritized(existing) : -1;
 

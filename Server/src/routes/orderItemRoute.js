@@ -5,8 +5,8 @@ import { verify, validate, ensureStore } from '../middlewares/index.js';
 import { orderItemSchemas } from '../reqSchemas/index.js';
 import { orderItem } from '../controllers/index.js'
 
-router.patch('/:id/status', verify(), ensureStore, validate(orderItemSchemas.update), orderItem.updateStatus);
+router.patch('/:id/status/:status', verify(), ensureStore, orderItem.updateStatus);
 
-router.patch('/by-variant/:variantId/status', verify(), ensureStore, validate(orderItemSchemas.update), orderItem.updateStatusByVariant);
+router.patch('/status/:status', verify(), ensureStore, validate(orderItemSchemas.whereQuery), orderItem.updateStatusWhere);
 
 export default router;

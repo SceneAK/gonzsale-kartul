@@ -4,6 +4,7 @@ export default function errorHandler(err, req, res, next){
     if(err.isJoi)
     {
         console.log(req.body);
+        console.log(err.message);
         return res.status(400).send("Validation Error: " + err.message)
     }
     if(err instanceof ApplicationError)

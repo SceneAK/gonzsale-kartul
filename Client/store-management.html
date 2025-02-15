@@ -501,6 +501,11 @@
             font-weight: bold;
         }
 
+        .status-cancelled{
+            color: gray;
+            font-weight: bold;
+        }
+
         /* Action Button Styles */
         .action-btn {
             padding: 8px 12px;
@@ -669,14 +674,15 @@
             <div id="dashboard" class="content-section active">
                 <h1>Dashboard</h1>
                 <div class="dashboard-metrics">
-                    <div class="dashboard-metric">
+                    Nothing to see here...
+                    <!--<div class="dashboard-metric">
                         <h2>Total Orders</h2>
                         <span id="total-orders">0</span>
                     </div>
                     <div class="dashboard-metric">
                         <h2>Total Revenue</h2>
                         <span id="total-revenue">0</span>
-                    </div>
+                    </div>-->
                 </div>
             </div>
 
@@ -714,20 +720,20 @@
                 <h1>Orders</h1>
                 <!-- Search Bar Container -->
                 <div class="search-container">
-                    <input type="text" id="search-product" placeholder="Search by Product Name..."
-                        oninput="filterOrders()">
-                    <input type="text" id="search-notes" placeholder="Search by Order Notes..."
-                        oninput="filterOrders()">
+                    <input type="text" id="search-product" placeholder="Search by Product...">
+                    <select name="variantFilter" id="order-variant-filter-select" disabled>
+                        <option value="">...</option>
+                    </select>
+                    <input type="text" id="search-notes" placeholder="Search by Notes...">
+                    <div class="bulk-actions">
+                        <button onclick="bulkUpdateStatus('COMPLETED')">Bulk Set Status</button>
+                    </div>
                 </div>
                 <!-- Search Results Counter -->
                 <div class="search-counter">
-                    Showing <span id="counter-value">0</span> orders
+                    Showing <span id="counter-value">0</span> of <span id="total-value">0</span>
                 </div>
                 <!-- Bulk Action Buttons -->
-                <div class="bulk-actions">
-                    <button onclick="bulkUpdateStatus('COMPLETED')">Bulk Mark as Completed</button>
-                    <button onclick="bulkUpdateStatus('READY')">Bulk Mark as Ready</button>
-                </div>
                 <div class="loader" id="loader">Loading orders...</div>
                 <div style="overflow-x: auto;">
                     <table id="order-table">
@@ -738,7 +744,6 @@
                                 <th>Date Created</th>
                                 <th>Transaction</th>
                                 <th>Transaction Image</th>
-                                <th>Order Notes</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -751,7 +756,7 @@
                 <!-- Pagination Placeholder -->
                 <div class="pagination">
                     <button id="prev-page" disabled>&lt;</button>
-                    <span id="page-info">Page 1</span>
+                    Page <span id="page-info">1</span> of <span id="total-page-info">1</span>
                     <button id="next-page">&gt;</button>
                 </div>
             </div>
@@ -787,10 +792,12 @@
             <div class="add-product-form-container">
                 <h1>Add New Product</h1>
                 <form id="add-product-form" class="add-product-form">
-                    <label for="product-name">Nama Produk:</label>
-                    <input type="text" id="product-name" name="name" placeholder="Masukkan nama produk" required />
+                    <!-- PRODUCT-->
+                    <h3>Product</h3>
+                    <label for="product-name">Nama:</label>
+                    <input type="text" id="product-name" name="name" class="product-inputs" placeholder="Masukkan nama produk" required />
                     <label for="product-category">Kategori:</label>
-                    <select id="product-category" name="category" required>
+                    <select id="product-category" name="category" class="product-inputs" required>
                         <option value="" disabled selected>Pilih kategori</option>
                         <option value="Shirts">Baju</option>
                         <option value="Pants">Celana</option>
@@ -799,25 +806,31 @@
                         <option value="Drinks">Minuman</option>
                     </select>
                     <label for="product-description">Deskripsi:</label>
-                    <textarea id="product-description" name="description" placeholder="Deskripsi produk"
-                        required></textarea>
-                    <label for="product-price">Harga & Unit</label>
+                    <textarea id="product-description" name="description" class="product-inputs" placeholder="Deskripsi produk" required></textarea>
+                    <label for="product-availability">Availability:</label>
+                    <select id="product-availability" name="availability" class="product-inputs" required>
+                        <option value="available">Available</option>
+                        <option value="unavailable">Unavailable</option>
+                    </select>
+
+                    <!-- PRODUCT IMAGE-->
+                    <label for="product-images">Tambah Gambar:</label>
+                    <input type="file" id="product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple required />
+                    <div class="image-preview-container" id="image-preview-container"></div>
+
+                    <!-- DEFAULT VARIANT -->
+                    <h3>Variant</h3>
+                    <label for="variant-name">Nama:</label>
+                    <input type="text" id="variant-name" value="Base" name="name" class="variant-inputs" placeholder="Nama variant (e.g. White - XL)" required>
+                    <label for="product-price">Harga & Unit:</label>
                     <div>
-                        <input type="number" id="product-price" name="price" placeholder="Masukkan harga" required
-                            style="padding-right: 0%; width: 70%;" />
-                        <input type="text" id="product-unit" name="unit" value="Unit" placeholder="Satuan..." required
+                        <input type="number" id="variant-price" name="price" class="variant-inputs" placeholder="Masukkan harga" required
+                            style="padding-right: 0%; width: 75%;" />
+                        <input type="text" id="variant-unit" name="unit" class="variant-inputs" value="Unit" placeholder="Satuan" required
                             style="width: 20%;" />
                     </div>
-                    <label for="product-images">Tambah Gambar:</label>
-                    <input type="file" id="product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple
-                        required />
-                    <div class="image-preview-container" id="image-preview-container"></div>
-                    <label for="product-availability">Availability:</label>
-                    <select id="product-availability" name="availability" required>
-                        <option value="AVAILABLE">Available</option>
-                        <option value="UNAVAILABLE">Unavailable</option>
-                        <option value="PREORDER">Pre-Order</option>
-                    </select>
+                    <label for="variant-stock">Stok:</label>
+                    <input type="number" id="variant-stock" value="0" min="0" name="stock" class="variant-inputs" required>
                     <div class="add-product-form-buttons">
                         <button type="button" onclick="closeAddProductModal()">Cancel</button>
                         <button type="submit">Tambah Produk</button>
@@ -827,36 +840,45 @@
         </div>
 
         <!-- Modal for Edit Product (Separated as a sibling) -->
-        <div class="modal" id="edit-product-modal">
+        <div class="modal" id="edit-product-variant-modal">
             <div class="add-product-form-container">
                 <h1>Edit Product</h1>
-                <form id="edit-product-form" class="add-product-form">
-                    <label for="edit-product-name">Product Name:</label>
-                    <input type="text" id="edit-product-name" name="name" required>
-                    <label for="edit-product-category">Category:</label>
-                    <select id="edit-product-category" name="category" required>
+                <form id="edit-product-variant-form" class="add-product-form">
+                    <h3>Product</h3>
+                    <label for="edit-product-name">Nama:</label>
+                    <input type="text" id="edit-product-name" class="product-inputs" name="name" placeholder="Edit nama produk..." required>
+                    <label for="edit-product-category">Kategori:</label>
+                    <select id="edit-product-category" name="category" class="product-inputs" required>
                         <option value="Shirts">Shirts</option>
                         <option value="Pants">Pants</option>
                         <option value="Accessories">Accessories</option>
                         <option value="Food">Food</option>
                         <option value="Drinks">Drinks</option>
                     </select>
-                    <label for="edit-product-description">Description:</label>
-                    <textarea id="edit-product-description" name="description" required></textarea>
-                    <label for="edit-product-price">Price & Unit</label>
-                    <div>
-                        <input type="number" id="edit-product-price" name="price" required style="width: 70%;">
-                        <input type="text" id="edit-product-unit" name="unit" required style="width: 20%;">
-                    </div>
-                    <label for="edit-product-images">Change Image:</label>
+                    <label for="edit-product-description">Deskripsi:</label>
+                    <textarea id="edit-product-description" name="description" class="product-inputs" placeholder="Edit deskripsi..." required></textarea>
+                    <label for="edit-product-availability">Availability:</label>
+                    <select id="edit-product-availability" name="availability" class="product-inputs" required>
+                        <option value="available">Available</option>
+                        <option value="unavailable">Unavailable</option>
+                    </select>
+
+                    <label for="edit-product-images">Edit Gambar:</label>
                     <input type="file" id="edit-product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple>
                     <div class="image-preview-container" id="edit-image-preview-container"></div>
-                    <label for="edit-product-availability">Availability:</label>
-                    <select id="edit-product-availability" name="availability" required>
-                        <option value="AVAILABLE">Available</option>
-                        <option value="UNAVAILABLE">Unavailable</option>
-                        <option value="PREORDER">Pre-Order</option>
-                    </select>
+
+                    <h3>Variant</h3>
+                    <label for="edit-variant-select">Select: </label>
+                    <select id="edit-variant-select" name=""></select>
+                    <label for="edit-variant-name">Nama</label>
+                    <input type="text" id="edit-variant-name" name="name" class="variant-inputs" placeholder="Masukkan nama variant..." required>
+                    <label for="edit-variant-price">Harga & Unit</label>
+                    <div>
+                        <input type="number" id="edit-variant-price" name="price" class="variant-inputs" placeholder="Masukkan harga..." required style="width: 75%;">
+                        <input type="text" id="edit-variant-unit" name="unit" class="variant-inputs" placeholder="satuan..." required style="width: 20%;">
+                    </div>
+                    <label for="variant-stock">Stok:</label>
+                    <input type="number" id="edit-variant-stock" value="0" min="0" name="stock" class="variant-inputs" required>
                     <div class="add-product-form-buttons">
                         <button type="button" onclick="closeEditProductModal()">Cancel</button>
                         <button type="submit">Save Changes</button>
@@ -867,7 +889,9 @@
 
         <script type="module" defer>
             import { mockApi } from './frontendTest/mockApi.js'
-            import { store, product, order, transaction } from './integration/fetches.js'
+            import { store, product, order, transaction, variant } from './integration/fetches.js'
+            import common from './common.js';
+
 
             // Hash-based navigation
             document.querySelectorAll('.menu-link').forEach(link => {
@@ -878,7 +902,7 @@
                     const sectionId = this.getAttribute('href').substring(1)
                     document.getElementById(sectionId).classList.add('active')
                     if (sectionId === 'orders') {
-                        loadOrders() // Load orders when the Orders section is active
+                        loadOrders(1) // Load orders when the Orders section is active
                     }
                 })
             })
@@ -935,35 +959,35 @@
 
             function getCreateStoreHtml() {
                 return `
-    <div class="form-wrapper">
-      <div class="create-store-container">
-        <h2>Create Your Store</h2>
-        <form id="create-store-form" enctype="multipart/form-data">
-          <div class="form-group">
-            <label for="name">Store Name:</label>
-            <input type="text" id="name" name="name" placeholder="Enter store name" required>
-          </div>
-          <div class="form-group">
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" rows="4" placeholder="Enter store description" required></textarea>
-          </div>
-          <div class="form-group">
-            <label for="imageFile">Image:</label>
-            <input type="file" id="imageFile" name="imageFile" accept="image/*" required>
-          </div>
-          <div class="form-group">
-            <label for="bankAccount">Bank Account:</label>
-            <input type="text" id="bankAccount" name="bankAccount" placeholder="Enter bank account number" required>
-          </div>
-          <div class="form-group">
-            <label for="bankName">Bank Name:</label>
-            <input type="text" id="bankName" name="bankName" placeholder="Enter bank name" required>
-          </div>
-          <button type="submit">Create Store</button>
-        </form>
-      </div>
-    </div>
-  `
+                    <div class="form-wrapper">
+                    <div class="create-store-container">
+                        <h2>Create Your Store</h2>
+                        <form id="create-store-form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="name">Store Name:</label>
+                            <input type="text" id="name" name="name" placeholder="Enter store name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <textarea id="description" name="description" rows="4" placeholder="Enter store description" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="imageFile">Image:</label>
+                            <input type="file" id="imageFile" name="imageFile" accept="image/*" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bankAccount">Bank Account:</label>
+                            <input type="text" id="bankAccount" name="bankAccount" placeholder="Enter bank account number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bankName">Bank Name:</label>
+                            <input type="text" id="bankName" name="bankName" placeholder="Enter bank name" required>
+                        </div>
+                        <button type="submit">Create Store</button>
+                        </form>
+                    </div>
+                    </div>
+                `
             }
 
             // Placeholder function for editing store
@@ -1005,117 +1029,238 @@
 
             // Load products data
             async function loadProducts() {
-                const result = await product.fetchOwnedProducts()
+                const result = await product.fetchOwnedProducts(1)
                 const products = result.items
                 const productList = document.getElementById('product-list')
                 productList.innerHTML = products.map(product => `
-        <tr>
-            <td>${product.name}</td>
-            <td>${product.category}</td>
-            <td>Rp ${product.price.toLocaleString('id-ID')}</td>
-            <td>
-                <button class="edit-btn" onclick="openEditProductModal('${product.id}')">Edit</button>
-                <button class="delete-btn" onclick="deleteProduct('${product.id}')">Delete</button>
-            </td>
-        </tr>
-      `).join('')
+                    <tr>
+                        <td>${product.name}</td>
+                        <td>${product.category}</td>
+                        <td>Rp ${product.Variants[0]?.price.toLocaleString('id-ID')}</td>
+                        <td>
+                            <button class="edit-btn" onclick="openEditProductModal('${product.id}')">Edit</button>
+                            <button class="delete-btn" onclick="deleteProduct('${product.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `).join('')
+            }
+            window.deleteProduct = async function(id)
+            {
+                try
+                {
+                    await product.deleteProduct(id);
+                    loadProducts();
+                    
+                }catch(err) {alert('error deleting product')}
             }
 
-            document.addEventListener("DOMContentLoaded", () => {
-                window.openAddProductModal = function () {
-                    document.getElementById('add-product-modal').classList.add('active')
+            //#region Add Product
+            window.openAddProductModal = function () {
+                document.getElementById('add-product-modal').classList.add('active')
+            }
+            window.closeAddProductModal = function () {
+                document.getElementById('add-product-modal').classList.remove('active')
+            }
+            document.addEventListener("click", event => {
+                const modalContent = document.querySelector(".add-product-form-container")
+                if (modalContent.classList.contains("active") && !modalContent.contains(event.target)) {
+                    closeAddProductModal()
                 }
-                window.closeAddProductModal = function () {
-                    document.getElementById('add-product-modal').classList.remove('active')
-                }
-                document.addEventListener("click", event => {
-                    const modalContent = document.querySelector(".add-product-form-container")
-                    if (modalContent.classList.contains("active") && !modalContent.contains(event.target)) {
-                        closeAddProductModal()
+            })
+            document.getElementById('product-images').addEventListener('change', function () {
+                const previewContainer = document.getElementById('image-preview-container')
+                previewContainer.innerHTML = ""
+                Array.from(this.files).forEach(file => {
+                    if (file.type.match("image.*")) {
+                        const reader = new FileReader()
+                        reader.onload = e => {
+                            const img = document.createElement('img')
+                            img.src = e.target.result
+                            img.classList.add('image-preview')
+                            previewContainer.appendChild(img)
+                        }
+                        reader.readAsDataURL(file)
                     }
                 })
-                document.getElementById('product-images').addEventListener('change', function () {
-                    const previewContainer = document.getElementById('image-preview-container')
-                    previewContainer.innerHTML = ""
-                    Array.from(this.files).forEach(file => {
-                        if (file.type.match("image.*")) {
-                            const reader = new FileReader()
-                            reader.onload = e => {
-                                const img = document.createElement('img')
-                                img.src = e.target.result
-                                img.classList.add('image-preview')
-                                previewContainer.appendChild(img)
-                            }
-                            reader.readAsDataURL(file)
-                        }
-                    })
-                })
-                document.getElementById('add-product-form').addEventListener('submit', async function (event) {
+
+                const addProductForm = document.getElementById('add-product-form');
+                addProductForm.addEventListener('submit', async function (event) {
                     event.preventDefault()
-                    const formData = new FormData(this)
+
+                    const createProductData = common.getAllNameValueOfSelector('.product-inputs', addProductForm);
+                    common.convertAvailabilityKey(createProductData);
+
+                    createProductData.defaultVariantData = common.getAllNameValueOfSelector('.variant-inputs', addProductForm)
+                    
+                    const productImageFormData = getProductImageFormData();
+
                     try {
-                        const response = await product.createProduct(formData)
+                        const createdProduct = await product.createProduct(createProductData)
+
+                        if(Array.from(productImageFormData.entries()).length > 0){
+                            await product.createProductImages(createdProduct.id, productImageFormData);
+                        }else{
+                            console.log("NO IMAGES");
+                        }
+                        
+                        
                         this.reset()
                         document.getElementById('image-preview-container').innerHTML = ""
                         closeAddProductModal()
                         loadProducts()
                     } catch (error) {
-                        console.error("Error adding product:", error)
-                        alert("There was an error adding the product. Please try again.")
+                        console.error("Error creating product:", error)
+                        alert("An error occurred during product creation. Please try again.")
                     }
                 })
             })
+            function getProductImageFormData()
+            {
+                const formData = new FormData();
+                const productImageFiles = document.getElementById('product-images').files;
+                for(let i = 0; i < productImageFiles.length; i++)
+                {
+                    formData.append('images', productImageFiles[i]);
+                }
+                return formData;
+            }
 
-            let editingProductId
+            //#endregion
+
+            //#region Edit Product
+            let cachedVariants;
+            let inputDetected;
             window.openEditProductModal = async function (productId) {
-                const productDetails = await product.fetchProduct(productId)
-                editingProductId = productId
-                document.getElementById('edit-product-name').value = productDetails.name
-                document.getElementById('edit-product-category').value = productDetails.category
-                document.getElementById('edit-product-description').value = productDetails.description
-                document.getElementById('edit-product-price').value = productDetails.price
-                document.getElementById('edit-product-unit').value = productDetails.unit
-                document.getElementById('edit-product-availability').value = productDetails.availability
-                const previewContainer = document.getElementById('edit-image-preview-container')
-                previewContainer.innerHTML = ""
-                productDetails.ProductImages?.forEach(src => {
-                    const img = document.createElement('img')
-                    img.src = src.url
-                    img.classList.add('image-preview')
-                    previewContainer.appendChild(img)
+                inputDetected = false;
+
+                const productData = await product.fetchProduct(productId)
+                setEditProduct(productData);
+
+                let defaultVariantId;
+                cachedVariants = {}
+                productData.Variants.forEach(Variant => {
+                    cachedVariants[Variant.id] = Variant
+                    if(Variant.isDefault) defaultVariantId = Variant.id;
                 })
-                document.getElementById('edit-product-modal').classList.add('active')
-                console.log(productDetails)
+                addVariantEditOptions(productData.Variants);
+                setEditVariantWithCached(defaultVariantId);
+                
+                document.getElementById('edit-product-variant-modal').classList.add('active')
             }
-
             window.closeEditProductModal = function () {
-                document.getElementById('edit-product-modal').classList.remove('active')
+                document.getElementById('edit-product-variant-modal').classList.remove('active')
             }
-
-            document.getElementById('edit-product-form').addEventListener('submit', async function (event) {
+            const editProductVariantForm = document.getElementById('edit-product-variant-form');
+            editProductVariantForm.addEventListener('change', function () { inputDetected = true; })
+            editProductVariantForm.addEventListener('submit', async function (event) {
                 event.preventDefault()
-                const formData = new FormData(this)
+                if(!inputDetected) {
+                    closeEditProductModal();
+                    return;
+                }
+                
+                const productData = common.getAllNameValueOfSelector('.product-inputs', editProductVariantForm);
+                common.convertAvailabilityKey(productData);
+                const variantData = common.getAllNameValueOfSelector('.variant-inputs', editProductVariantForm);
+                console.log(productData)
+                console.log(variantData)
                 try {
-                    await product.editProduct(formData, editingProductId)
-                    closeEditProductModal()
+                    const result = await product.editProduct(editingProductId, productData);
+                    if(editingVariantId)
+                    {
+                        await variant.editVariant(editingVariantId, variantData);
+                    }else{
+                        await variant.createVariant(editingProductId, variantData)
+                    }
                     loadProducts()
                 } catch (error) {
                     console.error("Error updating product:", error)
                     alert("Failed to update the product. Please try again.")
                 }
+                closeEditProductModal()
             })
 
+            let editingProductId;
+            const editPreviewContainer = document.getElementById('edit-image-preview-container')
+            function setEditProduct(productData)
+            {
+                editingProductId = productData.id;
+                common.setValuesOfSelector('.product-inputs', editProductVariantForm, productData)
+                common.setAvailabilityElementValue(document.getElementById('edit-product-availability'), productData.isAvailable);
+                document.getElementById('edit-product-availability')
+
+                editPreviewContainer.innerHTML = "";
+                productData.ProductImages?.forEach(src => {
+                    const img = document.createElement('img')
+                    img.src = src.url
+                    img.classList.add('image-preview')
+                    editPreviewContainer.appendChild(img)
+                })
+            }
+
+            let editingVariantId;
+            function setEditVariantWithCached(variantId)
+            {
+                const variantData = cachedVariants[variantId];
+                editingVariantId = variantId;
+                common.setValuesOfSelector('.variant-inputs', editProductVariantForm, variantData);
+            }
+            const editVariantSelect = document.getElementById("edit-variant-select");
+            function addVariantEditOptions(variants)
+            {
+                editVariantSelect.innerHTML = "";
+                addVariantOptionsToSelect(variants, editVariantSelect);
+                const createOption = document.createElement('option');
+                createOption.style = "color: gray";
+                createOption.value = "";
+                createOption.textContent = "Create new variant...";
+                editVariantSelect.appendChild(createOption)
+            }
+            function addVariantOptionsToSelect(Variants, selectElement)
+            {
+                Variants.forEach( variant => {
+                    const option = document.createElement('option');
+                    option.value = variant.id;
+                    option.textContent = variant.name;
+                    option.selected = variant.isDefault;
+                    console.log(option);
+                    selectElement.appendChild(option);
+                })
+            }
+            
+            function prepareEditFormToCreateVariant()
+            {
+                common.setValuesOfSelector('.variant-inputs', editProductVariantForm, {
+                    name: "",
+                    stock: 1
+                });
+                editingVariantId = null;
+            }
+
+            editVariantSelect.addEventListener('change', function () {
+                const selectedVariantId = editVariantSelect.value;
+                if(selectedVariantId != "") setEditVariantWithCached(selectedVariantId);
+                else prepareEditFormToCreateVariant()
+                
+            })
+            //#endregion
+
             // Load orders data
-            async function loadOrders() {
+            let orderFilters = {};
+            let cachedCurrentPage;
+            async function loadOrders(page) {
                 const orderTableBody = document.getElementById('order-table-body')
                 const loader = document.getElementById('loader')
                 loader.style.display = 'block'
                 try {
-                    const result = await order.fetchIncomingOrders()
+                    const result = await order.fetchIncomingOrders(page, orderFilters)
+                    setPaginationValues(result.items.length, result.total, result.page, result.totalPages);
                     const orders = result.items
                     orderTableBody.innerHTML = ""
                     orders.forEach(order => {
                         const createdAt = new Date(order.createdAt)
+                        const createdAtFormatted = createdAt.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
                         const transactionImage = order.Transactions.length > 0
                             ? `Payment ${order.Transactions[0].method.toLowerCase()}`
                             : 'Missing'
@@ -1125,15 +1270,14 @@
                         row.innerHTML = `
                         <td>${order.customerName}</td>
                         <td>${order.numberOfItems}</td>
-                        <td>${createdAt.toLocaleDateString()}</td>
+                        <td>${createdAtFormatted}</td>
                         <td>${transactionImage}</td>
                         <td>
                             ${order.Transactions.length > 0 && order.Transactions[0].method === 'PROOF-BASED'
                                 ? `<button class="action-btn" onclick="openTransactionImage('${order.Transactions[0].id}')">View Image</button>`
-                                : 'N/A'
+                                : 'Missing'
                             }
                         </td>
-                        <td>${order.orderNotes || ""}</td>
                         <td class="${getStatusClass(order.status)}">${order.status}</td>
                         <td>
                             <button class="action-btn expand-btn" onclick="toggleOrderDetails('${order.id}', this)">
@@ -1159,6 +1303,7 @@
                                         <th style="padding: 5px; border: 1px solid #ddd;">Product</th>
                                         <th style="padding: 5px; border: 1px solid #ddd;">Quantity</th>
                                         <th style="padding: 5px; border: 1px solid #ddd;">Price</th>
+                                        <th style="padding: 5px; border: 1px solid #ddd;">Notes</th>
                                         <th style="padding: 5px; border: 1px solid #ddd;">Status</th>
                                         <th style="padding: 5px; border: 1px solid #ddd;">Update</th>
                                     </tr>
@@ -1169,14 +1314,13 @@
                             <div class="transactionDetails" style="max-width: 30%; max-height: 40%; margin: auto;"></div>
                             <div class="extraOrderDetails" style="margin: auto;"> 
                                 <p>Customer Contacts</p>
-                                <p>${order.customerEmail} || ${order.customerPhone}</p>
+                                <p>${order.customerEmail} ・ ${order.customerPhone}</p>
                             </div>
                         `
                         detailRow.appendChild(detailCell)
                         orderTableBody.appendChild(detailRow)
                     })
                     // After populating rows, update the search filter (only main rows) so that detail rows remain collapsed.
-                    filterOrders()
                 } catch (error) {
                     console.error('Error loading orders:', error)
                 } finally {
@@ -1184,14 +1328,88 @@
                 }
             }
 
+            const variantFilterSelect = document.getElementById('order-variant-filter-select');
+            variantFilterSelect.addEventListener('change', function(){
+                orderFilters.variantId = variantFilterSelect.value;
+                formatFilterAndReloadOrders()
+            })
+            function updateOrderVariantFilter(variants)
+            {
+                variantFilterSelect.disabled = !variants;
+                variantFilterSelect.innerHTML = "";
+                if(variants)
+                {
+                    addVariantOptionsToSelect(variants, variantFilterSelect)
+                    orderFilters.variantId = variants.find( variant => variant.isDefault ).id;
+                }else{
+                    variantFilterSelect.innerHTML = "<option>...</option>"
+                    orderFilters.variantId = undefined;
+                }
+                formatFilterAndReloadOrders()
+            }
+
+            const productSearch = document.getElementById("search-product");
+            common.InputDebouncer.listen(productSearch, async function (){
+                if(productSearch.value == "") {
+                    updateOrderVariantFilter(null)
+                    return;
+                }
+
+                const results = await product.fetchOwnedProducts(1, {name: productSearch.value});
+                const productWithMatchingName = results.items[0];
+                updateOrderVariantFilter(productWithMatchingName?.Variants);
+            }, true)
+
+            const noteSearch = document.getElementById("search-notes");
+            common.InputDebouncer.listen(noteSearch, async function (){
+                if(noteSearch.value == "") return;
+                // just update the cachedFilter and reload orders;
+            }, true)
+
+            function formatFilterAndReloadOrders()
+            {
+                for(const key in orderFilters)
+                {
+                    if(!orderFilters[key]) // if it's falsy
+                    {
+                        delete orderFilters[key];
+                    }
+                }
+                loadOrders(1);
+            }
+
+            const nextPage = document.getElementById("next-page")
+            const prevPage = document.getElementById("prev-page")
+            function setPaginationValues(showing, total, page, totalPages)
+            {
+                cachedCurrentPage = page;
+                document.getElementById("counter-value").textContent = showing;
+                document.getElementById("total-value").textContent = total;
+                document.getElementById("page-info").textContent = page;
+                document.getElementById("total-page-info").textContent = totalPages;
+                nextPage.disabled = page == totalPages;
+                prevPage.disabled = page <= 1;
+            }
+            nextPage.addEventListener('click', function(){
+                loadOrders(cachedCurrentPage + 1)
+            })
+            prevPage.addEventListener('click', function()
+            {
+                loadOrders(cachedCurrentPage - 1);
+            })
+
             function getStatusClass(status) {
-                switch (status) {
-                    case 'COMPLETED':
-                        return 'status-completed'
-                    case 'READY':
-                        return 'status-ready'
-                    default:
-                        return 'status-pending'
+                if(status.includes('COMPLETED'))
+                {
+                    return 'status-completed'
+                }else if(status.includes('READ'))
+                {
+                    return 'status-ready'
+                }else if(status.includes('CANCELLED'))
+                {
+                    return 'status-cancelled'
+                }else {
+                    return 'status-pending'
                 }
             }
 
@@ -1223,36 +1441,44 @@
                             <td style="padding: 5px; border: 1px solid #ddd;">
                               <input type="checkbox" class="bulk-checkbox" data-order-item-id="${orderItem.id}">
                             </td>
-                            <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.Product.name}</td>
+                            <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.productName}</td>
                             <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.quantity}</td>
-                            <td style="padding: 5px; border: 1px solid #ddd;">Rp ${orderItem.unitPrice.toLocaleString('id-ID')}</td>
+                            <td style="padding: 5px; border: 1px solid #ddd;">Rp ${orderItem.variantPrice.toLocaleString('id-ID')}</td>
                             <td style="padding: 5px; border: 1px solid #ddd;" class="${getStatusClass(orderItem.status)}">${orderItem.status}</td>
+                            <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.notes || ""}</td>
                             <td style="padding: 5px; border: 1px solid #ddd;">
                               <select class="status-select" data-order-item-id="${orderItem.id}">
                                   <option value="PENDING" ${orderItem.status === "PENDING" ? "selected" : ""}>PENDING</option>
                                   <option value="READY" ${orderItem.status === "READY" ? "selected" : ""}>READY</option>
                                   <option value="COMPLETED" ${orderItem.status === "COMPLETED" ? "selected" : ""}>COMPLETED</option>
-                                  <option value="CANCELED" ${orderItem.status === "CANCELED" ? "selected" : ""}>CANCELED</option>
+                                  <option value="CANCELLED" ${orderItem.status === "CANCELLED" ? "selected" : ""}>CANCELED</option>
                               </select>
-                              <button class="delete-btn" onclick="deleteOrderItem('${orderItem.id}')">Delete</button>
                             </td>
                         </tr>
                     `
+                })
+                fullOrder.OrderItems.forEach( orderItem => {
                     const selectElement = document.querySelector(`#tbodyrow-${orderItem.id} .status-select`)
+                    console.log(selectElement);
                     if (selectElement) {
-                        selectElement.addEventListener('change', event => {
+                        selectElement.addEventListener('change', async event => {
+                            console.log("TEST");
                             const newStatus = event.target.value
                             if (newStatus !== orderItem.status) {
-                                order.updateItemStatus(orderItem.id, newStatus)
-                                    .then(() => {
-                                        const statusTd = document.querySelector(`#tbodyrow-${orderItem.id} td:nth-child(5)`)
-                                        statusTd.textContent = newStatus
-                                        statusTd.className = getStatusClass(newStatus)
-                                        orderItem.status = newStatus
-                                    })
-                                    .catch(err => {
-                                        event.target.value = orderItem.status
-                                    })
+                                try
+                                {
+                                    
+                                    await order.updateItemStatus(orderItem.id, newStatus)
+
+                                    const statusTd = document.querySelector(`#tbodyrow-${orderItem.id} td:nth-child(5)`)
+                                    statusTd.textContent = newStatus
+                                    statusTd.className = getStatusClass(newStatus)
+                                    orderItem.status = newStatus
+                                }catch(err)
+                                {
+                                    event.target.value = orderItem.status
+                                    throw err;
+                                }
                             }
                         })
                     }
@@ -1317,31 +1543,10 @@
                 }
             }
 
-            // Filter orders (only main order rows, not detail rows)
-            function filterOrders() {
-                const productSearchValue = document.getElementById("search-product").value.toLowerCase();
-                const notesSearchValue = document.getElementById("search-notes").value.toLowerCase();
-                const orderRows = document.querySelectorAll("#order-table-body tr:not(.order-details)");
-                let visibleCount = 0;
-                orderRows.forEach(row => {
-                    const productCell = row.querySelector("td:nth-child(1)"); // Customer Name
-                    const notesCell = row.querySelector("td:nth-child(6)"); // Order Notes column
-                    const productMatch = productCell?.textContent.toLowerCase().includes(productSearchValue);
-                    const notesMatch = notesCell ? notesCell.textContent.toLowerCase().includes(notesSearchValue) : false;
-                    if (productMatch || notesMatch) {
-                        row.style.display = "";
-                        visibleCount++;
-                    } else {
-                        row.style.display = "none";
-                    }
-                });
-                document.getElementById("counter-value").textContent = visibleCount;
-            }
-
+            
             // Initial Load
             loadStore()
             loadProducts()
-            loadOrders()
         </script>
         <script type="module" src="integration/uiManagement.js" defer></script>
 </body>

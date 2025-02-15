@@ -67,8 +67,10 @@ async function buildPayload(user)
     }
     if(user.role == userServices.ROLES['StoreManager'])
     {
-        payload.storeId = await storeServices.fetchStoreIdOfUser(user.id);
-        console.log(payload);
+        try
+        {
+            payload.storeId = await storeServices.fetchStoreIdOfUser(user.id);
+        }catch(err){}
     }
     return payload;
 }

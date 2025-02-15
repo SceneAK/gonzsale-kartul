@@ -114,7 +114,7 @@
             transition: background-color 0.2s ease-in-out;
         }
 
-        .item button:hover {
+        .item button:hover:enabled {
             background-color: #218838;
         }
 
@@ -232,8 +232,12 @@
             border: none;
         }
 
-        .add-to-cart:hover {
+        .add-to-cart:not(:disabled):hover {
             background-color: #218838;
+        }
+        .add-to-cart:disabled{
+            background-color: gray;
+            cursor: not-allowed;
         }
 
         .view-details {
@@ -245,6 +249,7 @@
         .view-details:hover {
             background-color: #0056b3;
         }
+        
     </style>
 </head>
 <header>
@@ -289,24 +294,8 @@
     <div id="footer"></div>
 
     <script type="module">
-        import { mockApi } from './frontendTest/mockApi.js';
         import { product } from './integration/fetches.js';
-
-        // Function to add items to the cart
-        window.addToCart = function (id, name, price, imgSrc, store_id, store_name) {
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            const existingItemIndex = cart.findIndex(item => item.id === id);
-
-            if (existingItemIndex > -1) {
-                cart[existingItemIndex].quantity += 1;
-            } else {
-                cart.push({ id, name, price, imgSrc, store_id, store_name, quantity: 1 });
-            }
-
-            localStorage.setItem('cart', JSON.stringify(cart));
-            alert(`${name} has been added to your cart!`);
-        };
-
+        import common from './common.js';
 
         const categoryToIdPair = {
             shirts: "shirts-items-container",
@@ -325,7 +314,7 @@
                 return;
             }
 
-            products.forEach(product => {
+            products.forEach(currentProduct => {
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('item');
                 itemDiv.style.cursor = 'pointer'; // Indicate that the item is clickable
@@ -337,20 +326,41 @@
                         return;
                     }
                     // Navigate to display-product.html with the product id in the query string
-                    window.location.href = `display-product.html?id=${product.id}`;
+                    window.location.href = `display-product.html?id=${currentProduct.id}`;
                 });
 
-                const firstImg = product.ProductImages[0]?.url || 'placeholder.jpg'; // fallback image if needed
+                const firstImg = currentProduct.ProductImages[0]?.url || 'assets/images/placeholder.png'; // fallback image if needed
+                const defaultVariant = currentProduct.Variants[0];
 
                 // Set the inner HTML of the item.
                 // Note: The Add to Cart button also calls event.stopPropagation() so its click does not bubble up.
                 itemDiv.innerHTML = `
-            <img src="${firstImg}" alt="${product.name}">
-            <p>${product.name}</p>
-            <p class="store-name">Store: <a href="display-store.html?id=${product.storeId}">${product.Store.name}</a></p>
-            <p>Rp ${product.price.toLocaleString('id-ID')} / ${product.unit}</p>
-            <button class="add-to-cart" onclick="event.stopPropagation(); addToCart('${product.id}', '${product.name}', ${product.price}, '${firstImg}', '${product.storeId}', '${product.Store.name}')">Add to Cart</button>
-            `;
+                    <img src="${firstImg}" alt="${currentProduct.name}">
+                    <p>${currentProduct.name}</p>
+                    <p class="store-name">Store: <a href="display-store.html?id=${currentProduct.storeId}">${currentProduct.Store.name}</a></p>
+                    <p>Rp ${defaultVariant?.price.toLocaleString('id-ID')} / ${defaultVariant?.unit}</p>
+                    <button class="add-to-cart" onclick="event.stopPropagation();" ${defaultVariant?.stock <= 0 ? "disabled" : ""}>Add to Cart</button>
+                `;
+                const addToCartButton = itemDiv.querySelector('button');
+                addToCartButton.addEventListener('click', async function () {
+                    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                    const defaultVariant = currentProduct.Variants.find( variant => variant.isDefault );
+
+                    const existingItemIndex = cart.findIndex(item => item.selectedVariant.id === defaultVariant.id);
+
+                    if (existingItemIndex > -1) {
+                        const maxStock = cart[existingItemIndex].quantity == cart[existingItemIndex].selectedVariant.stock
+                        cart[existingItemIndex].quantity += maxStock ? 1 : 0;
+                    } else {
+                        const completeProduct = await product.fetchProduct(currentProduct.id); // use if incomplete variants
+                        
+                        const itemToAdd = common.buildCartItem(completeProduct, defaultVariant, 1);
+                        cart.push(itemToAdd);
+                    }
+
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    alert(`${currentProduct.name} has been added to your cart!`);
+                });
                 container.appendChild(itemDiv);
             });
         }
@@ -376,7 +386,6 @@
             selectedTab.style.display = "block";
 
             const result = await product.fetchProducts(categoryName);
-            console.log(result);
             const products = result.items;
 
             // Finally, populate the container with the combined (or single) set of items

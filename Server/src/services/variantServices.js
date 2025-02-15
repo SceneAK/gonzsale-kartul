@@ -18,9 +18,9 @@ async function fetchVariantsIncludeProduct(ids)
 }
 async function _fetchVariant(id, options)
 {
-    const variant = await Variant.findByPk(id, {raw: true, ...options});
+    const variant = await Variant.findByPk(id, options);
     if(!variant) throw new ApplicationError('Variant not found', 404)
-    return variant;
+    return variant.toJSON();
 }
 
 // async function fetchVariantsOfProduct(productId)
@@ -42,16 +42,6 @@ async function editVariant(id, variantData, requesterStoreId)
     return await Variant.update(variantData, {where: {id}, raw: true});
 }
 
-async function deleteVariant(id, requesterStoreId)
-{
-    await ensureBelongsToStore(id, requesterStoreId);
-
-    const variant = _fetchVariant(id);
-    if(variant.isDefault) throw new ApplicationError("Cannot delete default variant! Please set a different variant as default first. ", 400);
-    
-    await Variant.destroy({ where: {id} });
-}
-
 async function createVariant(productId, variantData, requesterStoreId)
 {
     await baseProductServices.ensureBelongsToStore(productId, requesterStoreId);
@@ -61,14 +51,27 @@ async function _createVariant(productId, variantData)
 {
     await Variant.create({productId, ...variantData});
 }
-
-async function setDefault(id, requesterId)
+async function deleteVariant(id, requesterStoreId)
 {
-    const variant = await _fetchVariant(id, {include: baseProductServices.include()});
-    await ensureBelongsToStore(variant.Product, requesterId);
+    const variantWithProducts = await _fetchVariant(id, { include: baseProductServices.include()})
+    await ensureVariantBelongsToStore(variantWithProducts, requesterStoreId);
+
+    if(variantWithProducts.isDefault) throw new ApplicationError("Cannot delete default variant! Please set a different variant as default first. ", 400);
     
-    await Variant.update({isDefault: false}, {where: {productId: variant.productId} });
-    await Variant.update({isDefault: true}, {where: {id: variant.id} });
+    await Variant.destroy({ where: {id} });
+}
+async function _deleteAllVariantsOfProduct(productId)
+{
+    await Variant.destroy({where: {productId}});
+}
+
+async function setDefault(id, requesterStoreId)
+{
+    const variantWithProduct = await _fetchVariant(id, {include: baseProductServices.include()});
+    await ensureVariantBelongsToStore(variantWithProduct, requesterStoreId);
+    
+    await Variant.update({isDefault: false}, {where: {productId: variantWithProduct.productId} });
+    await Variant.update({isDefault: true}, {where: {id: variantWithProduct.id} });
 }
 
 async function ensureBelongsToStore(variantId, requesterStoreId)
@@ -100,7 +103,14 @@ function include(level)
                 model: Variant
             }
     }
-    
+}
+function includeSpecific(variantId)
+{
+    return {
+        model: Variant,
+        attributes: ATTRIBUTES,
+        where: { id: variantId }
+    }
 }
 
 export default {
@@ -112,5 +122,7 @@ export default {
     editVariant,
     setDefault,
     deleteVariant,
-    include
+    _deleteAllVariantsOfProduct,
+    include,
+    includeSpecific
 }

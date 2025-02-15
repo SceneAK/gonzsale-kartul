@@ -9,7 +9,7 @@ const userAttributes = {
         primaryKey: true
     },
     email: {
-        type: DataTypes.STRING(30),
+        type: DataTypes.STRING(320),
         allowNull: false,
         unique: true,
     },

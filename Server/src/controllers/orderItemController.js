@@ -1,17 +1,17 @@
 import {orderItemServices} from '../services/index.js';
 
 const updateStatus = async (req, res) => {
-    const {id} = req.params;
+    const {id, status} = req.params;
 
-    await orderItemServices.updateStatus(id, req.body.status, req.decodedAuthToken.storeId);
-    return res.json({result: 'updated'});
+    const result = await orderItemServices.updateStatus(id, status, req.decodedAuthToken.storeId);
+    return res.json(result || {});
 }
 
-const updateStatusByVariant = async (req, res) => {
-    const {variantId} = req.params;
+const updateStatusWhere = async (req, res) => {
+    const {status} = req.params;
 
-    await orderItemServices.updateStatusesByVariant(variantId, req.body.status, req.decodedAuthToken.storeId);
-    return res.json({result: 'updated'});
+    const result = await orderItemServices.updateStatusWhere(req.query, status, req.decodedAuthToken.storeId);
+    return res.json(result || {});
 }
 
-export default {updateStatus, updateStatusByVariant}
+export default {updateStatus, updateStatusWhere}

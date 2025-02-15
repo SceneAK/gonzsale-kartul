@@ -28,7 +28,7 @@ function toggleDropdownState(loginDetails) {
             const isStoreManager = loginDetails.role === 'STORE_MANAGER';
             editForm.innerHTML = `
                 <div style="text-align: center; padding: 10px;">
-                    <p>Welcome, <strong>${loginDetails.name || 'User'}</strong></p>
+                    <p>Hello, <strong>${loginDetails.name || 'User'}</strong>!  </p>
                     <p style="color: #555;">Role: ${isStoreManager ? 'Store Manager' : 'User'}</p>
                 </div>
                 <hr>
@@ -53,7 +53,6 @@ function toggleDropdownState(loginDetails) {
                 logoutButton.addEventListener('click', () => {
                     user.expireCookie().then(() => {
                         localStorage.removeItem('loginDetail');
-                        alert('You have logged out successfully.');
                         window.location.reload()
                     });
                 });
@@ -249,11 +248,7 @@ function hookSignInWithElementIds(emailId, passwordId, signInId) {
         }
 
         try {
-            const userInfo = await user.signIn(email.value, password.value);
-            trackSignin(userInfo);
-            console.log("User signed in:", userInfo);
-            alert("Login successful! Welcome, " + userInfo.user_name);
-            // Reload or update UI here if needed
+            await user.signIn(email.value, password.value);
         } catch (err) {
             displayError("Incorrect email or password. Please try again.");
         }

@@ -20,14 +20,14 @@ const createStore = async (req, res, next) =>
     const result = await storeServices.createStore(body, files, decodedAuthToken.id);
     
     logger.info('Created Store by User ', decodedAuthToken.id, '. Result: ', result);
-    res.json(result);
+    res.json(result || {});
 }
 
 const updateStore = async (req, res) => 
 {
     const {decodedAuthToken, files, body} = req;
     const result = await storeServices.updateStore(body, files, decodedAuthToken);
-    res.json(result);
+    res.json(result || {});
 }
 
 export default  { fetchStore, fetchOwnedStore, createStore, updateStore }

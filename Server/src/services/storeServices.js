@@ -30,27 +30,28 @@ async function createStore(storeData, files, userId)
 { 
     await ensureCanCreate(userId);
 
+    let store;
     await Store.sequelize.transaction( async t => {
         const completeData = await complete(storeData, files, userId);
-        await Store.create(completeData);
+        store = await Store.create(completeData);
     });
 
-    return { result: 'created' };
+    return store;
 }
 
 async function updateStore(storeData, files, requester)
 {
-    const store = await fetchStore(requester.storeId);
+    let store = await fetchStore(requester.storeId);
     
     const updateData = { ...storeData, userId: requester.id };
     await Store.sequelize.transaction( async t => {
 
         await handleImage('imageId', updateData.imageAction, files.imageFile?.[0], store, updateData);
         await handleImage('qrImageId', updateData.qrImageAction, files.qrImageFile?.[0], store, updateData);
-        await Store.update(updateData, {where: { storeId: store.id } });
+        store = await Store.update(updateData, {where: { storeId: store.id } });
     });
 
-    return { result: 'updated' };
+    return store;
 }
 async function handleImage(fieldName, action, file, store, updateData)
 {

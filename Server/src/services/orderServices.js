@@ -1,3 +1,5 @@
+import FilterToWhereConverter from '../common/filterToWhere.js';
+import { OrderItem } from '../database/models/orderModel.js';
 import baseOrderServices from './baseOrderServices.js';
 import orderItemServices from './orderItemServices.js';
 import storeServices from './storeServices.js';
@@ -21,13 +23,18 @@ async function fetchOrderIncludeAll(id)
     orderEnricher.summarizeOrderItems(order);
     return order;
 }
-
-async function fetchIncomingOrders(storeId, page = 1, whereOrderItem = {})
+async function fetchOrder(id)
 {
+    return await baseOrderServices.fetchOrder(id);
+}
+
+async function fetchIncomingOrders(storeId, page = 1, filter = {})
+{
+    const orderItemWhere = filterToWhereConverter.convert(filter);
     let result = await baseOrderServices.fetchAndCountAll(page, { 
         include: [
             transactionServices.include('serve'),
-            {...orderItemServices.include('serve'), where: whereOrderItem}
+            {...orderItemServices.include('serve'), where: orderItemWhere, required: true}
         ],
         where: { storeId },
         attributes: ATTRIBUTES,
@@ -36,13 +43,8 @@ async function fetchIncomingOrders(storeId, page = 1, whereOrderItem = {})
     
     result.items.forEach(order => orderEnricher.summarizeRemoveOrderItems(order) );
 
-    sortByStatus(result.items);
+    orderEnricher.sortByStatus(result.items);
     return result;
-}
-function sortByStatus(orders)
-{
-    const priority = orderItemServices.statusOrder;
-    orders.sort((a, b) => priority.indexOf(a.status) - priority.indexOf(b.status));
 }
 
 async function fetchOrders(customerId, page = 1)
@@ -71,7 +73,7 @@ async function createOrder(orderItems, customerDetails)
 
 async function calculateOrderTotal(orderId)
 {
-    const orderItems = await orderItemServices.fetchOrderItems({orderId}, ['quantity', 'unitPrice']);
+    const orderItems = await orderItemServices.fetchOrderItems(orderId);
     return orderEnricher.calculateTotal(orderItems);
 }
 
@@ -88,6 +90,7 @@ async function deleteOrder(id, requesterStoreId)
 
 
 export default {
+    fetchOrder,
     fetchOrderIncludeAll,
     fetchOrders,
     fetchIncomingOrders,
@@ -97,6 +100,11 @@ export default {
 }
 
 class OrderEnricher {
+    constructor(statusOrder)
+    {
+        this.statusOrder = statusOrder;
+        this.PARTIALLY = "PARTIALLY "
+    }
     summarizeRemoveOrderItems(order)
     {
         this.summarizeOrderItems(order);
@@ -118,14 +126,66 @@ class OrderEnricher {
     }
     calculateOverallStatus(items)
     {
-        let overallStatus = items[0].status;
-        items.some(item => {
-            if(item.status != overallStatus) {
-                overallStatus = 'MIXED';
+        const statuses = items.map(item => item.status);
+
+        const isPartial = this._isPartial(statuses);
+        const mostFrequentStatus = this._findMostFrequent(statuses);
+
+        return `${isPartial ? this.PARTIALLY:""}${mostFrequentStatus}`;
+    }
+    _isTerminal(statuses)
+    {
+        return !statuses.some(status => {
+            if(status != "COMPLETED") {
                 return true;
             }
         });
-        return overallStatus;
     }
+    _isPartial(statuses)
+    {
+        return statuses.some(status => {
+            if(status != statuses[0]) {
+                return true;
+            }
+        });
+    }
+    _findMostFrequent(arr) {
+        const frequencyMap = {};
+        let maxCount = 0;
+        let mostFrequent = null;
+        
+        for (const item of arr) {
+            frequencyMap[item] = (frequencyMap[item] || 0) + 1;
+        
+            if (frequencyMap[item] > maxCount) {
+                maxCount = frequencyMap[item];
+                mostFrequent = item;
+            }
+        }
+        return mostFrequent;
+    }
+    sortByStatus(orders)
+    {
+        const priority = this.statusOrder;
+        orders.sort((a, b) => {
+            const statusA = this._getPureStatus(a.status);
+            const statusB = this._getPureStatus(b.status);
+            return priority.indexOf(statusA) - priority.indexOf(statusB)
+        });
+        
+    }
+    _getPureStatus(overallStatus)
+    {
+        return overallStatus.includes(this.PARTIALLY) ? overallStatus.substring(this.PARTIALLY.length) : overallStatus
+    }
+      
 }
-const orderEnricher = new OrderEnricher(); 
+const orderEnricher = new OrderEnricher(orderItemServices.statusOrder); 
+const filterToWhereConverter = new FilterToWhereConverter({
+    toLike: [
+        'notes',
+        'productName',
+        'variantName',
+        'customerName'
+    ]
+})

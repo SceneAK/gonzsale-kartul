@@ -4,6 +4,11 @@ import variantServices from './variantServices.js';
 import baseOrderServices from './baseOrderServices.js';
 const { OrderItem } = await initializePromise;
 
+async function fetchOrderItems(orderId)
+{
+    const models = await OrderItem.findAll({where:{orderId}, order});
+    return models.map(model => model.toJSON());
+}
 async function _fetchByPk(id, options)
 {
     const model = await OrderItem.findByPk(id, options);
@@ -26,12 +31,13 @@ async function attatchAssociatedVariantProduct(orderItems)
     const variantIds = orderItems.map( item => item.variantId);
     const variants = await variantServices.fetchVariantsIncludeProduct(variantIds);
     
-    return orderItems.map( (item, index) => { 
-        if(item.variantId == variants[index].id)
+    return orderItems.map( (orderItem) => { 
+        const correspondingVariant = variants.find( variant => orderItem.variantId == variant.id )
+        if(correspondingVariant)
         {
-            return {...item, Variant: variants[index] }
+            return {...orderItem, Variant: correspondingVariant }
         }else{
-            throw new ApplicationError('One or more variants not found, causing mismatch of OrderItem-Variant attatchment', 404);
+            throw new ApplicationError(`Variant of id ${orderItem.variantId} could not be found`, 404);
         }
     } )
 }
@@ -97,22 +103,24 @@ async function updateStatus(id, status, requesterStoreId)
     })
     return result;
 }
-async function updateStatusesByVariant(variantId, requestedStatus, requesterStoreId)
+
+async function updateStatusWhere(where, requestedStatus, requesterStoreId)
 {
-    let orderItemsWithVariants = await OrderItem.findAll({ 
-        where: { variantId }, 
+    let orderItems = await OrderItem.findAll({ 
+        where, 
         include: [variantServices.include(), baseOrderServices.include()]
     })
-    if(orderItemsWithVariants.length == 0) return;
-    orderItemsWithVariants = orderItemsWithVariants.map( item => item.toJSON())
+    if(orderItems.length == 0) return;
+    orderItems = orderItems.map( item => item.toJSON())
 
-    baseOrderServices.ensureStoreOwnsOrder(orderItemsWithVariants[0].Order, requesterStoreId)
+    ensureSameStore(orderItems);
+    baseOrderServices.ensureStoreOwnsOrder(orderItems[0].Order, requesterStoreId);
 
-    const valids = [];
-    orderItemsWithVariants.forEach( existing => {
-        if(isValidStatusTransition(existing.status, requestedStatus))
+    const updated = [];
+    orderItems.forEach( orderItem => {
+        if(isValidStatusTransition(orderItem.status, requestedStatus))
         {
-            valids.push({...existing, status: requestedStatus});
+            updated.push({...orderItem, status: requestedStatus});
         }
     })
 
@@ -120,14 +128,18 @@ async function updateStatusesByVariant(variantId, requestedStatus, requesterStor
     await OrderItem.sequelize.transaction(async transaction => {
         if(requestedStatus == "CANCELLED")
         {
-            await stockUpdater.incrementCorrespondingStocks(valids, transaction);
+            await stockUpdater.incrementCorrespondingStocks(updated, transaction);
         }
-        
-        result = await OrderItem.bulkCreate(valids, { transaction, updateOnDuplicate: ['status'] });
+        result = await OrderItem.bulkCreate(updated, { transaction, updateOnDuplicate: ['status'] });
     })
     return result;
 }
-
+function ensureSameStore(orderItemsWithOrder)
+{
+    const firstItem = orderItemsWithOrder[0].Order;
+    const differentStore = orderItemsWithVariants.some( item => item.Order.storeId != firstItem.storeId )
+    if(differentStore) throw new ApplicationError('Bulk Update Status cannot be across different stores', 401);
+}
 
 async function _deleteOrderItemsOfOrder(orderId)
 {
@@ -150,7 +162,7 @@ function createStatusSortLiteral(statusOrder)
 {
     let literal = 'CASE ';
     statusOrder.forEach( (status, index) => {
-        literal += `WHEN status = ${status} THEN ${index+1} `;
+        literal += `WHEN status = "${status}" THEN ${index+1} `;
     })
     literal += `END`;
     return OrderItem.sequelize.literal(literal);
@@ -175,10 +187,11 @@ function include(level)
 }
 
 export default {
+    fetchOrderItems,
     _createOrderItems, 
     _deleteOrderItemsOfOrder,
     updateStatus, 
-    updateStatusesByVariant, 
+    updateStatusWhere, 
     statusOrder,
     include
 }

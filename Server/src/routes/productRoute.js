@@ -7,15 +7,19 @@ import { product, variant, productImage } from '../controllers/index.js';
 
 const imgUpload = createMulter({relativeDir: 'images', keyName: 'images', type: 'array', maxCount: 4});
 
-router.get('/search', validate(productSchemas.fetchProducts), product.fetchProducts);
+router.get('/search', validate(productSchemas.fetchFiltered), product.fetchProducts);
 
-router.get('/owned', verify(), ensureStore, validate(page), product.fetchOwnedProducts);
+router.get('/owned', verify(), ensureStore, validate(productSchemas.fetchFiltered), product.fetchOwnedProducts);
 
 router.get('/:id', product.fetchProduct);
 
+router.get('/variant/:id', product.fetchProductByVariant);
+
 router.patch('/:id', verify(), ensureStore, validate(productSchemas.editProduct), product.editProduct);
 
-router.post('/', verify(), validate(productSchemas.createProduct), product.createProduct);
+router.post('/', verify(), ensureStore, validate(productSchemas.createProduct), product.createProduct);
+
+router.delete('/:id', verify(), ensureStore, product.deleteProduct);
 
 router.post('/:productId/images', verify(), ensureStore, ensureBelowLimit, imgUpload, validate(productImageSchemas.createProductImages), productImage.createProductImage);
 

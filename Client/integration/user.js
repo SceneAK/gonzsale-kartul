@@ -1,47 +1,56 @@
 import { user } from "./fetches.js";
 
-const REFRESH_INTERVAL_MS = 1000 * 60 * 40; // 40 menit
-let refresherId;
-const autoRefresher = () => {
-    if(localStorage.getItem('loginDetail'))
+const REFRESH_INTERVAL_MS = 1000 * 60 * 30; // 30 menit
+const loginDetail = localStorage.getItem('loginDetail');
+const autoRefresher = async () => {
+    try
     {
-        user.refresh().catch( () => {
-            clearInterval(refresherId);
-            localStorage.clear();
-            window.location.reload();
-        })
+        const userInfo = await user.refresh();
+        setLoginInfo(userInfo);
+        setTimeout(autoRefresher, REFRESH_INTERVAL_MS);
+    }catch(err)
+    {
+        localStorage.removeItem('loginDetail');
+        window.location.reload();
     }
+    
+}
+if(loginDetail)
+{
+    const delta = (Date.now() - loginDetail.lastRefreshed);
+    const timeout = Math.min(REFRESH_INTERVAL_MS - delta, 10);
+
+    setTimeout(autoRefresher, timeout)
 }
 
-function updateUserInfo(userInfo)
+function setLoginInfo(userInfo)
 {
+    userInfo.lastRefreshed = Date.now();
     localStorage.setItem('loginDetail', JSON.stringify(userInfo));
-    clearInterval(refresherId);
-    refresherId = setInterval(autoRefresher, REFRESH_INTERVAL_MS);
-    window.location.reload();
 }
 
 export async function refreshAndUpdate()
 {
     const userInfo = await user.refresh();
-    updateUserInfo(userInfo);
+    setLoginInfo(userInfo);
+    window.location.reload();
 }
 
 export function hookSignIn(signInButton, emailInput, passwordInput)
 {
     signInButton.addEventListener('click', async function(event){
         const userInfo = await user.signIn(emailInput.value, passwordInput.value);
-        updateUserInfo(userInfo);
+        setLoginInfo(userInfo);
+        window.location.reload();
     });
 
 }
 
-export function hookSignUp(signUpButton, nameInput, phoneInput, emailInput, passwordInput)
+export async function signUp(nameInput, phoneInput, emailInput, passwordInput)
 {
-    signUpButton.addEventListener('click', async function(event){
-        const userInfo = await user.signUp(nameInput.value, phoneInput.value, emailInput.value, passwordInput.value);
-        updateUserInfo(userInfo);
-    });
+    const userInfo = await user.signUp(nameInput.value, phoneInput.value, emailInput.value, passwordInput.value);
+    setLoginInfo(userInfo);
+    window.location.href = '/';
 }
 
 export function hookSignOut(signOutButton)

@@ -69,7 +69,6 @@
             font-size: 14px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            margin-top: 10px;
             background-color: #fff;
             cursor: pointer;
         }
@@ -151,55 +150,76 @@
             document.getElementById('checkout-button').style.display = 'block';
 
             for (let i = 0; i < cart.length; i++) {
-                let item = cart[i];
-
-                // Fetch product details if description is missing
-                if (!item.description) {
-                    try {
-                        const productDetails = await product.fetchProduct(item.id);
-                        item.description = productDetails.description || "No description available";
-                        localStorage.setItem('cart', JSON.stringify(cart)); // Save updated cart
-                    } catch (error) {
-                        console.error(`Failed to fetch description for ${item.id}:`, error);
-                        item.description = "Failed to load description";
-                    }
-                }
+                let currentItem = cart[i];
 
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('cart-item');
+                const firstImage = currentItem.product.ProductImages?.[0];
 
-                itemDiv.innerHTML = `
-                    <a href="display-product.html?id=${item.id}">
-                        <img src="${item.imgSrc}" alt="${item.name}" />
+                let html = `
+                    <a href="display-product.html?id=${currentItem.product.id}">
+                        <img src="${firstImage?.url}" alt="${currentItem.product.name}" />
                     </a>
                     <div class="cart-item-details">
-                        <h3><a href="display-product.html?id=${item.id}">${item.name}</a></h3>
-                        <p><strong>Description:</strong> ${item.description}</p>
-                        <p><strong>Price:</strong> Rp ${item.price?.toLocaleString('id-ID')}</p>
-                        <p><strong>Quantity:</strong> ${item.quantity || 1}</p>
-                        <label for="variant-select">Choose a variant:</label>
-                        <select id="variant-select" class="variant-select">
-                            <option value="" selected disabled>Select a variant</option>
-                            <option value="Variant 1">Variant 1</option>
-                            <option value="Variant 2">Variant 2</option>
-                            <option value="Variant 3">Variant 3</option>
-                        </select>
-                        <textarea placeholder="Add order notes..." oninput="updateNote(${i}, this.value)">${item.notes || ''}</textarea>
+                        <h3><a href="display-product.html?id=${currentItem.product.id}">${currentItem.product.name}</a></h3>
+                        <p><strong>Description:</strong> ${currentItem.product.description}</p>
+                        <p><strong>Price:</strong> Rp ${currentItem.selectedVariant.price?.toLocaleString('id-ID')}</p>
+                        <p><strong>Quantity:</strong> ${currentItem.quantity || 1}</p>
+
+                        <div style = "display: flex; align-items: center;">
+                            <label for="variant-select" style="text-vertical-align: middle; margin-right: 2%;"><strong>Variant:</strong></label>
+                            <select id="variant-select" class="variant-select">`;
+                        
+                
+                currentItem.product.Variants.forEach( (variantOption, index) => {
+                    // if the variant selected exists in one of the carts as a choice OTHER THAN this item
+                    const duplicateExists = cart.find( cartItem => {
+                        const isSelectedVariant = variantOption.id == cartItem.selectedVariant.id
+                        const notThisCartItem = cartItem != currentItem;
+                        return isSelectedVariant && notThisCartItem;
+                    }  )
+                    const outOfStock = variantOption.stock <= 0;
+                    if(outOfStock) console.log(`OUT OF STOCK: ${variantOption.name}`)
+                    if(!duplicateExists && !outOfStock){
+                        const isSelected = currentItem.selectedVariant.id == variantOption.id;
+                        html += `<option value="${index}" ${isSelected ? "selected" : ""}>${variantOption.name}</option>`
+                    }
+                })
+
+                html +=`
+                            </select>
+                        </div>
+                        <textarea placeholder="Add order notes..." oninput="updateNote(${i}, this.value)">${currentItem.notes || ''}</textarea>
                         <button class="remove-button" onclick="removeFromCart(${i})">Remove</button>
                     </div>
                 `;
+                itemDiv.innerHTML = html;
+
+                itemDiv.addEventListener('change', function (){
+                    const chosenIndex = itemDiv.querySelector('select').value;
+                    const chosenVariant = cart[i].product.Variants[chosenIndex];
+                    cart[i].selectedVariant = chosenVariant;
+                    cart[i].quantity = cart[i].quantity > chosenVariant.stock ? chosenVariant.stock : cart[i].quantity;
+                    saveCartItem()
+                    displayCart();
+                })
                 cartItemsContainer.appendChild(itemDiv);
             }
         }
 
         function removeFromCart(index) {
             cart.splice(index, 1);
-            localStorage.setItem('cart', JSON.stringify(cart));
+            saveCartItem()
             displayCart();
         }
 
         function updateNote(index, note) {
             cart[index].notes = note;
+            saveCartItem()
+        }
+
+        function saveCartItem()
+        {
             localStorage.setItem('cart', JSON.stringify(cart));
         }
 

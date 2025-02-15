@@ -144,7 +144,7 @@
                 // Set the image source – if the API returns an associated image via 'image', use its url.
                 document.getElementById('store-img').src = storeInfo.image && storeInfo.image.url
                     ? storeInfo.image.url
-                    : 'placeholder.jpg';
+                    : 'assets/images/placeholder.png';
                 // Set store name and description.
                 document.getElementById('store-name').textContent = storeInfo.name;
                 document.getElementById('store-description').textContent = storeInfo.description;
@@ -163,7 +163,7 @@
                 } else {
                     productList.innerHTML = products.map(prod => `
             <div class="product-item">
-              <img src="${prod.ProductImages && prod.ProductImages.length > 0 ? prod.ProductImages[0].url : 'placeholder.jpg'}" alt="${prod.name}">
+              <img src="${prod.ProductImages && prod.ProductImages.length > 0 ? prod.ProductImages[0].url : 'assets/images/placeholder.png'}" alt="${prod.name}">
               <div>
                 <h3>${prod.name}</h3>
                 <p>Rp ${prod.price.toLocaleString('id-ID')}</p>

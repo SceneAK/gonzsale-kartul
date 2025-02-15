@@ -1,5 +1,7 @@
 import Joi from "joi";
 import { UUID } from "./common.js";
+import productSchema from "./productSchema.js";
+import variantSchema from "./variantSchema.js";
 
 const orderItem = Joi.object({
     variantId: UUID.required(),
@@ -7,13 +9,16 @@ const orderItem = Joi.object({
     notes: Joi.string()
 });
 
-const updateSchema = {
-    body: Joi.object({
-        status: Joi.string().valid('PENDING', 'PROCESSING', 'READY', 'COMPLETED', 'CANCELLED').required()
+const whereQuerySchema = {
+    query: Joi.object({
+        variantId: UUID,
+        variantName: variantSchema.variantBody.name,
+        productName: productSchema.productBody.name,
+        notes: Joi.string().max(999)
     }).required()
 }
 
 export default {
     orderItem,
-    update: updateSchema
+    whereQuery: whereQuerySchema
 };
