@@ -913,9 +913,6 @@
                         required>
                 </div>
 
-
-                <!-- Button to add new variant group -->
-                <button type="action-btn" onclick="addNewVariantField()">Add New Variant</button>
                 <div class="modal-form-buttons">
                     <button type="button" onclick="closeAddProductModal()">Cancel</button>
                     <button type="submit">Tambah Produk</button>
@@ -965,7 +962,7 @@
                 <!-- The variant input fields (price, unit, stock) can be reused for whichever variant is selected -->
                 <div id="variant-inputs">
                     <label for="nama">Nama Varian: </label>
-                    <input type="text" name="name" id="variant-name" class="variant-inputs>
+                    <input type="text" name="name" id="variant-name" class="variant-inputs">
                     <label for=" variant-price">Harga &amp; Unit:</label>
                     <div>
                         <input type="number" id="variant-price" name="price" class="variant-inputs"
@@ -1200,29 +1197,113 @@
             return formData;
         }
 
-        // Start variant count at 1 (because the default "Base" variant is already there)
-        let variantCount = 1;
+        // Global counter and variant data storage
+        let variantCount = 1; // New variants will be named variant-1, variant-2, etc.
+        let variantData = {}; // Object to hold variant details
 
-        function addNewVariantOption() {
+        // If you already have data in localStorage, load it:
+        if (localStorage.getItem("variantData")) {
+            variantData = JSON.parse(localStorage.getItem("variantData"));
+            // Optionally, update the select options for saved variants (except the base option)
+            Object.keys(variantData).forEach(key => {
+                if (key !== "base") {
+                    const variantSelect = document.getElementById("variant-select");
+                    const option = document.createElement("option");
+                    option.value = key;
+                    option.textContent = variantData[key].name || key;
+                    variantSelect.appendChild(option);
+                }
+            });
+        }
+
+        // Save the current variantData object to localStorage
+        function updateVariantStorage() {
+            localStorage.setItem("variantData", JSON.stringify(variantData));
+        }
+
+        // Initialize the "base" variant data if not already done
+        if (!variantData["base"]) {
+            variantData["base"] = {
+                name: "Base",
+                price: "",
+                unit: "",
+                stock: 0
+            };
+            updateVariantStorage();
+        }
+
+        // Function to add a new variant option
+        window.addNewVariantOption = async function () {
             const variantSelect = document.getElementById("variant-select");
+            const newVariantId = `variant-${variantCount}`;
 
             // Create a new option element for the new variant.
             const newOption = document.createElement("option");
-            newOption.value = `variant-${variantCount}`;
+            newOption.value = newVariantId;
             newOption.textContent = `Variant ${variantCount}`;
-
-            // Add the new option to the select element.
             variantSelect.appendChild(newOption);
 
             // Automatically select the new variant.
-            variantSelect.value = newOption.value;
-            document.getElementById('variant-name').value = 'Base';
-            document.getElementById('variant-price').value = '';
-            document.getElementById('variant-unit').value = '';
-            document.getElementById('variant-stock').value = 0;
+            variantSelect.value = newVariantId;
+
+            // Save default values for the new variant
+            variantData[newVariantId] = {
+                name: "Base", // default value; you can change this if needed
+                price: "",
+                unit: "",
+                stock: 0
+            };
+            updateVariantStorage();
+
+            // Update the input fields with default values
+            document.getElementById('variant-name').value = variantData[newVariantId].name;
+            document.getElementById('variant-price').value = variantData[newVariantId].price;
+            document.getElementById('variant-unit').value = variantData[newVariantId].unit;
+            document.getElementById('variant-stock').value = variantData[newVariantId].stock;
 
             variantCount++;
+        };
+
+        // Attach listeners to input fields so that when their value changes, we update variantData & localStorage
+        function attachVariantInputListeners() {
+            const fields = ['variant-name', 'variant-price', 'variant-unit', 'variant-stock'];
+            fields.forEach(fieldId => {
+                document.getElementById(fieldId).addEventListener('change', function () {
+                    const variantId = document.getElementById("variant-select").value;
+                    if (variantData[variantId]) {
+                        if (fieldId === 'variant-name') {
+                            variantData[variantId].name = this.value;
+                            // Also update the text of the option in the select, if needed
+                            const option = document.querySelector(`#variant-select option[value="${variantId}"]`);
+                            if (option) option.textContent = this.value;
+                        } else if (fieldId === 'variant-price') {
+                            variantData[variantId].price = this.value;
+                        } else if (fieldId === 'variant-unit') {
+                            variantData[variantId].unit = this.value;
+                        } else if (fieldId === 'variant-stock') {
+                            variantData[variantId].stock = this.value;
+                        }
+                        updateVariantStorage();
+                    }
+                });
+            });
         }
+
+        // When the user selects a variant, load the saved data into the input fields
+        document.getElementById("variant-select").addEventListener('change', function () {
+            const variantId = this.value;
+            if (variantData[variantId]) {
+                document.getElementById('variant-name').value = variantData[variantId].name;
+                document.getElementById('variant-price').value = variantData[variantId].price;
+                document.getElementById('variant-unit').value = variantData[variantId].unit;
+                document.getElementById('variant-stock').value = variantData[variantId].stock;
+            }
+        });
+
+        // Attach the input listeners once the DOM is fully loaded
+        document.addEventListener("DOMContentLoaded", function () {
+            attachVariantInputListeners();
+        });
 
         //#endregion
 
@@ -1564,7 +1645,7 @@
                         }
                     })
                 }
-            })
+            })  
         }
 
         window.openTransactionImage = async function (transactionId) {

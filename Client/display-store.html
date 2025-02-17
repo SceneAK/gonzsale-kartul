@@ -27,6 +27,7 @@
 
         .store-img {
             width: 100%;
+            max-width: 40vw;
             height: auto;
             border-radius: 10px;
             margin-bottom: 20px;
@@ -105,19 +106,21 @@
 
 <body>
     <div id="header"></div>
-    <div class="store-container">
-        <!-- Here we expect the store API to return an object with a 'name', 'description',
+    <div>
+        <div class="store-container">
+            <!-- Here we expect the store API to return an object with a 'name', 'description',
          and an associated 'image' object (with a 'url' property) -->
-        <img id="store-img" class="store-img" src="" alt="Store Image">
-        <h1 id="store-name" class="store-name"></h1>
-        <p id="store-description" class="store-description"></p>
-        <p id="store-user-name"></p>
-        <p id="store-phone-number"></p>
-        <p id="store-email"></p>
-    </div>
-    <div class="products-container">
-        <h2>Products</h2>
-        <div id="product-list"></div>
+            <img id="store-img" class="store-img" src="" alt="Store Image">
+            <h1 id="store-name" class="store-name"></h1>
+            <p id="store-description" class="store-description"></p>
+            <p id="store-user-name"></p>
+            <p id="store-phone-number"></p>
+            <p id="store-email"></p>
+        </div>
+        <div class="products-container">
+            <h2>Products</h2>
+            <div id="product-list"></div>
+        </div>
     </div>
     <div id="footer"></div>
 
