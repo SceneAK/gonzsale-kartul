@@ -29,6 +29,7 @@
             width: 100%;
             max-width: 40vw;
             height: auto;
+            max-height: 40vh;
             border-radius: 10px;
             margin-bottom: 20px;
             object-fit: cover;
@@ -47,17 +48,56 @@
         }
 
         .products-container {
-            max-width: 800px;
+            max-width: 95%;
             margin: 20px auto;
             background: #fff;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            white-space: nowrap;
         }
 
-        .products-container h2 {
+        .product-list {
+            display: flex;
+            gap: 15px;
+            padding: 10px;
+            justify-content: center;
+            flex-wrap: nowrap;
+        }
+
+        .product-card {
+            display: inline-block;
+            width: 150px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 10px;
             text-align: center;
-            margin-bottom: 20px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+            border: 1px solid #ddd;
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .product-card h3 {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .product-card p {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ff6600;
         }
 
         .product-item {
@@ -119,8 +159,9 @@
         </div>
         <div class="products-container">
             <h2>Products</h2>
-            <div id="product-list"></div>
+            <div id="product-list" class="product-list"></div>
         </div>
+
     </div>
     <div id="footer"></div>
 
@@ -163,6 +204,7 @@
                     productList.innerHTML = '<p>No products available.</p>';
                 } else {
                     productList.innerHTML = products.map(prod => {
+                        console.log(prod);
                         // Get the first image, or use a placeholder.
                         const productImage = (prod.ProductImages && prod.ProductImages.length > 0)
                             ? prod.ProductImages[0].url
@@ -176,12 +218,10 @@
                             : "Price unavailable";
 
                         return `
-                    <div class="product-item">
+                    <div class="product-card" onclick="window.location.href='display-product.html?id=${prod.id}'">
                         <img src="${productImage}" alt="${prod.name}">
-                        <div>
-                            <h3>${prod.name}</h3>
-                            <p>${priceDisplay}</p>
-                        </div>
+                        <h3>${prod.name}</h3>
+                        <p>${priceDisplay}</p>
                     </div>
                 `;
                     }).join('');

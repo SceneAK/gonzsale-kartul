@@ -396,6 +396,12 @@
             justify-content: flex-start;
         }
 
+        .image-preview-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 5px;
+        }
+
         .image-preview {
             width: 80px;
             height: 80px;
@@ -404,9 +410,39 @@
             object-fit: cover;
         }
 
+        .delete-icon {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            padding: 2px 5px;
+            cursor: pointer;
+            font-size: 14px;
+            color: red;
+        }
+
+        .variant-add-btn {
+            padding: 10px 12px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3sease;
+        }
+
+        .variant-delete-btn {
+            padding: 10px 12px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3sease;
+        }
+
         /* Modal Buttons */
         .modal-form-buttons button {
-            padding: 12px;
+            padding: 10px 12px;
             font-size: 1em;
             border: none;
             border-radius: 5px;
@@ -894,12 +930,15 @@
                     <select id="variant-select" name="variant">
                         <option value="base" selected>Base</option>
                     </select>
-                    <button type="button" onclick="addNewVariantOption()">Add New Variant</button>
+                    <button type="button" onclick="addNewVariantOption()" class="variant-add-btn">Add New
+                        Variant</button>
+                    <button type="button" onclick="deleteCurrentVariant()" class="variant-delete-btn">Delete Current
+                        Variant</button>
                 </div>
 
-                <!-- The variant input fields (price, unit, stock) can be reused for whichever variant is selected -->
+                <!-- Variant input fields that are shared between variants -->
                 <div id="variant-inputs">
-                    <label for="nama">Nama Varian: </label>
+                    <label for="variant-name">Nama Varian:</label>
                     <input type="text" name="name" id="variant-name" class="variant-inputs">
                     <label for="variant-price">Harga &amp; Unit:</label>
                     <div>
@@ -1141,53 +1180,7 @@
                 closeAddProductModal()
             }
         })
-        document.getElementById('product-images').addEventListener('change', function () {
-            const previewContainer = document.getElementById('image-preview-container')
-            previewContainer.innerHTML = ""
-            Array.from(this.files).forEach(file => {
-                if (file.type.match("image.*")) {
-                    const reader = new FileReader()
-                    reader.onload = e => {
-                        const img = document.createElement('img')
-                        img.src = e.target.result
-                        img.classList.add('image-preview')
-                        previewContainer.appendChild(img)
-                    }
-                    reader.readAsDataURL(file)
-                }
-            })
 
-            const addProductForm = document.getElementById('modal-form');
-            addProductForm.addEventListener('submit', async function (event) {
-                event.preventDefault()
-
-                const createProductData = common.getAllNameValueOfSelector('.product-inputs', addProductForm);
-                common.convertAvailabilityKey(createProductData);
-
-                createProductData.defaultVariantData = common.getAllNameValueOfSelector('.variant-inputs', addProductForm)
-
-                const productImageFormData = getProductImageFormData();
-
-                try {
-                    const createdProduct = await product.createProduct(createProductData)
-
-                    if (Array.from(productImageFormData.entries()).length > 0) {
-                        await product.createProductImages(createdProduct.id, productImageFormData);
-                    } else {
-                        console.log("NO IMAGES");
-                    }
-
-
-                    this.reset()
-                    document.getElementById('image-preview-container').innerHTML = ""
-                    closeAddProductModal()
-                    loadProducts()
-                } catch (error) {
-                    console.error("Error creating product:", error)
-                    alert("An error occurred during product creation. Please try again.")
-                }
-            })
-        })
         function getProductImageFormData() {
             const formData = new FormData();
             const productImageFiles = document.getElementById('product-images').files;
@@ -1197,14 +1190,16 @@
             return formData;
         }
 
+        // ================= Variant Handling =================
+
         // Global counter and variant data storage
         let variantCount = 1; // New variants will be named variant-1, variant-2, etc.
         let variantData = {}; // Object to hold variant details
 
-        // If you already have data in localStorage, load it:
+        // Load any saved variant data from localStorage
         if (localStorage.getItem("variantData")) {
             variantData = JSON.parse(localStorage.getItem("variantData"));
-            // Optionally, update the select options for saved variants (except the base option)
+            // Update the variant select with saved (non-base) variants
             Object.keys(variantData).forEach(key => {
                 if (key !== "base") {
                     const variantSelect = document.getElementById("variant-select");
@@ -1216,12 +1211,12 @@
             });
         }
 
-        // Save the current variantData object to localStorage
+        // Save variantData to localStorage
         function updateVariantStorage() {
             localStorage.setItem("variantData", JSON.stringify(variantData));
         }
 
-        // Initialize the "base" variant data if not already done
+        // Initialize "base" variant if not present
         if (!variantData["base"]) {
             variantData["base"] = {
                 name: "Base",
@@ -1237,7 +1232,7 @@
             const variantSelect = document.getElementById("variant-select");
             const newVariantId = `variant-${variantCount}`;
 
-            // Create a new option element for the new variant.
+            // Create and append a new option for the new variant.
             const newOption = document.createElement("option");
             newOption.value = newVariantId;
             newOption.textContent = `Variant ${variantCount}`;
@@ -1246,16 +1241,16 @@
             // Automatically select the new variant.
             variantSelect.value = newVariantId;
 
-            // Save default values for the new variant
+            // Save default values for the new variant.
             variantData[newVariantId] = {
-                name: "Base", // default value; you can change this if needed
+                name: "Base",
                 price: "",
                 unit: "",
                 stock: 0
             };
             updateVariantStorage();
 
-            // Update the input fields with default values
+            // Update the input fields with default values.
             document.getElementById('variant-name').value = variantData[newVariantId].name;
             document.getElementById('variant-price').value = variantData[newVariantId].price;
             document.getElementById('variant-unit').value = variantData[newVariantId].unit;
@@ -1264,7 +1259,33 @@
             variantCount++;
         };
 
-        // Attach listeners to input fields so that when their value changes, we update variantData & localStorage
+        // Function to delete the currently selected variant (except "base")
+        window.deleteCurrentVariant = function () {
+            const variantSelect = document.getElementById("variant-select");
+            const currentVariant = variantSelect.value;
+            if (currentVariant === "base") {
+                alert("Base variant cannot be deleted.");
+                return;
+            }
+            // Remove variant from our data and update storage.
+            delete variantData[currentVariant];
+            updateVariantStorage();
+
+            // Remove the option from the select element.
+            const option = variantSelect.querySelector(`option[value="${currentVariant}"]`);
+            if (option) {
+                option.remove();
+            }
+
+            // Switch back to the "base" variant and update input fields.
+            variantSelect.value = "base";
+            document.getElementById('variant-name').value = variantData["base"].name;
+            document.getElementById('variant-price').value = variantData["base"].price;
+            document.getElementById('variant-unit').value = variantData["base"].unit;
+            document.getElementById('variant-stock').value = variantData["base"].stock;
+        };
+
+        // Attach listeners to variant input fields to update the global variantData object.
         function attachVariantInputListeners() {
             const fields = ['variant-name', 'variant-price', 'variant-unit', 'variant-stock'];
             fields.forEach(fieldId => {
@@ -1273,7 +1294,7 @@
                     if (variantData[variantId]) {
                         if (fieldId === 'variant-name') {
                             variantData[variantId].name = this.value;
-                            // Also update the text of the option in the select, if needed
+                            // Update the option text in the select.
                             const option = document.querySelector(`#variant-select option[value="${variantId}"]`);
                             if (option) option.textContent = this.value;
                         } else if (fieldId === 'variant-price') {
@@ -1289,7 +1310,7 @@
             });
         }
 
-        // When the user selects a variant, load the saved data into the input fields
+        // When the user changes the variant selection, load that variant's saved data.
         document.getElementById("variant-select").addEventListener('change', function () {
             const variantId = this.value;
             if (variantData[variantId]) {
@@ -1300,9 +1321,78 @@
             }
         });
 
-        // Attach the input listeners once the DOM is fully loaded
+        // Attach listeners when DOM is ready.
         document.addEventListener("DOMContentLoaded", function () {
             attachVariantInputListeners();
+        });
+
+
+        // ================= Image Handling =================
+
+        // Global array to store selected image files.
+        let selectedFiles = [];
+
+        // Use a DataTransfer object to manage files for the file input.
+        const dt = new DataTransfer();
+
+        const fileInput = document.getElementById("product-images");
+        fileInput.addEventListener("change", function () {
+            const previewContainer = document.getElementById("image-preview-container");
+            previewContainer.innerHTML = "";
+
+            // Convert FileList to an array and enforce maximum of 4 files.
+            let files = Array.from(fileInput.files);
+            if (files.length > 4) {
+                alert("Maximum 4 images allowed. Only the first 4 will be used.");
+                files = files.slice(0, 4);
+            }
+
+            // Clear the global array and DataTransfer, then add these files.
+            selectedFiles = [];
+            dt.clearData();
+            files.forEach(file => {
+                dt.items.add(file);
+                selectedFiles.push(file);
+            });
+            // Force update the file input (this step may be optional in some browsers)
+            fileInput.files = dt.files;
+
+            // Generate previews with delete icons.
+            files.forEach((file, index) => {
+                if (file.type.match("image.*")) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const wrapper = document.createElement("div");
+                        wrapper.classList.add("image-preview-wrapper");
+
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.classList.add("image-preview");
+                        wrapper.appendChild(img);
+
+                        // Create a delete icon.
+                        const deleteButton = document.createElement("span");
+                        deleteButton.classList.add("delete-icon");
+                        deleteButton.textContent = "×";
+                        deleteButton.addEventListener("click", function () {
+                            // Remove file from selectedFiles.
+                            selectedFiles.splice(index, 1);
+
+                            // Update the DataTransfer object.
+                            dt.clearData();
+                            selectedFiles.forEach(file => dt.items.add(file));
+                            fileInput.files = dt.files;
+
+                            // Remove the preview wrapper.
+                            wrapper.remove();
+                        });
+                        wrapper.appendChild(deleteButton);
+
+                        previewContainer.appendChild(wrapper);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
         });
 
         //#endregion
@@ -1645,7 +1735,7 @@
                         }
                     })
                 }
-            })  
+            })
         }
 
         window.openTransactionImage = async function (transactionId) {

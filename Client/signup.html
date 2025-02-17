@@ -132,18 +132,6 @@
         #signupPhone {
             margin-bottom: 0;
         }
-
-        .phone-prefix {
-            background-color: #eee;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-right: none;
-            border-radius: 4px 0 0 4px;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
     </style>
 </head>
 
@@ -164,9 +152,7 @@
 
                 <label for="signupPhone"><span class="required">*</span> Phone:</label>
                 <div class="phone-input-container">
-                    <span class="phone-prefix">+62 </span>
-                    <!-- User enters only the rest of the digits -->
-                    <input type="text" id="signupPhone" name="signupPhone" required placeholder="e.g., 81111111111" />
+                    <input type="text" id="signupPhone" name="signupPhone" required placeholder="e.g., 08123456789" />
                 </div>
 
                 <label for="signupEmail"><span class="required">*</span> Email:</label>
