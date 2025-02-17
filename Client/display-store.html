@@ -137,39 +137,51 @@
             }
 
             try {
-                // Fetch store details using the fetchStore() function from fetches.js.
+                // Fetch store details using the fetchStore() function.
                 const storeInfo = await store.fetchStore(storeId);
-                console.log(storeInfo)
-                
-                // Set the image source – if the API returns an associated image via 'image', use its url.
+                console.log(storeInfo);
+
+                // Set store information on the page.
                 document.getElementById('store-img').src = storeInfo.image && storeInfo.image.url
                     ? storeInfo.image.url
                     : 'assets/images/placeholder.png';
-                // Set store name and description.
                 document.getElementById('store-name').textContent = storeInfo.name;
                 document.getElementById('store-description').textContent = storeInfo.description;
                 document.getElementById('store-user-name').textContent = storeInfo.User.name;
-                document.getElementById('store-phone-number').textContent = storeInfo.User.phone
-                document.getElementById('store-email').textContent = storeInfo.User.email
+                document.getElementById('store-phone-number').textContent = storeInfo.User.phone;
+                document.getElementById('store-email').textContent = storeInfo.User.email;
 
-                // Fetch products for this store. We assume your API supports filtering by store_id.
-                const productsResult = await product.fetchProducts('all', { storeId });
-                // Depending on your API, products may be returned directly as an array or wrapped inside an 'items' property.
-                const products = Array.isArray(productsResult) ? productsResult : productsResult.items;
+                // Fetch products for this store using your API.
+                const result = await product.fetchProducts('all', { storeId });
+                const products = result.items;
                 const productList = document.getElementById('product-list');
 
                 if (!products || products.length === 0) {
                     productList.innerHTML = '<p>No products available.</p>';
                 } else {
-                    productList.innerHTML = products.map(prod => `
-            <div class="product-item">
-              <img src="${prod.ProductImages && prod.ProductImages.length > 0 ? prod.ProductImages[0].url : 'assets/images/placeholder.png'}" alt="${prod.name}">
-              <div>
-                <h3>${prod.name}</h3>
-                <p>Rp ${prod.price.toLocaleString('id-ID')}</p>
-              </div>
-            </div>
-          `).join('');
+                    productList.innerHTML = products.map(prod => {
+                        // Get the first image, or use a placeholder.
+                        const productImage = (prod.ProductImages && prod.ProductImages.length > 0)
+                            ? prod.ProductImages[0].url
+                            : 'assets/images/placeholder.png';
+
+                        // Sort variants by price and display the cheapest.
+                        const variants = prod.Variants || [];
+                        const sortedVariants = variants.sort((a, b) => a.price - b.price);
+                        const priceDisplay = sortedVariants.length > 0
+                            ? `Rp ${sortedVariants[0].price.toLocaleString('id-ID')} / ${sortedVariants[0].unit}`
+                            : "Price unavailable";
+
+                        return `
+                    <div class="product-item">
+                        <img src="${productImage}" alt="${prod.name}">
+                        <div>
+                            <h3>${prod.name}</h3>
+                            <p>${priceDisplay}</p>
+                        </div>
+                    </div>
+                `;
+                    }).join('');
                 }
             } catch (error) {
                 console.error('Error loading store details:', error);

@@ -220,12 +220,13 @@
         document.getElementById('product-name').textContent = `${productData.name} |`;
         document.getElementById('product-description').textContent = productData.description;
         document.getElementById('product-category').textContent = productData.category;
+        console.log(productData)
       
         // Store Name & Link to Store Details
         const storeNameElement = document.getElementById('store-name');
         if (productData.Store) {
           storeNameElement.innerHTML = `
-            Sold by: <a href="display-store.html?id=${productData.storeId}" 
+            Sold by: <a href="display-store.html?id=${productData.Store.id}" 
             style="color: #0073e6; text-decoration: none; font-weight: bold;">
             ${productData.Store.name}
           </a>`;
