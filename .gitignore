@@ -51,7 +51,7 @@ Thumbs.db
 *.env
 
 # Public Server Directory
-server/public/
+Server/public/
 
 # PERSONAL HTML FILES (TESTING)
 plswork.html
