@@ -2,10 +2,11 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register</title>
     <style>
+        /* Base Styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -69,6 +70,7 @@
             color: white;
             cursor: pointer;
         }
+
         .register-container form button[type="submit"]:disabled {
             background-color: #ccc;
             color: #333;
@@ -109,6 +111,27 @@
                 padding: 8px;
             }
         }
+
+        /* Phone Input Styles */
+        .phone-input-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            /* Add spacing after the entire container */
+        }
+
+        .phone-input-container input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-left: none;
+            border-radius: 0 4px 4px 0;
+            box-sizing: border-box;
+        }
+
+        #signupPhone {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 
@@ -125,21 +148,25 @@
 
             <form id="register-form">
                 <label for="signupFullName"><span class="required">*</span> Full Name:</label>
-                <input type="text" id="signupFullName" name="signupFullName" required>
+                <input type="text" id="signupFullName" name="signupFullName" required />
 
-                <label for="signupPhone"><span class="required">*</span> Phone (+62):</label>
-                <input type="text" id="signupPhone" name="signupPhone" required>
+                <label for="signupPhone"><span class="required">*</span> Phone:</label>
+                <div class="phone-input-container">
+                    <input type="text" id="signupPhone" name="signupPhone" required placeholder="e.g., 08123456789" />
+                </div>
 
                 <label for="signupEmail"><span class="required">*</span> Email:</label>
-                <input type="email" id="signupEmail" name="signupEmail" required>
+                <input type="email" id="signupEmail" name="signupEmail" required />
 
                 <label for="signupPassword"><span class="required">*</span> Password:</label>
-                <input type="password" id="signupPassword" name="signupPassword" required minlength="8">
+                <input type="password" id="signupPassword" name="signupPassword" required minlength="8" />
 
                 <label for="signupConfirmPassword"><span class="required">*</span> Confirm Password:</label>
-                <input type="password" id="signupConfirmPassword" name="signupConfirmPassword" required>
+                <input type="password" id="signupConfirmPassword" name="signupConfirmPassword" required />
 
-                <p id="passwordMatchMessage" style="color: darkred; display: none; margin: 0%;">Passwords do not match</p>
+                <p id="passwordMatchMessage" style="color: darkred; display: none; margin: 0%;">
+                    Passwords do not match
+                </p>
 
                 <p class="password-instructions">
                     Your password must be between 3 to 300 characters inclusive.
@@ -154,7 +181,9 @@
     </div>
 
     <div id="footer">
-        <p>&copy; 2024 My Website | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        <p>
+            &copy; 2024 My Website | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+        </p>
     </div>
 
     <script type="module">
@@ -169,20 +198,31 @@
 
         const password = document.getElementById('signupPassword');
         const confirmPassword = document.getElementById('signupConfirmPassword');
-        registerForm.addEventListener('input', function (event) {
-            const message = document.getElementById('passwordMatchMessage');
 
+        // Enable/disable the submit button based on validity and password matching.
+        registerForm.addEventListener('input', function () {
+            const message = document.getElementById('passwordMatchMessage');
             const match = password.value === confirmPassword.value;
-            message.style.display = match ?  'none' : 'block';
+            message.style.display = match ? 'none' : 'block';
             registerButton.disabled = !match || !registerForm.checkValidity();
         });
+
+        // On form submission, automatically prepend a "0" to the phone number.
         registerForm.addEventListener('submit', async function (event) {
             event.preventDefault();
-            try
-            {
+            try {
+                // Remove any non-digit characters from the phone input.
+                const rawDigits = registerPhone.value.replace(/\D/g, '');
+                // Prepend a "0" to form the final phone number.
+                const finalPhone = '0' + rawDigits;
+                // Update the input value so that signUp receives the correct phone number.
+                registerPhone.value = finalPhone;
+
                 await signUp(registerFullName, registerPhone, registerEmail, registerPassword);
-            }catch(err){ alert(err.message) }
-        })
+            } catch (err) {
+                alert(err.message);
+            }
+        });
     </script>
 
     <script type="module" src="integration/uiManagement.js" defer></script>

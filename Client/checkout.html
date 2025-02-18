@@ -220,22 +220,20 @@
         // Group cart items by store_id
         const groupedCart = cart.reduce((groups, item) => {
             const { product, selectedVariant, quantity } = item;
-            if (!groups[product.storeId]) {
-                groups[product.storeId] = {
+            const storeId = product.Store.id; 
+            if (!groups[storeId]) {
+                groups[storeId] = {
                     store: product.Store,
                     items: [],
                     total: 0
                 };
             }
-            groups[product.storeId].items.push(item);
-            groups[product.storeId].total += selectedVariant.price * quantity;
+            groups[storeId].items.push(item);
+            groups[storeId].total += selectedVariant.price * quantity;
             return groups;
         }, {});
 
-        // Fetch and include store info for each group
-        for (const storeId in groupedCart) {
-            //  groupedCart[storeId].store = await store.fetchStore(storeId);
-        }
+        console.log(groupedCart)
 
         // Render order summary
         function renderOrderSummary() {

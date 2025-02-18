@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Product Details</title>
   <style>
+    /* Global Styles */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -13,9 +14,13 @@
       background-color: #f4f4f4;
     }
 
-    select{
+    select {
       font-family: Arial, sans-serif;
       font-size: medium;
+    }
+
+    .content-wrapper {
+      padding: 20px;
     }
 
     .product-container {
@@ -40,13 +45,6 @@
 
     .breadcrumb a:hover {
       text-decoration: underline;
-    }
-
-    .product-img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin: 0 auto;
     }
 
     .product-name {
@@ -88,13 +86,61 @@
       cursor: pointer;
       font-size: 16px;
     }
-    .add-to-cart-btn:disabled{
+
+    .add-to-cart-btn:disabled {
       background-color: gray;
       cursor: not-allowed;
     }
 
     .add-to-cart-btn:hover:enabled {
       background-color: #218838;
+    }
+
+    /* Carousel Styles (adapted from your promo index styling) */
+    .image-slider {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto 20px;
+      overflow: hidden;
+      border-radius: 10px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .slider-image {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .prev-btn,
+    .next-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 2rem;
+      padding: 10px;
+      border-radius: 5px;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .prev-btn:hover,
+    .next-btn:hover {
+      opacity: 1;
+    }
+
+    .prev-btn {
+      left: 10px;
+    }
+
+    .next-btn {
+      right: 10px;
     }
   </style>
 </head>
@@ -106,18 +152,21 @@
   <div class="content-wrapper">
     <div class="product-container">
       <div class="breadcrumb">
-        <a href="index.html">Home</a> / <span
-          id="product-category">Category</span>
+        <a href="index.html">Home</a> / <span id="product-category">Category</span>
       </div>
 
-      <!-- Product image will be loaded here using the first image logic -->
-      <img id="product-img" src="" alt="Product Image" class="product-img" style="max-width: 50%; max-height: 35%;" />
+      <!-- Product Image Carousel -->
+      <div class="image-slider" id="productImageSlider">
+        <button class="prev-btn" id="prev-btn">&#10094;</button>
+        <img src="" alt="Product Image" class="slider-image" id="slider-image" />
+        <button class="next-btn" id="next-btn">&#10095;</button>
+      </div>
 
       <div style="display: flex;">
         <h1 id="product-name" class="product-name"></h1>
         <h1 id="variant-name" class="product-name"></h1>
       </div>
-      
+
       <p style="width: 50%;" id="store-name"></p>
 
       <p id="variant-price-unit" class="variant-price-unit"></p>
@@ -129,7 +178,7 @@
       <div class="quantity-container">
         <label for="quantity-input">Quantity:</label>
         <input id="quantity-input" type="number" min="1" value="1" class="quantity-input" />
-      </div>  
+      </div>
 
       <button id="add-to-cart-btn" class="add-to-cart-btn">Add to Cart</button>
     </div>
@@ -144,7 +193,9 @@
     import common from './common.js';
 
     let productData;
-    let firstImgUrl;
+    let imageUrls = [];
+    let currentImageIndex = 0;
+
     document.addEventListener('DOMContentLoaded', async function () {
       // Get the product ID from the URL query string
       const urlParams = new URLSearchParams(window.location.search);
@@ -157,32 +208,49 @@
 
       // Fetch the product details
       productData = await product.fetchProduct(id);
-      firstImgUrl = productData.ProductImages && productData.ProductImages.length > 0
-            ? productData.ProductImages[0].url
-            : 'assets/images/placeholder.png';
-      
-      const firstVariant = await productData.Variants.filter(variant => variant.isDefault)[0];
+
+      // Build an array of image URLs from productData.ProductImages
+      imageUrls = (productData.ProductImages && productData.ProductImages.length > 0)
+        ? productData.ProductImages.map(img => img.url)
+        : ['assets/images/placeholder.png'];
+      currentImageIndex = 0;
+      updateSliderImage();
+
+      const firstVariant = productData.Variants.find(variant => variant.isDefault);
       loadProductData(productData);
       loadVariantData(firstVariant);
       initializeVariantSelect();
 
+      // Carousel navigation event listeners
+      document.getElementById('prev-btn').addEventListener('click', () => {
+        currentImageIndex = (currentImageIndex - 1 + imageUrls.length) % imageUrls.length;
+        updateSliderImage();
+      });
+      document.getElementById('next-btn').addEventListener('click', () => {
+        currentImageIndex = (currentImageIndex + 1) % imageUrls.length;
+        updateSliderImage();
+      });
+
       // Add to Cart functionality
       document.getElementById('add-to-cart-btn').addEventListener('click', () => {
         const quantity = parseInt(document.getElementById('quantity-input').value, 10) || 1;
-
         if (quantity < 1) {
           alert('Quantity must be at least 1.');
           return;
         }
 
-        
         const cart = JSON.parse(localStorage.getItem('cart') || '[]');
         const itemToAdd = buildCartItem(quantity);
         const existingItemIndex = cart.findIndex(item => item.selectedVariant.id === itemToAdd.selectedVariant.id);
 
         if (existingItemIndex > -1) {
-          const doesNotExeed = quantity + cart[existingItemIndex].quantity <= cart[existingItemIndex].variant.stock;
-          cart[existingItemIndex].quantity += doesNotExeed;
+          const doesNotExceed = quantity + cart[existingItemIndex].quantity <= cart[existingItemIndex].selectedVariant.stock;
+          if (doesNotExceed) {
+            cart[existingItemIndex].quantity += quantity;
+          } else {
+            alert("Adding this quantity exceeds available stock.");
+            return;
+          }
         } else {
           cart.push(itemToAdd);
         }
@@ -191,67 +259,68 @@
         alert(`${quantity} x ${productData.name} has been added to your cart!`);
       });
     });
-    const variantSelect = document.getElementById('variant-select');
-    function initializeVariantSelect()
-    {
-      productData.Variants.forEach( (variant, index) => {
-        variantSelect.innerHTML += `
-          <option value="${index}" ${variant.isDefault ? "selected" : ""}>${variant.name}</option>     
-        `;
-      })
-      variantSelect.addEventListener('change', function (){
-        loadVariantData(getSelectedVariant());
-      })
+
+    // Function to update the slider image with a fade transition
+    function updateSliderImage() {
+      const sliderImage = document.getElementById('slider-image');
+      sliderImage.style.opacity = 0;
+      setTimeout(() => {
+        sliderImage.src = imageUrls[currentImageIndex];
+        sliderImage.style.opacity = 1;
+      }, 300);
     }
-    function getSelectedVariant()
-    {
+
+    const variantSelect = document.getElementById('variant-select');
+    function initializeVariantSelect() {
+      productData.Variants.forEach((variant, index) => {
+        variantSelect.innerHTML += `<option value="${index}" ${variant.isDefault ? "selected" : ""}>${variant.name}</option>`;
+      });
+      variantSelect.addEventListener('change', function () {
+        loadVariantData(getSelectedVariant());
+      });
+    }
+
+    function getSelectedVariant() {
       const selectedVariantIndex = variantSelect.value;
-      console.log(selectedVariantIndex);
       return productData.Variants[selectedVariantIndex];
     }
-    function buildCartItem(quantity)
-    {
+
+    function buildCartItem(quantity) {
       return common.buildCartItem(productData, getSelectedVariant(), quantity);
     }
 
-    function loadProductData(productData)
-    {   
-        document.getElementById('product-img').src = firstImgUrl;
-        document.getElementById('product-name').textContent = `${productData.name} |`;
-        document.getElementById('product-description').textContent = productData.description;
-        document.getElementById('product-category').textContent = productData.category;
-      
-        // Store Name & Link to Store Details
-        const storeNameElement = document.getElementById('store-name');
-        if (productData.Store) {
-          storeNameElement.innerHTML = `
-            Sold by: <a href="display-store.html?id=${productData.storeId}" 
-            style="color: #0073e6; text-decoration: none; font-weight: bold;">
-            ${productData.Store.name}
-          </a>`;
-        } else {
-          storeNameElement.textContent = "Store information unavailable.";
-        }
+    function loadProductData(productData) {
+      document.getElementById('product-name').textContent = `${productData.name} |`;
+      document.getElementById('product-description').textContent = productData.description;
+      document.getElementById('product-category').textContent = productData.category;
+      // Store Name & Link to Store Details
+      const storeNameElement = document.getElementById('store-name');
+      if (productData.Store) {
+        storeNameElement.innerHTML = `
+          Sold by: <a href="display-store.html?id=${productData.Store.id}" 
+          style="color: #0073e6; text-decoration: none; font-weight: bold;">
+          ${productData.Store.name}
+        </a>`;
+      } else {
+        storeNameElement.textContent = "Store information unavailable.";
       }
+    }
 
-      function loadVariantData(variantData)
-      {
-        const outOfStock = variantData.stock <= 0
+    function loadVariantData(variantData) {
+      const outOfStock = variantData.stock <= 0;
 
-        document.getElementById('variant-name').textContent = `| ${variantData.name} ${outOfStock ? "(Out of Stock)" : ""}`;
-        document.getElementById('variant-price-unit').textContent =
-          `Rp ${variantData.price?.toLocaleString('id-ID')} / ${variantData.unit}`;
-        if(outOfStock)
-        {
-          document.getElementById('quantity-input').value = 0;
-          document.getElementById('quantity-input').disabled = true;
-        }else{
-          document.getElementById('quantity-input').value = 1;
-          document.getElementById('quantity-input').max = variantData.stock;
-        }
-        document.getElementById('add-to-cart-btn').disabled = outOfStock;
-        
+      document.getElementById('variant-name').textContent = `| ${variantData.name} ${outOfStock ? "(Out of Stock)" : ""}`;
+      document.getElementById('variant-price-unit').textContent =
+        `Rp ${variantData.price?.toLocaleString('id-ID')} / ${variantData.unit}`;
+      if (outOfStock) {
+        document.getElementById('quantity-input').value = 0;
+        document.getElementById('quantity-input').disabled = true;
+      } else {
+        document.getElementById('quantity-input').value = 1;
+        document.getElementById('quantity-input').max = variantData.stock;
       }
+      document.getElementById('add-to-cart-btn').disabled = outOfStock;
+    }
   </script>
 </body>
 
