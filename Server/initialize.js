@@ -13,8 +13,10 @@ const STATIC_ROUTE_NAME = 'source';
 // load .env file to process.env
 dotenv.config();
 
+const env = process.env;
 export {
   __dirname,
   STATIC_ROUTE_NAME,
-  PUBLIC_DIR
+  PUBLIC_DIR,
+  env
 };

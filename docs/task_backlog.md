@@ -13,38 +13,30 @@ Please sort by importance
 
 ## Integrationn
 .Automatic refresh token
-DONE Create product + default variant + product images
-DONE Create variant
-> Delete Variant
-DONE Edit variant
-
-> Carrousel product images 
-DONE Variant sellection 
-
-DONE Actually Ordering Items lmao
-    DONE Mycart fixing
-
-DONE integrate filtering orders based on variant and notes
-
-> My orders integration
-DONE Product Edit
-DONE Pagination integration
-
-> Product Image deletion editting
-> Bulk Order status updating
+> Create & Delete Variant
+> Create & Delete Product Image
+> Update order status bulk
 
 # BACKEND
 DONE fetching product+variant via variantId
-> Prepare to switch to https & ssl certificate
-> reCaptcha v2 integration, try to make a general captcha middleware before schema validation.
-> make one general SSR endpoint for og metadata
-    > reconfigure custom multer storage
-> Separate images from store creation & editing logic
-> Store allowed payment method redesign 💀
+DONE Prepare to switch to https & ssl certificate
+    NO (AT LEAST NOT NOW) Maybe switch to nginx?
+DONE prepare reCaptcha v2 middleware & env
+    . test it when deployed
+DONE .env template
+> Turn display product into an SSR
+    DONE reconfigure custom multer storage
 
-## Important
-- SSL Certificates
-- Catpcha V2
+> Store payment method & transaction extension tables are over engineered.
+
+- View Store percantik
+- Percantik UI Create store NEEDS BACKEND INTEGRATION
+- Checkout, storenya displaynya sama padahal storenya beda
+- Order history nama headernya (COMPLETED, READY, PENDING) masih undefined dan no image
+- Create Variant UI design NEEDS BACKEND INTEGRATION
+- Carousel for product images NEEDS BACKEND INTEGRATION
+-  Not adding a +62 format anymore, just sticking with example placeholder.
+- delete image through the editproduct form, small x button near the displayed images. NEEDS BACKEND INTEGRATION
 
 ## orders
 . Mailing Customers when order status changes, when product gets deleted 
@@ -62,13 +54,11 @@ DONE fetching product+variant via variantId
 
 ## Refactor
 - Rethink route file structure? It feels overcomplicated / weird
-DONE (kindof) Move logic that creates circular dependency to OrderManagementServices: orderItemServices.UpdateStatus + orderServices.createOrder()
 
 ## Extended Less Important Backlog
 - Statistical Analysis for Seller Account
 - Implement propper signout & blacklisting 
 - Payment Gateway
-DONE Use paranoid delete
 
 # Security Concerns & Abuse Protection
 - Limit number of variants
