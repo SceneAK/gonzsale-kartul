@@ -3,9 +3,7 @@ import common from '../common.js';
 
 const editProductVariantForm = document.getElementById('edit-product-variant-form');
 const productList = document.getElementById('product-list')
-const productModal = document.getElementById('product-modal');
-
-const productImages = document.getElementById('product-images');
+const modal = document.getElementById('product-variant-modal');
 
 loadProducts();
 // Load products data
@@ -32,36 +30,123 @@ window.deleteProduct = async function (id) {
     } catch (err) { alert('error deleting product') }
 }
 
-//#region Add Product
-window.openAddProductModal = function () {
-    productModal.classList.add('active')
+
+//#region Product Modal
+const modalSubmit = document.getElementById('modal-submit');
+window.openModal = function (mode) {
+    switch (mode) {
+        case 'add':
+            prepareAddProduct();
+            break;
+        case 'edit':
+            openModalAsEdit();
+            break;
+        default: throw new Error('No such mode')
+    }
+    modal.classList.add('active')
 }
-window.closeAddProductModal = function () {
-    productModal.classList.remove('active')
+
+const modalH1 = document.getElementById('modal-h1');
+window.openModalAsCreateProduct = function()
+{
+    modalH1.innerHTML = 'Add Product';
+    common.setValuesOfSelector('.product-inputs', { name:"", description:"", category:""}, modal);
+    // clear all fields, add isDefault=true variant 
+    modalSubmit.onclick = createProduct;
+}
+
+function createProduct()
+{
+    // Gather productData
+    // Gather VariantData
+    // find copy isDefault to productData, remove the one in variantData
+    // senddddddd
+}
+
+window.openModalAsEditProduct = function()
+{
+    modalH1.innerHTML = 'Edit Product';
+    
+    modalSubmit.onclick = createProduct;
+}
+function editProduct()
+{
+
+}
+
+window.closeModal = function () {
+    modal.classList.remove('active')
 }
 document.addEventListener("click", event => {
     const modalContent = document.querySelector(".modal-form-container")
     if (modalContent.classList.contains("active") && !modalContent.contains(event.target)) {
-        closeAddProductModal()
+        window.closeModal()
     }
 })
+//#region Variant Modal Logic
+const variantSelect = document.getElementById('variant-select');
+const recordedVariants = [];
+function setSelectedVariant(index)
+{
+    variantSelect.value = index;
+    saveVariantChanges();
+    common.setValuesOfSelector('.variant-inputs', modal, recordedVariants[index]);
+}
+variantSelect.addEventListener('change', function(){
+    setSelectedVariant(variantSelect.value);
+})
 
-function getProductImageFormData() {
-    const formData = new FormData();
-    for (let i = 0; i < productImages.files.length; i++) {
-        formData.append('images', productImages.files[i]);
-    }
-    return formData;
+// remove variant but also save changes
+function saveVariantChanges()
+{
+    const currentIndex = variantSelect.value;
+    const updated = common.getAllNameValueOfSelector('.variant-inputs', variantSelect);
+    variantSelect[currentIndex] = {...variantSelect[currentIndex], ...updated};
 }
 
-// GARBVAGE
-
-// ================= Image Handling =================
-const dt = new DataTransfer();
-const selectedFiles = []
-const fileInput = document.getElementById("product-images");
+window.addNewVariant = function()
+{
+    const index = recordedVariants.push({
+        id: recordedVariants.length,
+        name: "",
+        stock: 0
+    })
+    syncVariantOptions(recordedVariants, variantSelect);
+    setSelectedVariant(index);
+}
+window.deleteCurrentVariant = function()
+{
+    const currentIndex = variantSelect.value;
+    if(recordedVariants[currentIndex].isDefault) {
+        alert('Cannot delete default variant')
+        return;
+    }
+    recordedVariants.splice(currentIndex, 1);
+}
+function prepareModalToCreateVariant() {
+    common.setValuesOfSelector('.variant-inputs', editProductVariantForm, {
+        name: "",
+        stock: 1
+    });
+    editingVariantId = null;
+}
+export function syncVariantOptions(Variants, selectElement) {
+    selectElement.innerHTML = "";
+    Variants.forEach((variant, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = variantData.name;
+        option.selected = variant.isDefault;
+        selectElement.appendChild(option);
+    })
+}
+//#endregion
+//#region fileInput loic
+const productImagesInput = document.getElementById("product-images");
 let eventDueToUpdateFileInputUI = false;
-fileInput.addEventListener("change", function () {
+productImagesInput.addEventListener("change", function (event) {
+    event.preventDefault();
+
     if(eventDueToUpdateFileInputUI){
         eventDueToUpdateFileInputUI = false
         return;
@@ -69,28 +154,23 @@ fileInput.addEventListener("change", function () {
     const previewContainer = document.getElementById("image-preview-container");
     previewContainer.innerHTML = "";
 
-    let uploaded = Array.from(fileInput.files);
-    if (uploaded.length + selectedFiles.length > 4) {
-        uploaded = uploaded.slice(0, 4-selectedFiles.length);
-    }
+    includePreviousFiles(productImagesInput, uploaded)
 
-    populateImagePreview(previewContainer, fileInput.files, function(toRemove){
-        removeFromFileInput(fileInput, [toRemove]);
+    populateImagePreview(previewContainer, productImagesInput.files, function(fileToRemove, index){
+        removeFromFileInput(productImagesInput, index);
     });
-
-    addToFileInput(fileInput, uploaded)
 });
 
 function populateImagePreview(previewContainer, files, removeImageHandler)
 {
-    Array.from(files).forEach( file => {
+    Array.from(files).forEach( (file, index)=> {
         const reader = new FileReader();
         reader.onload = function (e) {
             const wrapper = document.createElement("div");
             wrapper.classList.add("image-preview-wrapper");
 
             const deleteElement = createDeleteElement(function(){
-                removeImageHandler(file);
+                removeImageHandler(file, index);
                 previewContainer.removeChild(wrapper);
             });
             wrapper.appendChild(deleteElement);
@@ -106,30 +186,26 @@ function populateImagePreview(previewContainer, files, removeImageHandler)
     });
 }
 
-function addToFileInput(fileInput, toAdds) {
-    const dt = new DataTransfer();
-    Array.from(fileInput.files).forEach(file => dt.items.add(file));
-    toAdds.forEach(file => dt.items.add(file));
-    fileInput.files = dt.files;
-    updateFileInputUI(fileInput);
+const previousDt = new DataTransfer();
+function includePreviousFiles(fileInput) {
+    const previousArr = Array.from(previousDt.files);
+    const newArr = Array.from(fileInput.files);
+
+    if(previousArr.length + newArr.length > 4){
+        newArr.splice(0, 4-previousArr.length);
+    }
+
+    newArr.forEach( file => {
+        if(!previousArr.includes(file)) previousDt.items.add(file)
+    })
+    fileInput.files = previousDt.files;
 }
 
-function removeFromFileInput(fileInput, toRemoves) {
-    const dt = new DataTransfer();
-    Array.from(fileInput.files).forEach(file => {
-        if (!toRemoves.includes(file)) {
-            dt.items.add(file);
-        }
-    });
-    fileInput.files = dt.files;
-    updateFileInputUI(fileInput);
+function removeFromFileInput(fileInput, index) {
+    previousDt.items.remove(index);
+    fileInput.files = previousDt.files; 
+    console.log(fileInput.files);
 }
-
-function updateFileInputUI(fileInput)
-{
-    fileInput.value = fileInput.files.length;
-}
-
 function createDeleteElement(onClickHandler)
 {
     const deleteButton = document.createElement("span");
@@ -138,11 +214,18 @@ function createDeleteElement(onClickHandler)
     deleteButton.addEventListener('click', onClickHandler);
     return deleteButton;
 }
+function getProductImageFormData() {
+    const formData = new FormData();
+    for (let i = 0; i < productImagesInput.files.length; i++) {
+        formData.append('images', productImagesInput.files[i]);
+    }
+    return formData;
+}
+//#endregion
 
 //#endregion
 
 //#region Edit Product
-let cachedVariants;
 let inputDetected;
 
 window.openEditProductModal = async function (productId) {
@@ -152,16 +235,16 @@ window.openEditProductModal = async function (productId) {
     const productData = await product.fetchProduct(productId)
     setEditProduct(productData);
 
-    let defaultVariantId;
-    cachedVariants = {}
-    productData.Variants.forEach(Variant => {
-        cachedVariants[Variant.id] = Variant
-        if (Variant.isDefault) defaultVariantId = Variant.id;
-    })
-    generateSelectOptionsWithVariants(productData.Variants);
-    fillEditVariantFormWithCached(defaultVariantId);
+    // let defaultVariantId;
+    // cachedVariants = {}
+    // productData.Variants.forEach(Variant => {
+    //     cachedVariants[Variant.id] = Variant
+    //     if (Variant.isDefault) defaultVariantId = Variant.id;
+    // })
+    // generateSelectOptionsWithVariants(productData.Variants);
+    // fillEditVariantFormWithCached(defaultVariantId);
 
-    editProductVariantModal.classList.add('active')
+    // editProductVariantModal.classList.add('active')
 }
 window.closeEditProductModal = function () {
     const editProductVariantModal = document.getElementById('edit-product-variant-modal');
@@ -210,31 +293,5 @@ function setEditProduct(productData) {
         img.classList.add('image-preview')
         editPreviewContainer.appendChild(img)
     })
-}
-
-let editingVariantId;
-function fillEditVariantFormWithCached(variantId) {
-    const variantData = cachedVariants[variantId];
-    editingVariantId = variantId;
-    common.setValuesOfSelector('.variant-inputs', editProductVariantForm, variantData);
-}
-
-export function generateSelectOptionsWithVariants(Variants, selectElement) {
-    selectElement.innerHTML = "";
-    Variants.forEach(variant => {
-        const option = document.createElement('option');
-        option.value = variant.id;
-        option.textContent = variant.name;
-        option.selected = variant.isDefault;
-        selectElement.appendChild(option);
-    })
-}
-
-function prepareEditFormToCreateVariant() {
-    common.setValuesOfSelector('.variant-inputs', editProductVariantForm, {
-        name: "",
-        stock: 1
-    });
-    editingVariantId = null;
 }
 //#endregion

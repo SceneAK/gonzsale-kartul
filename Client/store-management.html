@@ -78,7 +78,7 @@
             <div id="products" class="content-section">
                 <h1>Manage Products</h1>
                 <!-- Add Product Button -->
-                <button class="add-product-btn" onclick="openAddProductModal()">+ Add Product</button>
+                <button class="add-product-btn" onclick="openModalAsAddProduct()">+ Add Product</button>
                 <!-- Product Table -->
                 <table class="product-table">
                     <thead>
@@ -178,9 +178,9 @@
         </div>
     </div>
 
-    <div class="modal" id="product-modal">
+    <div class="modal" id="product-variant-modal">
         <div class="modal-form-container">
-            <h1>Add New Product</h1>
+            <h1 id="modal-h1">Add New Product</h1>
             <form id="modal-form" class="modal-form">
                 <!-- PRODUCT-->
                 <h3>Product</h3>
@@ -206,17 +206,16 @@
                 </select>
 
                 <!-- PRODUCT IMAGE-->
-                <label for="product-images">Tambah Gambar:</label>
-                <input type="file" id="product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple required/>
+                <label for="product-images" class="button-label" style="color: whitesmoke;">Tambah Gambar</label>
+                <input type="file" style="display: none;" id="product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple required/>
                 <div class="image-preview-container" id="image-preview-container"></div>
 
                 <h3>Variant</h3>
                 <div>
                     <label for="variant-select">Select Variant:</label>
                     <select id="variant-select" name="variant">
-                        <option value="base" selected>Base</option>
                     </select>
-                    <button type="button" onclick="addNewVariantOption()" class="variant-add-btn">Add New
+                    <button type="button" onclick="addNewVariant()" class="variant-add-btn">Add New
                         Variant</button>
                     <button type="button" onclick="deleteCurrentVariant()" class="variant-delete-btn">Delete Current
                         Variant</button>
@@ -239,8 +238,8 @@
                 </div>
 
                 <div class="modal-form-buttons">
-                    <button type="button" onclick="closeAddProductModal()">Cancel</button>
-                    <button type="submit">Tambah Produk</button>
+                    <button type="button" onclick="closeModal()">Cancel</button>
+                    <button type="submit" id="modal-submit">Tambah Produk</button>
                 </div>
             </form>
         </div>
