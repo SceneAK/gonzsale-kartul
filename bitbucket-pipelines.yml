@@ -2,9 +2,9 @@ image: atlassian/default-image:latest
 
 pipelines:
   branches:
-    staging:
+    main:
       - step:
-          deployment: staging
+          deployment: main
           caches:
             - composer
           script:
@@ -15,4 +15,4 @@ pipelines:
                 MODE: "script"
                 PORT: $STAGING_SSH_PORT
                 COMMAND: "deploy.sh"
-            - echo "DeployÂ stepÂ finished"
+            - echo "DeployÊstepÊfinished"
