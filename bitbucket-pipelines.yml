@@ -4,7 +4,7 @@ pipelines:
   branches:
     main:
       - step:
-          deployment: main
+          deployment: staging
           caches:
             - composer
           script:
