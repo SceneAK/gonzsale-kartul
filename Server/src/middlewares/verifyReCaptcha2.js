@@ -7,7 +7,7 @@ const responseKey = 'g-recaptcha-response';
 const urlEncodedHeader = { 'Content-Type': 'application/x-www-form-urlencoded' };
 const verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
 const verifyReCAPTCHA = (req, res, next) => {
-    if(env.ENABLE_CAPTCHA){
+    if(env.ENABLE_CAPTCHA == 'true'){
         const captchaResponse = req.body[responseKey];
         if(captchaResponse) throw new ApplicationError('Please submit reCAPTCHA', 401);
         
