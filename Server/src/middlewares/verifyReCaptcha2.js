@@ -17,7 +17,7 @@ const verifyReCAPTCHA = (req, res, next) => {
         }
         const result = axios.post(verifyUrl, qs.stringify(data), {headers: urlEncodedHeader })
 
-        if(!result.data.success) throw new ApplicationError('reCAPTCHA verification failed', 400);
+        if(!result?.data?.success) throw new ApplicationError('reCAPTCHA verification failed', 400);
     }
     delete req.body[responseKey];
     next()

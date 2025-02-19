@@ -51,6 +51,7 @@ window.openModalAsCreateProduct = function()
 {
     modalH1.innerHTML = 'Add Product';
     common.setValuesOfSelector('.product-inputs', { name:"", description:"", category:""}, modal);
+    window.addNewVariant()
     // clear all fields, add isDefault=true variant 
     modalSubmit.onclick = createProduct;
 }
@@ -104,12 +105,13 @@ function saveVariantChanges()
     variantSelect[currentIndex] = {...variantSelect[currentIndex], ...updated};
 }
 
-window.addNewVariant = function()
+window.addNewVariant = function(isDefault = false)
 {
     const index = recordedVariants.push({
         id: recordedVariants.length,
         name: "",
-        stock: 0
+        stock: 0,
+        isDefault
     })
     syncVariantOptions(recordedVariants, variantSelect);
     setSelectedVariant(index);

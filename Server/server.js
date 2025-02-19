@@ -32,10 +32,18 @@ const protocol = env.PROTOCOL?.toLowerCase();
 let server;
 switch (protocol) {
     case 'https':
+        let keyPath = env.SSL_KEY_PATH;
+        let certPath = env.SSL_CERT_PATH;
+        let combinedPath = env.SSL_COMBINED_PATH;
+        if(combinedPath) {
+            keyPath = combinedPath;
+            certPath = combinedPath;
+        }
+        
         const httpsOptions = {
-            key: fs.readFileSync(env.SSL_KEY_PATH),
-            cert: fs.readFileSync(env.SSL_CERT_PATH),
-            ca: env.SSL_CA_PATH != 'null' ? fs.readFileSync(env.SSL_CA_PATH) : undefined
+            key: fs.readFileSync(keyPath),
+            cert: fs.readFileSync(certPath),
+            //ca: env.SSL_CA_PATH != 'null' ? fs.readFileSync(env.SSL_CA_PATH) : undefined
         };
         server = https.createServer(httpsOptions, app);
         break;
