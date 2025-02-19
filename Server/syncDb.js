@@ -30,9 +30,9 @@ process.on('SIGINT', cleanup)
 async function sync()
 {
     logger.info('Start Sync');
-    const privileged = await questionAsync('URI: ');
+    //const privileged = await questionAsync('URI: ');
     const force =  stringToBool(await questionAsync('FORCE (will drop tables): '));
-    await switchURI(privileged)
+    //await switchURI(privileged)
     const sequelize = getInstance();
     try
     {
