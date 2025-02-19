@@ -123,13 +123,7 @@ window.deleteCurrentVariant = function()
     }
     recordedVariants.splice(currentIndex, 1);
 }
-function prepareModalToCreateVariant() {
-    common.setValuesOfSelector('.variant-inputs', editProductVariantForm, {
-        name: "",
-        stock: 1
-    });
-    editingVariantId = null;
-}
+
 export function syncVariantOptions(Variants, selectElement) {
     selectElement.innerHTML = "";
     Variants.forEach((variant, index) => {
@@ -227,24 +221,11 @@ function getProductImageFormData() {
 
 //#region Edit Product
 let inputDetected;
-
 window.openEditProductModal = async function (productId) {
-    const editProductVariantModal = document.getElementById('edit-product-variant-modal');
     inputDetected = false;
 
     const productData = await product.fetchProduct(productId)
-    setEditProduct(productData);
-
-    // let defaultVariantId;
-    // cachedVariants = {}
-    // productData.Variants.forEach(Variant => {
-    //     cachedVariants[Variant.id] = Variant
-    //     if (Variant.isDefault) defaultVariantId = Variant.id;
-    // })
-    // generateSelectOptionsWithVariants(productData.Variants);
-    // fillEditVariantFormWithCached(defaultVariantId);
-
-    // editProductVariantModal.classList.add('active')
+    setEditProduct(productData)
 }
 window.closeEditProductModal = function () {
     const editProductVariantModal = document.getElementById('edit-product-variant-modal');
