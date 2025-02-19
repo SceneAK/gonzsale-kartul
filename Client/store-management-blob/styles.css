@@ -689,3 +689,21 @@ td {
 .bulk-actions button:hover {
     background-color: #0056b3;
 }
+
+.button-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .button-label:hover {
+    background-color: #0056b3; /* Darker shade for hover effect */
+  }
+  .button-label:active {
+    background-color: #004494; /* Even darker shade for active (click) effect */
+    transform: scale(0.98); /* Slightly shrink to simulate a pressing effect */
+  }
