@@ -147,9 +147,9 @@ const product = {fetchProduct, fetchProducts, fetchOwnedProducts, createProduct,
 //#endregion
 
 //#region Variant
-async function createVariant(productId, data)
+async function createVariants(productId, dataArr)
 {
-    return await jsonRequestResponse(`/product/${productId}/variant`, 'POST', JSON.stringify(data), 'include');
+    return await jsonRequestResponse(`/product/${productId}/variants`, 'POST', JSON.stringify(dataArr), 'include');
 }
 async function editVariant(id, data)
 {
@@ -159,7 +159,7 @@ async function deleteVariant(id)
 {
     return await jsonRequestResponse(`/variant/${id}`, 'DELETE', null, 'include');
 }
-const variant = {createVariant, editVariant, deleteVariant}
+const variant = {createVariants, editVariant, deleteVariant}
 //#endregion
 
 //#region Order

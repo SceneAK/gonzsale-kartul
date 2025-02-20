@@ -46,9 +46,14 @@ Store.hasMany(Product, {foreignKey: 'storeId'})
 Product.belongsTo(Store, {foreignKey: 'storeId'})
 
 const ProductImage = sequelize.define('ProductImage', {
+    id:{
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     imageId: {
         type: DataTypes.UUID,
-        primaryKey: true
+        allowNull: false
     },
     productId: {
         type: DataTypes.UUID,
@@ -60,10 +65,10 @@ const ProductImage = sequelize.define('ProductImage', {
     }
 });
 
-Product.hasMany(ProductImage, { foreignKey: 'productId' });
+Product.hasMany(ProductImage, { foreignKey: 'productId'});
 ProductImage.belongsTo(Product, { foreignKey: 'productId' });
 
-Image.hasOne(ProductImage, {foreignKey: 'imageId'});
+Image.hasMany(ProductImage, {foreignKey: 'imageId'});
 ProductImage.belongsTo(Image, {foreignKey: 'imageId'});
 
 const variantAttributes = {

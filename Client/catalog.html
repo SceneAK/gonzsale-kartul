@@ -313,7 +313,7 @@
                 container.innerHTML = '<p>No products available for this category.</p>';
                 return;
             }
-
+            console.log(products);
             products.forEach(currentProduct => {
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('item');

@@ -12,9 +12,9 @@ async function fetchProductImages(productId, option = {})
     const models = await ProductImage.findAll({where: {productId}, ...option });
     return models.map( model => model.toJSON());
 }
-async function fetchProductImage(id, options)
+async function fetchProductImage(imageId, options)
 {
-    const productImage = await ProductImage.findByPk(id, options);
+    const productImage = await ProductImage.findOne({where: {imageId}, ...options});
     if(!productImage) throw new ApplicationError("Product image not found", 404);
     return productImage;
 }
@@ -86,10 +86,8 @@ function include(level)
 {
     const serve = {
         model: ProductImage,
-        attributes: ['priority'],
-        include: imageServices.include('serve'),
-        separate: true,
-        order: [['priority', 'ASC']]
+        attributes: ['priority', 'imageId'],
+        include: imageServices.include('serve')
     };
     switch (level) {
         case 'serve':

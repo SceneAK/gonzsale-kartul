@@ -54,15 +54,18 @@ async function createProduct()
 {
     const productData = common.getAllNameValueOfSelector('.product-inputs', modal);
     common.convertAvailabilityKey(productData);
-    const variantData = saveAndCloneRecordedVariants();
-    const defaultVariant = pullOutDefault(variantData);
+    const variantDataArr = saveAndCloneRecordedVariants();
+    const defaultVariant = pullOutDefault(variantDataArr);
     
     const result = await product.createProduct({
         ...productData,
         defaultVariantData: defaultVariant
     })
     await product.createProductImages(result.id, getProductImageFormData());
-    await variant.createVariant(result.id, variantData);
+    if(variantDataArr.length > 0)
+    {
+        await variant.createVariants(result.id, variantDataArr);
+    }
 }
 function pullOutDefault(variantData)
 {

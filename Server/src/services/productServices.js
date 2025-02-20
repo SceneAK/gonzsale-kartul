@@ -5,13 +5,13 @@ import variantServices from './variantServices.js';
 import baseProductServices from './baseProductServices.js';
 const sequelize = baseProductServices.sequelize;
 
-const BASIC_ATTRIBUTES = ['id', 'name', 'isAvailable'];
+const BASIC_ATTRIBUTES = ['id', 'name'];
 
 async function fetchAvailableProducts(page = 1, filter = {})
 {
     const where = filterToWhereConverter.convert(filter);
     let result = await baseProductServices.fetchAndCountAll('Available', page, {
-        attributes: [...BASIC_ATTRIBUTES, 'storeId', 'category', 'isAvailable'],
+        attributes: [...BASIC_ATTRIBUTES, 'storeId', 'category'],
         where,
         include: [
             variantServices.include('serveDefault'),
@@ -27,7 +27,7 @@ async function fetchProductsOfStore(storeId, page = 1, filter = {})
     const where = filterToWhereConverter.convert(filter);
     const result = await baseProductServices.fetchAndCountAll('', page, {
         attributes: [...BASIC_ATTRIBUTES, 'storeId', 'category', 'isAvailable'],
-        where: {storeId, ...where},
+        where: {storeId},
         include: [
             productImageServices.include('serveOne'),
             variantServices.include('serve')
