@@ -1,6 +1,6 @@
 import { product, order, transaction } from '../integration/fetches.js'
 import common from '../common.js';
-import { generateSelectOptionsWithVariants } from './productAndVariantBlob.js';
+import { syncVariantOptions } from './variantBlob.js';
 
 // Load orders data
 let orderFilters = {};
@@ -95,7 +95,7 @@ function updateOrderVariantFilter(variants) {
     variantFilterSelect.disabled = !variants;
     variantFilterSelect.innerHTML = "";
     if (variants) {
-        generateSelectOptionsWithVariants(variants, variantFilterSelect)
+        syncVariantOptions(variants, variantFilterSelect)
         orderFilters.variantId = variants.find(variant => variant.isDefault).id;
     } else {
         variantFilterSelect.innerHTML = "<option>...</option>"

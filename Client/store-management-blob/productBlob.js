@@ -1,7 +1,7 @@
 import { product, variant } from '../integration/fetches.js'
+import { resetRecordedVariants, saveAndCloneRecordedVariants } from './variantBlob.js';
 import common from '../common.js';
 
-const editProductVariantForm = document.getElementById('edit-product-variant-form');
 const productList = document.getElementById('product-list')
 const modal = document.getElementById('product-variant-modal');
 
@@ -33,35 +33,41 @@ window.deleteProduct = async function (id) {
 
 //#region Product Modal
 const modalSubmit = document.getElementById('modal-submit');
-window.openModal = function (mode) {
-    switch (mode) {
-        case 'add':
-            prepareAddProduct();
-            break;
-        case 'edit':
-            openModalAsEdit();
-            break;
-        default: throw new Error('No such mode')
-    }
-    modal.classList.add('active')
-}
 
 const modalH1 = document.getElementById('modal-h1');
 window.openModalAsCreateProduct = function()
 {
     modalH1.innerHTML = 'Add Product';
-    common.setValuesOfSelector('.product-inputs', { name:"", description:"", category:""}, modal);
-    window.addNewVariant()
-    // clear all fields, add isDefault=true variant 
-    modalSubmit.onclick = createProduct;
+    common.setValuesOfSelector('.product-inputs', modal, { name:"", description:"", category:""});
+
+    resetRecordedVariants({name: "Default", isDefault: true, unit: "Unit"});
+
+    modal.classList.add('active')
+    modalSubmit.addEventListener('submit', async function (event){
+        event.preventDefault();
+        //await createProduct(); 
+        modal.classList.remove('active');
+    });
 }
 
-function createProduct()
+async function createProduct()
 {
-    // Gather productData
-    // Gather VariantData
-    // find copy isDefault to productData, remove the one in variantData
-    // senddddddd
+    const productData = common.getAllNameValueOfSelector('.product-inputs', modal);
+    common.convertAvailabilityKey(productData);
+    const variantData = saveAndCloneRecordedVariants();
+    const defaultVariant = pullOutDefault(variantData);
+    
+    const result = await product.createProduct({
+        ...productData,
+        DefaultVariantData: defaultVariant
+    })
+    await product.createProductImages(result.id, getProductImageFormData());
+    await variant.createVariant(result.id, variantData);
+}
+function pullOutDefault(variantData)
+{
+    const defaultIndex = variantData.findIndex( variant => variant.isDefault );
+    return variantData.splice(defaultIndex, 1);
 }
 
 window.openModalAsEditProduct = function()
@@ -84,59 +90,6 @@ document.addEventListener("click", event => {
         window.closeModal()
     }
 })
-//#region Variant Modal Logic
-const variantSelect = document.getElementById('variant-select');
-const recordedVariants = [];
-function setSelectedVariant(index)
-{
-    variantSelect.value = index;
-    saveVariantChanges();
-    common.setValuesOfSelector('.variant-inputs', modal, recordedVariants[index]);
-}
-variantSelect.addEventListener('change', function(){
-    setSelectedVariant(variantSelect.value);
-})
-
-// remove variant but also save changes
-function saveVariantChanges()
-{
-    const currentIndex = variantSelect.value;
-    const updated = common.getAllNameValueOfSelector('.variant-inputs', variantSelect);
-    variantSelect[currentIndex] = {...variantSelect[currentIndex], ...updated};
-}
-
-window.addNewVariant = function(isDefault = false)
-{
-    const index = recordedVariants.push({
-        id: recordedVariants.length,
-        name: "",
-        stock: 0,
-        isDefault
-    })
-    syncVariantOptions(recordedVariants, variantSelect);
-    setSelectedVariant(index);
-}
-window.deleteCurrentVariant = function()
-{
-    const currentIndex = variantSelect.value;
-    if(recordedVariants[currentIndex].isDefault) {
-        alert('Cannot delete default variant')
-        return;
-    }
-    recordedVariants.splice(currentIndex, 1);
-}
-
-export function syncVariantOptions(Variants, selectElement) {
-    selectElement.innerHTML = "";
-    Variants.forEach((variant, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = variantData.name;
-        option.selected = variant.isDefault;
-        selectElement.appendChild(option);
-    })
-}
-//#endregion
 //#region fileInput loic
 const productImagesInput = document.getElementById("product-images");
 let eventDueToUpdateFileInputUI = false;
@@ -150,7 +103,7 @@ productImagesInput.addEventListener("change", function (event) {
     const previewContainer = document.getElementById("image-preview-container");
     previewContainer.innerHTML = "";
 
-    includePreviousFiles(productImagesInput, uploaded)
+    includePreviousFiles(productImagesInput)
 
     populateImagePreview(previewContainer, productImagesInput.files, function(fileToRemove, index){
         removeFromFileInput(productImagesInput, index);

@@ -19,7 +19,7 @@ function convertAvailabilityKey(obj)
 function setValuesOfSelector(selector, parentElement, obj)
 {
     const inputElements = Array.from(parentElement.querySelectorAll(selector));
-    inputElements.forEach( element => {
+    inputElements.forEach( element => {;
         const value = obj[element.name]
         element.value = value !== undefined ? value : element.value;
     })

@@ -206,8 +206,8 @@
                 </select>
 
                 <!-- PRODUCT IMAGE-->
-                <label for="product-images" class="button-label" style="color: whitesmoke;">Tambah Gambar</label>
-                <input type="file" style="display: none;" id="product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple required/>
+                <label for="product-images" class="button-label" style="color: whitesmoke;z-index: 1;">Tambah Gambar</label>
+                <input type="file" style="position:fixed; width: 0%; height: 0%;padding: 0%;margin: 0; z-index: 0;" id="product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple required/>
                 <div class="image-preview-container" id="image-preview-container"></div>
 
                 <h3>Variant</h3>
@@ -248,7 +248,8 @@
         import { mockApi } from './frontendTest/mockApi.js'
         import './store-management-blob/orderAndTransactionBlob.js';
         import './store-management-blob/storeBlob.js';
-        import './store-management-blob/productAndVariantBlob.js';
+        import './store-management-blob/productBlob.js';
+        import './store-management-blob/variantBlob.js';
         import common from './common.js';
 
 
