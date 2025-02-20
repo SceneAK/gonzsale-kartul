@@ -5,7 +5,7 @@ import { productTransform } from './transformer/index.js';
 const fetchOrder = async (req, res) => {
     const {id} = req.params;
     const result = await orderServices.fetchOrderIncludeAll(id);
-    convertAllPathsToURLs(req.protocol, req.hostname, result);
+    convertAllPathsToURLs(req, result);
     res.json(result || {});
 }
 

@@ -62,7 +62,7 @@ const deleteProduct = async(req, res) => {
 function transform(product, req)
 {
     productTransform.flattenProductImages(product)
-    convertAllPathsToURLs(req.protocol, req.hostname, product);
+    convertAllPathsToURLs(req, product);
 }
 
 export default {

@@ -4,7 +4,7 @@ import { extendedTransactionServices } from "../services/index.js";
 const fetchTransaction = async (req, res)=> {
     const {id} = req.params;
     const result = await extendedTransactionServices.fetchTransaction(id);
-    convertAllPathsToURLs(req.protocol, req.hostname, result);
+    convertAllPathsToURLs(req, result);
     res.json(result || {});
 }
 

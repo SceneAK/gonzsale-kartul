@@ -4,13 +4,13 @@ import { logger, convertAllPathsToURLs } from '../common/index.js';
 const fetchStore = async (req, res) =>{
     const { id } = req.params;
     const store = await storeServices.fetchStore(id);
-    convertAllPathsToURLs(req.protocol, req.hostname, store);
+    convertAllPathsToURLs(req, store);
     res.json(store);
 }
 
 const fetchOwnedStore = async (req, res) =>{
     const store = await storeServices.fetchStore(req.decodedAuthToken.storeId);
-    convertAllPathsToURLs(req.protocol, req.hostname, store);
+    convertAllPathsToURLs(req, store);
     res.json(store);
 }
 
