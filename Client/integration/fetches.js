@@ -1,3 +1,4 @@
+const url = new URL(window.location.origin)
 const baseUrl = window.location.origin + '/api';
 
 //#region Fetching
@@ -39,7 +40,6 @@ function isArray(value)
 {
     return Array.isArray(value)
 }
-//#endregion
 //#endregion
 
 //#region Util
