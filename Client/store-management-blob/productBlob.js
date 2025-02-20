@@ -182,40 +182,7 @@ window.openEditProductModal = async function (productId) {
     const productData = await product.fetchProduct(productId)
     setEditProduct(productData)
 }
-window.closeEditProductModal = function () {
-    const editProductVariantModal = document.getElementById('edit-product-variant-modal');
-    editProductVariantModal.classList.remove('active')
-}
-editProductVariantForm?.addEventListener('change', function () { inputDetected = true; })
-editProductVariantForm?.addEventListener('submit', async function (event) {
-    event.preventDefault()
-    if (!inputDetected) {
-        closeEditProductModal();
-        return;
-    }
 
-    const productData = common.getAllNameValueOfSelector('.product-inputs', editProductVariantForm);
-    common.convertAvailabilityKey(productData);
-    const variantData = common.getAllNameValueOfSelector('.variant-inputs', editProductVariantForm);
-    console.log(productData)
-    console.log(variantData)
-    try {
-        const result = await product.editProduct(editingProductId, productData);
-        if (editingVariantId) {
-            await variant.editVariant(editingVariantId, variantData);
-        } else {
-            await variant.createVariant(editingProductId, variantData)
-        }
-        loadProducts()
-    } catch (error) {
-        console.error("Error updating product:", error)
-        alert("Failed to update the product. Please try again.")
-    }
-    closeEditProductModal()
-})
-
-let editingProductId;
-const editPreviewContainer = document.getElementById('edit-image-preview-container')
 function setEditProduct(productData) {
     editingProductId = productData.id;
     common.setValuesOfSelector('.product-inputs', editProductVariantForm, productData)

@@ -2,7 +2,6 @@ import { variant } from "../integration/fetches.js";
 import common from "../common.js";
 
 const modal = document.getElementById('product-variant-modal');
-
 const variantSelect = document.getElementById('variant-select');
 let recordedVariants = [];
 let currentIndex;

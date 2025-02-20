@@ -1,11 +1,12 @@
 import { store } from '../integration/fetches.js'
 import common from '../common.js';
 
+const createStoreModal = document.getElementById('create-store-modal');
 window.openCreateStoreModal = async function () {
-    document.getElementById('create-store-modal').classList.add('active');
+    createStoreModal.classList.add('active');
 }
 window.closeCreateStoreModal = async function () {
-    document.getElementById('create-store-modal').classList.remove('active');
+    createStoreModal.classList.remove('active');
 }
 loadStore();
 // Load store data
@@ -34,7 +35,7 @@ export async function loadStore() {
 
                     try {
                         await store.createStore(formData)
-                        alert("Store created successfully!")
+                        window.closeCreateStoreModal();
                         loadStore() // Reload store data
                     } catch (error) {
                         console.error("Error creating store:", error)
