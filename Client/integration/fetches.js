@@ -20,6 +20,7 @@ async function jsonResponse(endpoint, method, body = null, credentials = 'omit',
 {
     const res = await request(endpoint, method, body, credentials, headers)
     const result = await res.json();
+    if(portInserter) portInserter.tryIncludePortAll(result)
     return result;
 }
 async function jsonRequestResponse(endpoint, method, body = null, credentials = 'omit', headers = {})
@@ -43,6 +44,46 @@ function isArray(value)
 //#endregion
 
 //#region Util
+
+class PortInserter {
+    constructor(port){
+        this.port = port
+    }
+    tryIncludePortAll(input)
+    {
+        if(this.isArray(input))
+        {
+            input.forEach( element => {
+                this.tryIncludePortAll(element);
+            })
+        }else if(this.isObject(input))
+        {
+            for(const key in input)
+            {
+                if(key === 'url')
+                {
+		    console.log(url)
+		    console.log("Test")
+                    const insertIndex = input[key].indexOf(url.hostname) + url.hostname.length;
+                    input[key] = `${input[key].slice(0, insertIndex)}:${this.port}${input[key].slice(insertIndex)}`
+		    console.log(input[key])
+                }else{
+                    this.tryIncludePortAll(input[key])
+                }
+            }
+        }
+    }
+    isObject(value)
+    {
+        return value && typeof value === 'object';
+    }
+    isArray(value)
+    {
+        return Array.isArray(value)
+    }
+}
+const portInserter = url.port != "" ? new PortInserter(url.port) : null;
+
 function toQueryString(obj)
 {
     const queryParams = Object.keys(obj).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`).join("&");
