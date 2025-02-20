@@ -26,10 +26,11 @@ function toggleDropdownState(loginDetails) {
         if (loginDetails) {
             // Dynamically populate editForm content when logged in
             const isStoreManager = loginDetails.role === 'STORE_MANAGER';
+            const isAdmin = loginDetails.role === 'ADMIN';
             editForm.innerHTML = `
                 <div style="text-align: center; padding: 10px;">
                     <p>Hello, <strong>${loginDetails.name || 'User'}</strong>!  </p>
-                    <p style="color: #555;">Role: ${isStoreManager ? 'Store Manager' : 'User'}</p>
+                    <p style="color: #555;">Role: ${isAdmin ? 'Admin' : (isStoreManager ? 'Store Manager' : 'User')}</p>
                 </div>
                 <hr>
                 <button onclick="window.location.href='profile-management.html'" style="width: 100%; padding: 10px; margin-bottom: 5px;">
@@ -38,6 +39,12 @@ function toggleDropdownState(loginDetails) {
                 ${isStoreManager
                     ? `<button onclick="window.location.href='store-management.html'" style="width: 100%; padding: 10px; margin-bottom: 5px;">
                             Manage Store
+                       </button>`
+                    : ''
+                }
+                ${isAdmin
+                    ? `<button onclick="window.location.href='admin.html'" style="width: 100%; padding: 10px; margin-bottom: 5px;">
+                            Raw Requests
                        </button>`
                     : ''
                 }

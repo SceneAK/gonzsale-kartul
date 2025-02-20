@@ -12,7 +12,10 @@ let sequelize = new Sequelize({
     username: env.MYSQL_USERNAME,
     password: env.MYSQL_PASSWORD,
     port: env.MYSQL_PORT,
-    database: env.MYSQL_DATABASE_NAME
+    database: env.MYSQL_DATABASE_NAME,
+    define:{
+        underscored: true
+    }
 });
 logger.info('Database connection created');
 

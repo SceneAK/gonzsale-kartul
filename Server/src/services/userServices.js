@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'; 
-import tokenAuthServices from './tokenAuthServices.js';
+import { env } from '../../initialize.js';
 import databaseInitializePromise from '../database/initialize.js'
 import { ApplicationError, paginationOption, reformatFindCountAll } from '../common/index.js';
 import { col, UniqueConstraintError, where } from 'sequelize';
@@ -51,10 +51,14 @@ async function signIn(email, password)
 
 async function signUp(contactData, password)
 {
+    console.log(contactData.email)
+    console.log(env.ORIGINAL_ADMIN_EMAIL)
+    console.log(contactData.email ==  env.ORIGINAL_ADMIN_EMAIL)
+    const role = contactData.email == env.ORIGINAL_ADMIN_EMAIL ? ROLES['Admin'] : ROLES['User']
     const hashed = await bcrypt.hash(password, SALT_ROUNDS);
     try
     {
-        const userModel = await User.create({...contactData, password: hashed});
+        const userModel = await User.create({...contactData, password: hashed, role});
         const user = userModel.toJSON();
         filterOnly(user, SERVE_ATTRIBUTES);
         return user;

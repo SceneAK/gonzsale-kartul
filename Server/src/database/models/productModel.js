@@ -104,7 +104,7 @@ const Variant = sequelize.define('Variant', variantAttributes , {
         {
             name: 'composite',
             unique: true,
-            fields: ['productId', 'name']
+            fields: ['product_id', 'name']
         }
     ]
 });
