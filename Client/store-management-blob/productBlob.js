@@ -32,7 +32,7 @@ window.deleteProduct = async function (id) {
 
 
 //#region Product Modal
-const modalSubmit = document.getElementById('modal-submit');
+const modalForm = document.getElementById('modal-form');
 
 const modalH1 = document.getElementById('modal-h1');
 window.openModalAsCreateProduct = function()
@@ -43,11 +43,11 @@ window.openModalAsCreateProduct = function()
     resetRecordedVariants({name: "Default", isDefault: true, unit: "Unit"});
 
     modal.classList.add('active')
-    modalSubmit.addEventListener('submit', async function (event){
+    modalForm.onsubmit= async function (event){
         event.preventDefault();
-        //await createProduct(); 
+        await createProduct(); 
         modal.classList.remove('active');
-    });
+    };
 }
 
 async function createProduct()
@@ -59,7 +59,7 @@ async function createProduct()
     
     const result = await product.createProduct({
         ...productData,
-        DefaultVariantData: defaultVariant
+        defaultVariantData: defaultVariant
     })
     await product.createProductImages(result.id, getProductImageFormData());
     await variant.createVariant(result.id, variantData);
@@ -67,14 +67,16 @@ async function createProduct()
 function pullOutDefault(variantData)
 {
     const defaultIndex = variantData.findIndex( variant => variant.isDefault );
-    return variantData.splice(defaultIndex, 1);
+    const defaultVariant = variantData.splice(defaultIndex, 1)[0];
+    delete defaultVariant.isDefault;
+    return defaultVariant;
 }
 
 window.openModalAsEditProduct = function()
 {
     modalH1.innerHTML = 'Edit Product';
     
-    modalSubmit.onclick = createProduct;
+    modalForm.onclick = ()=>{};
 }
 function editProduct()
 {

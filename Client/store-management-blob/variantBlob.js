@@ -26,10 +26,7 @@ function saveVariantChanges()
 }
 function addNewVariant(data)
 {
-    const newLen = recordedVariants.push({
-        id: recordedVariants.length,
-        ...data
-    })
+    const newLen = recordedVariants.push(data)
     saveVariantChanges();
     setSelectedVariant(newLen - 1);
 }
@@ -44,6 +41,10 @@ variantSelect.addEventListener('change', function(){
     saveVariantChanges();
     setSelectedVariant(variantSelect.value);
 })
+document.getElementById('variant-name').onblur = ()=>{
+    saveVariantChanges();
+    setSelectedVariant(currentIndex);
+};
 
 // remove variant but also save changes
 

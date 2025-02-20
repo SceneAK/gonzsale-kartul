@@ -28,6 +28,8 @@ DONE .env template
     DONE reconfigure custom multer storage
 
 > Store payment method & transaction extension tables are over engineered.
+> Deleting product does not delete its images.
+> Product Images aren't in order of uploads for some reason
 
 - View Store percantik
 - Percantik UI Create store NEEDS BACKEND INTEGRATION

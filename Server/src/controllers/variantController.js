@@ -5,9 +5,9 @@ const fetchVariant = async (req, res) => {
     res.json(await variantServices.fetchVariant(id));
 }
 
-const createVariant = async (req, res) => {
+const createVariants = async (req, res) => {
     const {productId} = req.params;
-    const result = await variantServices.createVariant(productId, req.body, req.decodedAuthToken.storeId);
+    const result = await variantServices.createVariants(productId, req.body, req.decodedAuthToken.storeId);
     res.json(result || {});
 }
 
@@ -31,7 +31,7 @@ const deleteVariant = async (req, res) => {
 
 export default {
     fetchVariant,
-    createVariant,
+    createVariants,
     editVariant,
     setDefault,
     deleteVariant

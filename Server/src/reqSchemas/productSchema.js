@@ -21,7 +21,7 @@ const bodySchema = Joi.object(productBody)
 
 const createProductSchema = {
     body: bodySchema.fork(['name', 'category', 'isAvailable'], schema => schema.required()).append({
-        defaultVariantData: variantSchema.createVariant.body.required()
+        defaultVariantData: variantSchema.bodySchemaRequired.required()
     }).required()
 }
 

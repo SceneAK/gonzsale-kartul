@@ -8,7 +8,7 @@ const createProductImage = async (req, res) => {
 }
 const deleteProductImage = async (req, res) => {
     const {id} = req.params;
-    const result = await productImageServices.deleteImage(id, req.decodedAuthToken);
+    const result = await productImageServices.deleteImages([id], req.decodedAuthToken);
     res.json(result || {});
 }
 

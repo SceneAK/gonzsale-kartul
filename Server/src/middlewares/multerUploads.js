@@ -7,16 +7,11 @@ import { ApplicationError, getFilesIfAny, logger } from '../common/index.js';
 
 const MULTER_MAX_FILE_BYTES = 10 * 1024 * 1024;
 const getStorage = (relativeDir) => multer.diskStorage({
-    destination: function (req, file, cb)
-    {
-        const fullPath = upath.join(PUBLIC_DIR, relativeDir);
-        cb(null, fullPath);
-    },
+    destination: upath.join(PUBLIC_DIR, relativeDir),
     filename: function (req, file, cb) {
         const rand = crypto.randomBytes(16).toString('hex');
-        const extension = upath.extname(file.originalname);
-        console.log(rand + extension);
-        cb(null, rand + extension);
+        const ext = upath.extname(file.originalname);
+        cb(null, rand + ext);
     }
 });
 
@@ -34,7 +29,6 @@ function createMulter(options)
 function onErrorFileDeletion(err, req, res, next)
 {
     const paths = getFilesIfAny(req).map(file => file.path);
-
     paths.forEach( path => {
             if(path) fs.unlink(path, err => {
                 if(err) logger.info(`Failed to delete ${path}`)

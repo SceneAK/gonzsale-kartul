@@ -7,9 +7,9 @@ import storeServices from "./storeServices.js";
 const { ProductImage } = await databaseInitializePromise;
 
 const MAX_IMAGES = 4;
-async function fetchProductImages(productId)
+async function fetchProductImages(productId, option = {})
 {
-    const models = await ProductImage.findAll({where: {productId}, include: { model: ProductImage } });
+    const models = await ProductImage.findAll({where: {productId}, ...option });
     return models.map( model => model.toJSON());
 }
 async function fetchProductImage(id, options)
@@ -44,11 +44,22 @@ function getLeastPrioritized(productImages)
 async function deleteImage(imageId, requester)
 {
     const productImage = await fetchProductImage(imageId, { include: baseProductServices.include()});
-    await baseProductServices.ensureProductBelongsToStore(productImage.Product, requester.storeId);
+    baseProductServices.ensureProductBelongsToStore(productImage.Product, requester.storeId);
 
     await ProductImage.sequelize.transaction( async t => {
         await imageServices.deleteImages([imageId], requester.id);
         await ProductImage.destroy({where: {imageId}});
+    })
+}
+async function deleteProductImages(productId, requester)
+{
+    const productImages = await fetchProductImages(productId, { include: baseProductServices.include()});
+    productImages.forEach( prdImg => baseProductServices.ensureProductBelongsToStore(prdImg.Product, requester.storeId) ); 
+    const imageIds = productImage.map( prdImg => prdImg.imageId);
+
+    await ProductImage.sequelize.transaction( async t => {
+        await imageServices.deleteImages(imageIds, requester.id);
+        await ProductImage.destroy({where: {productId}});
     })
 }
 
@@ -93,10 +104,10 @@ function include(level)
 }
 
 export default { 
-    fetchProductImages, 
     createProductImages, 
     createProductImages, 
     reorderProductImages,  
     deleteImage, 
+    deleteProductImages,
     include 
 };

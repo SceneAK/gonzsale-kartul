@@ -25,6 +25,6 @@ router.post('/:productId/images', verify(), ensureStore, ensureBelowLimit, produ
 
 router.delete('/images/:id', verify(), ensureStore, productImage.deleteProductImage);
 
-router.post('/:productId/variant', verify(), ensureStore, validate(variantSchema.createVariant), variant.createVariant);
+router.post('/:productId/variants', verify(), ensureStore, validate(variantSchema.createVariants), variant.createVariants);
 
 export default router;

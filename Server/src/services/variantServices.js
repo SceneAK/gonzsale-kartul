@@ -42,14 +42,15 @@ async function editVariant(id, variantData, requesterStoreId)
     return await Variant.update(variantData, {where: {id}, raw: true});
 }
 
-async function createVariant(productId, variantData, requesterStoreId)
+async function createVariants(productId, variantDataArr, requesterStoreId)
 {
     await baseProductServices.ensureBelongsToStore(productId, requesterStoreId);
-    _createVariant(productId, variantData)
+    _createVariants(productId, variantDataArr)
 }
-async function _createVariant(productId, variantData)
+async function _createVariants(productId, variantDataArr)
 {
-    await Variant.create({productId, ...variantData});
+    const complete = variantDataArr.map( variantData => ({productId, ...variantData}) )
+    await Variant.bulkCreate(complete);
 }
 async function deleteVariant(id, requesterStoreId)
 {
@@ -117,8 +118,8 @@ export default {
     fetchVariantIncludeProduct,
     fetchVariantsIncludeProduct,
     bulkUpsertStock,
-    createVariant,
-    _createVariant,
+    createVariants,
+    _createVariants,
     editVariant,
     setDefault,
     deleteVariant,

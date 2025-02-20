@@ -66,7 +66,7 @@ async function createProduct(data, requesterStoreId)
     let product;
     await sequelize.transaction(async t => {
         product = await baseProductServices._createProduct(requesterStoreId, productData);
-        await variantServices._createVariant(product.id, defaultVariantData)
+        await variantServices._createVariants(product.id, [defaultVariantData])
     });
     return product;
 }
@@ -78,10 +78,11 @@ async function editProduct(id, requesterStoreId, productData)
     return { id: productId };
 }
 
-async function deleteProduct(productId, requesterStoreId)
+async function deleteProduct(productId, requester)
 {
-    await baseProductServices.ensureBelongsToStore(productId, requesterStoreId);
+    await baseProductServices.ensureBelongsToStore(productId, requester.storeId);
     await sequelize.transaction(async t =>{
+        await productImageServices.deleteProductImages(productId, requester);
         await variantServices._deleteAllVariantsOfProduct(productId);
         await baseProductServices._deleteProduct(productId);
     })

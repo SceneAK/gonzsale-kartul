@@ -55,7 +55,7 @@ const editProduct = async(req, res) => {
 
 const deleteProduct = async(req, res) => {
     const { id } = req.params;
-    const result = await productServices.deleteProduct(id, req.decodedAuthToken.storeId);
+    const result = await productServices.deleteProduct(id, req.decodedAuthToken);
     res.json(result || {});
 }
 

@@ -8,15 +8,18 @@ const variantBody = {
 };
 const bodySchema = Joi.object(variantBody);
 
-const createVariantSchema = {
-    body: bodySchema.fork(['name', 'stock', 'price', 'unit'], schema => schema.required()).required()
+const bodySchemaRequired = bodySchema.fork(['name', 'stock', 'price', 'unit'], schema => schema.required()).required();
+const createVariantsSchema = {
+    body: Joi.array().items(bodySchemaRequired)
 }
 const editVariantSchema = {
     body: bodySchema.required()
 }
 
 export default {
-    createVariant: createVariantSchema,
+    createVariants: createVariantsSchema,
     editVariant: editVariantSchema,
-    variantBody
+    variantBody,
+    bodySchema,
+    bodySchemaRequired
 };
