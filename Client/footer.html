@@ -6,14 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Item Catalog</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+        :root {
+            --font-primary: "Raleway", serif;
+        }
+
         /* Body and general styles */
         body,
         html {
+            font-family: var(--font-primary);
             height: 100%;
             margin: 0;
-            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
+        }
+
+        .lora-bold {
+            font-family: "Lora", serif;
+            font-weight: 700;
+        }
+
+        .lora-italic {
+            font-family: "Lora", serif;
+            font-style: italic;
         }
 
         /* Wrapper to push footer down */
@@ -74,14 +91,16 @@
 
     <!-- Footer -->
     <footer>
-        <p>Mampir IG yang bikin website ini yuk!<p>
+        <p>Mampir IG yang bikin website ini yuk!
+        <p>
             <a href="https://instagram.com/dionisius_abi" target="_blank">@dionisius_abi</a> -
             <a href="https://instagram.com/ip.binawan" target="_blank">@ip.binawan</a> -
             <a href="https://instagram.com/evan_kue" target="_blank">@evan_kue</a>
         </p>
         </p>
         <div class="footer-links">
-            <p><a href="categories.html">Categories</a> | <a href="contactus.html">Contact</a> | <a href="aboutus.html">About Us</a></p>
+            <p><a href="categories.html">Categories</a> | <a href="contactus.html">Contact</a> | <a
+                    href="aboutus.html">About Us</a></p>
         </div>
     </footer>
 

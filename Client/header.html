@@ -46,15 +46,16 @@
         }
 
         .tablink {
-            background-color: #f9f9f9;
             border: none;
             padding: 10px 20px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: 600;
         }
 
         .tablink:hover {
             background-color: #ddd;
+            border-radius: 8px;
         }
 
         .tab-icon {
@@ -77,9 +78,8 @@
             justify-content: center;
             flex-wrap: wrap;
             align-items: center;
-            gap: 15px;
-            background-color: #f9f9f9;
-            padding: 10px 0;
+            gap: 20px;
+            border-radius: 8px;
         }
 
         .header-bottom a {
@@ -104,6 +104,7 @@
             display: flex;
             gap: 20px;
             align-items: center;
+            font-weight: 500;
         }
 
         .user-options a {
@@ -415,6 +416,16 @@
                 /* show pointer on hover */
             }
 
+            .tablink {
+                display: block;
+                margin: 15px 0;
+                padding: 30px;
+                font-size: 18px;
+                color: #333;
+                text-decoration: none;
+                border-radius: 10px;
+            }
+
             .modal-overlay {
                 display: none;
                 position: fixed;
@@ -552,7 +563,8 @@
                 <p>Don't have an account? <a href="signup.html">Register</a></p>
             </div>
             <div class="editForm">
-                <p>Ingin membuat atau mengelola toko Anda? Silakan gunakan versi desktop kami untuk pengalaman terbaik.</p>
+                <p>Ingin membuat atau mengelola toko Anda? Silakan gunakan versi desktop kami untuk pengalaman terbaik.
+                </p>
                 <button class="logoutButton" id="logoutButton_mobile">Logout</button>
             </div>
         </div>
