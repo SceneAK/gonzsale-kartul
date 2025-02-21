@@ -1,15 +1,15 @@
 import jwt from 'jsonwebtoken'; 
-import '../../initialize.js'; // ensure process.env is up
+import { env } from '../../initialize.js';
 
 function signPayload(payload)
 {
-    return jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
+    return jwt.sign(payload, env.SECRET_KEY, { expiresIn: '1h' });
 }
 
 async function verifyAuthToken(authToken)
 {
     return new Promise( (resolve, reject) => {
-        jwt.verify(authToken, process.env.SECRET_KEY, (err, decoded)=>{
+        jwt.verify(authToken, env.SECRET_KEY, (err, decoded)=>{
             if(err)
             {
                 reject(err);

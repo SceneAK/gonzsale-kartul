@@ -1,0 +1,18 @@
+image: atlassian/default-image:latest
+
+pipelines:
+  branches:
+    staging:
+      - step:
+          deployment: staging
+          caches:
+            - composer
+          script:
+            - pipe: atlassian/ssh-run:0.6.0
+              variables:
+                SSH_USER: $STAGING_SSH_USER
+                SERVER: $STAGING_SSH_SERVER
+                MODE: "script"
+                PORT: $STAGING_SSH_PORT
+                COMMAND: "deploy.sh"
+            - echo "Deploy step finished"

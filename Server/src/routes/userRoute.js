@@ -1,5 +1,5 @@
 import { user } from '../controllers/index.js';
-import { verify, validate } from '../middlewares/index.js';
+import { verify, validate, verifyReCAPTCHA } from '../middlewares/index.js';
 import { userSchemas } from '../reqSchemas/index.js'
 import express from 'express';
 const router = express.Router();
@@ -10,7 +10,7 @@ router.get('/', verify(), user.fetchUsers);
 
 router.post('/signin', validate(userSchemas.signIn), user.signIn);
 
-router.post('/signup', validate(userSchemas.signUp), user.signUp);
+router.post('/signup', verifyReCAPTCHA, validate(userSchemas.signUp), user.signUp);
 
 router.post('/refresh', verify(), user.refresh);
 

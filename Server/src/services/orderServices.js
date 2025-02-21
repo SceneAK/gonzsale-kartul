@@ -42,19 +42,21 @@ async function fetchIncomingOrders(storeId, page = 1, filter = {})
     });
     
     result.items.forEach(order => orderEnricher.summarizeRemoveOrderItems(order) );
-
     orderEnricher.sortByStatus(result.items);
     return result;
 }
 
 async function fetchOrders(customerId, page = 1)
 {
-    return await baseOrderServices.fetchAndCountAll(page, { 
+    const result = await baseOrderServices.fetchAndCountAll(page, { 
         where: { customerId }, 
         include: [...ITEMS_AND_TRANSAC, storeServices.include('serveName')],
         attributes: ATTRIBUTES,
         order: ORDER
     });
+    result.items.forEach(order => orderEnricher.summarizeOrderItems(order) );
+    orderEnricher.sortByStatus(result.items);
+    return result;
 };
 
 async function createOrder(orderItems, customerDetails)

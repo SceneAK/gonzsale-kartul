@@ -1,4 +1,4 @@
-import { STATIC_ROUTE_NAME, PUBLIC_DIR, __dirname } from './initialize.js';
+import { STATIC_ROUTE_NAME, PUBLIC_DIR, __dirname, env } from './initialize.js';
 import upath from 'upath';
 import cookieParser from 'cookie-parser';
 import express from 'express'; 
@@ -17,12 +17,15 @@ app.use(cors(
 );
 
 // static routes
-const pagesPath = upath.join(__dirname, '../Client');
-app.use(`/`, express.static(pagesPath)); 
-app.use(`/${STATIC_ROUTE_NAME}/`, express.static(PUBLIC_DIR)); 
+if(env.ENABLE_STATIC_CLIENT?.toLowerCase() === 'true') 
+{
+  const pagesPath = upath.join(__dirname, '../Client');
+  app.use(`/`, express.static(pagesPath)); 
+  app.use(`/${STATIC_ROUTE_NAME}/`, express.static(PUBLIC_DIR)); 
+}
 
 // Middlewares
-app.use(cookieParser(process.env.JWT_SECRET_KEY));
+app.use(cookieParser(env.JWT_SECRET_KEY));
 app.use(httpLogger)
 app.use( (req, res, next) => {
     if(req.headers['content-type'] == 'application/json')

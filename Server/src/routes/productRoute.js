@@ -5,7 +5,7 @@ import { ensureBelowLimit, createMulter, verify, validate, ensureStore } from '.
 import { page, productImageSchemas, productSchemas, variantSchema } from '../reqSchemas/index.js';
 import { product, variant, productImage } from '../controllers/index.js';
 
-const imgUpload = createMulter({relativeDir: 'images', keyName: 'images', type: 'array', maxCount: 4});
+const productImgUploads = createMulter({relativeDir: 'images/products/', keyName: 'images', type: 'array', maxCount: 4});
 
 router.get('/search', validate(productSchemas.fetchFiltered), product.fetchProducts);
 
@@ -21,7 +21,7 @@ router.post('/', verify(), ensureStore, validate(productSchemas.createProduct), 
 
 router.delete('/:id', verify(), ensureStore, product.deleteProduct);
 
-router.post('/:productId/images', verify(), ensureStore, ensureBelowLimit, imgUpload, validate(productImageSchemas.createProductImages), productImage.createProductImage);
+router.post('/:productId/images', verify(), ensureStore, ensureBelowLimit, productImgUploads, validate(productImageSchemas.createProductImages), productImage.createProductImage);
 
 router.delete('/images/:id', verify(), ensureStore, productImage.deleteProductImage);
 

@@ -5,5 +5,5 @@ export default function secretKey()
     return crypto.randomBytes(64).toString('hex');
 }
 
-const secretKey = secretKey();
-console.log(secretKey);
+const secret = secretKey();
+console.log(secret);

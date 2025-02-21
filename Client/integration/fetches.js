@@ -19,7 +19,6 @@ async function jsonResponse(endpoint, method, body = null, credentials = 'omit',
 {
     const res = await request(endpoint, method, body, credentials, headers)
     const result = await res.json();
-    tryIncludePortAll(result)
     return result;
 }
 async function jsonRequestResponse(endpoint, method, body = null, credentials = 'omit', headers = {})
@@ -32,28 +31,6 @@ async function jsonRequest(endpoint, method, body = null, credentials = 'omit', 
 }
 const fetching = {request, jsonRequest, jsonResponse, jsonRequestResponse};
 
-//#region temporary
-function tryIncludePortAll(input, port = '3000')
-{
-    if(isArray(input))
-    {
-        input.forEach( element => {
-            tryIncludePortAll(element, port);
-        })
-    }else if(isObject(input))
-    {
-        for(const key in input)
-        {
-            if(key === 'url')
-            {
-                const insertIndex = input[key].indexOf("localhost") + 9;
-                input[key] = input[key].slice(0, insertIndex) + ":3000" + input[key].slice(insertIndex);
-            }else{
-                tryIncludePortAll(input[key], port)
-            }
-        }
-    }
-}
 function isObject(value)
 {
     return value && typeof value === 'object';
@@ -89,7 +66,7 @@ async function signUp(name, phone, email, password) {
     return result;
 }
 async function editContacts(contacts) {
-    return await jsonRequest('/user/edit', 'PATCH', JSON.stringify(contacts), 'include');
+    return await jsonRequest('/user', 'PATCH', JSON.stringify(contacts), 'include');
 }
 async function refresh()
 {

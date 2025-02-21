@@ -3,7 +3,12 @@ import app from './app.js';
 import { userRoute, productRoute, storeRoute, orderRoute, transactionRoute, variantRoute } from './src/routes/index.js';
 import { onErrorFileDeletion } from './src/middlewares/multerUploads.js';
 import { logger } from './src/common/index.js';
+import { env } from './initialize.js';
 import errorHandler from './src/middlewares/errorHandler.js';
+import https from 'https'
+import http from 'http'
+import fs from 'fs';
+
 
 logger.info('Start Server');
 
@@ -19,6 +24,26 @@ app.use('/api/variant/', variantRoute);
 app.use(onErrorFileDeletion); // for multer
 app.use(errorHandler)
 
-// Start Listening
-const PORT = process.env.PORT;
-app.listen(PORT, () => { logger.info(`listening on ${PORT}`)} )
+const logListening = (port)=> ()=>{
+    logger.info(`listening on port ${port}`)
+};
+
+const protocol = env.PROTOCOL?.toLowerCase();
+let server;
+switch (protocol) {
+    case 'https':
+        const httpsOptions = {
+            key: fs.readFileSync(env.SSL_KEY_PATH),
+            cert: fs.readFileSync(env.SSL_CERT_PATH),
+            ca: env.SSL_CA_PATH != 'null' ? fs.readFileSync(env.SSL_CA_PATH) : undefined
+        };
+        server = https.createServer(httpsOptions, app);
+        break;
+    case 'http':
+        server = http.createServer(app);
+        break;
+    default:
+        server = app;
+        break;
+}
+server.listen(env.PORT, logListening(env.PORT));

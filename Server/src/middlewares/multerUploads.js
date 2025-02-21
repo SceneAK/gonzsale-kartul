@@ -1,18 +1,32 @@
 import multer from 'multer';
 import upath from 'upath';
 import fs from 'fs';
+import crypto from 'crypto';
 import { PUBLIC_DIR } from '../../initialize.js';
 import { ApplicationError, getFilesIfAny, logger } from '../common/index.js';
 
 const MULTER_MAX_FILE_BYTES = 10 * 1024 * 1024;
+const getStorage = (relativeDir) => multer.diskStorage({
+    destination: function (req, file, cb)
+    {
+        const fullPath = upath.join(PUBLIC_DIR, relativeDir);
+        cb(null, fullPath);
+    },
+    filename: function (req, file, cb) {
+        const rand = crypto.randomBytes(16).toString('hex');
+        const extension = upath.extname(file.originalname);
+        console.log(rand + extension);
+        cb(null, rand + extension);
+    }
+});
 
 function createMulter(options)
 {
     const { relativeDir, mimeType } = options;
     const upload = multer({
-        dest: upath.join(PUBLIC_DIR, relativeDir), 
         limits: { fileSize: MULTER_MAX_FILE_BYTES },
-        fileFilter: createMimeTypeFilterer(mimeType ? mimeType : 'any')
+        fileFilter: createMimeTypeFilterer(mimeType ? mimeType : 'any'),
+        storage: getStorage(relativeDir)
     });
     return getUploadMiddleware(upload, options);
 }

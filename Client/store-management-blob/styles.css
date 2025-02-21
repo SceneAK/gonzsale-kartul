@@ -1,0 +1,709 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Main Content Wrapper (middle row of the grid) */
+.container {
+    display: flex;
+    min-height: 70vh;
+}
+
+/* Side Menu */
+.side-menu {
+    width: 250px;
+    background: #fff;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    box-sizing: border-box;
+}
+
+.side-menu h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Sidebar Link Styles */
+.side-menu a {
+    display: block;
+    padding: 10px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 5px;
+}
+
+.side-menu a.active,
+.side-menu a:hover {
+    background: #ff9900;
+    color: white;
+}
+
+/* Main Content */
+.content {
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    flex: 1;
+}
+
+.content-section {
+    display: none;
+}
+
+/* Show only the active content section */
+.content-section.active {
+    display: block;
+}
+
+/* DASHBOARD STYLING */
+.dashboard-metrics {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.dashboard-metric {
+    flex: 1;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-metric h2 {
+    font-size: 1.2em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.dashboard-metric span {
+    font-size: 2em;
+    color: #ff9900;
+    font-weight: bold;
+}
+
+/* STORE STYLING */
+.store-details {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.store-details h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.store-details p {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.store-details img {
+    margin: 20px 0;
+    max-width: 100%;
+    height: auto;
+}
+
+.store-details button {
+    padding: 10px 15px;
+    font-size: 1em;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.store-details button:hover {
+    background-color: #0056b3;
+}
+
+/* Container for centering the form */
+.form-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    background: #f5f5f5;
+    min-height: 70vh;
+}
+
+/* Store form card style */
+.create-store-container {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Heading style */
+.create-store-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Style for each form group */
+.create-store-container .form-group {
+    margin-bottom: 15px;
+}
+
+/* Label styling */
+.create-store-container label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+/* Input, textarea, and file input styling */
+.create-store-container input[type="text"],
+.create-store-container textarea,
+.create-store-container input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+/* Focus effect for inputs */
+.create-store-container input[type="text"]:focus,
+.create-store-container textarea:focus,
+.create-store-container input[type="file"]:focus {
+    border-color: #ff9900;
+    outline: none;
+}
+
+/* Submit button styling */
+.create-store-container button[type="submit"] {
+    width: 100%;
+    background-color: #ff9900;
+    color: #fff;
+    padding: 12px;
+    font-size: 1em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+.create-store-container button[type="submit"]:hover {
+    background-color: #e68a00;
+}
+
+/* PRODUCT TAB STYLES */
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.product-table th,
+.product-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.product-table th {
+    background-color: #ff9900;
+    color: #fff;
+}
+
+.action-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background-color: #ffc107;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-product-btn {
+    background-color: #c2c2c2;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto 20px auto;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 41%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.modal.active {
+    display: block;
+}
+
+.modal input,
+textarea {
+    width: calc(100%-16px);
+    margin-bottom: 15px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.modal select {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.modal-buttons {
+    text-align: right;
+}
+
+.modal-buttons button {
+    padding: 8px 12px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.save-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+/* Modal Content Wrapper */
+.modal-form-container {
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+/* Modal Header */
+.modal-form-container h1 {
+    font-size: 1.6em;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+/* Form Styling */
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-form label {
+    font-weight: bold;
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.modal-form input[type="text"],
+.modal-form input[type="number"],
+.modal-form textarea,
+.modal-form select,
+.modal-form input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: 0.3s ease;
+}
+
+.modal-form textarea {
+    resize: none;
+    height: 100px;
+}
+
+/* Form Field Focus Effect */
+.modal-form input[type="text"]:focus,
+.modal-form input[type="number"]:focus,
+.modal-form textarea:focus,
+.modal-form select:focus {
+    border-color: #4caf50;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+    outline: none;
+}
+
+/* Image Preview Container */
+.image-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: flex-start;
+}
+
+.image-preview-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 5px;
+}
+
+.image-preview {
+    width: 80px;
+    height: 80px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+.delete-icon {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    padding: 2px 5px;
+    cursor: pointer;
+    font-size: 14px;
+    color: red;
+}
+
+.variant-add-btn {
+    padding: 10px 12px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3sease;
+}
+
+.variant-delete-btn {
+    padding: 10px 12px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3sease;
+}
+
+/* Modal Buttons */
+.modal-form-buttons button {
+    padding: 10px 12px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.modal-form-buttons button[type="button"] {
+    background-color: #f44336;
+    color: white;
+}
+
+.modal-form-buttons button[type="button"]:hover {
+    background-color: #d32f2f;
+}
+
+.modal-form-buttons button[type="submit"] {
+    background-color: #4caf50;
+    color: white;
+}
+
+.modal-form-buttons button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+@media (min-width: 768px) {
+    .modal {
+        max-height: 90vh;
+        overflow-y: auto;
+        transform: translate(-50%, -40%);
+        width: 95%;
+    }
+
+    .modal-form-container {
+        padding: 20px;
+    }
+
+    .modal-form {
+        gap: 10px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .modal {
+        width: 500px;
+    }
+}
+
+/* ORDER TABLE STYLES */
+table {
+    width: 100%;
+    margin: 20px 0;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(27, 27, 27, 0.1);
+}
+
+th,
+td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #ff9900;
+    color: #fff;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+td {
+    font-size: 0.95em;
+    color: #333;
+}
+
+.status-completed {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.status-pending {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.status-ready {
+    color: #ffd723;
+    font-weight: bold;
+}
+
+.status-cancelled {
+    color: gray;
+    font-weight: bold;
+}
+
+/* Action Button Styles */
+.action-btn {
+    padding: 8px 12px;
+    font-size: 0.9em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.complete-btn {
+    background-color: #28a745;
+    color: #fff;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.complete-btn:hover {
+    background-color: #218838;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: #fff;
+    transition: background-color 0.2s ease-in-out;
+    margin-left: 5px;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+.orderIdCopy:hover {
+    cursor: pointer;
+    color: blue;
+}
+
+.btn-primary {
+    background-color: #ff9900;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #e68a00;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* PAGINATION NEXT/PREVIOUS */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    gap: 10px;
+}
+
+.pagination button {
+    padding: 8px 12px;
+    background-color: #ff9900;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: #e68a00;
+}
+
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#page-info {
+    font-size: 1em;
+    color: #333;
+}
+
+/* SEARCH BAR STYLES */
+.search-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+    justify-content: center;
+}
+
+.search-container input {
+    padding: 10px;
+    width: 250px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.search-container input:focus {
+    border-color: #ff9900;
+    outline: none;
+}
+
+.search-counter {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1em;
+    color: #555;
+}
+
+/* BULK ACTION BUTTONS */
+.bulk-actions {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.bulk-actions button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.bulk-actions button:hover {
+    background-color: #0056b3;
+}
+
+.button-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .button-label:hover {
+    background-color: #0056b3; /* Darker shade for hover effect */
+  }
+  .button-label:active {
+    background-color: #004494; /* Even darker shade for active (click) effect */
+    transform: scale(0.98); /* Slightly shrink to simulate a pressing effect */
+  }

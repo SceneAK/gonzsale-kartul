@@ -527,7 +527,8 @@
         import { user, order } from './integration/fetches.js';
         const editProfileModal = document.getElementById('edit-profile-modal');
 
-        editProfileModal.addEventListener('submit', () => {
+        editProfileModal.addEventListener('submit', (event) => {
+            event.preventDefault();
             const phone = document.getElementById('edit-phone').value;
             const name = document.getElementById('edit-name').value;
             user.editContacts({ name, phone }).then(() => {
@@ -599,16 +600,6 @@
                 document.getElementById('phone').textContent = userData.phone;
             }
 
-            // Attach event listener for the Edit Profile form
-            const editProfileForm = document.getElementById('edit-profile-form');
-            if (editProfileForm) {
-                editProfileForm.addEventListener('submit', function (event) {
-                    event.preventDefault();
-                    alert('Profile updated!');
-                    window.closeEditProfileModal();
-                });
-            }
-
             // Order History Handling
             function showOrderHistory() {
                 document.querySelectorAll('.menu-link').forEach(link => {
@@ -660,15 +651,18 @@
                         const orderItem = document.createElement("div");
                         orderItem.classList.add("order-item");
 
-                        const productImg = document.createElement("img");
-                        productImg.src = undefined || "assets/images/placeholder.png";
-                        productImg.alt = item.productName;
+                        // const productImg = document.createElement("img");
+                        // productImg.src = undefined || "assets/images/placeholder.png";
+                        // productImg.alt = item.productName;
 
                         const itemDetails = document.createElement("div");
                         itemDetails.classList.add("order-item-details");
-                        itemDetails.innerHTML = `<p><strong>${item.productName} | ${item.variantName}</strong></p>`;
+                        itemDetails.innerHTML = `
+                            <p><strong>${item.productName} | ${item.variantName}</strong></p>
+                            <span style = "font-size: 80%; color: gray">(${item.status.toLowerCase()})</span>
+                        `;
 
-                        orderItem.appendChild(productImg);
+                        //orderItem.appendChild(productImg);
                         orderItem.appendChild(itemDetails);
                         orderItemsContainer.appendChild(orderItem);
                     });
