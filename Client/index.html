@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GonzSale - Promotions</title>
+    <title>GonzShop</title>
     <style>
         /* Global Styles */
         body {
             font-family: var(--font-primary);
             margin: 0;
             padding: 0;
-            background-color: black;
+            background-color: rgb(240, 240, 240);
             overflow-x: hidden;
         }
 
@@ -114,14 +114,14 @@
             }
         }
 
-        /* Container for the entire section (centers the wrapper) */
+        /* Exclusive Promotions Container (Centered) */
         .exclusive-promotions {
             width: 100%;
             display: flex;
             justify-content: center;
         }
 
-        /* h1 Wrapper now contains the slideshow */
+        /* h1 Wrapper with a static gradient background */
         .h1-wrapper {
             position: relative;
             width: 100%;
@@ -131,87 +131,11 @@
             border-radius: 10px;
             overflow: hidden;
             margin: 30px;
+            /* Static gradient: orange to red */
+            background: linear-gradient(45deg, #ff6600, #d9534f);
         }
 
-        .vertical-slideshow {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .vertical-slideshow .slides {
-            display: flex;
-            flex-direction: column;
-            height: 300%;
-            /* Three slides, each 100% of the container's height */
-            animation: verticalSlide 12s infinite;
-        }
-
-        .vertical-slideshow .slide {
-            flex: 1;
-            width: 100%;
-            background-size: cover;
-            background-position: center;
-        }
-
-        /* Vibrant background styles */
-        .vertical-slideshow .slide-1 {
-            background: linear-gradient(135deg, #ff6600, #ffcc00);
-        }
-
-        .vertical-slideshow .slide-2 {
-            background: radial-gradient(circle, #00ccff, #0066ff);
-        }
-
-        .vertical-slideshow .slide-3 {
-            background: linear-gradient(135deg, #ff33cc, #9933ff);
-        }
-
-        /* Vertical sliding animation */
-        @keyframes verticalSlide {
-            0% {
-                transform: translateY(0%);
-            }
-
-            33% {
-                transform: translateY(0%);
-            }
-
-            44% {
-                transform: translateY(-100%);
-            }
-
-            77% {
-                transform: translateY(-100%);
-            }
-
-            88% {
-                transform: translateY(-200%);
-            }
-
-            100% {
-                transform: translateY(-200%);
-            }
-        }
-
-        /* Semi-transparent overlay to ensure readability */
-        .h1-wrapper::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(186, 186, 186, 0.1);
-            /* Adjust transparency as needed */
-            z-index: 0;
-        }
-
-        /* Heading styling: on top of the slideshow & overlay */
+        /* Heading styling */
         .exclusive-promo-heading {
             position: relative;
             z-index: 1;
@@ -224,25 +148,12 @@
             -webkit-background-clip: text;
             color: transparent;
             -webkit-text-fill-color: transparent;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.6);
             animation: slideInDown 0.8s ease-out;
             margin: 0;
         }
 
         /* Entrance animation for the heading */
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Entrance Animation for the Heading */
         @keyframes slideInDown {
             from {
                 opacity: 0;
@@ -263,6 +174,7 @@
             width: 100%;
             max-width: 900px;
             box-sizing: border-box;
+            margin-top: 20px;
         }
 
         /* Promo Banner with Image Slider */
@@ -378,6 +290,15 @@
                 padding: 10px;
             }
 
+            .exclusive-promo-heading {
+                font-size: 1.6rem;
+                padding-top: 40px;
+            }
+
+            .h1-wrapper {
+                height: 150px;
+            }
+
             .big-banner {
                 height: 200px;
             }
@@ -407,7 +328,7 @@
         <!-- Grand Opening Banner -->
         <div class="big-banner">
             <div class="big-banner-content">
-                <h1 class="big-banner-title">SELAMAT DATANG DI GONZSALE</h1>
+                <h1 class="big-banner-title">SELAMAT DATANG DI GONZSHOP</h1>
                 <p class="big-banner-subtitle">Terbuka eksklusif sampai 10 Maret 2025</p>
                 <a href="categories.html" class="big-banner-button">Mulai Belanja</a>
             </div>

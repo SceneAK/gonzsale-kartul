@@ -33,7 +33,6 @@
 
         /* Tab links */
         .tablink {
-            background-color: #f9f9f9;
             border: none;
             padding: 10px 20px;
             cursor: pointer;
@@ -47,8 +46,9 @@
         /* Tab content */
         .tabcontent {
             display: none;
-            padding: 20px;
+            padding: 20px 0;
             background-color: #fff;
+            border-radius: 10px;
         }
 
         .item {
@@ -58,7 +58,7 @@
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 8px;
-            padding: 15px;
+            padding-bottom: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s ease-in-out;
             text-align: center;
@@ -71,10 +71,10 @@
 
         .item img {
             width: 150px;
-            /* Set consistent size */
             height: 150px;
             object-fit: cover;
             margin-bottom: 10px;
+            border-radius: 7.5px 7.5px 0 0;
         }
 
         .item .store-logo {
@@ -130,6 +130,36 @@
 
         .item a:hover {
             color: #363636;
+        }
+
+        @media (max-width: 480px) {
+            .item {
+                padding-bottom: 10px;
+            }
+
+            .item img {
+                width: 140px;
+                height: 140px;
+            }
+
+            .item p {
+                font-size: 12px;
+            }
+
+            .item .price {
+                font-size: 14px;
+            }
+
+            .item button {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+
+            .catalog-items-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 5px;
+            }
         }
 
         /* Active class for the selected tablink */
@@ -234,7 +264,8 @@
         .add-to-cart:not(:disabled):hover {
             background-color: #218838;
         }
-        .add-to-cart:disabled{
+
+        .add-to-cart:disabled {
             background-color: gray;
             cursor: not-allowed;
         }
@@ -248,7 +279,6 @@
         .view-details:hover {
             background-color: #0056b3;
         }
-        
     </style>
 </head>
 <header>
@@ -343,7 +373,7 @@
                 const addToCartButton = itemDiv.querySelector('button');
                 addToCartButton.addEventListener('click', async function () {
                     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-                    const defaultVariant = currentProduct.Variants.find( variant => variant.isDefault );
+                    const defaultVariant = currentProduct.Variants.find(variant => variant.isDefault);
 
                     const existingItemIndex = cart.findIndex(item => item.selectedVariant.id === defaultVariant.id);
 
@@ -352,7 +382,7 @@
                         cart[existingItemIndex].quantity += maxStock ? 1 : 0;
                     } else {
                         const completeProduct = await product.fetchProduct(currentProduct.id); // use if incomplete variants
-                        
+
                         const itemToAdd = common.buildCartItem(completeProduct, defaultVariant, 1);
                         cart.push(itemToAdd);
                     }

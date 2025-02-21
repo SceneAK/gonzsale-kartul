@@ -13,7 +13,6 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            /* Allows wrapping on smaller screens */
             padding: 10px 0;
         }
 
@@ -67,9 +66,19 @@
             /* Aligns the icon with the text */
         }
 
-        .search-bar input {
-            padding: 5px;
-            width: 250px;
+        .search-bar-container {
+            flex: 1 1 auto;
+            max-width: 700px;
+            margin: 0 40px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 8px 12px;
+            font-size: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 8px;
         }
 
         /* Second Row: Categories */
@@ -241,12 +250,12 @@
     <div class="header-top">
         <div class="logo">
             <a href="index.html">
-                <img src="assets/images/logo_placeholder.svg" alt="GonzSale Logo">
-                GonzSale
+                <img src="assets/images/logo_placeholder.svg" alt="GonzShop Logo">
+                GonzShop
             </a>
         </div>
-        <div class="search-bar">
-            <input type="text" placeholder="Search for items... ">
+        <div class="search-bar-container">
+            <input type="text" class="search-bar" placeholder="Search...">
         </div>
         <div class="user-options">
             <div class="dropdown">
@@ -422,6 +431,7 @@
                 padding: 30px;
                 font-size: 18px;
                 color: #333;
+                background-color: rgb(248, 248, 248);
                 text-decoration: none;
                 border-radius: 10px;
             }
@@ -447,13 +457,13 @@
             .modal-content {
                 background-color: white;
                 padding: 20px;
+                margin: 0 20px;
                 border-radius: 8px;
                 width: 90%;
                 max-width: 400px;
                 text-align: center;
                 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
                 z-index: 3100;
-                /* Ensures it appears above the modal overlay */
             }
 
             .modal-content h2 {
@@ -524,9 +534,9 @@
     <div class="header-container">
         <div class="menu-icon" onclick="toggleMenu()">☰</div>
         <div class="logo">
-            <img src="assets/images/logo_placeholder.svg" alt="GonzSale Logo"
+            <img src="assets/images/logo_placeholder.svg" alt="GonzShop Logo"
                 onclick="window.location.href='index.html';">
-            <a href=" index.html">GonzSale</a>
+            <a href=" index.html">GonzShop</a>
         </div>
         <div class="user-options">
             <img src="assets/images/sign_in_icon.svg" alt="Sign In Icon" onclick="toggleModal('loginModal')">
