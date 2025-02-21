@@ -139,11 +139,15 @@ async function editProduct(id, data) // auth & store
 {
     return await jsonRequestResponse(`/product/${id}`, "PATCH", JSON.stringify(data), 'include');
 }
+async function deleteProductImage(imageId)
+{
+    return await jsonRequest(`/product/image/${imageId}`, 'DELETE', null, 'include');
+}
 async function deleteProduct(id)
 {
     return await jsonRequest(`/product/${id}`, 'DELETE', null, 'include');
 }
-const product = {fetchProduct, fetchProducts, fetchOwnedProducts, createProduct, createProductImages, editProduct, deleteProduct};
+const product = {fetchProduct, fetchProducts, fetchOwnedProducts, createProduct, createProductImages, editProduct, deleteProduct, deleteProductImage};
 //#endregion
 
 //#region Variant

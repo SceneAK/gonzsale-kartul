@@ -1,6 +1,7 @@
 import { product, variant } from '../integration/fetches.js'
-import { resetRecordedVariants, saveAndCloneRecordedVariants } from './variantBlob.js';
+import { resetRecordedVariants, saveAndCloneRecordedVariants, setRecordedVariants } from './variantBlob.js';
 import common from '../common.js';
+import { deleteDeletedPreviewImages, getProductImageFormData, resetProductImages, setExistingProductImages } from './productImagesBlob.js';
 
 const productList = document.getElementById('product-list')
 const modal = document.getElementById('product-variant-modal');
@@ -16,7 +17,7 @@ async function loadProducts() {
                 <td>${product.category}</td>
                 <td>Rp ${product.Variants[0]?.price.toLocaleString('id-ID')}</td>
                 <td>
-                    <button class="edit-btn" onclick="openEditProductModal('${product.id}')">Edit</button>
+                    <button class="edit-btn" onclick="openModalAsEditProduct('${product.id}')">Edit</button>
                     <button class="delete-btn" onclick="deleteProduct('${product.id}')">Delete</button>
                 </td>
             </tr>
@@ -37,17 +38,22 @@ const modalForm = document.getElementById('modal-form');
 const modalH1 = document.getElementById('modal-h1');
 window.openModalAsCreateProduct = function()
 {
-    modalH1.innerHTML = 'Add Product';
-    common.setValuesOfSelector('.product-inputs', modal, { name:"", description:"", category:""});
-
-    resetRecordedVariants({name: "Default", isDefault: true, unit: "Unit"});
-
+    prepareCreateProductModal();
     modal.classList.add('active')
     modalForm.onsubmit= async function (event){
         event.preventDefault();
         await createProduct(); 
         modal.classList.remove('active');
+        loadProducts();
     };
+}
+function prepareCreateProductModal()
+{
+    modalH1.innerHTML = 'Add Product';
+    common.setValuesOfSelector('.product-inputs', modal, { name:"", description:"", category:""});
+    
+    resetProductImages();
+    resetRecordedVariants({name: "Default", isDefault: true, unit: "Unit"});
 }
 
 async function createProduct()
@@ -75,17 +81,6 @@ function pullOutDefault(variantData)
     return defaultVariant;
 }
 
-window.openModalAsEditProduct = function()
-{
-    modalH1.innerHTML = 'Edit Product';
-    
-    modalForm.onclick = ()=>{};
-}
-function editProduct()
-{
-
-}
-
 window.closeModal = function () {
     modal.classList.remove('active')
 }
@@ -95,111 +90,64 @@ document.addEventListener("click", event => {
         window.closeModal()
     }
 })
-//#region fileInput loic
-const productImagesInput = document.getElementById("product-images");
-let eventDueToUpdateFileInputUI = false;
-productImagesInput.addEventListener("change", function (event) {
-    event.preventDefault();
-
-    if(eventDueToUpdateFileInputUI){
-        eventDueToUpdateFileInputUI = false
-        return;
-    }
-    const previewContainer = document.getElementById("image-preview-container");
-    previewContainer.innerHTML = "";
-
-    includePreviousFiles(productImagesInput)
-
-    populateImagePreview(previewContainer, productImagesInput.files, function(fileToRemove, index){
-        removeFromFileInput(productImagesInput, index);
-    });
-});
-
-function populateImagePreview(previewContainer, files, removeImageHandler)
-{
-    Array.from(files).forEach( (file, index)=> {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const wrapper = document.createElement("div");
-            wrapper.classList.add("image-preview-wrapper");
-
-            const deleteElement = createDeleteElement(function(){
-                removeImageHandler(file, index);
-                previewContainer.removeChild(wrapper);
-            });
-            wrapper.appendChild(deleteElement);
-
-            const img = document.createElement("img");
-            img.src = e.target.result;
-            img.classList.add("image-preview");
-            wrapper.appendChild(img);
-
-            previewContainer.appendChild(wrapper);
-        };
-        reader.readAsDataURL(file);
-    });
-}
-
-const previousDt = new DataTransfer();
-function includePreviousFiles(fileInput) {
-    const previousArr = Array.from(previousDt.files);
-    const newArr = Array.from(fileInput.files);
-
-    if(previousArr.length + newArr.length > 4){
-        newArr.splice(0, 4-previousArr.length);
-    }
-
-    newArr.forEach( file => {
-        if(!previousArr.includes(file)) previousDt.items.add(file)
-    })
-    fileInput.files = previousDt.files;
-}
-
-function removeFromFileInput(fileInput, index) {
-    previousDt.items.remove(index);
-    fileInput.files = previousDt.files; 
-    console.log(fileInput.files);
-}
-function createDeleteElement(onClickHandler)
-{
-    const deleteButton = document.createElement("span");
-    deleteButton.classList.add("delete-icon");
-    deleteButton.textContent = "×";
-    deleteButton.addEventListener('click', onClickHandler);
-    return deleteButton;
-}
-function getProductImageFormData() {
-    const formData = new FormData();
-    for (let i = 0; i < productImagesInput.files.length; i++) {
-        formData.append('images', productImagesInput.files[i]);
-    }
-    return formData;
-}
-//#endregion
 
 //#endregion
 
 //#region Edit Product
-let inputDetected;
-window.openEditProductModal = async function (productId) {
+let inputDetected = false;
+modalForm.oninput = function() { inputDetected = true; }
+window.openModalAsEditProduct = async function(productId)
+{
     inputDetected = false;
-
     const productData = await product.fetchProduct(productId)
-    setEditProduct(productData)
+    prepareEditProductModal(productData)
+
+    modal.classList.add('active');
+    modalForm.onsubmit = async function (event){
+        event.preventDefault();
+        if(inputDetected)
+        {
+            await editProduct(productId);
+            loadProducts();
+        }
+        modal.classList.remove('active');
+    }
 }
+async function editProduct(productId)
+{
+    const productData = common.getAllNameValueOfSelector('.product-inputs', modal);
+    common.convertAvailabilityKey(productData);
+    await product.editProduct(productId, productData);
+    
+    const variantDataArr = saveAndCloneRecordedVariants();
+    const {toCreate, toEdit} = variantDataArr.reduce( (accumulator, currentVariant) => {
+        delete currentVariant.isDefault;
+        
+        if(currentVariant.id) {
+            delete currentVariant.id;
+            accumulator.toEdit.push(currentVariant);
+        }else {
+            accumulator.toCreate.push(currentVariant);
+        }
+        
+        return accumulator;
+    }, { toCreate: [], toEdit: []});
+    
+    if(toCreate.length > 0) await variant.createVariants(productId, toCreate);
+    if(toEdit.length > 0) toEdit.forEach( variantData => variant.editVariant(variantData.id, variantData) );
 
-function setEditProduct(productData) {
-    editingProductId = productData.id;
-    common.setValuesOfSelector('.product-inputs', editProductVariantForm, productData)
-    common.setAvailabilityElementValue(document.getElementById('edit-product-availability'), productData.isAvailable);
-    document.getElementById('edit-product-availability')
+    deleteDeletedPreviewImages();
+    const newImages = getProductImageFormData();
+    if(newImages) await product.createProductImages(productId, newImages);
+}
+function prepareEditProductModal(productData) {
+    modalH1.innerHTML = 'Edit Product';
 
-    editPreviewContainer.innerHTML = "";
-    productData.ProductImages?.forEach(src => {
-        const img = document.createElement('img')
-        img.src = src.url
-        img.classList.add('image-preview')
-        editPreviewContainer.appendChild(img)
-    })
+    common.setValuesOfSelector('.product-inputs', modal, productData)
+    common.setAvailabilityElementValue(document.getElementById('product-availability'), productData.isAvailable);
+
+    resetProductImages();
+    setExistingProductImages(productData.ProductImages);
+    setRecordedVariants(productData.Variants);
 }
 //#endregion

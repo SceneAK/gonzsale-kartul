@@ -33,9 +33,13 @@ function addNewVariant(data)
 
 
 export function resetRecordedVariants(firstVariantData){
-    counter = 0;;
     recordedVariants = [];
     addNewVariant(firstVariantData);
+}
+export function setRecordedVariants(Variants)
+{
+    recordedVariants = Variants;
+    setSelectedVariant(0);
 }
 variantSelect.addEventListener('change', function(){
     saveVariantChanges();
@@ -48,12 +52,10 @@ document.getElementById('variant-name').onblur = ()=>{
 
 // remove variant but also save changes
 
-let counter = 0;
 window.addNewVariant = function()
 {
-    counter += 1;
     addNewVariant({
-        name: `Variant ${counter}`,
+        name: `Variant ${recordedVariants.length}`,
         stock: 0
     })
 }

@@ -30,6 +30,9 @@ DONE .env template
 > Store payment method & transaction extension tables are over engineered.
 > Deleting product does not delete its images.
 > Product Images aren't in order of uploads for some reason
+> Bulk Delete Images
+> Bulk Create Variants
+> Bulk Edit Variants
 
 - View Store percantik
 - Percantik UI Create store NEEDS BACKEND INTEGRATION

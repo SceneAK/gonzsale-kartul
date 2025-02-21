@@ -50,7 +50,6 @@ Store.belongsTo(Image, {as: 'image', foreignKey: 'imageId', onDelete: 'RESTRICT'
 
 Image.hasOne(Store, {as: 'storeWithQrImage', foreignKey: 'qrImageId', onDelete: 'SET NULL'});
 Store.belongsTo(Image, {as: 'qrImage', foreignKey: 'qrImageId', onDelete: 'SET NULL'});
-
 const StorePaymentMethod = sequelize.define('StorePaymentMethod', {
     id: {
         type: DataTypes.INTEGER,

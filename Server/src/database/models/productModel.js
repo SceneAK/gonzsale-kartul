@@ -68,7 +68,7 @@ const ProductImage = sequelize.define('ProductImage', {
 Product.hasMany(ProductImage, { foreignKey: 'productId'});
 ProductImage.belongsTo(Product, { foreignKey: 'productId' });
 
-Image.hasMany(ProductImage, {foreignKey: 'imageId'});
+Image.hasOne(ProductImage, {foreignKey: 'imageId'});
 ProductImage.belongsTo(Image, {foreignKey: 'imageId'});
 
 const variantAttributes = {

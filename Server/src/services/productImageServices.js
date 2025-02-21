@@ -55,7 +55,7 @@ async function deleteProductImages(productId, requester)
 {
     const productImages = await fetchProductImages(productId, { include: baseProductServices.include()});
     productImages.forEach( prdImg => baseProductServices.ensureProductBelongsToStore(prdImg.Product, requester.storeId) ); 
-    const imageIds = productImage.map( prdImg => prdImg.imageId);
+    const imageIds = productImages.map( prdImg => prdImg.imageId);
 
     await ProductImage.sequelize.transaction( async t => {
         await imageServices.deleteImages(imageIds, requester.id);
@@ -66,7 +66,9 @@ async function deleteProductImages(productId, requester)
 async function reorderProductImages(imageIds, productId)
 {
     const imageData = imageIds.map( (imageId, index) => { return {imageId, priority: index, productId}  })
-    await ProductImage.bulkCreate(imageData, {updateOnDuplicate: ['priority']})
+    ProductImage.sequelize.transaction( async t => {
+        await ProductImage.bulkCreate(imageData, {updateOnDuplicate: ['priority']})
+    })
 }
 
 async function _createProductImages(files, productId, userId, imagesToImageDatas)
@@ -87,7 +89,9 @@ function include(level)
     const serve = {
         model: ProductImage,
         attributes: ['priority', 'imageId'],
-        include: imageServices.include('serve')
+        include: imageServices.include('serve'),
+        separate: true,
+        order: [['priority', 'ASC']]
     };
     switch (level) {
         case 'serve':

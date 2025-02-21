@@ -45,7 +45,9 @@ async function editVariant(id, variantData, requesterStoreId)
 async function createVariants(productId, variantDataArr, requesterStoreId)
 {
     await baseProductServices.ensureBelongsToStore(productId, requesterStoreId);
-    _createVariants(productId, variantDataArr)
+    Variant.sequelize.transaction( async t => {
+        await _createVariants(productId, variantDataArr)
+    })
 }
 async function _createVariants(productId, variantDataArr)
 {
@@ -55,7 +57,7 @@ async function _createVariants(productId, variantDataArr)
 async function deleteVariant(id, requesterStoreId)
 {
     const variantWithProducts = await _fetchVariant(id, { include: baseProductServices.include()})
-    await ensureVariantBelongsToStore(variantWithProducts, requesterStoreId);
+    ensureVariantBelongsToStore(variantWithProducts, requesterStoreId);
 
     if(variantWithProducts.isDefault) throw new ApplicationError("Cannot delete default variant! Please set a different variant as default first. ", 400);
     
@@ -69,7 +71,7 @@ async function _deleteAllVariantsOfProduct(productId)
 async function setDefault(id, requesterStoreId)
 {
     const variantWithProduct = await _fetchVariant(id, {include: baseProductServices.include()});
-    await ensureVariantBelongsToStore(variantWithProduct, requesterStoreId);
+    ensureVariantBelongsToStore(variantWithProduct, requesterStoreId);
     
     await Variant.update({isDefault: false}, {where: {productId: variantWithProduct.productId} });
     await Variant.update({isDefault: true}, {where: {id: variantWithProduct.id} });

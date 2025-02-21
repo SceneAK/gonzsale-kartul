@@ -23,7 +23,7 @@ router.delete('/:id', verify(), ensureStore, product.deleteProduct);
 
 router.post('/:productId/images', verify(), ensureStore, ensureBelowLimit, productImgUploads, validate(productImageSchemas.createProductImages), productImage.createProductImage);
 
-router.delete('/images/:id', verify(), ensureStore, productImage.deleteProductImage);
+router.delete('/image/:id', verify(), ensureStore, productImage.deleteProductImage);
 
 router.post('/:productId/variants', verify(), ensureStore, validate(variantSchema.createVariants), variant.createVariants);
 
