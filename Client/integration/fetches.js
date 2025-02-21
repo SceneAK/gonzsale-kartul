@@ -191,7 +191,7 @@ async function updateItemStatus(id, status)
 async function updateItemStatusWhere(where, status)
 {
     const query = toQueryString(where);
-    return await jsonRequestResponse(`/order/item/by-product/status/${status}?${query}`, "PATCH", null, 'include');
+    return await jsonRequestResponse(`/order/item/status/${status}?${query}`, "PATCH", null, 'include');
 }
 const order = {fetchOrder, fetchMyOrders, fetchIncomingOrders, createOrder, updateItemStatus, updateItemStatusWhere};
 //#endregion

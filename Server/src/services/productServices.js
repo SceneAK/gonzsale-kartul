@@ -27,7 +27,7 @@ async function fetchProductsOfStore(storeId, page = 1, filter = {})
     const where = filterToWhereConverter.convert(filter);
     const result = await baseProductServices.fetchAndCountAll('', page, {
         attributes: [...BASIC_ATTRIBUTES, 'storeId', 'category', 'isAvailable'],
-        where: {storeId},
+        where: {storeId, ...where},
         include: [
             productImageServices.include('serveOne'),
             variantServices.include('serve')

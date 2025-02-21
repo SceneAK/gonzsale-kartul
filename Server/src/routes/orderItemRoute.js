@@ -7,6 +7,6 @@ import { orderItem } from '../controllers/index.js'
 
 router.patch('/:id/status/:status', verify(), ensureStore, orderItem.updateStatus);
 
-router.patch('/status/:status', verify(), ensureStore, validate(orderItemSchemas.whereQuery), orderItem.updateStatusWhere);
+router.patch('/status/:status', verify(), ensureStore, validate(orderItemSchemas.filterQuery), orderItem.bulkUpdateStatus);
 
 export default router;

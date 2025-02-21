@@ -2,6 +2,7 @@ import initializePromise from '../database/initialize.js';
 import ApplicationError from '../common/errors.js';
 import variantServices from './variantServices.js';
 import baseOrderServices from './baseOrderServices.js';
+import FilterToWhereConverter from '../common/filterToWhere.js';
 const { OrderItem } = await initializePromise;
 
 async function fetchOrderItems(orderId)
@@ -104,8 +105,9 @@ async function updateStatus(id, status, requesterStoreId)
     return result;
 }
 
-async function updateStatusWhere(where, requestedStatus, requesterStoreId)
+async function bulkUpdateStatus(filter, requestedStatus, requesterStoreId)
 {
+    const where = filterToWhereConverter.convert(filter); 
     let orderItems = await OrderItem.findAll({ 
         where, 
         include: [variantServices.include(), baseOrderServices.include()]
@@ -137,7 +139,7 @@ async function updateStatusWhere(where, requestedStatus, requesterStoreId)
 function ensureSameStore(orderItemsWithOrder)
 {
     const firstItem = orderItemsWithOrder[0].Order;
-    const differentStore = orderItemsWithVariants.some( item => item.Order.storeId != firstItem.storeId )
+    const differentStore = orderItemsWithOrder.some( item => item.Order.storeId != firstItem.storeId )
     if(differentStore) throw new ApplicationError('Bulk Update Status cannot be across different stores', 401);
 }
 
@@ -191,7 +193,7 @@ export default {
     _createOrderItems, 
     _deleteOrderItemsOfOrder,
     updateStatus, 
-    updateStatusWhere, 
+    bulkUpdateStatus, 
     statusOrder,
     include
 }
@@ -220,3 +222,8 @@ class OrderItemStockUpdater {
     }
 }
 const stockUpdater = new OrderItemStockUpdater(variantServices)
+const filterToWhereConverter = new FilterToWhereConverter({
+    toLike: [
+        'notes'
+    ]
+});

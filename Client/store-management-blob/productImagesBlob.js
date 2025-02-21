@@ -18,6 +18,7 @@ export function setExistingProductImages(productImages)
         populateImagePreview();
         productImagesInput.required = false;
     }
+    console.log(existingProductImages);
 }
 function populateImagePreview()
 {
@@ -28,9 +29,11 @@ function populateImagePreview()
     });
 }
 let imageIdstoBeDeleted = [];
-export function deleteDeletedPreviewImages()
+export async function deleteDeletedPreviewImages()
 {
-    imageIdstoBeDeleted.forEach( async imageId => await product.deleteProductImage(imageId) );
+    for(const imageId of imageIdstoBeDeleted){
+        await product.deleteProductImage(imageId)
+    }
 }
 function populateWithExistingImagePreview(container, existingProductImages = [])
 {
@@ -76,12 +79,12 @@ function addImagePreview(src, deleteHandler)
 const previousDt = new DataTransfer();
 export function resetProductImages()
 {
+    previewContainer.innerHTML = "";
     previousDt.clearData();
     existingProductImages = [];
     imageIdstoBeDeleted = [];
     productImagesInput.required = true;
     productImagesInput.files = previousDt.files;
-    previewContainer.innerHTML = "";
 }
 function includePreviousFiles(fileInput) {
     const previousArr = Array.from(previousDt.files);

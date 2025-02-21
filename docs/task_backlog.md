@@ -13,9 +13,10 @@ Please sort by importance
 
 ## Integrationn
 .Automatic refresh token
-> Create & Delete Variant
-> Create & Delete Product Image
-> Update order status bulk
+DONE Update order status bulk
+    > Error with variant selection fo some reason
+    > Refresh the page
+    > Filter by notes too
 
 # BACKEND
 DONE fetching product+variant via variantId
@@ -24,24 +25,14 @@ DONE Prepare to switch to https & ssl certificate
 DONE prepare reCaptcha v2 middleware & env
     . test it when deployed
 DONE .env template
+> Change database name to lowercase 
+> Product Images aren't in order of uploads for some reason
 > Turn display product into an SSR
     DONE reconfigure custom multer storage
 
-> Store payment method & transaction extension tables are over engineered.
-> Deleting product does not delete its images.
-> Product Images aren't in order of uploads for some reason
-> Bulk Delete Images
-> Bulk Create Variants
-> Bulk Edit Variants
-
-- View Store percantik
-- Percantik UI Create store NEEDS BACKEND INTEGRATION
-- Checkout, storenya displaynya sama padahal storenya beda
-- Order history nama headernya (COMPLETED, READY, PENDING) masih undefined dan no image
-- Create Variant UI design NEEDS BACKEND INTEGRATION
-- Carousel for product images NEEDS BACKEND INTEGRATION
--  Not adding a +62 format anymore, just sticking with example placeholder.
-- delete image through the editproduct form, small x button near the displayed images. NEEDS BACKEND INTEGRATION
+- Store payment method & transaction extension tables are over engineered.
+- Bulk Delete Images
+- Bulk Edit Variants
 
 ## orders
 . Mailing Customers when order status changes, when product gets deleted 
@@ -50,7 +41,7 @@ DONE .env template
 - Design the system
 
 ## Preorder specific data
-- Make frontend tell you if it's preorder
+> Make frontend tell you if it's preorder
 
 ## OAuth2
 

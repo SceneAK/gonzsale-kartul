@@ -7,11 +7,11 @@ const updateStatus = async (req, res) => {
     return res.json(result || {});
 }
 
-const updateStatusWhere = async (req, res) => {
+const bulkUpdateStatus = async (req, res) => {
     const {status} = req.params;
 
-    const result = await orderItemServices.updateStatusWhere(req.query, status, req.decodedAuthToken.storeId);
+    const result = await orderItemServices.bulkUpdateStatus(req.query, status, req.decodedAuthToken.storeId);
     return res.json(result || {});
 }
 
-export default {updateStatus, updateStatusWhere}
+export default {updateStatus, bulkUpdateStatus}

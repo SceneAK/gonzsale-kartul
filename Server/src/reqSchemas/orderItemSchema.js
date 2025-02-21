@@ -9,7 +9,7 @@ const orderItem = Joi.object({
     notes: Joi.string()
 });
 
-const whereQuerySchema = {
+const filterQuerySchema = {
     query: Joi.object({
         variantId: UUID,
         variantName: variantSchema.variantBody.name,
@@ -20,5 +20,5 @@ const whereQuerySchema = {
 
 export default {
     orderItem,
-    whereQuery: whereQuerySchema
+    filterQuery: filterQuerySchema
 };

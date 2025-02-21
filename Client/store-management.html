@@ -105,8 +105,13 @@
                         <option value="">...</option>
                     </select>
                     <input type="text" id="search-notes" placeholder="Search by Notes...">
+                    <select name="status" id="bulk-status-update-select">
+                        <option value="READY">READY</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                        <option value="CANCELLED">CANCELLED</option>
+                    </select>
                     <div class="bulk-actions">
-                        <button onclick="bulkUpdateStatus('COMPLETED')">Bulk Set Status</button>
+                        <button onclick="bulkUpdateStatusByProduct()">Bulk Set Status</button>
                     </div>
                 </div>
                 <!-- Search Results Counter -->
@@ -239,7 +244,7 @@
 
                 <div class="modal-form-buttons">
                     <button type="button" onclick="closeModal()">Cancel</button>
-                    <button type="submit">Tambah Produk</button>
+                    <button type="submit" id="submit-button" >Tambah Produk</button>
                 </div>
             </form>
         </div>

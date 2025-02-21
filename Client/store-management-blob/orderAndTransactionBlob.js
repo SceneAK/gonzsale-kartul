@@ -1,4 +1,4 @@
-import { product, order, transaction } from '../integration/fetches.js'
+import { product, order, transaction, variant } from '../integration/fetches.js'
 import common from '../common.js';
 import { syncVariantOptions } from './variantBlob.js';
 
@@ -53,12 +53,12 @@ async function loadOrders(page) {
             detailCell.colSpan = 8
             detailCell.style = 'width: 100%;'
             detailCell.innerHTML = `
-                    <div><strong class="orderIdCopy">${order.customerName}'s Order:</strong></div>
+                    <div><strong class="orderIdCopy" onclick="copyToClipboard('${order.id}')">${order.customerName}'s Order:</strong></div>
                     <table style="width: 100%; border-collapse: collapse;">
                         <thead>
                             <tr style="background: #ff9900; color: #fff;">
-                                <th style="padding: 5px; border: 1px solid #ddd;">Select</th>
                                 <th style="padding: 5px; border: 1px solid #ddd;">Product</th>
+                                <th style="padding: 5px; border: 1px solid #ddd;">Variant</th>
                                 <th style="padding: 5px; border: 1px solid #ddd;">Quantity</th>
                                 <th style="padding: 5px; border: 1px solid #ddd;">Price</th>
                                 <th style="padding: 5px; border: 1px solid #ddd;">Notes</th>
@@ -86,17 +86,21 @@ async function loadOrders(page) {
     }
 }
 
+let cachedVariants = [];
 const variantFilterSelect = document.getElementById('order-variant-filter-select');
 variantFilterSelect.addEventListener('change', function () {
-    orderFilters.variantId = variantFilterSelect.value;
+    const selectedIndex = variantFilterSelect.value;
+    orderFilters.variantId = cachedVariants[selectedIndex].id;
     formatFilterAndReloadOrders()
 })
-function updateOrderVariantFilter(variants) {
+function cacheVariantUpdateSelect(variants) {
+    cachedVariants = variants;
     variantFilterSelect.disabled = !variants;
     variantFilterSelect.innerHTML = "";
     if (variants) {
-        syncVariantOptions(variants, variantFilterSelect)
+        syncVariantOptions(variants, variantFilterSelect);
         orderFilters.variantId = variants.find(variant => variant.isDefault).id;
+        variantFilterSelect.selected = orderFilters.variantId;
     } else {
         variantFilterSelect.innerHTML = "<option>...</option>"
         orderFilters.variantId = undefined;
@@ -105,18 +109,34 @@ function updateOrderVariantFilter(variants) {
 }
 
 const productSearch = document.getElementById("search-product");
-common.InputDebouncer.listen(productSearch, async function () {
-    if (productSearch.value == "") {
-        updateOrderVariantFilter(null)
-        return;
+common.InputDebouncer.listen(productSearch, updateOrderVariantFilter, true)
+productSearch.onblur = updateOrderVariantFilter;
+let lastNameSearched = "";
+async function updateOrderVariantFilter()
+{
+    if (productSearch.value != lastNameSearched) {
+        lastNameSearched = productSearch.value;
+        const results = await product.fetchOwnedProducts(1, { name: productSearch.value });
+        const productWithMatchingName = results.items[0];
+        cacheVariantUpdateSelect(productWithMatchingName?.Variants);
     }
-
-    const results = await product.fetchOwnedProducts(1, { name: productSearch.value });
-    const productWithMatchingName = results.items[0];
-    updateOrderVariantFilter(productWithMatchingName?.Variants);
-}, true)
+}
 
 const noteSearch = document.getElementById("search-notes");
+common.InputDebouncer.listen(noteSearch, updateOrderNotesFilter, true)
+noteSearch.onblur = updateOrderNotesFilter;
+let lastNoteSearched = "";
+async function updateOrderNotesFilter()
+{
+    if(noteSearch.value != lastNoteSearched)
+    {
+        lastNoteSearched = noteSearch.value;
+        console.log("CHAGED");
+        orderFilters.notes = noteSearch.value;
+        formatFilterAndReloadOrders();
+    }
+}
+
 common.InputDebouncer.listen(noteSearch, async function () {
     if (noteSearch.value == "") return;
     // just update the cachedFilter and reload orders;
@@ -162,7 +182,7 @@ function getStatusClass(status) {
     }
 }
 
-function copyToClipboard(text) {
+window.copyToClipboard = function(text) {
     navigator.clipboard.writeText(text)
 }
 
@@ -187,10 +207,8 @@ async function populatetDetailRow(orderId, detailRow) {
     fullOrder.OrderItems.forEach(orderItem => {
         tbody.innerHTML += `
                 <tr style="border: 1px solid #ddd;" id="tbodyrow-${orderItem.id}">
-                    <td style="padding: 5px; border: 1px solid #ddd;">
-                      <input type="checkbox" class="bulk-checkbox" data-order-item-id="${orderItem.id}">
-                    </td>
                     <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.productName}</td>
+                    <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.variantName}</td>
                     <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.quantity}</td>
                     <td style="padding: 5px; border: 1px solid #ddd;">Rp ${orderItem.variantPrice.toLocaleString('id-ID')}</td>
                     <td style="padding: 5px; border: 1px solid #ddd;" class="${getStatusClass(orderItem.status)}">${orderItem.status}</td>
@@ -246,46 +264,16 @@ window.openTransactionImage = async function (transactionId) {
         alert('Failed to fetch transaction image.')
     }
 }
-
-async function markOrderAsCompleted(orderId) {
-    alert(`Marking order ${orderId} as completed!`)
-}
-
 async function deleteOrder(orderId) {
     if (confirm(`Are you sure you want to delete order ${orderId}?`)) {
+        // order.deleteOrder(orderId)
         alert(`Order ${orderId} deleted.`)
     }
 }
 
-// Delete a single order item
-function deleteOrderItem(orderItemId) {
-    if (confirm('Are you sure you want to delete this order item?')) {
-        // Stub: Call your API to delete the order item here.
-        alert('Order item ' + orderItemId + ' deleted.')
-        const row = document.getElementById(`tbodyrow-${orderItemId}`)
-        if (row) row.remove()
-    }
-}
-
-// Bulk update status for selected order items
-async function bulkUpdateStatus(newStatus) {
-    const checkboxes = document.querySelectorAll('.bulk-checkbox:checked')
-    for (const checkbox of checkboxes) {
-        const orderItemId = checkbox.getAttribute('data-order-item-id')
-        try {
-            await order.updateItemStatus(orderItemId, newStatus)
-            const row = document.getElementById(`tbodyrow-${orderItemId}`)
-            if (row) {
-                const statusTd = row.children[4]
-                statusTd.textContent = newStatus
-                statusTd.className = getStatusClass(newStatus)
-                const select = row.querySelector('.status-select')
-                if (select) {
-                    select.value = newStatus
-                }
-            }
-        } catch (err) {
-            console.error('Bulk update failed for order item ', orderItemId, err)
-        }
-    }
+const bulkStatusUpdateSelect = document.getElementById("bulk-status-update-select");
+window.bulkUpdateStatusByProduct = async function() {
+    const newStatus = bulkStatusUpdateSelect.value;
+    await order.updateItemStatusWhere(orderFilters, newStatus);
+    loadOrders(cachedCurrentPage);
 }

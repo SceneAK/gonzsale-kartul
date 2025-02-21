@@ -5,6 +5,7 @@ import { deleteDeletedPreviewImages, getProductImageFormData, resetProductImages
 
 const productList = document.getElementById('product-list')
 const modal = document.getElementById('product-variant-modal');
+const submitBtn = document.getElementById('submit-button');
 
 loadProducts();
 // Load products data
@@ -50,6 +51,7 @@ window.openModalAsCreateProduct = function()
 function prepareCreateProductModal()
 {
     modalH1.innerHTML = 'Add Product';
+    submitBtn.innerHTML = 'Create Product';
     common.setValuesOfSelector('.product-inputs', modal, { name:"", description:"", category:""});
     
     resetProductImages();
@@ -96,6 +98,7 @@ document.addEventListener("click", event => {
 //#region Edit Product
 let inputDetected = false;
 modalForm.oninput = function() { inputDetected = true; }
+modalForm.onclick = function() { inputDetected = true; }
 window.openModalAsEditProduct = async function(productId)
 {
     inputDetected = false;
@@ -136,12 +139,13 @@ async function editProduct(productId)
     if(toCreate.length > 0) await variant.createVariants(productId, toCreate);
     if(toEdit.length > 0) toEdit.forEach( variantData => variant.editVariant(variantData.id, variantData) );
 
-    deleteDeletedPreviewImages();
+    await deleteDeletedPreviewImages();
     const newImages = getProductImageFormData();
     if(newImages) await product.createProductImages(productId, newImages);
 }
 function prepareEditProductModal(productData) {
     modalH1.innerHTML = 'Edit Product';
+    submitBtn.innerHTML = 'Edit';
 
     common.setValuesOfSelector('.product-inputs', modal, productData)
     common.setAvailabilityElementValue(document.getElementById('product-availability'), productData.isAvailable);
