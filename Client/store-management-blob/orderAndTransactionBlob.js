@@ -1,19 +1,22 @@
 import { product, order, transaction, variant } from '../integration/fetches.js'
 import common from '../common.js';
+import PaginationManager from '../pagination.js';
 import { syncVariantOptions } from './variantBlob.js';
 
+const orderDiv = document.getElementById('orders')
+const paginationManager = new PaginationManager(orderDiv, loadOrders);
 // Load orders data
 let orderFilters = {};
-let cachedCurrentPage;
-loadOrders();
+paginationManager.callLoadPageHandler();
 async function loadOrders(page) {
     const orderTableBody = document.getElementById('order-table-body')
     const loader = document.getElementById('loader')
     loader.style.display = 'block'
     try {
         const result = await order.fetchIncomingOrders(page, orderFilters)
-        setPaginationValues(result.items.length, result.total, result.page, result.totalPages);
-        const orders = result.items
+        const orders = result.items;
+        paginationManager.updatePaginationValues(orders.length, result.totalItems, result.page, result.totalPages);
+        
         orderTableBody.innerHTML = ""
         orders.forEach(order => {
             const createdAt = new Date(order.createdAt)
@@ -149,26 +152,8 @@ function formatFilterAndReloadOrders() {
             delete orderFilters[key];
         }
     }
-    loadOrders(1);
+    paginationManager.callLoadPageHandler(1);
 }
-
-const nextPage = document.getElementById("next-page")
-const prevPage = document.getElementById("prev-page")
-function setPaginationValues(showing, total, page, totalPages) {
-    cachedCurrentPage = page;
-    document.getElementById("counter-value").textContent = showing;
-    document.getElementById("total-value").textContent = total;
-    document.getElementById("page-info").textContent = page;
-    document.getElementById("total-page-info").textContent = totalPages;
-    nextPage.disabled = page == totalPages;
-    prevPage.disabled = page <= 1;
-}
-nextPage.addEventListener('click', function () {
-    loadOrders(cachedCurrentPage + 1)
-})
-prevPage.addEventListener('click', function () {
-    loadOrders(cachedCurrentPage - 1);
-})
 
 function getStatusClass(status) {
     if (status.includes('COMPLETED')) {
@@ -275,5 +260,5 @@ const bulkStatusUpdateSelect = document.getElementById("bulk-status-update-selec
 window.bulkUpdateStatusByProduct = async function() {
     const newStatus = bulkStatusUpdateSelect.value;
     await order.updateItemStatusWhere(orderFilters, newStatus);
-    loadOrders(cachedCurrentPage);
+    paginationManager.callLoadPageHandler();
 }

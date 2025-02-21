@@ -109,7 +109,7 @@ const store = {fetchStore, fetchOwnedStore, createStore, editStore};
 //#endregion
 
 //#region Product
-async function fetchProducts(category, others = {}, page = 1)
+async function fetchProducts(category, page = 1, others = {})
 {
     const paramsObj = { category, ...others, page};
     const products = await jsonRequestResponse(`/product/search?${toQueryString(paramsObj)}`, "GET");

@@ -325,6 +325,10 @@
     <script type="module">
         import { product } from './integration/fetches.js';
         import common from './common.js';
+        import PaginationManager from './pagination.js';
+
+        const catalogDiv = document.querySelector('.catalog');
+        const paginationManager = new PaginationManager(catalogDiv, loadProductsCurrentCategory);
 
         const categoryToIdPair = {
             shirts: "shirts-items-container",
@@ -335,14 +339,14 @@
             all: "all-items-container",
         };
 
-        function populateItems(container, products) {
-            container.innerHTML = '';
+        let currentActiveContainer;
+        function populateItems(products) {
+            currentActiveContainer.innerHTML = '';
 
             if (!products || products.length === 0) {
-                container.innerHTML = '<p>No products available for this category.</p>';
+                currentActiveContainer.innerHTML = '<p>No products available for this category.</p>';
                 return;
             }
-            console.log(products);
             products.forEach(currentProduct => {
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('item');
@@ -390,10 +394,9 @@
                     localStorage.setItem('cart', JSON.stringify(cart));
                     alert(`${currentProduct.name} has been added to your cart!`);
                 });
-                container.appendChild(itemDiv);
+                currentActiveContainer.appendChild(itemDiv);
             });
         }
-
 
         async function openCategory(categoryName) {
             const container = document.getElementById(categoryToIdPair[categoryName.toLowerCase()]);
@@ -401,6 +404,7 @@
                 console.error(`Invalid category: ${categoryName}`);
                 return;
             }
+            currentActiveContainer = container;
 
             // Hide all other tab contents
             const tabcontents = document.getElementsByClassName("tabcontent");
@@ -414,15 +418,20 @@
             }
             selectedTab.style.display = "block";
 
-            const result = await product.fetchProducts(categoryName);
+            loadProductsCurrentCategory();
+        }
+        async function loadProductsCurrentCategory(page = 1)
+        {
+            const categoryName = window.location.hash.substring(1);
+            const result = await product.fetchProducts(categoryName, page);
             const products = result.items;
 
-            // Finally, populate the container with the combined (or single) set of items
-            populateItems(container, products);
+            paginationManager.updatePaginationValues(products.length, result.totalItems, page, result.totalPages);
+            populateItems(products);
         }
 
         function handleHashChange() {
-            const hash = window.location.hash.substring(1); // Remove the '#' from the hash
+            const hash = window.location.hash.substring(1);
             if (hash) {
                 openCategory(hash);
             } else {

@@ -608,7 +608,7 @@ td {
 }
 
 /* PAGINATION NEXT/PREVIOUS */
-.pagination {
+.pagination-control {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -616,7 +616,7 @@ td {
     gap: 10px;
 }
 
-.pagination button {
+.pagination-control button {
     padding: 8px 12px;
     background-color: #ff9900;
     color: #fff;
@@ -626,11 +626,11 @@ td {
     transition: background-color 0.3s ease;
 }
 
-.pagination button:hover:not(:disabled) {
+.pagination-control button:hover:not(:disabled) {
     background-color: #e68a00;
 }
 
-.pagination button:disabled {
+.pagination-control button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
@@ -662,9 +662,9 @@ td {
     outline: none;
 }
 
-.search-counter {
+.item-count-info {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     font-size: 1em;
     color: #555;
 }

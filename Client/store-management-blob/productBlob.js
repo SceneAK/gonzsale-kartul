@@ -1,17 +1,23 @@
 import { product, variant } from '../integration/fetches.js'
 import { resetRecordedVariants, saveAndCloneRecordedVariants, setRecordedVariants } from './variantBlob.js';
 import common from '../common.js';
+import PaginationManager from '../pagination.js';
 import { deleteDeletedPreviewImages, getProductImageFormData, resetProductImages, setExistingProductImages } from './productImagesBlob.js';
 
 const productList = document.getElementById('product-list')
 const modal = document.getElementById('product-variant-modal');
 const submitBtn = document.getElementById('submit-button');
 
-loadProducts();
+const productDiv = document.getElementById('products');
+
+const paginationManager = new PaginationManager(productDiv, loadProducts);
+paginationManager.callLoadPageHandler();
 // Load products data
-async function loadProducts() {
-    const result = await product.fetchOwnedProducts(1)
+async function loadProducts(page = 1) {
+    const result = await product.fetchOwnedProducts(page)
     const products = result.items
+    paginationManager.updatePaginationValues(products.length, result.totalItems, result.page, result.totalPages);
+
     productList.innerHTML = products.map(product => `
             <tr>
                 <td>${product.name}</td>
@@ -27,7 +33,7 @@ async function loadProducts() {
 window.deleteProduct = async function (id) {
     try {
         await product.deleteProduct(id);
-        loadProducts();
+        paginationManager.callLoadPageHandler();
 
     } catch (err) { alert('error deleting product') }
 }
@@ -45,7 +51,7 @@ window.openModalAsCreateProduct = function()
         event.preventDefault();
         await createProduct(); 
         modal.classList.remove('active');
-        loadProducts();
+        paginationManager.callLoadPageHandler();
     };
 }
 function prepareCreateProductModal()
@@ -111,7 +117,7 @@ window.openModalAsEditProduct = async function(productId)
         if(inputDetected)
         {
             await editProduct(productId);
-            loadProducts();
+            paginationManager.callLoadPageHandler();
         }
         modal.classList.remove('active');
     }

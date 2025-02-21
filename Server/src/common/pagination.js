@@ -1,19 +1,19 @@
 
-export function paginationOption(page, limit = 40)
+export function paginationOption(page, itemsPerPage = 40)
 {
     return {
-        limit,
-        offset: (page-1)*limit,
+        limit: itemsPerPage,
+        offset: (page-1)*itemsPerPage,
         distinct: true
     }
 }
-export function reformatFindCountAll(result, page)
+export function reformatFindCountAll(result, page, itemsPerPage = 40)
 {
     const {rows, count, ...others} = result;
-    const totalPages = Math.ceil(count/rows.length);
+    const totalPages = Math.ceil(count/itemsPerPage);
     const transformed = {
         items: rows,
-        total: count,
+        totalItems: count,
         page,
         totalPages,
         ...others

@@ -28,13 +28,14 @@ async function _fetchUser(id, options)
 
 async function fetchUsers(requesterId, page = 1, where = {})
 {
+    const ITEMS_PER_PAGE = 100;
     await ensureAdmin(requesterId);
     const result = await User.findAndCountAll( {
         attributes: SERVE_ATTRIBUTES,
-        ...paginationOption(page), 
+        ...paginationOption(page, ITEMS_PER_PAGE), 
         where
     });
-    return reformatFindCountAll(result, page);
+    return reformatFindCountAll(result, page, ITEMS_PER_PAGE);
 }
 
 async function signIn(email, password)

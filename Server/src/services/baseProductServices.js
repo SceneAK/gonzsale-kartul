@@ -5,11 +5,12 @@ const { Product } = await databaseInitializePromise;
 
 async function fetchAndCountAll(scope, page = 1, options)
 {
+    const ITEMS_PER_PAGE = 40;
     const result = await Product.scope(scope).findAndCountAll({
         ...options,
-        ...paginationOption(page)
+        ...paginationOption(page, ITEMS_PER_PAGE)
     });
-    return reformatFindCountAll(result, page).itemsToJSON();
+    return reformatFindCountAll(result, page, ITEMS_PER_PAGE).itemsToJSON();
 }
 
 async function fetchProduct(id, options){

@@ -16,11 +16,12 @@ async function fetchOrder(id, options)
 }
 async function fetchAndCountAll(page, options)
 {
+    const ITEMS_PER_PAGE = 10;
     const result = await Order.findAndCountAll({
         ...options,
-        ...paginationOption(page, 10)
+        ...paginationOption(page, ITEMS_PER_PAGE)
     });
-    return reformatFindCountAll(result, page).itemsToJSON();
+    return reformatFindCountAll(result, page, ITEMS_PER_PAGE).itemsToJSON();
 }
 
 async function _createOrder(customerDetails, storeId, options)

@@ -13,20 +13,11 @@ Please sort by importance
 
 ## Integrationn
 .Automatic refresh token
-DONE Update order status bulk
-    > Error with variant selection fo some reason
-    > Refresh the page
-    > Filter by notes too
 
 # BACKEND
-DONE fetching product+variant via variantId
-DONE Prepare to switch to https & ssl certificate
-    NO (AT LEAST NOT NOW) Maybe switch to nginx?
-DONE prepare reCaptcha v2 middleware & env
-    . test it when deployed
-DONE .env template
-> Change database name to lowercase 
+? Change database name to lowercase 
 > Product Images aren't in order of uploads for some reason
+> Bug with edit image or somthin... 
 > Turn display product into an SSR
     DONE reconfigure custom multer storage
 
