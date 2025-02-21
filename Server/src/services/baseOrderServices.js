@@ -1,7 +1,7 @@
 import ApplicationError from '../common/errors.js';
-import initializePromise from '../database/initialize.js';
+import dbInitPromise from '../database/initialize.js';
 import { paginationOption, reformatFindCountAll } from '../common/pagination.js';
-const { Order } = await initializePromise;
+const { Order } = await dbInitPromise;
 
 async function fetchAll(options)
 {

@@ -1,7 +1,7 @@
 import ApplicationError from '../common/errors.js';
-import databaseInitializePromise from '../database/initialize.js'
+import dbInitPromise from '../database/initialize.js'
 import baseProductServices from './baseProductServices.js';
-const { Variant } = await databaseInitializePromise;
+const { Variant } = await dbInitPromise;
 
 const ATTRIBUTES = ['id', 'name', 'price', 'unit', 'stock', 'isDefault']
 

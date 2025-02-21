@@ -1,7 +1,7 @@
 import ApplicationError from '../common/errors.js';
-import databaseInitializePromise from '../database/initialize.js';
+import dbInitPromise from '../database/initialize.js';
 import imageServices from './imageServices.js';
-const { ProofTransaction } = await databaseInitializePromise;
+const { ProofTransaction } = await dbInitPromise;
 
 async function createProofTransaction(proofImage, transactionId, userId)
 {

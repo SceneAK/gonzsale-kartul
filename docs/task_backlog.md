@@ -16,11 +16,11 @@ Please sort by importance
 
 # BACKEND
 ? Change database name to lowercase 
-> Product Images aren't in order of uploads for some reason
-> Bug with edit image or somthin... 
+? Bug with edit image or somthin... 
 > Turn display product into an SSR
     DONE reconfigure custom multer storage
-
+DONE Transition to sequelize cli...
+    make migration script
 - Store payment method & transaction extension tables are over engineered.
 - Bulk Delete Images
 - Bulk Edit Variants

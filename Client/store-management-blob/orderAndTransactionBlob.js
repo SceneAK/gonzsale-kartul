@@ -196,8 +196,8 @@ async function populatetDetailRow(orderId, detailRow) {
                     <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.variantName}</td>
                     <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.quantity}</td>
                     <td style="padding: 5px; border: 1px solid #ddd;">Rp ${orderItem.variantPrice.toLocaleString('id-ID')}</td>
+                    <td style="padding: 5px; border: 1px solid #ddd;font-style: italic;">${orderItem.notes || "..."}</td>
                     <td style="padding: 5px; border: 1px solid #ddd;" class="${getStatusClass(orderItem.status)}">${orderItem.status}</td>
-                    <td style="padding: 5px; border: 1px solid #ddd;">${orderItem.notes || ""}</td>
                     <td style="padding: 5px; border: 1px solid #ddd;">
                       <select class="status-select" data-order-item-id="${orderItem.id}">
                           <option value="PENDING" ${orderItem.status === "PENDING" ? "selected" : ""}>PENDING</option>
@@ -214,14 +214,13 @@ async function populatetDetailRow(orderId, detailRow) {
         console.log(selectElement);
         if (selectElement) {
             selectElement.addEventListener('change', async event => {
-                console.log("TEST");
                 const newStatus = event.target.value
                 if (newStatus !== orderItem.status) {
                     try {
 
                         await order.updateItemStatus(orderItem.id, newStatus)
 
-                        const statusTd = document.querySelector(`#tbodyrow-${orderItem.id} td:nth-child(5)`)
+                        const statusTd = document.querySelector(`#tbodyrow-${orderItem.id} td:nth-child(6)`)
                         statusTd.textContent = newStatus
                         statusTd.className = getStatusClass(newStatus)
                         orderItem.status = newStatus

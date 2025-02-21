@@ -1,7 +1,7 @@
 import { promises as fs} from 'fs';
 import { logger, getFull } from '../common/index.js';
-import dbInitializePromise from '../database/initialize.js'
-const { UserStorage } = await dbInitializePromise;
+import dbInitPromise from '../database/initialize.js'
+const { UserStorage } = await dbInitPromise;
 
 async function getUsed(userId)
 {

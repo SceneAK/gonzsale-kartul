@@ -1,7 +1,7 @@
 import ApplicationError from '../common/errors.js';
-import databaseInitializePromise from '../database/initialize.js';
+import dbInitPromise from '../database/initialize.js';
 import { paginationOption, reformatFindCountAll } from '../common/index.js';
-const { Product } = await databaseInitializePromise;
+const { Product } = await dbInitPromise;
 
 async function fetchAndCountAll(scope, page = 1, options)
 {

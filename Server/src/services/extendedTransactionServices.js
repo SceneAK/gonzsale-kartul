@@ -1,8 +1,8 @@
 import transactionServices from './transactionServices.js';
 import proofTransactionServices from './proofTransactionServices.js';
 import ApplicationError from '../common/errors.js';
-import { getInstance } from '../database/sequelize.js';
-const sequelize = getInstance();
+import dbInitPromise from '../database/initialize.js';
+const { sequelize } = await dbInitPromise;
 
 async function createTransaction(transactionData, method, requesterId)
 {

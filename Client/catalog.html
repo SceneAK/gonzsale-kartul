@@ -359,7 +359,7 @@
                         return;
                     }
                     // Navigate to display-product.html with the product id in the query string
-                    window.location.href = `display-product.html?id=${currentProduct.id}`;
+                    window.location.href = `ssr/display-product/${currentProduct.id}`;
                 });
 
                 const firstImg = currentProduct.ProductImages[0]?.url || 'assets/images/placeholder.png'; // fallback image if needed

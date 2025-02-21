@@ -1,5 +1,4 @@
 import FilterToWhereConverter from '../common/filterToWhere.js';
-import { OrderItem } from '../database/models/orderModel.js';
 import baseOrderServices from './baseOrderServices.js';
 import orderItemServices from './orderItemServices.js';
 import storeServices from './storeServices.js';

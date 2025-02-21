@@ -1,8 +1,8 @@
 import ApplicationError from '../common/errors.js';
-import databaseInitializePromise from '../database/initialize.js';
+import dbInitPromise from '../database/initialize.js';
 import orderServices from './orderServices.js';
 import storeServices from './storeServices.js';
-const { Transaction } = await databaseInitializePromise;
+const { Transaction } = await dbInitPromise;
 
 const ATTRIBUTES = ['id', 'orderId', 'method', 'amount', 'type', 'createdAt']
 

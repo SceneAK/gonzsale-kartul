@@ -1,9 +1,9 @@
-import {__dirname, env } from '../../initialize.js';
+import {SERVER_DIR, env } from '../../initialize.js';
 import upath from 'upath';
 import pinoHttp from 'pino-http';
 import pino from "pino";
 
-const dest = pino.destination(upath.join(__dirname, '.log'))
+const dest = pino.destination(upath.join(SERVER_DIR, '.log'))
 const level = env.NODE_ENV.toLowerCase() == 'development' ? 'debug' : 'info';
 const logger = pino({ 
     level,

@@ -1,10 +1,10 @@
 import ApplicationError from "../common/errors.js";
 import { productImage } from "../controllers/index.js";
-import databaseInitializePromise from "../database/initialize.js";
+import dbInitPromise from "../database/initialize.js";
 import baseProductServices from "./baseProductServices.js";
 import imageServices from "./imageServices.js";
 import storeServices from "./storeServices.js";
-const { ProductImage } = await databaseInitializePromise;
+const { ProductImage } = await dbInitPromise;
 
 const MAX_IMAGES = 4;
 async function fetchProductImages(productId, option = {})

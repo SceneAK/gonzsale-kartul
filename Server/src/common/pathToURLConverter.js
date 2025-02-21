@@ -1,8 +1,8 @@
-import { STATIC_ROUTE_NAME } from '../../initialize.js';
+import { AGREED_PUBLIC_ROUTE_NAME } from '../../initialize.js';
 
 function buildURL(protocol, host, relativePath)
 {
-    return `${protocol}://${host}/${STATIC_ROUTE_NAME}/${relativePath}`;
+    return `${protocol}://${host}/${AGREED_PUBLIC_ROUTE_NAME}/${relativePath}`;
 }
 
 const pathFieldName = 'path';

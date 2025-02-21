@@ -1,9 +1,9 @@
-import initializePromise from '../database/initialize.js';
+import dbInitPromise from '../database/initialize.js';
 import ApplicationError from '../common/errors.js';
 import variantServices from './variantServices.js';
 import baseOrderServices from './baseOrderServices.js';
 import FilterToWhereConverter from '../common/filterToWhere.js';
-const { OrderItem } = await initializePromise;
+const { OrderItem } = await dbInitPromise;
 
 async function fetchOrderItems(orderId)
 {

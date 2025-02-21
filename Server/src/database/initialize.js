@@ -1,14 +1,12 @@
-import { getInstance } from './sequelize.js';
-import * as models from './models/index.js';
+import db from './models/index.js';
 import { logger } from '../common/index.js';
 
-const databaseInitializePromise = (async () => {
+const dbInitPromise = (async () => {
   try
   {
-    const sequelize = getInstance();
-    await sequelize.authenticate();
+    await db.sequelize.authenticate();
     logger.info('Database initialized');
-    return { sequelize, ...models };
+    return db;
   }catch(err)
   {
     logger.error('Error initializing database: ' + err);
@@ -16,4 +14,4 @@ const databaseInitializePromise = (async () => {
   }
 })();
 
-export default databaseInitializePromise;
+export default dbInitPromise;

@@ -1,7 +1,7 @@
 import { ApplicationError, getRelative, logger }from '../common/index.js'
-import databaseInitializePromise from '../database/initialize.js'
+import dbInitPromise from '../database/initialize.js'
 import userStorageServices from './userStorageServices.js';
-const { Image } = await databaseInitializePromise;
+const { Image } = await dbInitPromise;
 
 async function createImages(files, userId = null) 
 {

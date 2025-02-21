@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt'; 
 import { env } from '../../initialize.js';
-import databaseInitializePromise from '../database/initialize.js'
+import dbInitPromise from '../database/initialize.js'
 import { ApplicationError, paginationOption, reformatFindCountAll } from '../common/index.js';
 import { col, UniqueConstraintError, where } from 'sequelize';
-const { User } = await databaseInitializePromise;
+const { User } = await dbInitPromise;
 
 const SALT_ROUNDS = 8;
 

@@ -1,9 +1,9 @@
 import imageServices from './imageServices.js';
 import userServices from './userServices.js';
-import databaseInitializePromise from '../database/initialize.js'
+import dbInitPromise from '../database/initialize.js'
 import {ApplicationError} from '../common/index.js';
 import fs from 'fs';
-const { Store } = await databaseInitializePromise;
+const { Store } = await dbInitPromise;
 
 async function fetchStore(id)
 {

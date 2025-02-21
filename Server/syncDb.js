@@ -1,4 +1,4 @@
-import { getInstance, switchURI } from './src/database/sequelize.js';
+import { sequelize } from './src/database/models/index.js';
 import { logger } from './src/common/index.js';
 import readline from 'readline';
 
@@ -30,15 +30,10 @@ process.on('SIGINT', cleanup)
 async function sync()
 {
     logger.info('Start Sync');
-    //const privileged = await questionAsync('URI: ');
     const force =  stringToBool(await questionAsync('FORCE (will drop tables): '));
-    //await switchURI(privileged)
-    const sequelize = getInstance();
     try
     {
         await sequelize.authenticate();
-    
-        await import('./src/database/models/index.js')
         await sequelize.sync({force});
         logger.info(`Successfully ${force ? "Force" : ""} Synced`);
     }catch(err)
