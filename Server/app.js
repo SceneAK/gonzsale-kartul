@@ -28,7 +28,7 @@ if(env.ENABLE_STATIC_CLIENT?.toLowerCase() === 'true')
 app.set('view engine', 'ejs');
 app.set('views', VIEW_DIR)
 app.use('/ssr', ssrRoute)
-app.use('/ban', (req, res) => { res.send('<h1>not banned</h1>') })
+app.get('/ban', (req, res) => { res.send('<h1>not banned</h1>') })
 
 // Middlewares
 app.use(cookieParser(env.JWT_SECRET_KEY));
