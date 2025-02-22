@@ -1,6 +1,6 @@
 import 'express-async-errors';
 import app from './app.js';
-import { userRoute, productRoute, storeRoute, orderRoute, transactionRoute, variantRoute } from './src/routes/index.js';
+import { userRoute, productRoute, storeRoute, orderRoute, transactionRoute, variantRoute, adminRoute } from './src/routes/index.js';
 import { onErrorFileDeletion } from './src/middlewares/multerUploads.js';
 import { logger } from './src/common/index.js';
 import { env } from './initialize.js';
@@ -19,6 +19,7 @@ app.use('/api/store/', storeRoute);
 app.use('/api/order/', orderRoute);
 app.use('/api/transaction/', transactionRoute);
 app.use('/api/variant/', variantRoute);
+app.use('/admin/', adminRoute)
 
 // Handled Errors
 app.use(onErrorFileDeletion); // for multer
@@ -54,8 +55,5 @@ switch (protocol) {
         server = app;
         break;
 }
-
-import './src/database/wipe.js';
-import '../envEditor.js';
 
 server.listen(env.PORT, logListening(env.PORT));

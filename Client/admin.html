@@ -45,8 +45,10 @@
             <option value="omit">omit</option>
             <option value="include">include</option>
         </select>
-        <textarea id="jsonBodyTextArea" placeholder="request body..."></textarea>
-        <button onclick="sendJSON()">Send Application/JSON</button>
+        <textarea id="headersTextArea" placeholder="header..."></textarea>
+        <textarea id="bodyTextArea" placeholder="body..."></textarea>
+        IS JSON<input type="checkbox" id="isJSON">
+        <button onclick="fetchToBase()">Fetch</button>
         <textarea id="errorP" readonly></textarea>
     </div>
     <div id="resultDiv"></div>
@@ -59,28 +61,37 @@
     const endpointInput = document.getElementById('endpointInput');
     const methodSelect = document.getElementById('methodSelect');
     const credentialSelect = document.getElementById('credentialSelect');
-    const jsonBodyTextArea = document.getElementById('jsonBodyTextArea');
+    const bodyTextArea = document.getElementById('bodyTextArea');
+    const headersTextArea = document.getElementById('headersTextArea');
 
-    window.sendJSON = async function () {
-        errorP.innerHTML = "";
-        const body = methodSelect.value == "GET" ? null : jsonBodyTextArea.value;
+    window.fetchToBase = async function () {
+
+        resultDiv.innerHTML = "";
+        const body = methodSelect.value == "GET" ? null : bodyTextArea.value;
         try
         {
-            const res = await fetching.jsonRequest(endpointInput.value, methodSelect.value, body, credentialSelect.value);
-            resultDiv.innerHTML = "";
-            try{
+            const res = await fetch(`${window.location.origin}${endpointInput.value}`, {
+                headers: headersTextArea.value != "" ? headersTextArea.value : undefined,
+                method: methodSelect.value,
+                credentials: credentialSelect.value,
+                body
+            })
+            console.log("TEST");
+            if(!res.ok) throw new Error(`Status (${res.status}) ${await res.text()}`);
+            console.log("OK");
+            const contentType = res.headers.get('content-type');
+            if(contentType && contentType.includes('application/json'))
+            {
+                resultDiv.innerHTML += "JSON: \n";
+                console.log("JSON");
                 const json = await res.json()
                 createTreeView(json, resultDiv);
-            }catch(err){
-                if(typeof(err) == SyntaxError)
-                {
-                    resultDiv.innerHTML = await res.text();
-                }
-                throw err;
+            }else{
+                resultDiv.innerHTML = await res.text();
             }
         }catch(err)
         {
-            errorP.innerHTML = err.toString();
+            resultDiv.innerHTML = "ERR: " + err.toString();
             return;
         }
     }

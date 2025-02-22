@@ -25,5 +25,5 @@ function updateEnv(key, newValue) {
     fs.writeFileSync(envPath, updatedLines.join(os.EOL));
 }
 
-updateEnv('ENABLE_CAPTCHA', 'false');
-updateEnv('ORIGINAL_ADMIN_EMAIL', '"evankue@gmail.com"');
+// updateEnv('ENABLE_CAPTCHA', 'false');
+// updateEnv('ORIGINAL_ADMIN_EMAIL', '"evankue@gmail.com"');

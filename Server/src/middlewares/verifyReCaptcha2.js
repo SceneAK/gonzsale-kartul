@@ -1,7 +1,7 @@
 import { env } from "../../initialize.js";
 import axios from "axios";
 import qs from "qs";
-import { ApplicationError } from "../common/index.js";
+import { ApplicationError, logger } from "../common/index.js";
 
 const responseKey = 'g-recaptcha-response';
 const urlEncodedHeader = { 'Content-Type': 'application/x-www-form-urlencoded' };
@@ -9,6 +9,7 @@ const verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
 const verifyReCAPTCHA = (req, res, next) => {
     if(env.ENABLE_CAPTCHA == 'true'){
         const captchaResponse = req.body[responseKey];
+        logger.info(`CAPTCHA ISSUE. ENV: ${env.ENABLE_CAPTCHA} | result: ${env.ENABLE_CAPTCHA == 'true'} | value: ${captchaResponse}`)
         if(!captchaResponse) throw new ApplicationError('Please submit reCAPTCHA', 401);
         
         const data = {
