@@ -356,7 +356,7 @@
         
         document.addEventListener("DOMContentLoaded", async function () {
             
-            const res = await fetch('http://localhost:3000/admin/logs', {method: 'GET'});
+            const res = await fetch('https://gonzshop.coralisstudio.com:8482/admin/logs', {method: 'GET'});
             const txt = await res.text();
             console.log(txt);
 
