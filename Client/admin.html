@@ -70,15 +70,13 @@
         const body = methodSelect.value == "GET" ? null : bodyTextArea.value;
         try
         {
+            console.log(window.location.origin);
             const res = await fetch(`${window.location.origin}${endpointInput.value}`, {
-                headers: headersTextArea.value != "" ? headersTextArea.value : undefined,
                 method: methodSelect.value,
                 credentials: credentialSelect.value,
                 body
             })
-            console.log("TEST");
             if(!res.ok) throw new Error(`Status (${res.status}) ${await res.text()}`);
-            console.log("OK");
             const contentType = res.headers.get('content-type');
             if(contentType && contentType.includes('application/json'))
             {
