@@ -3,7 +3,7 @@ import upath from 'upath';
 import pinoHttp from 'pino-http';
 import pino from "pino";
 
-const dest = pino.destination(upath.join(SERVER_DIR, './public/.log'))
+const dest = pino.destination(upath.join(SERVER_DIR, './public/log'))
 const level = env.NODE_ENV.toLowerCase() == 'development' ? 'debug' : 'info';
 const logger = pino({ 
     level,
