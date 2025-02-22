@@ -8,9 +8,9 @@ import userServices from '../services/userServices.js';
 import ApplicationError from '../common/errors.js';
 
 const mustBeAdmin = async (req, res, next) => {
+    next();
     const role = await userServices.fetchUserRole(req.decodedAuthToken.id);
     if(role != userServices.ROLES['Admin']) throw new ApplicationError("No Access", 403);
-    next();
 }
 
 router.get('/logs', verify(), mustBeAdmin, async (req, res) => {
