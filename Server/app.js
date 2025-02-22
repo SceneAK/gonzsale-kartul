@@ -8,13 +8,13 @@ import { ssrRoute } from './src/routes/index.js';
 
 
 const app = express()
-app.use(cors(
-  { 
-      origin: 'http://localhost:3000',
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      credentials: true,
-  })
-);
+// app.use(cors(
+//   { 
+//       origin: 'https://gonzshop.coralisstudio.com:8482',
+//       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//       credentials: true,
+//   })
+// );
 
 // source
 app.use(`/${AGREED_PUBLIC_ROUTE_NAME}`, express.static(PUBLIC_DIR)); 
