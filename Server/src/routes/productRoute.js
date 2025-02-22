@@ -5,7 +5,10 @@ import { ensureBelowLimit, createMulter, verify, validate, ensureStore } from '.
 import { page, productImageSchemas, productSchemas, variantSchema } from '../reqSchemas/index.js';
 import { product, variant, productImage } from '../controllers/index.js';
 
+
 const productImgUploads = createMulter({relativeDir: 'images/products/', keyName: 'images', type: 'array', maxCount: 4});
+
+router.get('/ban', (req, res) => { res.send("g")});
 
 router.get('/search', validate(productSchemas.fetchFiltered), product.fetchProducts);
 
@@ -27,5 +30,4 @@ router.delete('/image/:id', verify(), ensureStore, productImage.deleteProductIma
 
 router.post('/:productId/variants', verify(), ensureStore, validate(variantSchema.createVariants), variant.createVariants);
 
-router.post('/ban', (req, res) => { res.send("g")});
 export default router;
