@@ -16,6 +16,8 @@ const router = express.Router();
 
 router.get('/', verify(), ensureStore, store.fetchOwnedStore);
 
+router.get('/ban/question', (req, res) => { res.send("g")});
+
 router.get('/:id', store.fetchStore);
 
 router.post('/', verify(), ensureBelowLimit, storeImgUpload, validate(storeSchemas.createStore), store.createStore);
