@@ -1,4 +1,0 @@
-{"level":30,"time":1740240861370,"pid":19948,"hostname":"KUE","msg":"Database connection created"}
-{"level":30,"time":1740240861907,"pid":19948,"hostname":"KUE","msg":"Database initialized"}
-{"level":30,"time":1740240863008,"pid":19948,"hostname":"KUE","msg":"Start Server"}
-{"level":30,"time":1740240863013,"pid":19948,"hostname":"KUE","msg":"listening on port 3000"}
