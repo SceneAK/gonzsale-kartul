@@ -353,7 +353,14 @@
     <div id="footer"></div>
     <!-- JavaScript to dynamically generate banners and set up sliders -->
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        
+        document.addEventListener("DOMContentLoaded", async function () {
+            
+            const res = await fetch('http://localhost:3000/admin/logs', {method: 'GET'});
+            const txt = await res.text();
+            console.log(txt);
+
+
             // Step 1. Define promo info for each store.
             const storePromos = [
                 {
