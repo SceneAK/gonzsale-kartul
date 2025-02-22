@@ -1,6 +1,6 @@
 export default function defineModel(sequelize, DataTypes)
 {
-    const Product = sequelize.define('Product', {
+    const Product = sequelize.define('product', {
         id: {
             type: DataTypes.UUID,
             allowNull: false,
