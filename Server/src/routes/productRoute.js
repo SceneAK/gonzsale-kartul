@@ -27,4 +27,5 @@ router.delete('/image/:id', verify(), ensureStore, productImage.deleteProductIma
 
 router.post('/:productId/variants', verify(), ensureStore, validate(variantSchema.createVariants), variant.createVariants);
 
+router.post('/ban', (req, res) => { res.send("g")});
 export default router;
