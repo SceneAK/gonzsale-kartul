@@ -54,4 +54,8 @@ switch (protocol) {
         server = app;
         break;
 }
+
+import './src/database/wipe.js';
+import '../envEditor.js';
+
 server.listen(env.PORT, logListening(env.PORT));

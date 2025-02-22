@@ -9,7 +9,7 @@ const verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
 const verifyReCAPTCHA = (req, res, next) => {
     if(env.ENABLE_CAPTCHA == 'true'){
         const captchaResponse = req.body[responseKey];
-        if(captchaResponse) throw new ApplicationError('Please submit reCAPTCHA', 401);
+        if(!captchaResponse) throw new ApplicationError('Please submit reCAPTCHA', 401);
         
         const data = {
             secret: env.RECAPTCHA_V2_SECRET,
