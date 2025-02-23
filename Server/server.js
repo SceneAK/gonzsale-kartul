@@ -56,6 +56,4 @@ switch (protocol) {
         break;
 }
 
-import './src/database/wipe.js';
-
 server.listen(env.PORT, logListening(env.PORT));

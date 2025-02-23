@@ -63,7 +63,7 @@ export default class paginationManager {
         this.currentPageSpan.textContent = page;
         this.totalPageSpan.textContent = totalPages;
 
-        this.next.disabled = page == totalPages;
+        this.next.disabled = page >= totalPages;
         this.prev.disabled = page <= 1;
     }
 
