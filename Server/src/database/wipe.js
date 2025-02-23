@@ -1,5 +1,6 @@
-import dbInitPromise from "./initialize.js";
-const {sequelize} = await dbInitPromise;
+import unauthedDb from "./models/index.js";
+const {sequelize} = unauthedDb;
+
 const queryInterface = sequelize.getQueryInterface();
 
 await sequelize.query('SET FOREIGN_KEY_CHECKS = 0;');
