@@ -1,3 +1,3 @@
 #public_html/_subdomain_gonzshop
 git pull origin main
-pm2 start Gonzshop
+pm2 restart Gonzshop
