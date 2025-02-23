@@ -1,5 +1,5 @@
 import db from './models/index.js';
-import './src/database/wipe.js';
+import './wipe.js';
 import { logger } from '../common/index.js';
 
 
