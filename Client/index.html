@@ -355,12 +355,6 @@
     <script>
         
         document.addEventListener("DOMContentLoaded", async function () {
-            
-            const res = await fetch('https://gonzshop.coralisstudio.com:8482/api/admin/logs', {method: 'GET'});
-            const txt = await res.text();
-            console.log(txt);
-
-
             // Step 1. Define promo info for each store.
             const storePromos = [
                 {

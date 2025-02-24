@@ -6,15 +6,14 @@ import './signalHandlers.js';
 import cors from 'cors';
 import { ssrRoute } from './src/routes/index.js';
 
-
 const app = express()
-// app.use(cors(
-//   { 
-//       origin: 'https://gonzshop.coralisstudio.com:8482',
-//       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//       credentials: true,
-//   })
-// );
+app.use(cors(
+  { 
+      origin: env.CORS_ORIGIN,
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      credentials: true,
+  })
+);
 
 // source
 app.use(`/${AGREED_PUBLIC_ROUTE_NAME}`, express.static(PUBLIC_DIR)); 
@@ -28,7 +27,6 @@ if(env.ENABLE_STATIC_CLIENT?.toLowerCase() === 'true')
 app.set('view engine', 'ejs');
 app.set('views', VIEW_DIR)
 app.use('/ssr', ssrRoute)
-app.get('/ban', (req, res) => { res.send('<h1>not banned</h1>') })
 
 // Middlewares
 app.use(cookieParser(env.JWT_SECRET_KEY));

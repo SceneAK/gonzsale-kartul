@@ -13,7 +13,7 @@ const mustBeAdmin = async (req, res, next) => {
     next();
 }
 
-router.get('/logs', async (req, res) => {
+router.get('/logs', verify(), mustBeAdmin, async (req, res) => {
     const logs = fs.readFileSync('./Server/.log', 'utf-8');
     const arr = logs.split(os.EOL);
     res.json(arr);

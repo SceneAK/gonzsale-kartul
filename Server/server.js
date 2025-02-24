@@ -19,7 +19,7 @@ app.use('/api/store/', storeRoute);
 app.use('/api/order/', orderRoute);
 app.use('/api/transaction/', transactionRoute);
 app.use('/api/variant/', variantRoute);
-app.use('/api/admin/', adminRoute)
+app.use('/admin/', adminRoute)
 
 // Handled Errors
 app.use(onErrorFileDeletion); // for multer

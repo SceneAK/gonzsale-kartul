@@ -1,13 +1,12 @@
 import db from './models/index.js';
-import './wipe.js';
 import { logger } from '../common/index.js';
 
+import './wipe.js';
 
 const dbInitPromise = (async () => {
   try
   {
     await db.sequelize.authenticate();
-    //await db.sequelize.sync({force: false});
     logger.info('Database initialized');
     return db;
   }catch(err)
