@@ -26,7 +26,7 @@ function recaptchaCallback(token)
     response = token;
 }
 function getRecaptchaResponse(){
-    if(!response) throw new Error('No Captcha Response');
+    if(config.ENABLE_CAPTCHA && !response) throw new Error('No Captcha Response');
     return response;
 }
 

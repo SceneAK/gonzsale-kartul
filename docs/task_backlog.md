@@ -15,18 +15,15 @@ Please sort by importance
 .Automatic refresh token
 
 # BACKEND
-? Change database name to lowercase 
-? Bug with edit image or somthin... 
-> Turn display product into an SSR
-    DONE reconfigure custom multer storage
-DONE Transition to sequelize cli...
-    make migration script
+? Bug with edit image or somthin... .
+? make migration script
 - Store payment method & transaction extension tables are over engineered.
 - Bulk Delete Images
 - Bulk Edit Variants
+> implement rate limitting.
 
 ## orders
-. Mailing Customers when order status changes, when product gets deleted 
+> Mailing Customers when order status changes, when product gets deleted 
 
 ## Request Home page Items (promotional content)
 - Design the system
