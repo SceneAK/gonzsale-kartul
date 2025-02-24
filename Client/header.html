@@ -49,7 +49,7 @@
             padding: 10px 20px;
             cursor: pointer;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 500;
         }
 
         .tablink:hover {
@@ -81,6 +81,10 @@
             border-radius: 8px;
         }
 
+        .search-bar::placeholder {
+            color: #aaa;
+        }
+
         /* Second Row: Categories */
         .header-bottom {
             display: flex;
@@ -94,7 +98,6 @@
         .header-bottom a {
             text-decoration: none;
             color: #333;
-            font-weight: bold;
         }
 
         .header-bottom a:hover {
@@ -121,6 +124,40 @@
             color: #333;
             cursor: pointer;
             align-items: center;
+            background: none;
+            border: none;
+            display: inline-block;
+            padding: 8px 18px;
+            color: #fff;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .user-options a.signIn {
+            background-color: #ff9900;
+            color: #fff;
+        }
+
+        .user-options a.myCart {
+            background-color: rgb(226, 224, 223);
+            color: #272727;
+        }
+
+        .user-options a.signIn:hover {
+            background-color: #df8602;
+        }
+
+        .user-options a.myCart:hover {
+            background-color: #c7c7c7;
+        }
+
+        .user-options img {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            vertical-align: middle;
         }
 
         /* Dropdown styling */
@@ -232,13 +269,6 @@
             background-color: #ff9900;
         }
 
-        .user-options img {
-            width: 20px;
-            height: 20px;
-            margin-right: 5px;
-            vertical-align: middle;
-        }
-
         .mobile-header {
             display: none;
         }
@@ -259,8 +289,7 @@
         </div>
         <div class="user-options">
             <div class="dropdown">
-                <a href="#" id="userLink">Sign in
-                </a> <!-- Keep only one userLink -->
+                <a href="#" id="userLink" class="signIn">Sign in</a>
                 <div id="dropdown-content" class="dropdown-content">
                     <div class="loginForm">
                         <input type="text" id="email" placeholder="Email">
@@ -275,7 +304,9 @@
                     </div>
                 </div>
             </div>
-            <a href="mycart.html">
+            <!-- Divider element -->
+            <span class="divider">|</span>
+            <a href="mycart.html" class="myCart">
                 <img src="assets/images/cart_icon.svg" alt="Cart Icon">
                 My Cart
             </a>
@@ -288,22 +319,27 @@
             <img src="assets/images/shirts_icon.svg" alt="Shirts Icon" class="tab-icon">
             Baju
         </a>
+        <span class="divider">|</span>
         <a class="tablink" href="catalog.html#Pants">
             <img src="assets/images/pants_icon.svg" alt="Pants Icon" class="tab-icon">
             Celana
         </a>
+        <span class="divider">|</span>
         <a class="tablink" href="catalog.html#Accessories">
             <img src="assets/images/accessories_icon.svg" alt="Accessories Icon" class="tab-icon">
             Aksesoris
         </a>
+        <span class="divider">|</span>
         <a class="tablink" href="catalog.html#Food">
             <img src="assets/images/food_icon.svg" alt="Food Icon" class="tab-icon">
             Makanan
         </a>
+        <span class="divider">|</span>
         <a class="tablink" href="catalog.html#Drinks">
             <img src="assets/images/drinks_icon.svg" alt="Drinks Icon" class="tab-icon">
             Minuman
         </a>
+        <span class="divider">|</span>
         <a class="tablink" href="catalog.html#All">
             <img src="assets/images/all_items_icon.svg" alt="All Items Icon" class="tab-icon">
             All Items

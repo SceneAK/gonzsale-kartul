@@ -7,22 +7,20 @@
     <title>Contact Us</title>
     <style>
         .content {
-            height: 80vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
             font-family: Arial, sans-serif;
         }
 
         .contact-card {
-            width: 300px;
+            width: 100%;
+            max-width: 1000px;
             padding: 15px;
+            margin: 10px 0;
             border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
-            margin-bottom: 15px;
         }
 
         .contact-card p {
@@ -30,36 +28,34 @@
         }
     </style>
 </head>
-<header>
-    <div id="header"></div>
-</header>
 
 <body>
     <div class="content">
+        <div id="header"></div>
         <h2>Contact Us</h2>
         <div class="contact-card">
             <h3>Pio</h3>
             <h4>Manager and Research</h4>
-            <p>Whatsapp: +62 811-1048-507</p>
+            <a href="https://wa.me/628111048507?text=Halo%20bang%20gw%20mau%20jualan" target="_blank">
+                Whatsapp: +62 811-1048-507
+            </a>
             <p>IG: @ip.binawan</p>
         </div>
         <div class="contact-card">
             <h3>Abi</h3>
             <h4>UI/UX Designer and Frontend Programmer</h4>
-            <p>Whatsapp: +62 813-8554-6396</p>
+            <a href="https://wa.me/6281385546396?text=Halo%20bang%20gw%20mau%20jualan" target="_blank">Whatsapp: +62 813-8554-6396</a>
             <p>IG: @dionisius_abi</p>
         </div>
         <div class="contact-card">
             <h3>Evan</h3>
             <h4>Backend and Database Programmer</h4>
-            <p>Whatsapp: +62 814-1038-4378</p>
+            <a href="https://wa.me/6281410384378?text=Keren%20bang%20websitenya" target="_blank">Whatsapp: +62 814-1038-4378</a>
             <p>IG: @evan_kue</p>
         </div>
+        <div id="footer"></div>
     </div>
     <script type="module" src="integration/uiManagement.js"></script>
 </body>
-<footer>
-    <div id="footer"></div>
-</footer>
 
 </html>
