@@ -1,7 +1,7 @@
 import db from './models/index.js';
 import { logger } from '../common/index.js';
 
-//import './wipe.js';
+db.sequelize.sync();
 
 const dbInitPromise = (async () => {
   try
