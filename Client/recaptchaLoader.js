@@ -5,19 +5,20 @@ function loadRecaptcha() {
     if(config.ENABLE_CAPTCHA)
     {
         const script = document.createElement('script');
-        script.src = "https://www.google.com/recaptcha/api.js?render=explicit";
+        script.src = "https://www.google.com/recaptcha/api.js?onload=renderCaptcha&render=explicit";
         script.async = true;
         script.defer = true;
-        script.onload = function(){
-            grecaptcha.render('recaptcha-container', {
-                sitekey: config.RECAPTCHA_V2_SITE_KEY,
-                callback: recaptchaCallback
-            });
-        }
         document.head.appendChild(script);
     }
 }
 loadRecaptcha();
+
+window.renderCaptcha = function(){
+    grecaptcha.render('recaptcha-container', {
+        sitekey: config.RECAPTCHA_V2_SITE_KEY,
+        callback: recaptchaCallback
+    });
+}
 
 let response;
 function recaptchaCallback(token)
