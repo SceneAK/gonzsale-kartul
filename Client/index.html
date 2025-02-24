@@ -300,17 +300,22 @@
             }
 
             .promo-text {
-                font-size: 1.2rem;
-                padding: 10px;
+                left: 50%;
+                bottom: 20px;
+                transform: translateX(-50%);
+                text-align: center;
+                font-size: 0.8rem;
+                padding: 5px;
+            }
+
+            .promo-text .seller-name {
+                font-size: 0.7rem;
             }
 
             .shop-btn {
-                font-size: 1rem;
+                font-size: 0.8rem;
                 padding: 8px 12px;
-            }
-
-            .seller-name {
-                font-size: 0.9rem;
+                margin: 0;
             }
         }
     </style>
@@ -354,23 +359,11 @@
             // Step 1. Define promo info for each store.
             const storePromos = [
                 {
-                    storeName: "store1", // used in the image file name and seller subheading
-                    promoText: "Alvin Kalcer Abis!!!",
+                    storeName: "Alvin",
+                    promoText: "VIOLET BLOOMS IS BACK!!!",
                     storeUrl: "display-store.html?id=3a44ffce-4480-4654-81b0-cd69c749ab5b",
-                    bannerCount: 4  // store1 has 4 banner images
+                    bannerCount: 6
                 },
-                {
-                    storeName: "store2",
-                    promoText: "Totebag EL PASO",
-                    storeUrl: "store2.html",
-                    bannerCount: 1 // no carousel buttons for a single banner image
-                },
-                {
-                    storeName: "store3",
-                    promoText: "Foods and Stickers",
-                    storeUrl: "store3.html",
-                    bannerCount: 2
-                }
             ];
 
             // Step 2. Select the promo grid container.
@@ -400,7 +393,7 @@
                 // Create the slider image element and set its initial source.
                 const imageElement = document.createElement("img");
                 imageElement.classList.add("slider-image");
-                imageElement.src = `assets/images/banner_${store.storeName}_1.jpg`;
+                imageElement.src = `assets/banner_images/banner_${store.storeName}_1.jpg`;
                 sliderDiv.appendChild(imageElement);
 
                 if (store.bannerCount > 1) {
@@ -445,7 +438,7 @@
                 // Step 4. Build an array of image URLs for the slider.
                 const images = [];
                 for (let i = 1; i <= store.bannerCount; i++) {
-                    images.push(`assets/images/banner_${store.storeName}_${i}.jpg`);
+                    images.push(`assets/banner_images/banner_${store.storeName}_${i}.jpg`);
                 }
 
                 // If there is more than one image, set up carousel functionality.
