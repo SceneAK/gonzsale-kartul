@@ -170,6 +170,8 @@
                 <p class="password-instructions">
                     Your password must be between 3 to 300 characters inclusive.
                 </p>
+                
+                <div id="recaptcha-container"></div>
 
                 <div class="form-buttons">
                     <button type="button" onclick="window.history.back()">Cancel</button>
@@ -187,6 +189,7 @@
 
     <script type="module">
         import { signUp } from './integration/user.js';
+        import getRecaptchaResponse from './recaptchaLoader.js';
 
         const registerForm = document.getElementById('register-form');
         const registerButton = document.getElementById('signupSubmitButton');
@@ -206,18 +209,10 @@
             registerButton.disabled = !match || !registerForm.checkValidity();
         });
 
-        // On form submission, automatically prepend a "0" to the phone number.
         registerForm.addEventListener('submit', async function (event) {
             event.preventDefault();
             try {
-                // Remove any non-digit characters from the phone input.
-                const rawDigits = registerPhone.value.replace(/\D/g, '');
-                // Prepend a "0" to form the final phone number.
-                const finalPhone = '0' + rawDigits;
-                // Update the input value so that signUp receives the correct phone number.
-                registerPhone.value = finalPhone;
-
-                await signUp(registerFullName, registerPhone, registerEmail, registerPassword);
+                await signUp(registerFullName, registerPhone, registerEmail, registerPassword, getRecaptchaResponse());
             } catch (err) {
                 alert(err.message);
             }

@@ -5,9 +5,11 @@ import { UUID } from "./common.js";
 import variantSchema from "./variantSchema.js";
 import productSchema from "./productSchema.js";
 
-const createOrderSchema = (req) => ({
+const orderItems = Joi.array().min(1).items(orderItemSchema.orderItem).required();
+
+const createOrdersSchema = (req) => ({
     body: Joi.object({
-        OrderItems: Joi.array().min(1).items(orderItemSchema.orderItem).required(),
+        Orders: Joi.array().min(1).items(orderItems).required(),
         customerDetails: req.decodedAuthToken ? Joi.forbidden() : Joi.object(customerDetails).required()
     }).required() 
 })
@@ -37,7 +39,7 @@ const fetchIncomingSchema = {
 }
 
 export default {
-    createOrder: createOrderSchema,
+    createOrders: createOrdersSchema,
     update: updateSchema,
     fetchIncoming: fetchIncomingSchema
 };

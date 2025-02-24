@@ -23,13 +23,13 @@ const fetchOrders = async (req, res) => {
     res.json(result || {});
 };
 
-const createOrder = async(req, res) => {
-    let {customerDetails, OrderItems} = req.body;
+const createOrders = async(req, res) => {
+    let {customerDetails, Orders} = req.body;
     if(req.decodedAuthToken)
     {
         customerDetails = await fetchAsCustomerInfo(req.decodedAuthToken.id);
     }
-    const result = await orderServices.createOrder(OrderItems, customerDetails)
+    const result = await orderServices.createOrders(Orders, customerDetails)
     res.json( result );
 }
 
@@ -62,4 +62,4 @@ async function fetchAsCustomerInfo(userId)
     }
 }
 
-export default {fetchOrder, fetchOrders, fetchIncomingOrders, createOrder, deleteOrder}
+export default {fetchOrder, fetchOrders, fetchIncomingOrders, createOrders, deleteOrder}

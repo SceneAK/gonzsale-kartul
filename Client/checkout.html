@@ -173,6 +173,7 @@
         <!-- Order Summary -->
         <div id="order-summary"></div>
 
+        <div id="recaptcha-container"></div>
         <!-- Finish Orders Button -->
         <button class="finish-orders-btn" id="finish-orders-btn" disabled>Finish Orders</button>
     </div>
@@ -180,6 +181,7 @@
     <script type="module" src="integration/uiManagement.js" defer></script>
     <script type="module" defer>
         import { order, store, transaction } from './integration/fetches.js';
+        import getRecaptchaResponse from './recaptchaLoader.js';
 
         const cart = JSON.parse(localStorage.getItem('cart') || '[]'); // Get cart data from localStorage
         const orderSummaryContainer = document.getElementById('order-summary');
@@ -287,34 +289,35 @@
         renderOrderSummary();
 
         finishOrdersButton.addEventListener('click', async () => {
-            for (const storeId in groupedCart) {
-                let createdOrder;
-                try
-                {
-                    createdOrder = await handleOrderCreation(storeId);
-                }catch(err){ alert(err.message); return; }
-                const proofFile = document.getElementById(`proof-${storeId}`).files[0];
-                await handleTransaction(createdOrder.id, proofFile);
-            }
+            try
+            {
+                
+                const createdOrders = await handleOrderCreation();
+                await handleTransactions(createdOrders);
+                
+            }catch(err){ alert(err.message); return; }
 
             alert("Orders have been successfully placed!");
             localStorage.removeItem('cart');
             window.location.href = localStorage.getItem('loginDetail') ? 'profile-management.html#order-history' : '/';
         });
 
-        async function handleOrderCreation(storeId) {
-            const isLoggedIn =  localStorage.getItem('loginDetail');
+        async function handleOrderCreation() {
+            const isLoggedIn = localStorage.getItem('loginDetail');
             let body = isLoggedIn ? {} : { customerDetails: getCustomerData() };
 
-            const OrderItems = groupedCart[storeId].items.map(item => ({
-                variantId: item.selectedVariant.id,
-                quantity: item.quantity,
-                notes: item.notes
-            }));
-            body = { OrderItems, ...body };
-            console.log(body);
+            const Orders = []
+            Object.keys(groupedCart).forEach( storeId => {
+                const orderItems = groupedCart[storeId].items.map(item => ({
+                    variantId: item.selectedVariant.id,
+                    quantity: item.quantity,
+                    notes: item.notes
+                }));
+                Orders.push(orderItems);
+            })
+            body = { Orders, ...body };
 
-            const orderId = await order.createOrder(body);
+            const orderId = await order.createOrders(body, getRecaptchaResponse());
             return orderId;
         }
 
@@ -325,16 +328,20 @@
             return { customerName, customerPhone, customerEmail }
         }
 
-        async function handleTransaction(orderId, proofFile) {
-            const formdata = new FormData();
-            formdata.append('type', "PAYMENT");
-            formdata.append('file', proofFile);
-            try {
-                await transaction.createProofTransaction(orderId, formdata);
-            } catch (err) {
-                const msg = "Fatal error: Failed to upload proof of payment. Please contact the website admins.";
-                alert(msg);
-                throw err;
+        async function handleTransactions(orders, proofFile) {
+            for(const order of orders)
+            {
+                const proofFile = document.getElementById(`proof-${order.storeId}`).files[0];
+                const formdata = new FormData();
+                formdata.append('type', "PAYMENT");
+                formdata.append('file', proofFile);
+                try {
+                    await transaction.createProofTransaction(order.id, formdata);
+                } catch (err) {
+                    const msg = `Failed to upload proof for ${order.storeId}. Please contact the website admins.`;
+                    alert(msg);
+                    throw err;
+                }
             }
         }
     </script>

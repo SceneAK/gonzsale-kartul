@@ -12,7 +12,7 @@ router.get('/my', verify(), validate(page), order.fetchOrders);
 
 router.get('/:id', order.fetchOrder);
 
-router.post('/', verify(false), verifyReCAPTCHA, validatePassReq(orderSchemas.createOrder), order.createOrder);
+router.post('/', verify(false), verifyReCAPTCHA, validatePassReq(orderSchemas.createOrders), order.createOrders);
 
 router.delete('/:id', verify(), ensureStore, order.deleteOrder);
 

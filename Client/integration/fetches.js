@@ -54,12 +54,13 @@ async function signIn(email, password) {
     const body = JSON.stringify({email, password});
     return await jsonRequestResponse('/user/signin', 'POST', body, 'include')
 }
-async function signUp(name, phone, email, password) { 
+async function signUp(name, phone, email, password, recaptchaResponse) { 
     const body = JSON.stringify({
         name,
         phone,
         email, 
-        password
+        password,
+        'g-recaptcha-response': recaptchaResponse
     });
     const result = await jsonRequestResponse('/user/signup', 'POST', body, 'include');
     return result;
@@ -180,9 +181,9 @@ async function fetchIncomingOrders(page = 1, filter) // auth & store
     const params = toQueryString({ page, ...filter});
     return await jsonResponse(`/order/incoming?${params}`, "GET", null, 'include');
 }
-async function createOrder(data)// auth
+async function createOrders(data, recaptchaResponse)// auth
 {
-    return await jsonRequestResponse('/order', "POST", JSON.stringify(data), 'include');   
+    return await jsonRequestResponse('/order', "POST", JSON.stringify({...data, 'g-recaptcha-response': recaptchaResponse}), 'include');   
 }
 async function updateItemStatus(id, status)
 {
@@ -193,7 +194,7 @@ async function updateItemStatusWhere(where, status)
     const query = toQueryString(where);
     return await jsonRequestResponse(`/order/item/status/${status}?${query}`, "PATCH", null, 'include');
 }
-const order = {fetchOrder, fetchMyOrders, fetchIncomingOrders, createOrder, updateItemStatus, updateItemStatusWhere};
+const order = {fetchOrder, fetchMyOrders, fetchIncomingOrders, createOrders, updateItemStatus, updateItemStatusWhere};
 //#endregion
 
 //#region Transaction

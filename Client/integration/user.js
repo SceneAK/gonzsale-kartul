@@ -46,9 +46,9 @@ export function hookSignIn(signInButton, emailInput, passwordInput)
 
 }
 
-export async function signUp(nameInput, phoneInput, emailInput, passwordInput)
+export async function signUp(nameInput, phoneInput, emailInput, passwordInput, recaptchaResponse)
 {
-    const userInfo = await user.signUp(nameInput.value, phoneInput.value, emailInput.value, passwordInput.value);
+    const userInfo = await user.signUp(nameInput.value, phoneInput.value, emailInput.value, passwordInput.value, recaptchaResponse);
     setLoginInfo(userInfo);
     window.location.href = '/';
 }

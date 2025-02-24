@@ -58,18 +58,22 @@ async function fetchOrders(customerId, page = 1)
     return result;
 };
 
-async function createOrder(orderItems, customerDetails)
+async function createOrders(Orders, customerDetails)
 {
-    const firstVariant = await variantServices.fetchVariantIncludeProduct(orderItems[0].variantId);
-    const storeId = firstVariant.Product.storeId;
-    
-    let order;
-
+    let orders = []
     await sequelize.transaction( async transaction => {
-        order = await baseOrderServices._createOrder(customerDetails, storeId, {transaction});
-        await orderItemServices._createOrderItems(orderItems, order.id, transaction);
+        for(const orderItems of Orders)
+        {
+            const firstVariant = await variantServices.fetchVariantIncludeProduct(orderItems[0].variantId);
+            const storeId = firstVariant.Product.storeId;
+            
+            const order = await baseOrderServices._createOrder(customerDetails, storeId, {transaction});
+            await orderItemServices._createOrderItems(orderItems, order.id, transaction);
+
+            orders.push(order);
+        }   
     })
-    return order;
+    return orders;
 }
 
 async function calculateOrderTotal(orderId)
@@ -95,7 +99,7 @@ export default {
     fetchOrderIncludeAll,
     fetchOrders,
     fetchIncomingOrders,
-    createOrder,
+    createOrders,
     deleteOrder,
     calculateOrderTotal
 }
