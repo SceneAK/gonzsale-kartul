@@ -1,8 +1,6 @@
 import db from './models/index.js';
 import { logger } from '../common/index.js';
 
-db.sequelize.sync();
-
 const dbInitPromise = (async () => {
   try
   {
