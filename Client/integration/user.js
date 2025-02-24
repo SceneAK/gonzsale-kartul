@@ -1,7 +1,9 @@
 import { user } from "./fetches.js";
 
 const REFRESH_INTERVAL_MS = 1000 * 60 * 30; // 30 menit
-const loginDetail = localStorage.getItem('loginDetail');
+const loginDetailStr = localStorage.getItem('loginDetail')
+const loginDetail = loginDetailStr ? JSON.parse(loginDetailStr) : null;
+
 const autoRefresher = async () => {
     try
     {
@@ -18,7 +20,7 @@ const autoRefresher = async () => {
 if(loginDetail)
 {
     const delta = (Date.now() - loginDetail.lastRefreshed);
-    const timeout = Math.min(REFRESH_INTERVAL_MS - delta, 10);
+    const timeout = Math.max(REFRESH_INTERVAL_MS - delta, 10);
 
     setTimeout(autoRefresher, timeout)
 }
