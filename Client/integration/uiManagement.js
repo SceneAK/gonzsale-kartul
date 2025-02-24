@@ -29,7 +29,7 @@ function toggleDropdownState(loginDetails) {
             const isAdmin = loginDetails.role === 'ADMIN';
             editForm.innerHTML = `
                 <div style="text-align: center; padding: 10px;">
-                    <p>Hello, <strong>${loginDetails.name || 'User'}</strong>!  </p>
+                    <p>Hello, <strong>${loginDetails.name || 'User'}</strong>!</p>
                     <p style="color: #555;">Role: ${isAdmin ? 'Admin' : (isStoreManager ? 'Store Manager' : 'User')}</p>
                 </div>
                 <hr>
@@ -60,7 +60,7 @@ function toggleDropdownState(loginDetails) {
                 logoutButton.addEventListener('click', () => {
                     user.expireCookie().then(() => {
                         localStorage.removeItem('loginDetail');
-                        window.location.reload()
+                        window.location.reload();
                     });
                 });
             }
@@ -94,9 +94,9 @@ function toggleDropdownState(loginDetails) {
     });
 }
 
-
-
-// Update UI based on login state
+/***************************************************
+ * Update UI based on login state
+ ***************************************************/
 function updateUI() {
     const loginDetail = JSON.parse(localStorage.getItem('loginDetail'));
     toggleDropdownState(loginDetail);
@@ -138,7 +138,7 @@ function attachEventListeners() {
             updateUI();
             window.location.reload();
         });
-    })
+    });
 }
 
 /***************************************************
@@ -209,7 +209,6 @@ function initializeMenuToggle() {
     }
 
     // "Click outside" logic for the side menu:
-    // If you want this to work on every click (not just once), remove `{ once: true }`.
     document.addEventListener("click", function handleSideMenuOutsideClick(event) {
         if (
             sideMenu &&
@@ -220,7 +219,7 @@ function initializeMenuToggle() {
         ) {
             sideMenu.classList.remove("open");
         }
-    }, /* { once: true } */);
+    });
 }
 
 window.addEventListener('hashchange', function () {
@@ -275,21 +274,70 @@ function hookSignInWithElementIds(emailId, passwordId, signInId) {
 }
 
 /***************************************************
+ * MY CART CUSTOM FUNCTION
+ * Updates the header’s cart notification for both desktop and mobile.
+ ***************************************************/
+function updateCartNotification() {
+    // Get current cart count
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const cartCount = cart.length;
+
+    // Update desktop cart element
+    const myCartButton = document.getElementById('my-cart');
+    if (myCartButton) {
+        // Define base and hover colors based on cartCount
+        const baseBgColor = cartCount > 0 ? "rgb(66, 197, 6)" : "rgb(226, 224, 223)";
+        const hoverBgColor = cartCount > 0 ? "rgb(51, 152, 0)" : "rgb(200, 200, 200)";
+
+        // Update innerHTML and inline styles
+        myCartButton.innerHTML = `
+            <img src="assets/images/cart_icon.svg" alt="Cart Icon">
+            My Cart <span class="badge" id="cart-count">${cartCount}</span>
+        `;
+        myCartButton.style.backgroundColor = baseBgColor;
+        myCartButton.style.color = cartCount > 0 ? "white" : "black";  // Change text color for readability
+
+        // Attach hover event listeners only once
+        if (!myCartButton.dataset.hoverInitialized) {
+            myCartButton.addEventListener("mouseover", function () {
+                // Recalculate in case cart count has changed
+                const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const currentCount = currentCart.length;
+                const newHoverColor = currentCount > 0 ? "rgb(51, 152, 0)" : "rgb(200, 200, 200)";
+                myCartButton.style.backgroundColor = newHoverColor;
+            });
+            myCartButton.addEventListener("mouseout", function () {
+                const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const currentCount = currentCart.length;
+                const originalColor = currentCount > 0 ? "rgb(66, 197, 6)" : "rgb(226, 224, 223)";
+                myCartButton.style.backgroundColor = originalColor;
+            });
+            myCartButton.dataset.hoverInitialized = "true";
+        }
+    }
+
+    // Update mobile cart badge if it exists
+    const mobileCartBadge = document.getElementById('mobile-cart-count');
+    if (mobileCartBadge) {
+        mobileCartBadge.textContent = cartCount;
+    }
+}
+
+// Listen for cartUpdated events to update the notification
+document.addEventListener('cartUpdated', updateCartNotification);
+
+/***************************************************
  * Page Initialization
  ***************************************************/
 function initializePage() {
     loadHTML('header.html', 'header', () => {
-        // After header loads
+        // After header loads, initialize header-related functions
         initializeDropdown();
         initializeModals();
         initializeMenuToggle();
         updateUI();
         attachEventListeners();
-
-        // REMOVED: handleSideMenuOutsideClick() call 
-        // because it wasn't defined as a standalone function.
-        // The side-menu "click outside" logic is already handled 
-        // in initializeMenuToggle().
+        updateCartNotification(); // Update cart count on initial load
     });
 
     loadHTML('footer.html', 'footer');
@@ -310,6 +358,5 @@ function doElementsOfSelector(selector, callback) {
     const elements = document.querySelectorAll(selector);
     Array.from(elements).forEach(callback);
 }
-
 
 document.addEventListener('DOMContentLoaded', initializePage);

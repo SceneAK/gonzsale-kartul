@@ -114,7 +114,7 @@
         .user-options {
             position: relative;
             display: flex;
-            gap: 20px;
+            gap: 15px;
             align-items: center;
             font-weight: 500;
         }
@@ -151,6 +151,19 @@
 
         .user-options a.myCart:hover {
             background-color: #c7c7c7;
+        }
+
+        .badge {
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            vertical-align: top;
+            margin-left: 5px;
+            position: absolute;
+            top: -5px;
+            right: -10px;
         }
 
         .user-options img {
@@ -306,7 +319,7 @@
             </div>
             <!-- Divider element -->
             <span class="divider">|</span>
-            <a href="mycart.html" class="myCart">
+            <a href="mycart.html" class="myCart" id="my-cart">
                 <img src="assets/images/cart_icon.svg" alt="Cart Icon">
                 My Cart
             </a>
@@ -392,6 +405,12 @@
                 height: auto;
                 margin-left: 10px;
                 vertical-align: middle;
+                cursor: pointer;
+            }
+
+            myCart-mobile {
+                display: flex;
+                align-items: center;
                 cursor: pointer;
             }
 
@@ -576,7 +595,10 @@
         </div>
         <div class="user-options">
             <img src="assets/images/sign_in_icon.svg" alt="Sign In Icon" onclick="toggleModal('loginModal')">
-            <img src="assets/images/cart_icon.svg" alt="Cart Icon" onclick="window.location.href='mycart.html';">
+            <div class="myCart-mobile" onclick="window.location.href='mycart.html';">
+                <img src="assets/images/cart_icon.svg" alt="Cart Icon">
+                <span id="mobile-cart-count" class="badge">0</span>
+            </div>
 
         </div>
     </div>
