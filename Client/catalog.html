@@ -392,7 +392,14 @@
                     }
 
                     localStorage.setItem('cart', JSON.stringify(cart));
-                    alert(`${currentProduct.name} has been added to your cart!`);
+
+                    // Calculate the new cart count (or any other detail you want to pass)
+                    const cartCount = cart.length;
+
+                    // Dispatch a custom event with the updated cart information
+                    document.dispatchEvent(new CustomEvent('cartUpdated', {
+                        detail: { cartCount }
+                    }));
                 });
                 currentActiveContainer.appendChild(itemDiv);
             });
@@ -420,8 +427,7 @@
 
             loadProductsCurrentCategory();
         }
-        async function loadProductsCurrentCategory(page = 1)
-        {
+        async function loadProductsCurrentCategory(page = 1) {
             const categoryName = window.location.hash.substring(1);
             const result = await product.fetchProducts(categoryName, page);
             const products = result.items;
