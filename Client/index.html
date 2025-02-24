@@ -354,7 +354,7 @@
     <div id="footer"></div>
     <!-- JavaScript to dynamically generate banners and set up sliders -->
     <script>
-        
+
         document.addEventListener("DOMContentLoaded", async function () {
             // Step 1. Define promo info for each store.
             const storePromos = [
@@ -393,7 +393,7 @@
                 // Create the slider image element and set its initial source.
                 const imageElement = document.createElement("img");
                 imageElement.classList.add("slider-image");
-                imageElement.src = `assets/banner_images/banner_${store.storeName}_1.jpg`;
+                imageElement.src = `assets/banner_images/banner_${store.storeName.toLowerCase()}_1.jpg`;
                 sliderDiv.appendChild(imageElement);
 
                 if (store.bannerCount > 1) {
