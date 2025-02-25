@@ -55,13 +55,13 @@
       color: green;
     }
     .string {
-      color: lightcoral;
+      color: crimson;
     }
     .null {
       color: darkslategray;
     }
     .undefined {
-      color: darkorange;
+      color: darkblue;
     }
     strong, p {
       display: inline;
@@ -96,12 +96,7 @@
     <label for="bodyTextArea">Body:</label>
     <textarea id="bodyTextArea" placeholder="body..."></textarea>
     
-    <label>
-      IS JSON <input type="checkbox" id="isJSON">
-    </label>
-    
     <button onclick="fetchToBase()">Fetch</button>
-    <textarea id="errorP" readonly placeholder="Error messages..."></textarea>
   </div>
   <div id="resultDiv"></div>
   
@@ -109,7 +104,6 @@
     import {fetching, user} from './integration/fetches.js';
     const resultDiv = document.getElementById('resultDiv');
     const queryDiv = document.getElementById('queryDiv');
-    const errorP = document.getElementById('errorP');
     const endpointInput = document.getElementById('endpointInput');
     const methodSelect = document.getElementById('methodSelect');
     const credentialSelect = document.getElementById('credentialSelect');

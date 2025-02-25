@@ -1,12 +1,9 @@
 const upath = require('upath');
 const { pathToFileURL } = require('url');
 
-function resolve(...params) {
-  return pathToFileURL(upath.resolve(...params));
-}
 module.exports = {
-  'config': resolve('Server/src/database/config', 'config.js'),
-  'models-path': resolve('Server/src/database/models'),
-  'seeders-path': resolve('Server/src/database/seeders'),
-  'migrations-path': resolve('Server/src/database/migrations'),
+  'config': upath.resolve('Server/src/database/config', 'config.js'),
+  'models-path': upath.resolve('Server/src/database/models'),
+  'seeders-path': upath.resolve('Server/src/database/seeders'),
+  'migrations-path': upath.resolve('Server/src/database/migrations'),
 };

@@ -1,6 +1,7 @@
-import { sequelize } from './src/database/models/index.js';
+import dbPromise from './src/database/initialize.js'
 import { logger } from './src/common/index.js';
 import readline from 'readline';
+const {sequelize} = await dbPromise;
 
 let rl;
 async function questionAsync(msg) {
@@ -17,8 +18,7 @@ function stringToBool(str) { return str.toLowerCase() === "true"; }
 
 async function cleanup()
 {
-    const activeSequelizeInstance = getInstance();
-    await activeSequelizeInstance.close();
+    await sequelize.close();
     rl?.close();
     logger.info('Cleanup');
     logger.flush();

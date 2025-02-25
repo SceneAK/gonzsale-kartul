@@ -21,6 +21,7 @@ Please sort by importance
 - Bulk Delete Images
 - Bulk Edit Variants
 > implement rate limitting.
+> Order migration
 
 ## orders
 > Mailing Customers when order status changes, when product gets deleted 
