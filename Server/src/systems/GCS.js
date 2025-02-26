@@ -3,8 +3,8 @@ import { Storage } from '@google-cloud/storage';
 import { logger } from "./logger.js";
 
 const storage = new Storage({
-    credentials: JSON.parse(env.GCS_KEY),
-    projectId: env.GCP_PROJECT_ID,
+    credentials: JSON.parse(env.GC_KEY_STRINGIFIED),
+    projectId: env.GC_PROJECT_ID,
 });
 const bucket = storage.bucket(env.GCS_BUCKET_NAME);
 
@@ -26,13 +26,8 @@ async function uploadFile(file, filename)
         gzip: true,
         metadata: { contentType: file.mimetype },
     });
-    await new Promise((resolve, reject) => {
-        blobStream.on('error', (err) => reject(err));
-        blobStream.on('finish', () => {
-            gcsBlob.makePublic().then(resolve).catch(reject);
-        });
-        blobStream.end(file.buffer);
-    });
+    blobStream.on('error', (err) => logger.error(err));
+    blobStream.end(file.buffer);
 }
 async function deleteFilename(gcsFilename)
 {

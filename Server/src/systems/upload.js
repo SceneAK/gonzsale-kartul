@@ -2,7 +2,7 @@ import { env } from '../../initialize.js';
 import localStorage from './localStorage.js';
 import { logger } from './logger.js';
 const USING_GCS = env.USE_GCS == 'true';
-let GCS = USING_GCS ? await import('./GCS.js') : null; // dynamically bcs else it will throw error trying to access bucket credentials
+let GCS = USING_GCS ? (await import('./GCS.js')).default : null; // dynamically, else it will throw error trying to access bucket credentials
 
 // GCS and Local should be split into two classes.
 function buildAccessURL(req, relativePath)

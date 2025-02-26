@@ -18,7 +18,6 @@ export function setExistingProductImages(productImages)
         populateImagePreview();
         productImagesInput.required = false;
     }
-    console.log(existingProductImages);
 }
 function populateImagePreview()
 {
@@ -80,7 +79,7 @@ const previousDt = new DataTransfer();
 export function resetProductImages()
 {
     previewContainer.innerHTML = "";
-    previousDt.clearData();
+    previousDt.items.clear();
     existingProductImages = [];
     imageIdstoBeDeleted = [];
     productImagesInput.required = true;

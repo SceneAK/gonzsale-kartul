@@ -61,7 +61,7 @@ function prepareCreateProductModal()
     common.setValuesOfSelector('.product-inputs', modal, { name:"", description:"", category:""});
     
     resetProductImages();
-    resetRecordedVariants({name: "Default", isDefault: true, unit: "Unit"});
+    resetRecordedVariants();
 }
 
 async function createProduct()

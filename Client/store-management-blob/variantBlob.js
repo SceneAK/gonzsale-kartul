@@ -13,10 +13,11 @@ export function saveAndCloneRecordedVariants(){
 function setSelectedVariant(index)
 {
     syncVariantOptions(recordedVariants, variantSelect);
-
+    
     currentIndex = index;
     variantSelect.value = index;
 
+    console.log(recordedVariants);
     common.setValuesOfSelector('.variant-inputs', modal, recordedVariants[index]);
 }
 function saveVariantChanges()
@@ -31,15 +32,23 @@ function addNewVariant(data)
     setSelectedVariant(newLen - 1);
 }
 
-
-export function resetRecordedVariants(firstVariantData){
+export function resetRecordedVariants(){
+    currentIndex = 0;
     recordedVariants = [];
-    addNewVariant(firstVariantData);
+
+    setRecordedVariants([
+        {
+            name: "Default", 
+            isDefault: true, 
+            price: 0,
+            unit: "Unit", 
+            stock: 1
+        }
+    ])
 }
 export function setRecordedVariants(Variants)
 {
     recordedVariants = Variants;
-    console.log(Variants);
     setSelectedVariant(0);
 }
 variantSelect.addEventListener('change', function(){
