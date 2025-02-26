@@ -1,7 +1,8 @@
 import { env } from "../../initialize.js";
 import axios from "axios";
 import qs from "qs";
-import { ApplicationError, logger } from "../common/index.js";
+import { ApplicationError } from "../common/index.js";
+import { logger } from "../systems/index.js";
 
 const responseKey = 'g-recaptcha-response';
 const urlEncodedHeader = { 'Content-Type': 'application/x-www-form-urlencoded' };

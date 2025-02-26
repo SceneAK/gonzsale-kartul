@@ -1,12 +1,12 @@
 import express from 'express';
 const router = express.Router();
 
-import { ensureBelowLimit, createMulter, verify, validate, ensureStore } from '../middlewares/index.js';
-import { page, productImageSchemas, productSchemas, variantSchema } from '../reqSchemas/index.js';
+import { ensureBelowLimit, createUpload, verify, validate, ensureStore } from '../middlewares/index.js';
+import { productImageSchemas, productSchemas, variantSchema } from '../reqSchemas/index.js';
 import { product, variant, productImage } from '../controllers/index.js';
 
 
-const productImgUploads = createMulter({relativeDir: 'images/products/', keyName: 'images', type: 'array', maxCount: 4});
+const productImgUploads = createUpload('images/products/', {keyName: 'images', type: 'array', maxCount: 4});
 
 router.get('/search', validate(productSchemas.fetchFiltered), product.fetchProducts);
 

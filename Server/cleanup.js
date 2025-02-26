@@ -1,7 +1,7 @@
 import initPromise from './src/database/initialize.js';
 const { sequelize } = await initPromise;
 
-import { logger } from "./src/common/index.js";
+import { logger } from "./src/systems/index.js";
 
 export default async function cleanUp()
 {

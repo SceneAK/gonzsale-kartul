@@ -1,7 +1,7 @@
-import { AGREED_PUBLIC_ROUTE_NAME, PUBLIC_DIR, STATIC_CLIENT_DIR, VIEW_DIR, env } from './initialize.js';
+import { PUBLIC_LOCAL_STORAGE_ROUTE, PUBLIC_LOCAL_STORAGE_DIR, STATIC_CLIENT_DIR, VIEW_DIR, env } from './initialize.js';
 import cookieParser from 'cookie-parser';
 import express from 'express'; 
-import { httpLogger } from './src/common/index.js';
+import { httpLogger } from './src/systems/logger.js';
 import './signalHandlers.js';
 import cors from 'cors';
 import { ssrRoute } from './src/routes/index.js';
@@ -16,7 +16,7 @@ app.use(cors(
 );
 
 // source
-app.use(`/${AGREED_PUBLIC_ROUTE_NAME}`, express.static(PUBLIC_DIR)); 
+app.use(`/${PUBLIC_LOCAL_STORAGE_ROUTE}`, express.static(PUBLIC_LOCAL_STORAGE_DIR)); 
 
 // static client routes
 if(env.ENABLE_STATIC_CLIENT?.toLowerCase() === 'true') 

@@ -2,7 +2,7 @@ import imageServices from './imageServices.js';
 import userServices from './userServices.js';
 import dbInitPromise from '../database/initialize.js'
 import {ApplicationError} from '../common/index.js';
-import fs from 'fs';
+import upload from '../systems/upload.js';
 const { Store } = await dbInitPromise;
 
 async function fetchStore(id)
@@ -72,7 +72,7 @@ async function handleImage(fieldName, action, file, store, updateData)
     // cleanup
     if(file && action != 'replace')
     {
-        fs.unlink(file.path, _ => _);
+        file = null;
     }
 }
 async function complete(storeData, files, userId)

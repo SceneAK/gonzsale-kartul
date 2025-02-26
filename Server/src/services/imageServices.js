@@ -1,5 +1,7 @@
-import { ApplicationError, getRelative, logger }from '../common/index.js'
+import { ApplicationError }from '../common/index.js'
+import { logger } from '../systems/index.js';
 import dbInitPromise from '../database/initialize.js'
+import upload from '../systems/upload.js';
 import userStorageServices from './userStorageServices.js';
 const { Image } = await dbInitPromise;
 
@@ -7,8 +9,8 @@ async function createImages(files, userId = null)
 {
     const imageDatas = files.map( file => {
         if (!isImage(file)) throw new ApplicationError('File is not an Image', 400);
-        const rel = getRelative(file.path);
-        return { path: rel };
+        const path = file.relativePath;
+        return { path };
     });
     const imageModels = await Image.bulkCreate(imageDatas);
 

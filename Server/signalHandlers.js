@@ -1,5 +1,5 @@
 import cleanUp from './cleanup.js';
-import { logger } from './src/common/index.js';
+import { logger } from './src/systems/index.js';
 
 process.on('SIGTERM', handle);
 process.on('SIGHUP', handle)

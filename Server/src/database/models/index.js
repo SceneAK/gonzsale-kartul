@@ -4,7 +4,7 @@ import {pathToFileURL} from 'url';
 import { fileURLToPath } from 'url';
 import { Sequelize, DataTypes } from 'sequelize';
 import config from '../config/config.js';
-import { logger } from '../../common/logger.js';
+import { logger } from '../../systems/logger.js';
 import cls from 'cls-hooked';
 import { env } from '../../../initialize.js';
 

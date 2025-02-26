@@ -1,5 +1,5 @@
 import { orderServices, storeServices, userServices } from '../services/index.js';
-import { convertAllPathsToURLs } from '../common/pathToURLConverter.js';
+import { convertAllPathsToURLs } from '../common/index.js';
 import { productTransform } from './transformer/index.js';
 
 const fetchOrder = async (req, res) => {

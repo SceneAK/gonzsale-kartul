@@ -1,5 +1,5 @@
 import db from './models/index.js';
-import { logger } from '../common/index.js';
+import { logger } from '../systems/index.js';
 
 const dbInitPromise = (async () => {
   try

@@ -1,8 +1,7 @@
 import 'express-async-errors';
 import app from './app.js';
 import { userRoute, productRoute, storeRoute, orderRoute, transactionRoute, variantRoute, adminRoute } from './src/routes/index.js';
-import { onErrorFileDeletion } from './src/middlewares/multerUploads.js';
-import { logger } from './src/common/index.js';
+import { logger } from './src/systems/logger.js';
 import { env } from './initialize.js';
 import errorHandler from './src/middlewares/errorHandler.js';
 import https from 'https'
@@ -22,7 +21,6 @@ app.use('/api/variant/', variantRoute);
 app.use('/admin/', adminRoute)
 
 // Handled Errors
-app.use(onErrorFileDeletion); // for multer
 app.use(errorHandler)
 
 const logListening = (port)=> ()=>{

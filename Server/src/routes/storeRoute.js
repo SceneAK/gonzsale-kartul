@@ -1,10 +1,9 @@
 import { store }from '../controllers/index.js';
-import { verify, validate, createMulter, ensureBelowLimit, ensureStore} from '../middlewares/index.js'
+import { verify, validate, createUpload, ensureBelowLimit, ensureStore} from '../middlewares/index.js'
 import { storeSchemas } from '../reqSchemas/index.js';
 import express from 'express';
 
-const storeImgUpload = createMulter({
-    relativeDir: "images/store/", 
+const storeImgUpload = createUpload('images/store/', {
     type: 'fields', 
     fields: [
         { name: 'imageFile', maxCount: 1 },

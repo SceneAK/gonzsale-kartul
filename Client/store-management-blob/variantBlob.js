@@ -39,6 +39,7 @@ export function resetRecordedVariants(firstVariantData){
 export function setRecordedVariants(Variants)
 {
     recordedVariants = Variants;
+    console.log(Variants);
     setSelectedVariant(0);
 }
 variantSelect.addEventListener('change', function(){

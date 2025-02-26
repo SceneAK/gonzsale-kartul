@@ -334,7 +334,7 @@
                 const proofFile = document.getElementById(`proof-${order.storeId}`).files[0];
                 const formdata = new FormData();
                 formdata.append('type', "PAYMENT");
-                formdata.append('file', proofFile);
+                formdata.append('image', proofFile);
                 try {
                     await transaction.createProofTransaction(order.id, formdata);
                 } catch (err) {

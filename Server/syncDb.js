@@ -1,5 +1,5 @@
 import dbPromise from './src/database/initialize.js'
-import { logger } from './src/common/index.js';
+import { logger } from './src/systems/index.js';
 import readline from 'readline';
 const {sequelize} = await dbPromise;
 

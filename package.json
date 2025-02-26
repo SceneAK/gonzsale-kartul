@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google-cloud/storage": "^7.15.2",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "chai": "^5.1.2",
@@ -35,7 +36,6 @@
     "pino-http": "^10.3.0",
     "qs": "^6.14.0",
     "sequelize": "^6.37.5",
-    "ssr": "^6.2.82",
     "upath": "^2.0.1",
     "uuid": "^11.0.3"
   },

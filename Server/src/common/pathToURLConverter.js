@@ -1,21 +1,12 @@
-import { AGREED_PUBLIC_ROUTE_NAME } from '../../initialize.js';
-
-function buildURL(protocol, host, relativePath)
-{
-    return `${protocol}://${host}/${AGREED_PUBLIC_ROUTE_NAME}/${relativePath}`;
-}
+import {upload} from "../systems/index.js";
 
 const pathFieldName = 'path';
 function convertAllPathsToURLs(req, input)
 {
-    return _convertAllPathsToURLs(req.protocol, req.get('host'), input);
-}
-function _convertAllPathsToURLs(protocol, host, input)
-{
     if(isArray(input))
     {
         input.forEach( element => {
-            _convertAllPathsToURLs(protocol, host, element);
+            convertAllPathsToURLs(req, element);
         })
     }else if(isObject(input))
     {
@@ -23,10 +14,11 @@ function _convertAllPathsToURLs(protocol, host, input)
         {
             if(key === pathFieldName)
             {
-                input['url'] = buildURL(protocol, host, input[key]);
+                const relativePath = input[key];
+                input['url'] = upload.buildAccessURL(req, relativePath);
                 delete input[key];
             }else{
-                _convertAllPathsToURLs(protocol, host, input[key]);
+                convertAllPathsToURLs(req, input[key]);
             }
         }
     }
@@ -40,4 +32,4 @@ function isArray(value)
     return Array.isArray(value)
 }
 
-export {buildURL, convertAllPathsToURLs};
+export default convertAllPathsToURLs;

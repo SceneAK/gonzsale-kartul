@@ -47,8 +47,8 @@ async function deleteImage(imageId, requester)
     baseProductServices.ensureProductBelongsToStore(productImage.Product, requester.storeId);
 
     await ProductImage.sequelize.transaction( async t => {
-        await imageServices.deleteImages([imageId], requester.id);
         await ProductImage.destroy({where: {imageId}});
+        await imageServices.deleteImages([imageId], requester.id);
     })
 }
 async function deleteProductImages(productId, requester)
@@ -58,8 +58,8 @@ async function deleteProductImages(productId, requester)
     const imageIds = productImages.map( prdImg => prdImg.imageId);
 
     await ProductImage.sequelize.transaction( async t => {
-        await imageServices.deleteImages(imageIds, requester.id);
         await ProductImage.destroy({where: {productId}});
+        await imageServices.deleteImages(imageIds, requester.id);
     })
 }
 

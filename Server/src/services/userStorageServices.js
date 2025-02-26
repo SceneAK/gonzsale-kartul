@@ -1,6 +1,6 @@
-import { promises as fs} from 'fs';
-import { logger, getFull } from '../common/index.js';
+import { logger } from '../systems/index.js';
 import dbInitPromise from '../database/initialize.js'
+import upload from '../systems/upload.js';
 const { UserStorage } = await dbInitPromise;
 
 async function getUsed(userId)
@@ -8,7 +8,6 @@ async function getUsed(userId)
     const row = await UserStorage.findByPk(userId, {raw: true});
     return row ? row.usedStorage : 0;
 }
-
 async function trackUsedFiles(files, userId)
 {
     let total = 0;
@@ -20,13 +19,12 @@ async function unlinkUnused(relPaths, userId)
 {
     let absSize = 0;
     for(const relPath of relPaths){
-        const path = getFull(relPath);
         try
         {
-            const size = (await fs.stat(path)).size;
+            const size = (await upload.getStat(dbPath)).size;
             absSize += size;
             
-            await fs.unlink(path);
+            await upload.deleteRelativePath(relPaths);
         }catch(err)
         {
             logger.error("Updated Unlink Error, ", err.message);

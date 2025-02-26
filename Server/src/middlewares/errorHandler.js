@@ -1,4 +1,5 @@
-import { ApplicationError, logger } from "../common/index.js"
+import { ApplicationError } from "../common/index.js"
+import { logger } from "../systems/index.js";
 
 export default function errorHandler(err, req, res, next){
     if(err.isJoi)

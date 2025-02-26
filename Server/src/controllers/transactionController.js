@@ -1,4 +1,4 @@
-import { convertAllPathsToURLs } from "../common/pathToURLConverter.js";
+import { convertAllPathsToURLs } from "../common/index.js";
 import { extendedTransactionServices } from "../services/index.js";
 
 const fetchTransaction = async (req, res)=> {

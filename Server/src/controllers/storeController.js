@@ -1,5 +1,6 @@
 import { storeServices } from '../services/index.js';
-import { logger, convertAllPathsToURLs } from '../common/index.js';
+import { logger } from '../systems/index.js';
+import { convertAllPathsToURLs } from '../common/index.js';
 
 const fetchStore = async (req, res) =>{
     const { id } = req.params;

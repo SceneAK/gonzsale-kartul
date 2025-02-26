@@ -133,7 +133,6 @@ async function editProduct(productId)
         delete currentVariant.isDefault;
         
         if(currentVariant.id) {
-            delete currentVariant.id;
             accumulator.toEdit.push(currentVariant);
         }else {
             accumulator.toCreate.push(currentVariant);
@@ -143,7 +142,10 @@ async function editProduct(productId)
     }, { toCreate: [], toEdit: []});
     
     if(toCreate.length > 0) await variant.createVariants(productId, toCreate);
-    if(toEdit.length > 0) toEdit.forEach( variantData => variant.editVariant(variantData.id, variantData) );
+    if(toEdit.length > 0) toEdit.forEach( variantData => {
+        const {id, ...rest} = variantData;
+        variant.editVariant(id, rest) 
+    });
 
     await deleteDeletedPreviewImages();
     const newImages = getProductImageFormData();
