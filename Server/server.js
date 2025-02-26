@@ -1,24 +1,33 @@
 import 'express-async-errors';
 import app from './app.js';
-import { userRoute, productRoute, storeRoute, orderRoute, transactionRoute, variantRoute, adminRoute } from './src/routes/index.js';
+import apiRoute from './src/routes/apiRoute.js'
+import { adminRoute } from './src/routes/index.js';
 import { logger } from './src/systems/logger.js';
 import { env } from './initialize.js';
 import errorHandler from './src/middlewares/errorHandler.js';
 import https from 'https'
 import http from 'http'
 import fs from 'fs';
+import rateLimit from 'express-rate-limit';
 
+const globalLimitter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: env.RATE_LIMIT_MAX || 500,
+    message: 'Too many requests, please wait.'
+})
+const apiLimitter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: env.API_RATE_LIMIT_MAX || 120,
+    message: 'Too many requests, please wait.'
+})
+  
 
 logger.info('Start Server');
 
-// MOUNTS ROUTES
-app.use('/api/product/', productRoute);
-app.use('/api/user/', userRoute);
-app.use('/api/store/', storeRoute);
-app.use('/api/order/', orderRoute);
-app.use('/api/transaction/', transactionRoute);
-app.use('/api/variant/', variantRoute);
-app.use('/admin/', adminRoute)
+app.use(globalLimitter);
+
+app.use('/api', apiLimitter, apiRoute)
+app.use('/admin', adminRoute)
 
 // Handled Errors
 app.use(errorHandler)
