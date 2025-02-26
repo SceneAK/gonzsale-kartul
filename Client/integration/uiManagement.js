@@ -276,9 +276,9 @@ function hookSignInWithElementIds(emailId, passwordId, signInId) {
 /***************************************************
  * MY CART CUSTOM FUNCTION
  * Updates the header’s cart notification for both desktop and mobile.
- * Also animates a sliding box that, on completion, changes the button's color.
+ * If the optional parameter "animate" is true, it plays the sliding box animation.
  ***************************************************/
-function updateCartNotification() {
+function updateCartNotification(animate = false) {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     const cartCount = cart.length;
 
@@ -290,45 +290,50 @@ function updateCartNotification() {
         const hoverBgColor = cartCount > 0 ? "rgb(51, 152, 0)" : "rgb(200, 200, 200)";
         const textColor = cartCount > 0 ? "#fff" : "#272727";
 
-        // Update the innerHTML and text color
+        // Update innerHTML and text color
         myCartButton.innerHTML = `
             <img src="assets/images/cart_icon.svg" alt="Cart Icon">
             My Cart <span class="badge" id="cart-count">${cartCount}</span>
         `;
         myCartButton.style.color = textColor;
 
-        // Ensure the button is relatively positioned so the animated box can be placed absolutely.
-        myCartButton.style.position = 'relative';
+        if (animate) {
+            // Ensure the button is relatively positioned so the animated box can be placed absolutely.
+            myCartButton.style.position = 'relative';
 
-        // Create the sliding box element.
-        const slideBox = document.createElement('div');
-        slideBox.className = 'slide-box';
-        slideBox.style.position = 'absolute';
-        slideBox.style.top = '0';
-        slideBox.style.left = '-30%';  // Start fully to the left of the button
-        slideBox.style.width = '100%';
-        slideBox.style.height = '100%';
-        slideBox.style.zIndex = '100';
-        // Use a semi-transparent white so the animation is visible.
-        slideBox.style.backgroundColor = 'rgba(255,255,255,0.7)';
-        // Use a transition on the left property for a smooth slide.
-        slideBox.style.transition = 'left 0.5s ease-out';
+            // Create the sliding box element.
+            const slideBox = document.createElement('div');
+            slideBox.className = 'slide-box';
+            slideBox.style.position = 'absolute';
+            slideBox.style.top = '0';
+            slideBox.style.left = '-30%';  // Start slightly off the left edge
+            slideBox.style.width = '100%';
+            slideBox.style.height = '100%';
+            slideBox.style.zIndex = '100';
+            // Semi-transparent white for visibility.
+            slideBox.style.backgroundColor = 'rgba(255,255,255,0.7)';
+            // Transition on the left property for a smooth slide.
+            slideBox.style.transition = 'left 0.5s ease-out';
 
-        // Append the slideBox to the My Cart button.
-        myCartButton.appendChild(slideBox);
+            // Append the slideBox to the My Cart button.
+            myCartButton.appendChild(slideBox);
 
-        // Force a reflow to ensure the transition starts.
-        slideBox.getBoundingClientRect();
-        // Start the animation: slide the box from left: -100% to left: 0.
-        slideBox.style.left = '0';
+            // Force a reflow so the transition kicks in.
+            slideBox.getBoundingClientRect();
+            // Start the animation: slide the box into view.
+            slideBox.style.left = '0';
 
-        // When the animation (transition) ends, change the background color and remove the box.
-        slideBox.addEventListener("transitionend", function () {
+            // When the transition ends, update the button's background and remove the slideBox.
+            slideBox.addEventListener("transitionend", function () {
+                myCartButton.style.backgroundColor = baseBgColor;
+                myCartButton.removeChild(slideBox);
+            });
+        } else {
+            // If no animation, simply set the background color.
             myCartButton.style.backgroundColor = baseBgColor;
-            myCartButton.removeChild(slideBox);
-        });
+        }
 
-        // Attach hover event listeners (only once) to update the background color on mouseover/mouseout.
+        // Attach hover event listeners (only once) to update background color on mouseover/mouseout.
         if (!myCartButton.dataset.hoverInitialized) {
             myCartButton.addEventListener("mouseover", function () {
                 const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -353,8 +358,10 @@ function updateCartNotification() {
     }
 }
 
-// Listen for cartUpdated events to update the notification
-document.addEventListener('cartUpdated', updateCartNotification);
+// Listen for cartUpdated events to update the notification with animation.
+document.addEventListener('cartUpdated', function (e) {
+    updateCartNotification(true);
+});
 
 /***************************************************
  * Page Initialization
