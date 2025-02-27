@@ -293,7 +293,7 @@
     }
 
     function loadProductData(productData) {
-      document.getElementById('product-name').textContent = `${productData.name} |`;
+      document.getElementById('product-name').innerText = `${productData.name} -`;
       document.getElementById('product-description').innerText = productData.description;
       document.getElementById('product-category').textContent = productData.category;
       // Store Name & Link to Store Details
@@ -312,7 +312,7 @@
     function loadVariantData(variantData) {
       const outOfStock = variantData.stock <= 0;
 
-      document.getElementById('variant-name').textContent = `| ${variantData.name} ${outOfStock ? "(Out of Stock)" : ""}`;
+      document.getElementById('variant-name').innerHTML = `&nbsp;${variantData.name} ${outOfStock ? "(Out of Stock)" : ""}`;
       document.getElementById('variant-price-unit').textContent =
         `Rp ${variantData.price?.toLocaleString('id-ID')} / ${variantData.unit}`;
       if (outOfStock) {
