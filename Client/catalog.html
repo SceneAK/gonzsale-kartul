@@ -62,11 +62,12 @@
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s ease-in-out;
             text-align: center;
+            width: 150px;
+            height: 300px;
         }
 
         .item:hover {
             transform: translateY(-5px);
-            /* Slight hover effect */
         }
 
         .item img {
@@ -79,15 +80,18 @@
 
         .item .store-logo {
             width: 40px;
-            /* Make the store image smaller */
             height: 40px;
             border-radius: 50%;
             margin: 10px 0;
         }
 
         .item p {
-            margin: 5px 0;
+            margin: 5px;
             font-size: 14px;
+            overflow: hidden;
+            line-height: 1.5;
+            max-height: calc(1.5em * 2);
+            overflow: hidden;
         }
 
         .item .price {
@@ -135,6 +139,8 @@
         @media (max-width: 480px) {
             .item {
                 padding-bottom: 10px;
+                width: 140px;
+                height: 280px;
             }
 
             .item img {
@@ -143,7 +149,7 @@
             }
 
             .item p {
-                font-size: 12px;
+                font-size: 13px;
             }
 
             .item .price {
@@ -340,6 +346,36 @@
         };
 
         let currentActiveContainer;
+
+        // Truncation function to limit text to two lines with ellipsis
+        window.truncateToTwoLines = function (pElement) {
+            const originalText = pElement.textContent;
+            const computedStyle = window.getComputedStyle(pElement);
+            const lineHeight = parseFloat(computedStyle.lineHeight);
+            const maxHeight = lineHeight * 2;
+
+            // If the content already fits in two lines, do nothing.
+            if (pElement.scrollHeight <= maxHeight) return;
+
+            let start = 0;
+            let end = originalText.length;
+            let truncatedText = "";
+
+            // Binary search for the longest substring that fits within two lines.
+            while (start <= end) {
+                const mid = Math.floor((start + end) / 2);
+                pElement.textContent = originalText.slice(0, mid) + '...';
+                if (pElement.scrollHeight <= maxHeight) {
+                    truncatedText = pElement.textContent;
+                    start = mid + 1; // Try a longer substring.
+                } else {
+                    end = mid - 1; // Reduce the substring length.
+                }
+            }
+            pElement.textContent = truncatedText;
+            console.log(`Truncated "${originalText}" to "${truncatedText}"`);
+        }
+
         function populateItems(products) {
             currentActiveContainer.innerHTML = '';
 
@@ -347,26 +383,26 @@
                 currentActiveContainer.innerHTML = '<p>No products available for this category.</p>';
                 return;
             }
+
             products.forEach(currentProduct => {
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('item');
                 itemDiv.style.cursor = 'pointer'; // Indicate that the item is clickable
 
-                // Add a click listener on the entire item div
+                // Click listener for the entire item div.
                 itemDiv.addEventListener('click', function (e) {
-                    // Prevent navigation when clicking the Add to Cart button
+                    // Prevent navigation when clicking the Add to Cart button.
                     if (e.target.closest('.add-to-cart')) {
                         return;
                     }
-                    // Navigate to display-product.html with the product id in the query string
+                    // Navigate to display-product.html with the product id in the query string.
                     window.location.href = `ssr/display-product/${currentProduct.id}`;
                 });
 
-                const firstImg = currentProduct.ProductImages[0]?.url || 'assets/images/placeholder.png'; // fallback image if needed
+                const firstImg = currentProduct.ProductImages[0]?.url || 'assets/images/placeholder.png'; // Fallback image.
                 const defaultVariant = currentProduct.Variants[0];
 
                 // Set the inner HTML of the item.
-                // Note: The Add to Cart button also calls event.stopPropagation() so its click does not bubble up.
                 itemDiv.innerHTML = `
                     <img src="${firstImg}" alt="${currentProduct.name}">
                     <p>${currentProduct.name}</p>
@@ -382,27 +418,28 @@
                     const existingItemIndex = cart.findIndex(item => item.selectedVariant.id === defaultVariant.id);
 
                     if (existingItemIndex > -1) {
-                        const maxStock = cart[existingItemIndex].quantity == cart[existingItemIndex].selectedVariant.stock
+                        const maxStock = cart[existingItemIndex].quantity == cart[existingItemIndex].selectedVariant.stock;
                         cart[existingItemIndex].quantity += maxStock ? 1 : 0;
                     } else {
-                        const completeProduct = await product.fetchProduct(currentProduct.id); // use if incomplete variants
-
+                        const completeProduct = await product.fetchProduct(currentProduct.id); // Use if incomplete variants.
                         const itemToAdd = common.buildCartItem(completeProduct, defaultVariant, 1);
                         cart.push(itemToAdd);
                     }
 
                     localStorage.setItem('cart', JSON.stringify(cart));
 
-                    // Calculate the new cart count (or any other detail you want to pass)
+                    // Dispatch a custom event with the updated cart information.
                     const cartCount = cart.length;
-
-                    // Dispatch a custom event with the updated cart information
                     document.dispatchEvent(new CustomEvent('cartUpdated', {
                         detail: { cartCount }
                     }));
                 });
                 currentActiveContainer.appendChild(itemDiv);
             });
+
+            // After appending items, run the truncation on all <p> elements inside .item divs.
+            const paragraphs = currentActiveContainer.querySelectorAll('.item p');
+            paragraphs.forEach(p => window.truncateToTwoLines(p));
         }
 
         async function openCategory(categoryName) {
@@ -413,11 +450,11 @@
             }
             currentActiveContainer = container;
 
-            // Hide all other tab contents
+            // Hide all other tab contents.
             const tabcontents = document.getElementsByClassName("tabcontent");
             Array.from(tabcontents).forEach(tab => (tab.style.display = "none"));
 
-            // Show the selected tab
+            // Show the selected tab.
             const selectedTab = document.getElementById(categoryName);
             if (!selectedTab) {
                 console.error(`Tab not found for category: ${categoryName}`);
@@ -427,6 +464,7 @@
 
             loadProductsCurrentCategory();
         }
+
         async function loadProductsCurrentCategory(page = 1) {
             const categoryName = window.location.hash.substring(1);
             const result = await product.fetchProducts(categoryName, page);
@@ -441,7 +479,7 @@
             if (hash) {
                 openCategory(hash);
             } else {
-                openCategory("shirts"); // Default to shirts
+                openCategory("shirts"); // Default to shirts.
             }
         }
 
