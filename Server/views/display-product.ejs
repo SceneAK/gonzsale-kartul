@@ -211,6 +211,7 @@
         productData = await product.fetchProduct(id);
       }
 
+
       // Build an array of image URLs from productData.ProductImages
       imageUrls = (productData.ProductImages && productData.ProductImages.length > 0)
         ? productData.ProductImages.map(img => img.url)
@@ -293,7 +294,7 @@
 
     function loadProductData(productData) {
       document.getElementById('product-name').textContent = `${productData.name} |`;
-      document.getElementById('product-description').textContent = productData.description;
+      document.getElementById('product-description').innerText = productData.description;
       document.getElementById('product-category').textContent = productData.category;
       // Store Name & Link to Store Details
       const storeNameElement = document.getElementById('store-name');
