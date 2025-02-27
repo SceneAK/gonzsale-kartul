@@ -197,8 +197,7 @@
     import { product } from './integration/fetches.js';
     import common from './common.js';
 
-    let ssrProductData = '<%- JSON.stringify(productData) %>' || null;
-    let productData;
+    let productData = <%- JSON.stringify(productData) %> || null;
     let imageUrls = [];
     let currentImageIndex = 0;
 
@@ -208,12 +207,7 @@
       const id = urlParams.get('id');
 
       // Fetch the product details
-      if(ssrProductData) {
-        productData = JSON.parse(ssrProductData);
-        console.log("PARSED")
-        console.log(productData)
-      }else{
-        console.log("NOPE")
+      if(!productData) {
         productData = await product.fetchProduct(id);
       }
 
