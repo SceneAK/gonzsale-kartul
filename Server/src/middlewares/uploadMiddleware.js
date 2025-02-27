@@ -11,10 +11,12 @@ const createUpload = (relativeDir, options) => (req, res, next) => {
             saveFilesAsRelativePath(populatedFiles);
         }
     })
-    createMulter(options)(req, res, ()=>{
-        const memStorageFiles = getFilesIfAny(req);
-        populateWithRelativePath(memStorageFiles, relativeDir);
-        next();
+    createMulter(options)(req, res, (err)=>{
+        if(!err){
+            const memStorageFiles = getFilesIfAny(req);
+            populateWithRelativePath(memStorageFiles, relativeDir);
+        }
+        next(err);
     });
 }
 function saveFilesAsRelativePath(files)

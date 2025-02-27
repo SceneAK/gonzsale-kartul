@@ -77,10 +77,10 @@ async function createProduct()
         ...productData,
         defaultVariantData: defaultVariant
     })
-    await product.createProductImages(result.id, getProductImageFormData());
+    product.createProductImages(result.id, getProductImageFormData()).catch(err => alert(err.message));
     if(variantDataArr.length > 0)
     {
-        await variant.createVariants(result.id, variantDataArr);
+        variant.createVariants(result.id, variantDataArr).catch(err => alert(err.message));
     }
 }
 function pullOutDefault(variantData)
@@ -154,7 +154,7 @@ async function editProduct(originalProductData)
 
     await deleteDeletedPreviewImages();
     const newImages = getProductImageFormData();
-    if(newImages) await product.createProductImages(productId, newImages);
+    if(newImages) product.createProductImages(productId, newImages).catch(err => alert(err.message));
 }
 function prepareEditProductModal(productData) {
     modalH1.innerHTML = 'Edit Product';

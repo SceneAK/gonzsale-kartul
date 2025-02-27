@@ -25,6 +25,7 @@ const apiLimitter = rateLimit({
 logger.info('Start Server');
 
 app.use(globalLimitter);
+app.set('trust proxy', env.TRUST_PROXY || 0);
 
 app.use('/api', apiLimitter, apiRoute)
 app.use('/admin', adminRoute)

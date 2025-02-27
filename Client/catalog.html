@@ -397,9 +397,7 @@
                     const cartCount = cart.length;
 
                     // Dispatch a custom event with the updated cart information
-                    document.dispatchEvent(new CustomEvent('cartUpdated', {
-                        detail: { cartCount }
-                    }));
+                    document.dispatchEvent(new CustomEvent('cartUpdated'));
                 });
                 currentActiveContainer.appendChild(itemDiv);
             });

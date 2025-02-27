@@ -1,4 +1,3 @@
-import { convertAllPathsToURLs } from '../common/index.js';
 import { productImageServices, storeServices} from '../services/index.js';
 
 const createProductImage = async (req, res) => {

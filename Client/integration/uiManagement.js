@@ -281,7 +281,7 @@ function hookSignInWithElementIds(emailId, passwordId, signInId) {
 function updateCartNotification(animate = false) {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     const cartCount = cart.length;
-
+    
     // Update desktop cart element
     const myCartButton = document.getElementById('my-cart');
     if (myCartButton) {
@@ -293,7 +293,7 @@ function updateCartNotification(animate = false) {
         // Update innerHTML and text color
         myCartButton.innerHTML = `
             <img src="assets/images/cart_icon.svg" alt="Cart Icon">
-            My Cart <span class="badge" id="cart-count">${cartCount}</span>
+            My Cart ${ cartCount > 0 ? `<span class="badge" id="cart-count">${cartCount}</span>` : ""}
         `;
         myCartButton.style.color = textColor;
 

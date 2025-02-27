@@ -219,6 +219,7 @@
             cart.splice(index, 1);
             saveCartItem()
             displayCart();
+            document.dispatchEvent(new CustomEvent('cartUpdated'));
         }
 
         function updateNote(index, note) {
