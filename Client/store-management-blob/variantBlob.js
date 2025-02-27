@@ -17,7 +17,6 @@ function setSelectedVariant(index)
     currentIndex = index;
     variantSelect.value = index;
 
-    console.log(recordedVariants);
     common.setValuesOfSelector('.variant-inputs', modal, recordedVariants[index]);
 }
 function saveVariantChanges()
@@ -48,7 +47,7 @@ export function resetRecordedVariants(){
 }
 export function setRecordedVariants(Variants)
 {
-    recordedVariants = Variants;
+    recordedVariants = Array.from(Variants);
     setSelectedVariant(0);
 }
 variantSelect.addEventListener('change', function(){

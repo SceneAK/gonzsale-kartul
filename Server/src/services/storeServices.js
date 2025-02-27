@@ -1,8 +1,8 @@
 import imageServices from './imageServices.js';
 import userServices from './userServices.js';
 import dbInitPromise from '../database/initialize.js'
-import {ApplicationError} from '../common/index.js';
-import upload from '../systems/upload.js';
+import {ApplicationError, reformatFindCountAll} from '../common/index.js';
+import { paginationOption } from '../common/index.js';
 const { Store } = await dbInitPromise;
 
 async function fetchStore(id)
@@ -13,6 +13,17 @@ async function fetchStore(id)
     });
     if(!storeModel) throw new ApplicationError('Store not found', 404);
     return storeModel.toJSON();
+}
+
+async function fetchStores(page, where = {})
+{
+    const results = await Store.findAll({
+        include: ALL_INCLUDES,
+        attributes: SERVE_ATTRIBUTES,
+        where,
+        ...paginationOption(page, 20)
+    });
+    return reformatFindCountAll(results).itemsToJSON();
 }
 
 async function fetchStoreIdOfUser(userId) {
@@ -122,4 +133,4 @@ function include(level)
             }
     }
 }
-export default  { fetchStore, fetchStoreIdOfUser, createStore, updateStore, include }
+export default  { fetchStore, fetchStoreIdOfUser, fetchStores, createStore, updateStore, include }

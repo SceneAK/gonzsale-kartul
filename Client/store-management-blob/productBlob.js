@@ -32,8 +32,10 @@ async function loadProducts(page = 1) {
 }
 window.deleteProduct = async function (id) {
     try {
-        await product.deleteProduct(id);
-        paginationManager.callLoadPageHandler();
+        if(confirm("Are you sure you want to delete this product?")){
+            await product.deleteProduct(id);
+            paginationManager.callLoadPageHandler();
+        }
 
     } catch (err) { alert('error deleting product') }
 }
@@ -116,36 +118,39 @@ window.openModalAsEditProduct = async function(productId)
         event.preventDefault();
         if(inputDetected)
         {
-            await editProduct(productId);
+            await editProduct(productData);
             paginationManager.callLoadPageHandler();
         }
         modal.classList.remove('active');
     }
 }
-async function editProduct(productId)
+async function editProduct(originalProductData)
 {
-    const productData = common.getAllNameValueOfSelector('.product-inputs', modal);
-    common.convertAvailabilityKey(productData);
-    await product.editProduct(productId, productData);
+    const productId = originalProductData.id;
+    const editedData = common.getAllNameValueOfSelector('.product-inputs', modal);
+    common.convertAvailabilityKey(editedData);
+    await product.editProduct(productId, editedData);
     
     const variantDataArr = saveAndCloneRecordedVariants();
-    const {toCreate, toEdit} = variantDataArr.reduce( (accumulator, currentVariant) => {
+    const {toCreate, toEdit, toDelete} = variantDataArr.reduce( (accumulator, currentVariant) => {
         delete currentVariant.isDefault;
-        
         if(currentVariant.id) {
             accumulator.toEdit.push(currentVariant);
+            const thisIndex = accumulator.toDelete.findIndex( value => value.id == currentVariant.id )
+            accumulator.toDelete.splice(thisIndex, 1 )
         }else {
             accumulator.toCreate.push(currentVariant);
         }
-        
         return accumulator;
-    }, { toCreate: [], toEdit: []});
-    
+    }, { toCreate: [], toEdit: [], toDelete: originalProductData.Variants});    
     if(toCreate.length > 0) await variant.createVariants(productId, toCreate);
     if(toEdit.length > 0) toEdit.forEach( variantData => {
         const {id, ...rest} = variantData;
-        variant.editVariant(id, rest) 
+        variant.editVariant(id, rest).catch(err => alert(err.message))
     });
+    if(toDelete.length > 0) toDelete.forEach( variantData => {
+        variant.deleteVariant(variantData.id).catch(err => alert(err.message));
+    })
 
     await deleteDeletedPreviewImages();
     const newImages = getProductImageFormData();

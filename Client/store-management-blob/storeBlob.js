@@ -1,12 +1,12 @@
 import { store } from '../integration/fetches.js'
 import common from '../common.js';
 
-const createStoreModal = document.getElementById('create-store-modal');
+const storeModal = document.getElementById('store-modal');
 window.openCreateStoreModal = async function () {
-    createStoreModal.classList.add('active');
+    storeModal.classList.add('active');
 }
 window.closeCreateStoreModal = async function () {
-    createStoreModal.classList.remove('active');
+    storeModal.classList.remove('active');
 }
 loadStore();
 // Load store data
@@ -28,7 +28,7 @@ export async function loadStore() {
     <button class="btn-primary" onclick="openCreateStoreModal()">Create one now!</button>
   </div>
 `;
-                document.getElementById("create-store-form").addEventListener("submit", async function (event) {
+                document.getElementById("store-form").addEventListener("submit", async function (event) {
                     event.preventDefault()
 
                     const formData = new FormData(this)

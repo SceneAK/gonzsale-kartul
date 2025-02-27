@@ -5,7 +5,7 @@ import variantServices from './variantServices.js';
 import baseProductServices from './baseProductServices.js';
 const sequelize = baseProductServices.sequelize;
 
-const BASIC_ATTRIBUTES = ['id', 'name'];
+const BASIC_ATTRIBUTES = ['id', 'name', 'createdAt'];
 
 async function fetchAvailableProducts(page = 1, filter = {})
 {
