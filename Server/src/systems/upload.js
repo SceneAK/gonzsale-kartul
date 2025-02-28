@@ -40,7 +40,7 @@ async function deleteRelativePath(relativePath)
 {
     if(USING_GCS){
         const filename = relativePath;
-        await GCS.deleteFile(filename);
+        await GCS.deleteFilename(filename);
     }else{
         await localStorage.unlinkRelativePath(relativePath);
     }
