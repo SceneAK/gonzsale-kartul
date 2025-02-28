@@ -153,7 +153,8 @@ async function editProduct(originalProductData)
     })
 
     await deleteDeletedPreviewImages();
-    if(newImages) product.createProductImages(productId, getInputtedProductImages()).catch(err => alert(err.message));
+    const newImages = getInputtedProductImages()
+    if(newImages) product.createProductImages(productId, newImages).catch(err => alert(err.message));
 }
 function prepareEditProductModal(productData) {
     modalH1.innerHTML = 'Edit Product';
