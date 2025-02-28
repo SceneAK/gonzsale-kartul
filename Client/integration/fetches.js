@@ -141,7 +141,7 @@ async function createProduct(productData) // auth & store
 async function createProductImages(productId, files)
 {
     const formData = new FormData();
-    files.forEach( file => formData.append('images', file));
+    Array.from(files).forEach( file => formData.append('images', file));
     return await jsonResponse(`/product/${productId}/images`, 'POST', formData, 'include');
 }
 async function editProduct(id, data) // auth & store

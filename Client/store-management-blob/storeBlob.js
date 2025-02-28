@@ -48,7 +48,6 @@ export async function loadStore() {
             }
         } else {
             // If a store exists, display its details.
-            console.log("STORE EXIST: " + JSON.stringify(userStore));
             storeContainer.innerHTML = `
                 <div class="store-details">
                 <h2>${userStore.name}</h2>
