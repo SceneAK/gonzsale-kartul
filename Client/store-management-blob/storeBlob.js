@@ -11,6 +11,7 @@ window.closeStoreModal = async function () {
 }
 loadStore();
 // Load store data
+const imageInput = document.getElementById('store-image-input');
 export async function loadStore() {
     const storeContainer = document.getElementById("store-container");
 
@@ -19,6 +20,7 @@ export async function loadStore() {
 
         if (!userStore) {
             // No store exists—check the logged-in user's role.
+            imageInput.setAttribute("required", "");
             const user = JSON.parse(localStorage.getItem('loginDetail'));
             if (user && user.role === 'STORE_MANAGER') {
                 // If the user is a store manager, prompt to create a store.
@@ -30,23 +32,20 @@ export async function loadStore() {
                     `;
                 storeForm.onsubmit = async function (event) {
                     event.preventDefault()
-
-                    const formData = new FormData(this)
-
-                    try {
-                        await store.createStore(formData)
-                        window.closeStoreModal();
-                        loadStore() // Reload store data
-                    } catch (error) {
-                        console.error("Error creating store:", error)
-                        alert("There was an error creating the store. Please try again.")
-                    }
+                    const storeData = common.getAllNameValueOfSelector('.store-inputs', storeModal);
+                    await store.createStore(storeData);
+                    await store.updateStoreImage(imageInput.files[0]);
+                    await loadStore();
+                    window.closeStoreModal();
                 }
             } else {
                 // Otherwise, show a message to contact the admins.
                 storeContainer.innerHTML = `<p>Contact Admins to be granted Store Manager Role</p>`;
             }
         } else {
+            if (imageInput.hasAttribute("required")) {
+                imageInput.removeAttribute("required");
+            }
             // If a store exists, display its details.
             storeContainer.innerHTML = `
                 <div class="store-details">
@@ -57,7 +56,7 @@ export async function loadStore() {
                 <p><strong>Bank Name:</strong> ${userStore.bankName}</p>
                 <button class="btn-primary" onclick="editStore()">Edit Store</button>
                 </div>
-                `;
+            `;
         }
     } catch (error) {
         console.error("Error loading store:", error);
@@ -67,7 +66,6 @@ export async function loadStore() {
 
 
 // Placeholder function for editing store
-const imageInput = document.getElementById('store-image-input');
 window.editStore = async function () {
     try {
         const userStore = await store.fetchOwnedStore();
@@ -83,7 +81,7 @@ window.editStore = async function () {
             try {
                 await store.editStore(updatedValues);
                 if(imageInput.value) {
-                    await store.editStoreImage(imageInput.files[0]);
+                    await store.updateStoreImage(imageInput.files[0]);
                 }
                 
                 await loadStore();

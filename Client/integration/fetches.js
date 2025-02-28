@@ -97,22 +97,21 @@ async function fetchOwnedStore() {
     }
 }
 
-async function createStore(formdata) // auth
+async function createStore(data) // auth
 {
-    await jsonResponse(`/store`, "POST", formdata, 'include');
-    await user.refresh();
+    await jsonRequestResponse(`/store`, "POST", JSON.stringify(data), 'include');
 }
 async function editStore(data)
 {
     return await jsonRequestResponse(`/store`, "PATCH", JSON.stringify(data), 'include');
 }
-async function editStoreImage(image)
+async function updateStoreImage(image)
 {
     const formData = new FormData();
     formData.append('image', image);
     return await jsonResponse(`/store/image`, "PATCH", formData, 'include');
 }
-const store = {fetchStore, fetchOwnedStore, createStore, editStore, editStoreImage};
+const store = {fetchStore, fetchOwnedStore, createStore, editStore, updateStoreImage};
 //#endregion
 
 //#region Product

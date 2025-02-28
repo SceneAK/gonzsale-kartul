@@ -37,27 +37,11 @@ async function fetchStoreIdOfUser(userId) {
     return store.id;
 }
 
-async function createStore(storeData, files, userId) 
+async function createStore(storeData, userId) 
 { 
     await ensureCanCreate(userId);
-
-    let store;
-    await Store.sequelize.transaction( async t => {
-        const completeData = await complete(storeData, files, userId);
-        store = await Store.create(completeData);
-    });
-
-    return store;
+    return await Store.create({...storeData, userId});
 }
-
-async function complete(storeData, files, userId)
-{
-    const {imageFile, qrImageFile} = files;
-    const [image, qrImage] = await imageServices.createImagesKeepInvalids([imageFile?.[0], qrImageFile?.[0]], userId);
-    const [imageId, qrImageId] = [image?.id, qrImage?.id];
-    return { ...storeData, imageId, qrImageId, userId };
-}
-
 async function updateStore(storeData, requester)
 {
     let store = await fetchStore(requester.storeId);
