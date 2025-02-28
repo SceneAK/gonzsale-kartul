@@ -73,6 +73,7 @@
       width: 50px;
       padding: 5px;
       text-align: center;
+      border-radius: 4px;
     }
 
     .add-to-cart-btn {
@@ -229,7 +230,7 @@
         updateSliderImage();
       });
 
-      // Add to Cart functionality
+      // Add to Cart functionality with custom event dispatch.
       document.getElementById('add-to-cart-btn').addEventListener('click', () => {
         const quantity = parseInt(document.getElementById('quantity-input').value, 10) || 1;
         if (quantity < 1) {
@@ -254,7 +255,7 @@
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));
-        alert(`${quantity} x ${productData.name} has been added to your cart!`);
+        document.dispatchEvent(new CustomEvent('cartUpdated')); // Custom event dispatched here.
       });
     });
 

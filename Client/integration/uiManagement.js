@@ -1,7 +1,9 @@
 import { user } from "./fetches.js";
 import { hookSignIn } from "./user.js";
 
-// 1) Load external HTML file into a div
+/***************************************************
+ * Utility: Load External HTML into a Div
+ ***************************************************/
 function loadHTML(file, elementId, callback) {
     fetch(file)
         .then(response => response.text())
@@ -21,10 +23,9 @@ function toggleDropdownState(loginDetails) {
         loginForm.style.display = loginDetails ? 'none' : 'block';
     });
 
-    // Show or hide edit forms
+    // Show or hide edit forms (and dynamically populate if logged in)
     doElementsOfSelector('.editForm', editForm => {
         if (loginDetails) {
-            // Dynamically populate editForm content when logged in
             const isStoreManager = loginDetails.role === 'STORE_MANAGER';
             const isAdmin = loginDetails.role === 'ADMIN';
             editForm.innerHTML = `
@@ -53,7 +54,6 @@ function toggleDropdownState(loginDetails) {
                     Logout
                 </button>
             `;
-
             // Attach logout functionality
             const logoutButton = editForm.querySelector('#logoutButton');
             if (logoutButton) {
@@ -64,28 +64,23 @@ function toggleDropdownState(loginDetails) {
                     });
                 });
             }
-
             editForm.style.display = 'block';
         } else {
             editForm.style.display = 'none';
         }
     });
 
-    // Update dropdown link text
+    // Update dropdown link text based on login state
     doElementsOfSelector('.dropdown a', element => {
         if (loginDetails) {
-            // Truncate the name if it exceeds 15 characters
             const displayName = loginDetails.name.length > 15
                 ? `${loginDetails.name.slice(0, 12)}...`
                 : loginDetails.name;
-
-            // If the user is logged in, display the icon next to their name
             element.innerHTML = `
                 <img src="assets/images/user_logged_in_icon.svg" alt="User Icon">
                 ${displayName || 'User'}
             `;
         } else {
-            // Default text for sign-in with icon
             element.innerHTML = `
                 <img src="assets/images/sign_in_icon.svg" alt="Sign In Icon">
                 Sign In
@@ -95,7 +90,7 @@ function toggleDropdownState(loginDetails) {
 }
 
 /***************************************************
- * Update UI based on login state
+ * Update UI Based on Login State
  ***************************************************/
 function updateUI() {
     const loginDetail = JSON.parse(localStorage.getItem('loginDetail'));
@@ -123,15 +118,15 @@ function initializeDropdown() {
         }
     });
 
-    // Hook desktop login
+    // Hook desktop login elements
     hookSignInWithElementIds('email', 'password', 'signIn');
 }
 
 /***************************************************
- * Attach Listeners (Logout, etc.)
+ * Attach Global Event Listeners
  ***************************************************/
 function attachEventListeners() {
-    // Logout
+    // Attach logout listeners to all elements with .logoutButton
     doElementsOfSelector('.logoutButton', logoutButton => {
         logoutButton.addEventListener('click', () => {
             localStorage.removeItem('loginDetail');
@@ -142,7 +137,7 @@ function attachEventListeners() {
 }
 
 /***************************************************
- * Modal Logic (Approach A: local overlay-based)
+ * Modal Logic: Local Overlay-based
  ***************************************************/
 window.toggleModal = function (modalId) {
     console.log(`Toggling modal with ID: ${modalId}`);
@@ -155,18 +150,17 @@ window.toggleModal = function (modalId) {
 };
 
 function initializeModals() {
-    // Local approach: Each modal overlay closes itself if user clicks outside its .modal-content
+    // Close modal when clicking outside the .modal-content
     const modals = document.querySelectorAll(".modal-overlay");
     modals.forEach((modal) => {
         modal.addEventListener("click", (event) => {
-            // If user clicked the overlay, or anything not in .modal-content, close it
             if (!event.target.closest(".modal-content")) {
                 modal.classList.remove("show");
             }
         });
     });
 
-    // Hook mobile login
+    // Hook mobile login elements
     hookSignInWithElementIds('email_mobile', 'password_mobile', 'signIn_mobile');
 }
 
@@ -177,12 +171,9 @@ window.toggleMenu = function () {
     const sideMenu = document.getElementById('sideMenu');
     if (sideMenu) {
         console.log("Found sideMenu:", sideMenu);
-        console.log("Before toggle:", sideMenu.classList.value);
-
+        // Toggle side menu open state
         sideMenu.classList.remove('open');
         sideMenu.classList.toggle('open');
-
-        // Logging final state
         console.log("After toggle:", sideMenu.classList.value);
     } else {
         console.error('sideMenu element not found.');
@@ -208,29 +199,30 @@ function initializeMenuToggle() {
         });
     }
 
-    // "Click outside" logic for the side menu:
+    // Close side menu when clicking outside of it
     document.addEventListener("click", function handleSideMenuOutsideClick(event) {
         if (
             sideMenu &&
             sideMenu.classList.contains("open") &&
-            !event.target.closest("#sideMenu") &&       // Not inside the side menu
-            !event.target.closest(".menu-icon") &&       // Not the menu icon
-            !event.target.closest(".close-icon")         // Not the side menu close icon
+            !event.target.closest("#sideMenu") &&
+            !event.target.closest(".menu-icon") &&
+            !event.target.closest(".close-icon")
         ) {
             sideMenu.classList.remove("open");
         }
     });
 }
 
+// Close side menu on hashchange
 window.addEventListener('hashchange', function () {
     const sideMenu = document.getElementById('sideMenu');
-    if (sideMenu.classList.contains('open')) {
+    if (sideMenu && sideMenu.classList.contains('open')) {
         sideMenu.classList.remove('open');
     }
 });
 
 /***************************************************
- * Hooking Sign-In
+ * Hooking Sign-In Functionality
  ***************************************************/
 function hookSignInWithElementIds(emailId, passwordId, signInId) {
     const email = document.getElementById(emailId);
@@ -243,7 +235,7 @@ function hookSignInWithElementIds(emailId, passwordId, signInId) {
     }
 
     const displayError = (message) => {
-        alert(message); // Use alert for now; you can replace with a styled message element
+        alert(message);
     };
 
     // Trigger sign-in on button click
@@ -252,7 +244,6 @@ function hookSignInWithElementIds(emailId, passwordId, signInId) {
             displayError("Please fill in both email and password.");
             return;
         }
-
         try {
             await user.signIn(email.value, password.value);
         } catch (err) {
@@ -264,8 +255,8 @@ function hookSignInWithElementIds(emailId, passwordId, signInId) {
     [email, password].forEach((input) => {
         input.addEventListener("keydown", function (event) {
             if (event.key === "Enter") {
-                event.preventDefault(); // Prevent form submission
-                signIn.click(); // Simulate button click
+                event.preventDefault();
+                signIn.click();
             }
         });
     });
@@ -274,66 +265,51 @@ function hookSignInWithElementIds(emailId, passwordId, signInId) {
 }
 
 /***************************************************
- * MY CART CUSTOM FUNCTION
- * Updates the header’s cart notification for both desktop and mobile.
- * If the optional parameter "animate" is true, it plays the sliding box animation.
+ * Cart Notification, Animation & Fly-to-Cart Effect
+ * Updates header cart notifications (desktop and mobile).
+ * Also animates a box icon flying from the add-to-cart button
+ * (provided via event.detail.source) to the destination cart button.
  ***************************************************/
 function updateCartNotification(animate = false) {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     const cartCount = cart.length;
-    
-    // Update desktop cart element
+
+    // --- Desktop Cart Update ---
     const myCartButton = document.getElementById('my-cart');
     if (myCartButton) {
-        // Define colors based on whether there are items in the cart.
         const baseBgColor = cartCount > 0 ? "rgb(66, 197, 6)" : "rgb(226, 224, 223)";
-        const hoverBgColor = cartCount > 0 ? "rgb(51, 152, 0)" : "rgb(200, 200, 200)";
         const textColor = cartCount > 0 ? "#fff" : "#272727";
 
-        // Update innerHTML and text color
         myCartButton.innerHTML = `
             <img src="assets/images/cart_icon.svg" alt="Cart Icon">
-            My Cart ${ cartCount > 0 ? `<span class="badge" id="cart-count">${cartCount}</span>` : ""}
+            My Cart ${cartCount > 0 ? `<span class="badge" id="cart-count">${cartCount}</span>` : ""}
         `;
         myCartButton.style.color = textColor;
 
         if (animate) {
-            // Ensure the button is relatively positioned so the animated box can be placed absolutely.
+            // Desktop sliding box animation
             myCartButton.style.position = 'relative';
-
-            // Create the sliding box element.
             const slideBox = document.createElement('div');
             slideBox.className = 'slide-box';
             slideBox.style.position = 'absolute';
             slideBox.style.top = '0';
-            slideBox.style.left = '-30%';  // Start slightly off the left edge
+            slideBox.style.left = '-30%';
             slideBox.style.width = '100%';
             slideBox.style.height = '100%';
             slideBox.style.zIndex = '100';
-            // Semi-transparent white for visibility.
             slideBox.style.backgroundColor = 'rgba(255,255,255,0.7)';
-            // Transition on the left property for a smooth slide.
             slideBox.style.transition = 'left 0.5s ease-out';
-
-            // Append the slideBox to the My Cart button.
             myCartButton.appendChild(slideBox);
-
-            // Force a reflow so the transition kicks in.
-            slideBox.getBoundingClientRect();
-            // Start the animation: slide the box into view.
+            slideBox.getBoundingClientRect(); // Force reflow
             slideBox.style.left = '0';
-
-            // When the transition ends, update the button's background and remove the slideBox.
             slideBox.addEventListener("transitionend", function () {
                 myCartButton.style.backgroundColor = baseBgColor;
                 myCartButton.removeChild(slideBox);
             });
         } else {
-            // If no animation, simply set the background color.
             myCartButton.style.backgroundColor = baseBgColor;
         }
 
-        // Attach hover event listeners (only once) to update background color on mouseover/mouseout.
         if (!myCartButton.dataset.hoverInitialized) {
             myCartButton.addEventListener("mouseover", function () {
                 const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -351,17 +327,87 @@ function updateCartNotification(animate = false) {
         }
     }
 
-    // Update mobile cart badge if it exists.
+    // --- Mobile Cart Update & Bounce Animation ---
     const mobileCartBadge = document.getElementById('mobile-cart-count');
     if (mobileCartBadge) {
-	mobileCartBadge.style = `display: ${cartCount > 0 ? "block" : "none"};`
+        mobileCartBadge.style.display = cartCount > 0 ? "block" : "none";
         mobileCartBadge.textContent = cartCount;
+    }
+    const mobileCart = document.querySelector('.myCart-mobile');
+    if (mobileCart && animate) {
+        mobileCart.style.transition = 'transform 0.5s ease-in-out';
+        mobileCart.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+            mobileCart.style.transform = 'scale(1)';
+        }, 500);
     }
 }
 
-// Listen for cartUpdated events to update the notification with animation.
+/***************************************************
+ * Fly-to-Cart Animation
+ * Animates a box icon flying from a source element (e.g., add-to-cart button)
+ * to the target cart element (desktop: #my-cart, mobile: .myCart-mobile).
+ ***************************************************/
+function flyBoxToCart(sourceElement, targetElement) {
+    // Get bounding rectangles relative to viewport
+    const sourceRect = sourceElement.getBoundingClientRect();
+    const targetRect = targetElement.getBoundingClientRect();
+
+    // Create the flying box element
+    const flyBox = document.createElement('img');
+    flyBox.src = "assets/images/box_icon.svg"; // Update with your box icon path
+    flyBox.style.position = 'fixed'; // Fixed so it follows the viewport
+    flyBox.style.width = '30px';
+    flyBox.style.height = '30px';
+    flyBox.style.zIndex = '2000';
+    flyBox.style.transition = 'all 0.8s ease-in-out';
+
+    // Position it at the center of the source element
+    const startX = sourceRect.left + sourceRect.width / 2 - 15; // 15 = half width (30px/2)
+    const startY = sourceRect.top + sourceRect.height / 2 - 15;
+    flyBox.style.left = `${startX}px`;
+    flyBox.style.top = `${startY}px`;
+
+    document.body.appendChild(flyBox);
+
+    // Calculate destination center point
+    const endX = targetRect.left + targetRect.width / 2 - 15;
+    const endY = targetRect.top + targetRect.height / 2 - 15;
+
+    // Force reflow before starting animation
+    flyBox.getBoundingClientRect();
+
+    // Start the animation by setting new position
+    flyBox.style.left = `${endX}px`;
+    flyBox.style.top = `${endY}px`;
+    flyBox.style.opacity = '0.2';
+    flyBox.style.transform = 'scale(0.5)';
+
+    // Remove the element after the animation completes
+    flyBox.addEventListener('transitionend', () => {
+        if (flyBox && flyBox.parentNode) {
+            flyBox.parentNode.removeChild(flyBox);
+        }
+    });
+}
+
+/***************************************************
+ * Listen for Cart Updates & Trigger Animations
+ * When dispatching a cartUpdated event, pass a detail.source
+ * that references the add-to-cart button.
+ ***************************************************/
 document.addEventListener('cartUpdated', function (e) {
     updateCartNotification(true);
+
+    // Use window.matchMedia to determine if it's a mobile viewport
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const target = isMobile
+        ? document.getElementById('my-cart-mobile')
+        : document.getElementById('my-cart');
+
+    if (e.detail && e.detail.source && target) {
+        flyBoxToCart(e.detail.source, target);
+    }
 });
 
 /***************************************************
@@ -369,32 +415,33 @@ document.addEventListener('cartUpdated', function (e) {
  ***************************************************/
 function initializePage() {
     loadHTML('header.html', 'header', () => {
-        // After header loads, initialize header-related functions
         initializeDropdown();
         initializeModals();
         initializeMenuToggle();
         updateUI();
         attachEventListeners();
-        updateCartNotification(); // Update cart count on initial load
+        updateCartNotification(); // Initial cart update
     });
 
     loadHTML('footer.html', 'footer');
 
-    // Hide search bars on specific pages
-    const currentPath = window.location.pathname;
-    if (currentPath.includes("create-store.html")) {
+    // Hide search bars on "create-store.html"
+    if (window.location.pathname.includes("create-store.html")) {
         document.addEventListener("DOMContentLoaded", () => {
-            const searchBars = document.querySelectorAll(".search-bar");
-            searchBars.forEach((searchBar) => {
+            doElementsOfSelector(".search-bar", searchBar => {
                 searchBar.style.display = "none";
             });
         });
     }
 }
 
+/***************************************************
+ * Helper: Process Each Element for a Given Selector
+ ***************************************************/
 function doElementsOfSelector(selector, callback) {
     const elements = document.querySelectorAll(selector);
     Array.from(elements).forEach(callback);
 }
 
+// Initialize the page when DOM is ready.
 document.addEventListener('DOMContentLoaded', initializePage);

@@ -429,7 +429,7 @@
                     localStorage.setItem('cart', JSON.stringify(cart));
 
                     // Dispatch a custom event with the updated cart information
-                    document.dispatchEvent(new CustomEvent('cartUpdated'));
+                    document.dispatchEvent(new CustomEvent('cartUpdated', { detail: { source: addToCartButton } }));
                 });
                 currentActiveContainer.appendChild(itemDiv);
             });
