@@ -1,5 +1,6 @@
 import multer from 'multer';
 import { ApplicationError } from '../common/index.js';
+import { env } from '../../initialize.js'
 
 const MULTER_MAX_FILE_BYTES = 2 * 1024 * 1024;
 
@@ -7,7 +8,7 @@ function createMulter(options)
 {
     const { mimeType, ...uploadOptions } = options;
     const upload = multer({
-        limits: { fileSize: MULTER_MAX_FILE_BYTES },
+        limits: { fileSize: env.MAX_FILE_SIZE || MULTER_MAX_FILE_BYTES },
         fileFilter: createMimeTypeFilterer(mimeType ? mimeType : 'any'),
         storage: multer.memoryStorage()
     });

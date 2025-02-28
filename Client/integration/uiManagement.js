@@ -354,6 +354,7 @@ function updateCartNotification(animate = false) {
     // Update mobile cart badge if it exists.
     const mobileCartBadge = document.getElementById('mobile-cart-count');
     if (mobileCartBadge) {
+	mobileCartBadge.style = `display: ${cartCount > 0 ? "block" : "none"};`
         mobileCartBadge.textContent = cartCount;
     }
 }
