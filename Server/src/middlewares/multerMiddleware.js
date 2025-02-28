@@ -4,6 +4,7 @@ import { env } from '../../initialize.js'
 
 const MULTER_MAX_FILE_BYTES = 2 * 1024 * 1024;
 
+// options: mimeType, type (fields, array, single), keyName: customKeyName, fields: [], maxCount
 function createMulter(options)
 {
     const { mimeType, ...uploadOptions } = options;

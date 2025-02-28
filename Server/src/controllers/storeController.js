@@ -26,9 +26,14 @@ const createStore = async (req, res, next) =>
 
 const updateStore = async (req, res) => 
 {
-    const {decodedAuthToken, files, body} = req;
-    const result = await storeServices.updateStore(body, files, decodedAuthToken);
+    const {decodedAuthToken, body} = req;
+    const result = await storeServices.updateStore(body, decodedAuthToken);
     res.json(result || {});
 }
 
-export default  { fetchStore, fetchOwnedStore, createStore, updateStore }
+const updateStoreImage = async (req, res) => {
+    const result = await storeServices.updateStoreImage(req.file, req.decodedAuthToken);
+    res.json(result || {});
+}
+
+export default  { fetchStore, fetchOwnedStore, createStore, updateStore, updateStoreImage }

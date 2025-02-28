@@ -21,13 +21,13 @@ async function unlinkUnused(relPaths, userId)
     for(const relPath of relPaths){
         try
         {
-            const size = (await upload.getStat(dbPath)).size;
+            const size = (await upload.getStat(relPath)).size;
             absSize += size;
-            
-            await upload.deleteRelativePath(relPaths);
+
+            await upload.deleteRelativePath(relPath);
         }catch(err)
         {
-            logger.error("Updated Unlink Error, ", err.message);
+            logger.error(`Error Unlinking ${relPath} : `, JSON.stringify(err));
         }
     }
     await addToUsed(-absSize, userId);

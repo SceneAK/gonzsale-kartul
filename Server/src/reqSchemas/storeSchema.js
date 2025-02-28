@@ -22,13 +22,14 @@ const updateStoreSchema = {
         imageAction: Joi.string().valid('keep', 'replace'),
         qrImageAction: Joi.string().valid('keep', 'delete', 'replace')
     }).required(),
-    files: Joi.object({
-        imageFile: Joi.any(),
-        qrImageFile: Joi.any()
-    })
+}
+
+const updateStoreImageSchema = {
+    file: Joi.any().required()
 }
 
 export default {
     createStore: createStoreSchema,
-    updateStore: updateStoreSchema
+    updateStore: updateStoreSchema,
+    updateStoreImage: updateStoreImageSchema
 };

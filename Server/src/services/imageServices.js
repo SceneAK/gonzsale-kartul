@@ -67,7 +67,6 @@ function include(level)
 export default { 
     createImages, 
     createImagesKeepInvalids, 
-    deleteImages, 
-    deleteImageFilesOnly, 
+    deleteImages,
     include 
 };

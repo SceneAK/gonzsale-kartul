@@ -102,11 +102,17 @@ async function createStore(formdata) // auth
     await jsonResponse(`/store`, "POST", formdata, 'include');
     await user.refresh();
 }
-async function editStore(formdata)
+async function editStore(data)
 {
-    return await jsonResponse(`/store`, "PATCH", formdata);
+    return await jsonRequestResponse(`/store`, "PATCH", JSON.stringify(data), 'include');
 }
-const store = {fetchStore, fetchOwnedStore, createStore, editStore};
+async function editStoreImage(image)
+{
+    const formData = new FormData();
+    formData.append('image', image);
+    return await jsonResponse(`/store/image`, "PATCH", formData, 'include');
+}
+const store = {fetchStore, fetchOwnedStore, createStore, editStore, editStoreImage};
 //#endregion
 
 //#region Product
@@ -132,8 +138,10 @@ async function createProduct(productData) // auth & store
 {
     return await jsonRequestResponse(`/product`, "POST", JSON.stringify(productData), 'include');
 }
-async function createProductImages(productId, formData)
+async function createProductImages(productId, files)
 {
+    const formData = new FormData();
+    files.forEach( file => formData.append('images', file));
     return await jsonResponse(`/product/${productId}/images`, 'POST', formData, 'include');
 }
 async function editProduct(id, data) // auth & store

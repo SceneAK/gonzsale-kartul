@@ -151,28 +151,28 @@
             <form id="store-form" class="modal-form" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="store-name-input">Store Name:</label>
-                    <input type="text" id="store-name-input" name="name" placeholder="Enter store name" required>
+                    <input type="text" class="store-inputs" id="store-name-input" name="name" placeholder="Enter store name" required>
                 </div>
                 <div class="form-group">
                     <label for="store-description-input">Description:</label>
-                    <textarea id="store-description-input" name="description" rows="4"
+                    <textarea class="store-inputs" id="store-description-input" name="description" rows="4"
                         placeholder="Enter store description" required></textarea>
                 </div>
                 <div class="form-group">
                     <label for="store-image-input">Image:</label>
-                    <input type="file" id="store-image-input" name="imageFile" accept="image/*" required>
+                    <input type="file" id="store-image-input" name="imageFile" accept="image/*">
                 </div>
                 <div class="form-group">
                     <label for="store-bankAccount-input">Bank Account:</label>
-                    <input type="text" id="store-bankAccount-input" name="bankAccount"
+                    <input type="text" class="store-inputs" id="store-bankAccount-input" name="bankAccount"
                         placeholder="Enter bank account number" required>
                 </div>
                 <div class="form-group">
                     <label for="store-bankName-input">Bank Name:</label>
-                    <input type="text" id="store-bankName-input" name="bankName" placeholder="Enter bank name" required>
+                    <input type="text" class="store-inputs" id="store-bankName-input" name="bankName" placeholder="Enter bank name" required>
                 </div>
-                <button type="submit" class="btn-primary">Create Store</button>
-                <button type="button" class="btn-secondary" onclick="closeCreateStoreModal()">Cancel</button>
+                <button type="submit" id="store-submit-button" class="btn-primary">Create Store</button>
+                <button type="button" class="btn-secondary" onclick="closeStoreModal()">Cancel</button>
             </form>
         </div>
     </div>

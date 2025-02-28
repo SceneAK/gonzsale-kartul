@@ -118,10 +118,7 @@ function createDeleteElement(onClickHandler)
     deleteButton.onclick = onClickHandler;
     return deleteButton;
 }
-export function getProductImageFormData() {
-    const formData = new FormData();
-    for (let i = 0; i < productImagesInput.files.length; i++) {
-        formData.append('images', productImagesInput.files[i]);
-    }
-    return formData;
+
+export function getInputtedProductImages() {
+    return productImagesInput.files;
 }

@@ -3,13 +3,7 @@ import { verify, validate, createUpload, ensureBelowLimit, ensureStore} from '..
 import { storeSchemas } from '../reqSchemas/index.js';
 import express from 'express';
 
-const storeImgUpload = createUpload('images/store/', {
-    type: 'fields', 
-    fields: [
-        { name: 'imageFile', maxCount: 1 },
-        { name: 'qrImageFile', maxCount: 1 }
-    ]
-});
+const storeImgUpload = createUpload('images/store/', { mimetype: 'image', type: 'single', keyName: 'image'});
 
 const router = express.Router();
 
@@ -20,5 +14,7 @@ router.get('/:id', store.fetchStore);
 router.post('/', verify(), ensureBelowLimit, storeImgUpload, validate(storeSchemas.createStore), store.createStore);
 
 router.patch('/', verify(), ensureStore, ensureBelowLimit, storeImgUpload, validate(storeSchemas.updateStore), store.updateStore);
+
+router.patch('/image', verify(), ensureStore, ensureBelowLimit, storeImgUpload, validate(storeSchemas.updateStoreImage), store.updateStoreImage);
 
 export default router;

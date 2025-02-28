@@ -15,12 +15,14 @@ async function writeFile(file, relativePath)
 
 async function readStat(relativePath)
 {
-    return await fs.stat(relativePath);
+    const resolved = upath.join(PUBLIC_LOCAL_STORAGE_DIR, relativePath);
+    return await fs.stat(resolved);
 }
 
 async function unlinkRelativePath(relativePath)
 {
-    await fs.unlink( upath.join(PUBLIC_LOCAL_STORAGE_DIR, relativePath) );
+    const resolved = upath.join(PUBLIC_LOCAL_STORAGE_DIR, relativePath);
+    await fs.unlink( resolved );
 }
 
 export default { writeFile, unlinkRelativePath, readStat, buildAccessURL }

@@ -2,7 +2,7 @@ import { product, variant } from '../integration/fetches.js'
 import { resetRecordedVariants, saveAndCloneRecordedVariants, setRecordedVariants } from './variantBlob.js';
 import common from '../common.js';
 import PaginationManager from '../pagination.js';
-import { deleteDeletedPreviewImages, getProductImageFormData, resetProductImages, setExistingProductImages } from './productImagesBlob.js';
+import { deleteDeletedPreviewImages, getInputtedProductImages, resetProductImages, setExistingProductImages } from './productImagesBlob.js';
 
 const productList = document.getElementById('product-list')
 const modal = document.getElementById('product-variant-modal');
@@ -77,7 +77,7 @@ async function createProduct()
         ...productData,
         defaultVariantData: defaultVariant
     })
-    product.createProductImages(result.id, getProductImageFormData()).catch(err => alert(err.message));
+    product.createProductImages(result.id, getInputtedProductImages()).catch(err => alert(err.message));
     if(variantDataArr.length > 0)
     {
         variant.createVariants(result.id, variantDataArr).catch(err => alert(err.message));
@@ -153,8 +153,7 @@ async function editProduct(originalProductData)
     })
 
     await deleteDeletedPreviewImages();
-    const newImages = getProductImageFormData();
-    if(newImages) product.createProductImages(productId, newImages).catch(err => alert(err.message));
+    if(newImages) product.createProductImages(productId, getInputtedProductImages()).catch(err => alert(err.message));
 }
 function prepareEditProductModal(productData) {
     modalH1.innerHTML = 'Edit Product';

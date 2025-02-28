@@ -24,12 +24,15 @@ Please sort by importance
 > Fix Edit Store
     > Separate image handling and store info updating
     > Write the frontend lmaooo
-> Variants having maximum quantity per order. 
-    > Change the model, write migration script
-    > Default the value to one, service level default it to percentage of the overall stock.
-    > Write the frontend
-DONE implement rate limitting.
-> Order migration
+> Unlimited Stocks
+> Unconfirmed Order Status
+    > Order has a confirmed bool that defaults to false
+    > 
+    > Update Database
+    > Order migration script
+DONE file compression for transactions
+> Promotion System. Contains the product, promotion title for now.
+> Store Browse // later
 
 ## orders
 > Mailing Customers when order status changes, when product gets deleted 
@@ -54,7 +57,6 @@ DONE implement rate limitting.
 - Payment Gateway
 
 # Security Concerns & Abuse Protection
-- Limit number of variants
-- Express-Rate-Limiter
+- Limit number of variants, products.
 - Cors check reconfig
 // todo: check if user has association with the order

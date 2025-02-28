@@ -195,7 +195,7 @@
                 document.getElementById('store-email').textContent = storeInfo.User.email;
 
                 // Fetch products for this store using your API.
-                const result = await product.fetchProducts('all', { storeId });
+                const result = await product.fetchProducts('all', 1, { storeId });
                 const products = result.items;
                 const productList = document.getElementById('product-list');
 

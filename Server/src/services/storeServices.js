@@ -50,48 +50,31 @@ async function createStore(storeData, files, userId)
     return store;
 }
 
-async function updateStore(storeData, files, requester)
-{
-    let store = await fetchStore(requester.storeId);
-    
-    const updateData = { ...storeData, userId: requester.id };
-    await Store.sequelize.transaction( async t => {
-
-        await handleImage('imageId', updateData.imageAction, files.imageFile?.[0], store, updateData);
-        await handleImage('qrImageId', updateData.qrImageAction, files.qrImageFile?.[0], store, updateData);
-        store = await Store.update(updateData, {where: { storeId: store.id } });
-    });
-
-    return store;
-}
-async function handleImage(fieldName, action, file, store, updateData)
-{
-    if(action)
-    {
-        if(store[fieldName] != null && action != 'keep')
-        {
-            await imageServices.deleteImages(store[fieldName], store.userId);
-            updateData[fieldName] = null;
-        }
-        if(action == 'replace')
-        {
-            const [image] = await imageServices.createImages([file], store.userId)
-            updateData[fieldName] = image.id;
-        }
-    }
-    
-    // cleanup
-    if(file && action != 'replace')
-    {
-        file = null;
-    }
-}
 async function complete(storeData, files, userId)
 {
     const {imageFile, qrImageFile} = files;
     const [image, qrImage] = await imageServices.createImagesKeepInvalids([imageFile?.[0], qrImageFile?.[0]], userId);
     const [imageId, qrImageId] = [image?.id, qrImage?.id];
     return { ...storeData, imageId, qrImageId, userId };
+}
+
+async function updateStore(storeData, requester)
+{
+    let store = await fetchStore(requester.storeId);
+    return await Store.update(storeData, { where: { id: store.id } });;
+}
+async function updateStoreImage(image, requester)
+{
+    let store = await fetchStore(requester.storeId);
+    let result;
+    await Store.sequelize.transaction( async t => {
+        const [newImage] = await imageServices.createImages([image], requester.id);
+        result = await Store.update({imageId: newImage.id}, {where: { id: store.id }});
+    
+        if(store.image) await imageServices.deleteImages([store.image.id], requester.id);
+    })
+
+    return result;
 }
 
 async function ensureCanCreate(userId)
@@ -133,4 +116,4 @@ function include(level)
             }
     }
 }
-export default  { fetchStore, fetchStoreIdOfUser, fetchStores, createStore, updateStore, include }
+export default  { fetchStore, fetchStoreIdOfUser, fetchStores, createStore, updateStore, updateStoreImage, include }
