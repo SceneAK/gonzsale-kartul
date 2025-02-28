@@ -16,7 +16,7 @@ const globalLimitter = rateLimit({
     message: 'Too many requests, please wait.'
 })
 const apiLimitter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
+    windowMs: 15 * 60 * 1000, 
     max: env.API_RATE_LIMIT_MAX || 120,
     message: 'Too many requests, please wait.'
 })

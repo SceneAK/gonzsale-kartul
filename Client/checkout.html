@@ -182,6 +182,7 @@
     <script type="module" defer>
         import { order, store, transaction } from './integration/fetches.js';
         import getRecaptchaResponse from './recaptchaLoader.js';
+        import compress from './fileCompressor.js';
 
         const cart = JSON.parse(localStorage.getItem('cart') || '[]'); // Get cart data from localStorage
         const orderSummaryContainer = document.getElementById('order-summary');
@@ -233,8 +234,6 @@
             groups[storeId].total += selectedVariant.price * quantity;
             return groups;
         }, {});
-
-        console.log(groupedCart)
 
         // Render order summary
         function renderOrderSummary() {
@@ -322,23 +321,31 @@
         }
 
         function getCustomerData() {
-            const customerName = document.getElementById('full-name').value;
-            const customerPhone = document.getElementById('phone-number').value;
-            const customerEmail = document.getElementById('non-signin-email').value;
+            const customerName = document.getElementById('full-name').value.trim();
+            const customerEmail = document.getElementById('non-signin-email').value.trim();
+            const customerPhone = formatPhone(document.getElementById('phone-number').value);
+            
             return { customerName, customerPhone, customerEmail }
+        }
+        function formatPhone(input)
+        {
+            return parseInt( input.replace(/\D/g, '') );
         }
 
         async function handleTransactions(orders, proofFile) {
             for(const order of orders)
             {
                 const proofFile = document.getElementById(`proof-${order.storeId}`).files[0];
+                const compressedBlob = await compress(proofFile);
+
                 const formdata = new FormData();
                 formdata.append('type', "PAYMENT");
-                formdata.append('image', proofFile);
+                formdata.append('image', compressedBlob);
+
                 try {
                     await transaction.createProofTransaction(order.id, formdata);
                 } catch (err) {
-                    const msg = `Failed to upload proof for ${order.storeId}. Please contact the website admins.`;
+                    const msg = `Failed to upload proof for ${order.id}. Please contact the website admins.`;
                     alert(msg);
                     throw err;
                 }

@@ -20,7 +20,15 @@ Please sort by importance
 - Store payment method & transaction extension tables are over engineered.
 - Bulk Delete Images
 - Bulk Edit Variants
-> implement rate limitting.
+
+> Fix Edit Store
+    > Separate image handling and store info updating
+    > Write the frontend lmaooo
+> Variants having maximum quantity per order. 
+    > Change the model, write migration script
+    > Default the value to one, service level default it to percentage of the overall stock.
+    > Write the frontend
+DONE implement rate limitting.
 > Order migration
 
 ## orders

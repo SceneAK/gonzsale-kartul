@@ -75,7 +75,7 @@ async function loadOrders(page) {
                     <div class="transactionDetails" style="max-width: 30%; max-height: 40%; margin: auto;"></div>
                     <div class="extraOrderDetails" style="margin: auto;"> 
                         <p>Customer Contacts</p>
-                        <p>${order.customerEmail} ・ ${order.customerPhone}</p>
+                        <p>${order.customerEmail} ・ ${formatPhoneReadable(order.customerPhone)}</p>
                     </div>
                 `
             detailRow.appendChild(detailCell)
@@ -87,6 +87,15 @@ async function loadOrders(page) {
     } finally {
         loader.style.display = 'none'
     }
+}
+
+function formatPhoneReadable(numbers)
+{
+    const str = "0" + numbers.toString();
+    let first = str.slice(0, 4)
+    let second = str.length < 11 ? str.slice(first.length, 7) : str.slice(first.length, 8);
+    let third = str.slice(first.length + second.length, str.length);
+    return `${first} - ${second} - ${third}`;
 }
 
 let cachedVariants = [];
