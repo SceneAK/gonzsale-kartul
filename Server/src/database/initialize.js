@@ -7,7 +7,7 @@ const dbInitPromise = (async () => {
   try
   {
     await db.sequelize.authenticate();
-    if(env.RUN_MIGRATION == "true")
+    if(env.RUN_MIGRATIONS == "true")
     {
       await migrateUp(db.sequelize);
     }
