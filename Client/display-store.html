@@ -217,7 +217,7 @@
                             : "Price unavailable";
 
                         return `
-                    <div class="product-card" onclick="window.location.href='display-product.html?id=${prod.id}'">
+                    <div class="product-card" onclick="window.location.href='ssr/display-product/${prod.id}'">
                         <img src="${productImage}" alt="${prod.name}">
                         <h3>${prod.name}</h3>
                         <p>${priceDisplay}</p>
