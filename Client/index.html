@@ -438,7 +438,7 @@
                 // Step 4. Build an array of image URLs for the slider.
                 const images = [];
                 for (let i = 1; i <= store.bannerCount; i++) {
-                    images.push(`assets/banner_images/banner_${store.storeName}_${i}.webp`);
+                    images.push(`assets/banner_images/banner_${store.storeName.toLowerCase()}_${i}.webp`);
                 }
 
                 // If there is more than one image, set up carousel functionality.
