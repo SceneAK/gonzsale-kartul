@@ -1,6 +1,7 @@
 import { storeServices } from '../services/index.js';
 import { logger } from '../systems/index.js';
 import { convertAllPathsToURLs } from '../common/index.js';
+import { setAuthTokenCookie } from './cookieSetter.js';
 
 const fetchStore = async (req, res) =>{
     const { id } = req.params;
@@ -17,9 +18,9 @@ const fetchOwnedStore = async (req, res) =>{
 
 const createStore = async (req, res, next) =>
 {
-    const {decodedAuthToken, files, body} = req;
-    const result = await storeServices.createStore(body, files, decodedAuthToken.id);
-    
+    const {decodedAuthToken, body} = req;
+    const result = await storeServices.createStore(body, decodedAuthToken.id);
+    await setAuthTokenCookie(res, decodedAuthToken);
     logger.info('Created Store by User ', decodedAuthToken.id, '. Result: ', result);
     res.json(result || {});
 }

@@ -1,5 +1,4 @@
 const upath = require('upath');
-const { pathToFileURL } = require('url');
 
 module.exports = {
   'config': upath.resolve('Server/src/database/config', 'config.js'),

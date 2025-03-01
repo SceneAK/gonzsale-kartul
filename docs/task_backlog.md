@@ -21,18 +21,15 @@ Please sort by importance
 - Bulk Delete Images
 - Bulk Edit Variants
 
-> Fix Edit Store
-    > Separate image handling and store info updating
-    > Write the frontend lmaooo
 > Unlimited Stocks
 > Unconfirmed Order Status
     > Order has a confirmed bool that defaults to false
-    > 
+    > Make the stock reduction shift to this.
     > Update Database
     > Order migration script
 DONE file compression for transactions
 > Promotion System. Contains the product, promotion title for now.
-> Store Browse // later
+? Store Browse
 
 ## orders
 > Mailing Customers when order status changes, when product gets deleted 

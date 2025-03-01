@@ -12,8 +12,7 @@ export default function defineModel(sequelize, DataTypes)
             allowNull: false
         },
         imageId: {
-            type: DataTypes.UUID,
-            allowNull: false
+            type: DataTypes.UUID
         },
         name: {
             type: DataTypes.STRING(35),

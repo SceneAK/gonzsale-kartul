@@ -10,11 +10,7 @@ const bodySchema = Joi.object({
 const bodySchemaRequired = bodySchema.fork(['name', 'bankAccount', 'bankName'], schema => schema.required());
 
 const createStoreSchema = {
-    body: bodySchemaRequired.required(),
-    files: Joi.object({
-        imageFile: Joi.any().required(),
-        qrImageFile: Joi.any()
-    }).required()
+    body: bodySchemaRequired.required()
 }
 
 const updateStoreSchema = {

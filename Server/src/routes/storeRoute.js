@@ -13,7 +13,7 @@ router.get('/:id', store.fetchStore);
 
 router.post('/', verify(), ensureBelowLimit, storeImgUpload, validate(storeSchemas.createStore), store.createStore);
 
-router.patch('/', verify(), ensureStore, ensureBelowLimit, storeImgUpload, validate(storeSchemas.updateStore), store.updateStore);
+router.patch('/', verify(), ensureStore, ensureBelowLimit, validate(storeSchemas.updateStore), store.updateStore);
 
 router.patch('/image', verify(), ensureStore, ensureBelowLimit, storeImgUpload, validate(storeSchemas.updateStoreImage), store.updateStoreImage);
 
