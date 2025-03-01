@@ -15,19 +15,18 @@
             if (!loginDetails) {
                 // Select the content wrapper
                 const contentWrapper = document.querySelector(".container");
-
                 // Replace its content
                 contentWrapper.innerHTML = `
-                        <div style="text-align: center; margin-top: 50px;">
-                            <h1>Access Restricted</h1>
-                            <p>You must be logged in to access this page.</p>
-                            <button onclick="window.location.href='signup.html'" 
-                                style="padding: 10px 20px; font-size: 16px; background-color: #ff9900; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
-                                Sign Up / Log In
-                            </button>
-                        </div>
-                    `;
-                // Optional: Style the wrapper to center the content
+          <div style="text-align: center; margin-top: 50px;">
+            <h1>Access Restricted</h1>
+            <p>You must be logged in to access this page.</p>
+            <button onclick="window.location.href='signup.html'" 
+              style="padding: 10px 20px; font-size: 16px; background-color: #ff9900; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
+              Sign Up / Log In
+            </button>
+          </div>
+        `;
+                // Optional: Center the content
                 contentWrapper.style.display = "flex";
                 contentWrapper.style.justifyContent = "center";
                 contentWrapper.style.alignItems = "center";
@@ -39,8 +38,10 @@
     <div id="header">Header Content Here</div>
 
     <div class="container">
-        <!-- Side Menu -->
-        <div class="side-menu">
+        <!-- Side Menu with an ID for toggling -->
+        <div class="store-side-menu" id="storeSideMenu">
+            <!-- Close button inside side menu (mobile only) -->
+            <button class="close-menu" onclick="closeStoreMenu()">✖</button>
             <h2>My Store</h2>
             <a href="#dashboard" class="menu-link">Dashboard</a>
             <a href="#store" class="menu-link">Store</a>
@@ -50,19 +51,14 @@
 
         <!-- Main Content -->
         <div class="content">
+            <!-- Mobile Menu Toggle Button (visible on mobile only) -->
+            <button class="store-menu-toggle" onclick="toggleStoreMenu()">☰</button>
+
             <!-- Dashboard Section -->
             <div id="dashboard" class="content-section active">
                 <h1>Dashboard</h1>
                 <div class="dashboard-metrics">
                     Nothing to see here...
-                    <!--<div class="dashboard-metric">
-                        <h2>Total Orders</h2>
-                        <span id="total-orders">0</span>
-                    </div>
-                    <div class="dashboard-metric">
-                        <h2>Total Revenue</h2>
-                        <span id="total-revenue">0</span>
-                    </div>-->
                 </div>
             </div>
 
@@ -100,16 +96,20 @@
                 <h1>Orders</h1>
                 <!-- Search Bar Container -->
                 <div class="search-container">
-                    <input type="text" id="search-product" placeholder="Search by Product...">
-                    <select name="variantFilter" id="order-variant-filter-select" disabled>
-                        <option value="">...</option>
-                    </select>
-                    <input type="text" id="search-notes" placeholder="Search by Notes...">
-                    <select name="status" id="bulk-status-update-select">
-                        <option value="READY">READY</option>
-                        <option value="COMPLETED">COMPLETED</option>
-                        <option value="CANCELLED">CANCELLED</option>
-                    </select>
+                    <div class="search-group">
+                        <input type="text" id="search-product" placeholder="Search by Product...">
+                        <select name="variantFilter" id="order-variant-filter-select" disabled>
+                            <option value="">...</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <input type="text" id="search-notes" placeholder="Search by Notes...">
+                        <select name="status" id="bulk-status-update-select">
+                            <option value="READY">READY</option>
+                            <option value="COMPLETED">COMPLETED</option>
+                            <option value="CANCELLED">CANCELLED</option>
+                        </select>
+                    </div>
                     <div class="bulk-actions">
                         <button onclick="bulkUpdateStatusByProduct()">Bulk Set Status</button>
                     </div>
@@ -143,7 +143,7 @@
     </div>
 
     <div id="footer"></div>
-    
+
     <!-- MODALS -->
     <div class="modal" id="store-modal">
         <div class="modal-form-container">
@@ -151,7 +151,8 @@
             <form id="store-form" class="modal-form" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="store-name-input">Store Name:</label>
-                    <input type="text" class="store-inputs" id="store-name-input" name="name" placeholder="Enter store name" required>
+                    <input type="text" class="store-inputs" id="store-name-input" name="name"
+                        placeholder="Enter store name" required>
                 </div>
                 <div class="form-group">
                     <label for="store-description-input">Description:</label>
@@ -169,7 +170,8 @@
                 </div>
                 <div class="form-group">
                     <label for="store-bankName-input">Bank Name:</label>
-                    <input type="text" class="store-inputs" id="store-bankName-input" name="bankName" placeholder="Enter bank name" required>
+                    <input type="text" class="store-inputs" id="store-bankName-input" name="bankName"
+                        placeholder="Enter bank name" required>
                 </div>
                 <button type="submit" id="store-submit-button" class="btn-primary">Create Store</button>
                 <button type="button" class="btn-secondary" onclick="closeStoreModal()">Cancel</button>
@@ -181,7 +183,7 @@
         <div class="modal-form-container">
             <h1 id="modal-h1">Add New Product</h1>
             <form id="modal-form" class="modal-form">
-                <!-- PRODUCT-->
+                <!-- PRODUCT -->
                 <h3>Product</h3>
                 <label for="product-name">Nama:</label>
                 <input type="text" id="product-name" name="name" class="product-inputs"
@@ -203,25 +205,22 @@
                     <option value="available">Available</option>
                     <option value="unavailable">Unavailable</option>
                 </select>
-
-                <!-- PRODUCT IMAGE-->
-                <label for="product-images" class="button-label" style="color: whitesmoke;z-index: 1;">Tambah Gambar</label>
-                <input type="file" style="position:fixed; width: 0%; height: 0%;padding: 0%;margin: 0; z-index: 0;" id="product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple required/>
+                <!-- PRODUCT IMAGE -->
+                <label for="product-images" class="button-label" style="color: whitesmoke; z-index: 1;">Tambah
+                    Gambar</label>
+                <input type="file" style="position: fixed; width: 0%; height: 0%; padding: 0%; margin: 0; z-index: 0;"
+                    id="product-images" name="images" accept=".jpg,.jpeg,.png,.gif" multiple required />
                 <span style="font-style: italic; font-size: small; color: gray;">Max. 2mb</span>
                 <div class="image-preview-container" id="image-preview-container"></div>
-
                 <h3>Variant</h3>
                 <div>
                     <label for="variant-select">Select Variant:</label>
-                    <select id="variant-select" name="variant">
-                    </select>
-                    <button type="button" onclick="addNewVariant()" class="variant-add-btn">Add New
-                        Variant</button>
+                    <select id="variant-select" name="variant"></select>
+                    <button type="button" onclick="addNewVariant()" class="variant-add-btn">Add New Variant</button>
                     <button type="button" onclick="deleteCurrentVariant()" class="variant-delete-btn">Delete Current
                         Variant</button>
                 </div>
-
-                <!-- Variant input fields that are shared between variants -->
+                <!-- Shared Variant Input Fields -->
                 <div id="variant-inputs">
                     <label for="variant-name">Nama Varian:</label>
                     <input type="text" name="name" id="variant-name" class="variant-inputs">
@@ -236,16 +235,16 @@
                     <input type="number" id="variant-stock" name="stock" class="variant-inputs" value="0" min="0"
                         required>
                 </div>
-
                 <div class="modal-form-buttons">
                     <button type="button" onclick="closeModal()">Cancel</button>
-                    <button type="submit" id="submit-button" >Tambah Produk</button>
+                    <button type="submit" id="submit-button">Tambah Produk</button>
                 </div>
             </form>
         </div>
     </div>
+
     <div class="pagination"></div>
-    
+
     <script type="module" defer>
         import './store-management-blob/orderAndTransactionBlob.js';
         import './store-management-blob/storeBlob.js';
@@ -253,20 +252,52 @@
         import './store-management-blob/variantBlob.js';
         import common from './common.js';
 
-
-        // Hash-based navigation
+        // Hash-based navigation for content sections
         document.querySelectorAll('.menu-link').forEach(link => {
             link.addEventListener('click', function (event) {
                 event.preventDefault();
-                document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'))
-                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'))
-                this.classList.add('active')
-                const sectionId = this.getAttribute('href').substring(1)
-                document.getElementById(sectionId).classList.add('active')
-            })
-        })
+                document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+                const sectionId = this.getAttribute('href').substring(1);
+                document.getElementById(sectionId).classList.add('active');
+                // On mobile, close the side menu when a tab is selected
+                if (window.innerWidth < 769) {
+                    closeStoreMenu();
+                }
+            });
+        });
     </script>
     <script type="module" src="integration/uiManagement.js" defer></script>
+
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+        function toggleStoreMenu() {
+            const menu = document.getElementById("storeSideMenu");
+            const toggleButton = document.querySelector(".store-menu-toggle");
+            menu.classList.toggle("open");
+            if (menu.classList.contains("open")) {
+                // Hide the toggle button when menu is open
+                toggleButton.style.display = "none";
+            } else {
+                toggleButton.style.display = "block";
+            }
+        }
+        function closeStoreMenu() {
+            const menu = document.getElementById("storeSideMenu");
+            const toggleButton = document.querySelector(".store-menu-toggle");
+            menu.classList.remove("open");
+            toggleButton.style.display = "block";
+        }
+        // Close the side menu when clicking outside of it
+        document.addEventListener("click", function (event) {
+            const menu = document.getElementById("storeSideMenu");
+            const toggleButton = document.querySelector(".store-menu-toggle");
+            if (menu.classList.contains("open") && !menu.contains(event.target) && !toggleButton.contains(event.target)) {
+                closeStoreMenu();
+            }
+        });
+    </script>
 </body>
 
 </html>

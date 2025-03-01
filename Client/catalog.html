@@ -319,6 +319,10 @@
                 <div id="drinks-items-container" class="catalog-items-container"></div>
             </div>
 
+            <div id="Others" class="tabcontent">
+                <div id="others-items-container" class="catalog-items-container"></div>
+            </div>
+
             <div id="All" class="tabcontent">
                 <div id="all-items-container" class="catalog-items-container"></div>
             </div>
@@ -342,6 +346,7 @@
             accessories: "accessory-items-container",
             food: "food-items-container",
             drinks: "drinks-items-container",
+            others: "others-items-container",
             all: "all-items-container",
         };
 
@@ -404,12 +409,12 @@
 
                 // Set the inner HTML of the item.
                 itemDiv.innerHTML = `
-                    <img src="${firstImg}" alt="${currentProduct.name}">
-                    <p>${currentProduct.name}</p>
-                    <p class="store-name">Store: <a href="display-store.html?id=${currentProduct.storeId}">${currentProduct.Store.name}</a></p>
-                    <p>Rp ${defaultVariant?.price.toLocaleString('id-ID')} / ${defaultVariant?.unit}</p>
-                    <button class="add-to-cart" onclick="event.stopPropagation();" ${defaultVariant?.stock <= 0 ? "disabled" : ""}>Add to Cart</button>
-                `;
+          <img src="${firstImg}" alt="${currentProduct.name}">
+          <p>${currentProduct.name}</p>
+          <p class="store-name">Store: <a href="display-store.html?id=${currentProduct.storeId}">${currentProduct.Store.name}</a></p>
+          <p>Rp ${defaultVariant?.price.toLocaleString('id-ID')} / ${defaultVariant?.unit}</p>
+          <button class="add-to-cart" onclick="event.stopPropagation();" ${defaultVariant?.stock <= 0 ? "disabled" : ""}>Add to Cart</button>
+        `;
                 const addToCartButton = itemDiv.querySelector('button');
                 addToCartButton.addEventListener('click', async function () {
                     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -476,7 +481,7 @@
             if (hash) {
                 openCategory(hash);
             } else {
-                openCategory("shirts"); // Default to shirts.
+                openCategory("Shirts"); // Default to Shirts.
             }
         }
 
@@ -491,7 +496,6 @@
         });
     </script>
     <script type="module" src="integration/uiManagement.js" defer></script>
-
 </body>
 
 </html>
