@@ -1,26 +1,39 @@
-# Notable Things
-The following will contain some notable logic, design decisions/quirks, and bugs of the backend node.js app alongside other potentially helpful information, since the developers have never created a fullstack system before this one. Things that are self explanitory / native to node.js will be skipped over.
+I assume AI will be advanced enough where it can interpret this mess of a codebase reliably, since this isn't really a documentation. I apologize in advance for how unscalable and coupled some systems are. Most libraries were chosen without consideration, we have never created a fullstack system before this one. Contact me to get the google project access if needed.
 
-## Setup
-- Install all node dependencies + MySQL Service
-- Run Node Server/setups/secretKey.js to generate a secret key in console
-- Edit .env file to include SECRET_KEY, JWT_SECRET_KEY, PORT, MYSQL_URI
-- Run syncDb to sync with mysql, provide URI with sufficient privileges
+# Setup
+1. $ npm install dependencies
+2. Install MySQL Service, run it, and set up a user for this app.
+3. Add a .env file (or inject it). Follow Server/.env.template
+    - You can run Server/setups/secretKey.js to help generate a secret key 
+4. Run syncDb to sync with mysql (or if you're up for it, try to fix the initial migration script). Ensure the mysql user in .env has sufficient privileges for this
 
-## Node.js
-This site was made with Node.Js and Express simply because the first tutorial I found on making e-commerce websites was one with MERN stack. We didn't consider how pricey it is to run node.js compared to something like codeigniter, it was too late to switch.
 
-## ReqSchemas
-- JOI schema validation for incoming requests (yes, the entire request object)
+# Frontend
+I, the person writing this document, did not design the frontend. I had to go through to pain of integration all by myself. 
+One notable page is store-management, which was such a monolithic file, I had to split them into "blobs". They aren't by any means clean, it was a quick refactor. Notice _config.js.
 
-## Database
-### Sequelize
-- Uses CLS namespace to make transactions easier
-#### Issues with changing model names
+# Backend
+- ReqSchemas
+    JOI schema validation for incoming requests, the entire request object.
+- Database
+    CLS namespace is also used to make transactions easier.
+    Uses Sequelize-CLI & Umzug for database migrations
+    The reason why EnvEditor.js and Wipe.js exist is related to how we had no access to "our" server besides lazy pulling.
+- UserStorage
+    This overcomplicates things.
+- SSR
+    We didn't do SSR from the start due to lack of skill. I decided to add SSR to one page so we can make use of OpenGraph.
+- Upload
+    We have the option to switch to GCS because we thought our hosting only has ephemeral storage.
+- Check task_backlog to check my wishful thinking.
+
+# Bugs
+## Transitioning to underscored model names
 - I've encountered issues with imageId being duplicated for some unknown reason, causing the main catalog page not loading, which i've only noticed when making commit bdd350c6. It's unclear when the bug occurred, likely after underscored: true. Occurrs when two products exist, sequelize performs some sort of union all complicated mush
 - I changed product_images table to have its own auto increment id and that seemed to fix the duplicate issue, but then it made queries that tried including ON `ProductImages`.`imageId` where imageId was not defined yet. solution was to add `imageId` to the attributes in .include() of productImages
 - Adittionally, i've disabled separate=true and ordering since that caused long ass Union queries dependant on the product count
-#### Do not use .get(), use toJSON() instead. 
+## Weird inter-request persistent bug
+Do not use .get(). use toJSON() instead. 
     28 Jan 2025 GET /store's fetchStoreOfUser(uid) returns with model.get(). Calling this endpoint and then attempting to create product threw an error at Image.bulkCreate. GET /store returns the complete data, which means all is/should be resolved. The cause must be persistent across requests.
     What I've ruled out: 
         - Transactions: I've removed them, error persists
@@ -31,28 +44,5 @@ This site was made with Node.Js and Express simply because the first tutorial I 
     Suspicions: 
         - Sequelize lazy loading (doubt). I don't fully understand it, how it's connected to createProducts, but chatGPT keeps pointing to it. Something about the model not resolving when using .get() through GET /store, but does resolve when calling the function directly. And somehow (???) this unresolved model "indirectly impacts" Image.bulkCreate.
         - Linked with specifically Image Creation: I haven't checked, but perhaps it's just image creation. I tried calling GET /store and then POST /signup, that worked just fine. Haven't tried anything else though.
-
-## Middlewares
-### multerUploads.js
-- Server immediately stores uploaded files to __dir/public/${relativeFilePath}
-- Access the files using {protocol}{host}/source/${relativeFilePath}
-- Files are stored in the database as their relative path to the public directory, controllers are expect to transform them into URLs
-
-## verifyAuthToken.js
-- verify() authenticates signedCookies.token, then populates the *decodedAuthToken* in req, intended to be run before an operation requiring authentication, throwing an error if required = true
-
-## Services
-### Token Authentication
-- *Some route controllers expects this middleware to run right before and depends on decodedAuthToken.id.*
-- The normal checkAuthToken returns the ID or an error. Used for Logins and such
-### User
-- Schema's regex allows passwords and names to have chinese japanese characters, cause why the heck not?
-#### User.FindOne literal where
+## User.FindOne literal where
 - For some reason, one random time, User.findOne consistently ignores the where clause and returns the first row of the users table. Setting where { email: 'name@domain.com'} directly didn't even work. Only using where literals worked.
-
-### Store
-- As per the schema, storeData expects name, description, bankAccount, bankName. Files expects imageFile, qrImageFile.
-
-### Move reqSchemas to middleware
-
-## Delete files on rollback. 
