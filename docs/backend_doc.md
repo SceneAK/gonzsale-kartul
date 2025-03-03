@@ -16,7 +16,7 @@ This site was made with Node.Js and Express simply because the first tutorial I 
 ## Database
 ### Sequelize
 - Uses CLS namespace to make transactions easier
-#### Issues with changing schema definitions
+#### Issues with changing model names
 - I've encountered issues with imageId being duplicated for some unknown reason, causing the main catalog page not loading, which i've only noticed when making commit bdd350c6. It's unclear when the bug occurred, likely after underscored: true. Occurrs when two products exist, sequelize performs some sort of union all complicated mush
 - I changed product_images table to have its own auto increment id and that seemed to fix the duplicate issue, but then it made queries that tried including ON `ProductImages`.`imageId` where imageId was not defined yet. solution was to add `imageId` to the attributes in .include() of productImages
 - Adittionally, i've disabled separate=true and ordering since that caused long ass Union queries dependant on the product count

@@ -16,7 +16,7 @@ export default function defineModel(sequelize, DataTypes)
         },
         stock: {
             type: DataTypes.INTEGER.UNSIGNED,
-            allowNull: false
+            allowNull: true
         },
         price: {
             type: DataTypes.INTEGER.UNSIGNED,

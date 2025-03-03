@@ -24,6 +24,7 @@ Please sort by importance
 > Unlimited Stocks
 > Unconfirmed Order Status
     > Order has a confirmed bool that defaults to false
+    > Store Preferences Services.
     > Make the stock reduction shift to this.
     > Update Database
     > Order migration script
@@ -33,6 +34,7 @@ DONE file compression for transactions
 
 ## orders
 > Mailing Customers when order status changes, when product gets deleted 
+    > Tracking Updates to orders
 
 ## Request Home page Items (promotional content)
 - Design the system

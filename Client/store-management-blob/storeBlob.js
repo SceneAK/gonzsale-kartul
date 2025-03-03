@@ -32,7 +32,7 @@ export async function loadStore() {
                     `;
                 storeForm.onsubmit = async function (event) {
                     event.preventDefault()
-                    const storeData = common.getAllNameValueOfSelector('.store-inputs', storeModal);
+                    const storeData = common.elementUtils.buildData('.store-inputs', storeModal);
                     await store.createStore(storeData);
                     await store.updateStoreImage(imageInput.files[0]);
                     await loadStore();
@@ -69,7 +69,7 @@ export async function loadStore() {
 window.editStore = async function () {
     try {
         const userStore = await store.fetchOwnedStore();
-        common.setValuesOfSelector('.store-inputs', storeModal, userStore);
+        common.elementUtils.populateWithData('.store-inputs', userStore, storeModal);
         imageInput.value = null;
 
         storeModal.querySelector('h2').innerText = "Edit Store";
@@ -77,7 +77,7 @@ window.editStore = async function () {
 
         storeForm.onsubmit = async function (event) {
             event.preventDefault()
-            const updatedValues = common.getAllNameValueOfSelector('.store-inputs', storeModal);
+            const updatedValues = common.elementUtils.buildData('.store-inputs', storeModal);
             try {
                 await store.editStore(updatedValues);
                 if(imageInput.value) {

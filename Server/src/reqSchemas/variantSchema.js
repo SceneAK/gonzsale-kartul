@@ -8,7 +8,7 @@ const variantBody = {
 };
 const bodySchema = Joi.object(variantBody);
 
-const bodySchemaRequired = bodySchema.fork(['name', 'stock', 'price', 'unit'], schema => schema.required()).required();
+const bodySchemaRequired = bodySchema.fork(['name', 'price', 'unit'], schema => schema.required()).required();
 const createVariantsSchema = {
     body: Joi.array().items(bodySchemaRequired)
 }

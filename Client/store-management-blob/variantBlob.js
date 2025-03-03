@@ -17,11 +17,11 @@ function setSelectedVariant(index)
     currentIndex = index;
     variantSelect.value = index;
 
-    common.setValuesOfSelector('.variant-inputs', modal, recordedVariants[index]);
+    common.elementUtils.populateWithData('.variant-inputs', recordedVariants[index], modal);
 }
 function saveVariantChanges()
 {
-    const updated = common.getAllNameValueOfSelector('.variant-inputs', modal);
+    const updated = common.elementUtils.buildData('.variant-inputs', modal);
     recordedVariants[currentIndex] = {...recordedVariants[currentIndex], ...updated};
 }
 function addNewVariant(data)

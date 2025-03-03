@@ -1,0 +1,14 @@
+export const STATUSES = {
+    PENDING: 'PENDING',
+    PROCESSING: 'PROCESSING',
+    READY: 'READY',
+    COMPLETED: 'COMPLETED',
+    CANCELLED: 'CANCELLED'
+};
+export const STATUS_ORDER = [
+    OrderItem.STATUS.PENDING,
+    OrderItem.STATUS.PROCESSING,
+    OrderItem.STATUS.READY,
+    OrderItem.STATUS.COMPLETED,
+    OrderItem.STATUS.CANCELLED
+];

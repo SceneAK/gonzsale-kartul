@@ -20,12 +20,12 @@ async function _fetchByPk(id, options)
 async function _createOrderItems(orderItems, orderId, transaction)
 {
     const orderItemsWithVariantProduct = await attatchAssociatedVariantProduct(orderItems);
-    validatePotentialOrderVariants(orderItemsWithVariantProduct);
+    validateItems(orderItemsWithVariantProduct);
     
-    const completedOrderItems = await completeOrderItemsData(orderItemsWithVariantProduct, orderId);
+    const bulkCreateData = await completeBulkCreateData(orderItemsWithVariantProduct, orderId);
     
-    await OrderItem.bulkCreate(completedOrderItems, {transaction});
-    await stockUpdater.decrementCorrespondingStocks(orderItemsWithVariantProduct);
+    await OrderItem.bulkCreate(bulkCreateData, {transaction});
+    await stockUpdater.decrementStocks(orderItemsWithVariantProduct);
 }
 async function attatchAssociatedVariantProduct(orderItems)
 {
@@ -42,7 +42,7 @@ async function attatchAssociatedVariantProduct(orderItems)
         }
     } )
 }
-async function completeOrderItemsData(orderItemsWithVariantProduct, orderId)
+async function completeBulkCreateData(orderItemsWithVariantProduct, orderId)
 {
     return orderItemsWithVariantProduct.map( withVariantProduct => {
         const { Variant, ...orderItemData } = withVariantProduct;
@@ -62,15 +62,13 @@ async function completeOrderItemsData(orderItemsWithVariantProduct, orderId)
         };
     })
 }
-function validatePotentialOrderVariants(orderItemsWithVariantProduct)
+function validateItems(orderItemsWithVariantProduct)
 {
     const commonStoreId = orderItemsWithVariantProduct[0].Variant.Product.storeId;
     const seenVariants = new Set();
     orderItemsWithVariantProduct.forEach( orderItem => {
-        const { Variant, quantity, variantId } = orderItem;
+        const { Variant, variantId } = orderItem;
         const { Product } = Variant;
-
-        if(Variant.stock - quantity < 0) throw new ApplicationError(`Insufficient Stock: "${Product.name} - ${Variant.name}"`, 400);
 
         if(!Product.isAvailable) throw new ApplicationError(`Order contains unavailable product "${Product.name}"`, 400);
         if(Product.storeId != commonStoreId) throw new ApplicationError("Order contains products of mixed store origin", 400);
@@ -97,7 +95,7 @@ async function updateStatus(id, status, requesterStoreId)
     await OrderItem.sequelize.transaction( async t => {
         if(status == "CANCELLED") 
         {
-            await stockUpdater.incrementCorrespondingStocks([orderItemWithVariant]);
+            await stockUpdater.incrementStocks([orderItemWithVariant]);
         }
     
         result = await OrderItem.update({status}, {where: {id}});
@@ -130,7 +128,7 @@ async function bulkUpdateStatus(filter, requestedStatus, requesterStoreId)
     await OrderItem.sequelize.transaction(async transaction => {
         if(requestedStatus == "CANCELLED")
         {
-            await stockUpdater.incrementCorrespondingStocks(updated, transaction);
+            await stockUpdater.incrementStocks(updated, transaction);
         }
         result = await OrderItem.bulkCreate(updated, { transaction, updateOnDuplicate: ['status'] });
     })
@@ -203,21 +201,21 @@ class OrderItemStockUpdater {
     {
         this.variantServices = variantServices;
     }
-    async incrementCorrespondingStocks(orderItemsWithVariant, transaction)
+    async incrementStocks(orderItemsWithVariant, transaction)
     {
         const reversed = orderItemsWithVariant.map( item => ( { ...item, quantity: -item.quantity } ) );
-        await this.decrementCorrespondingStocks(reversed, transaction)
+        await this.decrementStocks(reversed, transaction)
     }
-    async decrementCorrespondingStocks(orderItemsWithVariant, transaction)
+    async decrementStocks(orderItemsWithVariant, transaction)
     {
-        const stockUpdateData = await this.buildStockUpdateData(orderItemsWithVariant);
-        await this.variantServices.bulkUpsertStock(stockUpdateData, transaction);
+        const upsertData = await this.buildStockIncrementData(orderItemsWithVariant);
+        await this.variantServices.bulkIncrementStocksWithUpsert(upsertData, transaction);
     }
-    async buildStockUpdateData(orderItemsWithVariant)
+    async buildStockIncrementData(orderItemsWithVariant)
     {
-        return orderItemsWithVariant.map( orderItem => ({
-            ...orderItem.Variant,
-            stock: (orderItem.Variant.stock - orderItem.quantity)
+        return orderItemsWithVariant.map( item => ({
+            ...item.Variant,
+            by: item.quantity
         }))
     }
 }

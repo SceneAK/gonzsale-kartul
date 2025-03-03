@@ -1,33 +1,34 @@
-function getAllNameValueOfSelector(selector, parentElement)
+function buildData(selector, parentElement = document)
 {
-    const inputElements = Array.from(parentElement.querySelectorAll(selector));
-    return inputElements.reduce( (accumulator, element) => {
+    const elements = Array.from(parentElement.querySelectorAll(selector));
+    return elements.reduce( (accumulator, element) => {
         accumulator[element.name] = element.value;
         return accumulator;
     }, {})
 }
-function convertAvailabilityKey(obj)
+function populateWithData(selector, obj, parentElement = document)
 {
-    for(const key in obj)
-    {
-        if(key == 'availability') {
-            obj['isAvailable'] = obj[key] == 'available';
-            delete obj[key];
-        }
-    }
-}
-function setValuesOfSelector(selector, parentElement, obj)
-{
-    const inputElements = Array.from(parentElement.querySelectorAll(selector));
-    inputElements.forEach( element => {;
+    const elements = Array.from(parentElement.querySelectorAll(selector));
+    elements.forEach( element => {;
         const value = obj[element.name]
         element.value = value !== undefined ? value : element.value;
     })
 }
-function setAvailabilityElementValue(element, value)
+function modifyData(data, adjustments)
 {
-    element.value = value ? 'available' : 'unavailable';
+    const { set, remove } = adjustments;
+    for(const keyToChange in set)
+    {
+        data[keyToChange] = set[keyToChange];
+    }
+    for(const keyToRemove of remove)
+    {
+        delete data[keyToRemove];
+    }
+    return data;
 }
+const elementUtils = { buildData, populateWithData, modifyData }
+
 function buildCartItem(product, selectedVariant, quantity)
 {
     return { 
@@ -56,10 +57,7 @@ class InputDebouncer {
 }
 
 export default {
-    getAllNameValueOfSelector, 
-    setValuesOfSelector, 
-    setAvailabilityElementValue, 
-    convertAvailabilityKey,
+    elementUtils,
     buildCartItem,
     InputDebouncer
 }

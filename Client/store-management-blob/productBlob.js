@@ -60,7 +60,7 @@ function prepareCreateProductModal()
 {
     modalH1.innerHTML = 'Add Product';
     submitBtn.innerHTML = 'Create Product';
-    common.setValuesOfSelector('.product-inputs', modal, { name:"", description:"", category:""});
+    common.elementUtils.populateWithData('.product-inputs', { name:"", description:"", category:""}, modal);
     
     resetProductImages();
     resetRecordedVariants();
@@ -68,8 +68,9 @@ function prepareCreateProductModal()
 
 async function createProduct()
 {
-    const productData = common.getAllNameValueOfSelector('.product-inputs', modal);
-    common.convertAvailabilityKey(productData);
+    const productData = common.elementUtils.buildData('.product-inputs', modal);
+    modifyDataForFetch(productData);
+    
     const variantDataArr = saveAndCloneRecordedVariants();
     const defaultVariant = pullOutDefault(variantDataArr);
     
@@ -127,8 +128,10 @@ window.openModalAsEditProduct = async function(productId)
 async function editProduct(originalProductData)
 {
     const productId = originalProductData.id;
-    const editedData = common.getAllNameValueOfSelector('.product-inputs', modal);
-    common.convertAvailabilityKey(editedData);
+    
+    const editedData = common.elementUtils.buildData('.product-inputs', modal);
+    modifyDataForFetch(editedData);
+
     await product.editProduct(productId, editedData);
     
     const variantDataArr = saveAndCloneRecordedVariants();
@@ -160,11 +163,22 @@ function prepareEditProductModal(productData) {
     modalH1.innerHTML = 'Edit Product';
     submitBtn.innerHTML = 'Edit';
 
-    common.setValuesOfSelector('.product-inputs', modal, productData)
+    common.elementUtils.populateWithData('.product-inputs', productData, modal)
     common.setAvailabilityElementValue(document.getElementById('product-availability'), productData.isAvailable);
 
     resetProductImages();
     setExistingProductImages(productData.ProductImages);
     setRecordedVariants(productData.Variants);
 }
+
+function modifyDataForFetch(productData)
+{
+    common.elementUtils.modifyData(productData, {
+        set: {
+            isAvailable: productData.availability == "available"
+        },
+        remove: ['availability']
+    })
+}
+
 //#endregion

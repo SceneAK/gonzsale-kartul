@@ -23,17 +23,19 @@ async function _fetchVariant(id, options)
     return variant.toJSON();
 }
 
-// async function fetchVariantsOfProduct(productId)
-// {
-//     const variants = await Variant.findAll({where: {productId}});
-//     return variants.map(variant => variant.toJSON());
-// }
-
-async function bulkUpsertStock(stockUpdateData, transaction)
+async function bulkDecrementStocksWithUpsert(upsertDecrementData, transaction)
 {
-    await Variant.bulkCreate(stockUpdateData, {
-        updateOnDuplicate: ['stock'], transaction
+    const upsertData = upsertDecrementData.map( datum => {
+        const { stock: previousStock, by, ...variantData} = datum;
+        const stock = previousStock == null ? null : previousStock - by;
+        
+        if(stock && stock < 0) throw new ApplicationError(`Stock cannot be less than zero, assesing variant ${variantData.name}, id: ${variantData.id}`, 400);
+
+        return { stock, ...variantData }
     })
+    return await await Variant.bulkCreate(upsertData, {
+        updateOnDuplicate: ['stock'], transaction
+    });
 }
 
 async function editVariant(id, variantData, requesterStoreId)
@@ -119,7 +121,7 @@ function includeSpecific(variantId)
 export default {
     fetchVariantIncludeProduct,
     fetchVariantsIncludeProduct,
-    bulkUpsertStock,
+    bulkDecrementStocksWithUpsert,
     createVariants,
     _createVariants,
     editVariant,
