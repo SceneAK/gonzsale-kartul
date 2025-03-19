@@ -1,6 +1,7 @@
 import { store } from '../integration/fetches.js'
 import common from '../common.js';
 import { getCachedLogin } from '../integration/user.js';
+import { loadAnalysis } from  '../storeAnalysis.js';
 
 const storeModal = document.getElementById('store-modal');
 const storeForm = document.getElementById("store-form");
@@ -61,6 +62,7 @@ export async function loadStore() {
                 <button class="btn-primary" onclick="editStore()">Edit Store</button>
                 </div>
             `;
+            loadAnalysis(userStore.id)
         }
     } catch (error) {
         console.error("Error loading store:", error);

@@ -95,7 +95,7 @@ async function fetchStores()
 
 async function fetchStoreAnalytics(storeId, startDate, endDate){
     const query = toQueryString({startDate, endDate})
-    await jsonRequestResponse(`/store/${storeId}/analytics?${query}`, "GET", null, 'include');
+    return await jsonRequestResponse(`/store/${storeId}/analytics?${query}`, "GET", null, 'include');
 }
 
 async function createStore(data) // auth

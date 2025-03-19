@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,10 +26,11 @@
       padding: 1rem;
       background: #fff;
       border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
-    h1, h2 {
+    h1,
+    h2 {
       margin-bottom: 1rem;
       color: #444;
     }
@@ -37,46 +39,48 @@
       margin-bottom: 2rem;
     }
 
-    /* Form Styling */
-    form {
+    /* Store & Orders Panel Layout */
+    .dashboard {
       display: flex;
-      align-items: center;
       gap: 1rem;
-      margin-bottom: 1rem;
     }
 
-    form label {
-      font-weight: bold;
+    /* Store Panel Styling */
+    #store-panel {
+      width: 200px;
+      background: lightblue;
+      color: darkslategray;
+      padding: 1rem;
+      border-radius: 5px;
     }
 
-    form input[type="text"],
-    form select {
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 3px;
+    #storesList {
+      list-style: none;
     }
 
-    form button {
-      padding: 0.5rem 1rem;
-      border: none;
-      background-color: #007bff;
-      color: #fff;
-      border-radius: 3px;
+    #storesList li {
+      padding: 0.75rem;
       cursor: pointer;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     }
 
-    form button:hover {
-      background-color: #0056b3;
+    #storesList li:hover {
+      background: rgba(255, 255, 255, 0.2);
     }
 
-    /* Table Styling */
+    /* Pending Orders Panel */
+    #pending-orders-panel {
+      flex-grow: 1;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 1rem;
     }
 
-    table th, table td {
+    table th,
+    table td {
       padding: 0.75rem;
       text-align: left;
       border-bottom: 1px solid #ddd;
@@ -85,152 +89,121 @@
     table tbody tr:hover {
       background-color: #f1f1f1;
     }
-
-    /* Button for Raw HTTP Requests */
-    #raw-http-section {
-      text-align: center;
-      margin-top: 2rem;
-    }
-
-    #rawHttpButton {
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      border: none;
-      background-color: #28a745;
-      color: #fff;
-      border-radius: 3px;
-      cursor: pointer;
-    }
-
-    #rawHttpButton:hover {
-      background-color: #1e7e34;
-    }
   </style>
 </head>
+
 <body>
   <div class="container">
-    <h1>Admin Dashboard</h1>
-    
+    <h1>Admin Actions</h1>
+
     <!-- User Role Granting Panel -->
     <section id="user-role-panel">
-      <h2>User Role Granting Panel</h2>
       <form id="roleForm">
         <label for="username">Username:</label>
         <input type="text" id="email" name="email" placeholder="Enter email" required>
-        
+
         <label for="role">Select Role:</label>
         <select id="role" name="role">
           <option value="STORE_MANAGER">STORE_MANAGER</option>
           <option value="ADMIN">ADMIN</option>
         </select>
-        
+
         <button type="submit">Grant Role</button>
       </form>
       <div id="roleMessage"></div>
     </section>
-    
-    <!-- Pending Orders Panel -->
-    <section id="pending-orders-panel">
-      <h2>Pending Orders</h2>
-      <table id="pendingOrdersTable">
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Store</th>
-            <th>Customer</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Pending orders will be inserted here by JavaScript -->
-        </tbody>
-      </table>
-    </section>
-    
-    <!-- Store Panel -->
-    <section id="store-panel">
-      <h2>Stores</h2>
-      <table id="storesTable">
-        <thead>
-          <tr>
-            <th>Store ID</th>
-            <th>Store Name</th>
-            <th>Location</th>
-          </tr>
-        </thead>
-        <tbody>
+
+    <!-- Store and Orders Section -->
+    <div class="dashboard">
+      <!-- Store Panel -->
+      <section id="store-panel">
+        <ul id="storesList">
           <!-- Store list will be inserted here by JavaScript -->
-        </tbody>
-      </table>
-    </section>
-    
-    <!-- Raw HTTP Requests Button -->
-    <section id="raw-http-section">
-      <button id="rawHttpButton">Go to Raw HTTP Requests</button>
-    </section>
+        </ul>
+      </section>
+
+      <!-- Pending Orders Panel -->
+      <section id="pending-orders-panel">
+        <h2 id="pending-orders-title">Select a Store</h2>
+        <table id="pendingOrdersTable">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Items</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Orders will be inserted here by JavaScript -->
+          </tbody>
+        </table>
+        <section>
+          <span id="store-revenue"></span>
+          <input type="date" id="start-date">
+          <input type="date" id="end-date">
+        </section>
+      </section>
+    </div>
   </div>
-  
+
   <script type="module">
-    import {user, store} from './integration/fetches.js';
-    // Handle User Role Granting Form Submission
-    document.getElementById('roleForm').addEventListener('submit', async function(e) {
+    import { user, store, order } from './integration/fetches.js';
+    import { loadAnalysis } from './storeAnalysis.js'
+    // Dummy Data for Stores
+    const storeResults = await store.fetchStores();
+    const stores = storeResults.items;
+
+    // Store Panel List
+    const storesList = document.getElementById('storesList');
+    stores.forEach(storeData => {
+      const li = document.createElement('li');
+      li.textContent = storeData.name;
+      li.dataset.storeId = storeData.id;
+      li.addEventListener('click', async () => {
+        document.getElementById('pending-orders-title').innerText = `Orders for ${storeData.name}`;
+        loadAnalysis(storeData.id)
+        loadOrders(storeData.id)
+      });
+      storesList.appendChild(li);
+    });
+
+    const ordersByStore = {}
+    // Function to Load Orders for a Selected Store
+    async function loadOrders(storeId) {
+      const ordersTableBody = document.querySelector('#pendingOrdersTable tbody');
+      ordersTableBody.innerHTML = ''; // Clear existing rows
+
+      if (!ordersByStore[storeId]) ordersByStore[storeId] = await order.fetchOrdersForStore(storeId);
+      const storeOrders = ordersByStore[storeId].items;
+      storeOrders.forEach(storeOrder => {
+        const row = document.createElement('tr');
+        const date = new Date(storeOrder.createdAt);
+        row.innerHTML = `<td>${storeOrder.id.substring(0, 10)}...</td>
+                           <td>${storeOrder.customerName}</td>
+                           <td>${storeOrder.numberOfItems}</td>
+                           <td>${storeOrder.status}</td>
+                           <td>${date.toDateString()}</td>`;
+        ordersTableBody.appendChild(row);
+      });
+    }
+
+    // Event Listener for User Role Granting
+    document.getElementById('roleForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       const email = document.getElementById('email').value;
       const role = document.getElementById('role').value;
 
-      const result = await user.fetchUsers({email});
+      const result = await user.fetchUsers({ email });
       const userWithEmail = result.items?.[0];
-      if(!userWithEmail) throw new Error("No user with such email");
-      
-      console.log(userWithEmail)
+      if (!userWithEmail) throw new Error("No user with such email");
+
       await user.grantRole(userWithEmail.id, role);
-      document.getElementById('roleMessage').textContent = 'Granted ' + role + ' role to ' + userWithEmail.name;
-      // Reset the form fields
+      document.getElementById('roleMessage').textContent = `Granted ${role} role to ${userWithEmail.name}`;
       this.reset();
-    });
-    
-    // Dummy Data for Pending Orders
-    const pendingOrders = [
-      { id: 'ORD001', store: 'Store A', customer: 'John Doe', total: '$100.00' },
-      { id: 'ORD002', store: 'Store B', customer: 'Jane Smith', total: '$150.00' },
-      { id: 'ORD003', store: 'Store C', customer: 'Alice Johnson', total: '$200.00' }
-    ];
-    
-    const ordersTableBody = document.querySelector('#pendingOrdersTable tbody');
-    pendingOrders.forEach(order => {
-      const row = document.createElement('tr');
-      row.innerHTML = '<td>' + order.id + '</td>' +
-                      '<td>' + order.store + '</td>' +
-                      '<td>' + order.customer + '</td>' +
-                      '<td>' + order.total + '</td>';
-      ordersTableBody.appendChild(row);
-    });
-    
-    // Dummy Data for Stores
-    const stores = [
-      { id: '1', name: 'Store A', location: 'New York' },
-      { id: '2', name: 'Store B', location: 'Los Angeles' },
-      { id: '3', name: 'Store C', location: 'Chicago' }
-    ];
-    
-    const storesTableBody = document.querySelector('#storesTable tbody');
-    stores.forEach(store => {
-      const row = document.createElement('tr');
-      row.style.cursor = 'pointer';
-      row.innerHTML = '<td>' + store.id + '</td>' +
-                      '<td>' + store.name + '</td>' +
-                      '<td>' + store.location + '</td>';
-      row.addEventListener('click', function() {
-        // Redirect to the store analytics page with a query parameter for the store id
-        window.location.href = 'storeAnalytics.html?storeId=' + store.id;
-      });
-      storesTableBody.appendChild(row);
-    });
-    
-    // Event Listener for "Raw HTTP Requests" Button
-    document.getElementById('rawHttpButton').addEventListener('click', function() {
-      window.location.href = 'raw.html';
     });
   </script>
 </body>
+
 </html>

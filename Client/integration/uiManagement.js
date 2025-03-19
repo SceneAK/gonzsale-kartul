@@ -45,7 +45,7 @@ function toggleDropdownState(loginDetails) {
                 }
                 ${isAdmin
                     ? `<button onclick="window.location.href='admin.html'" style="width: 100%; padding: 10px; margin-bottom: 5px;">
-                            Raw Requests
+                            Admin Page
                        </button>`
                     : ''
                 }

@@ -37,7 +37,7 @@ const updateStoreImage = async (req, res) => {
 
 const fetchStoreAnalytics = async (req, res) => {
     const dateRange = req.query;
-    const result = await storeAnalyticsServices.fetchStoreAnalytics(req.params.storeId, dateRange);
+    const result = await storeAnalyticsServices.fetchStoreAnalytics(req.params.id, dateRange);
     res.json(result || {})
 }
 
