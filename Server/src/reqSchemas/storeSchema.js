@@ -24,8 +24,16 @@ const updateStoreImageSchema = {
     file: Joi.any().required()
 }
 
+const analyticsSchema = {
+    query: Joi.object({
+        startDate: Joi.string().isoDate().empty("").required(),
+        endDate: Joi.string().isoDate().empty("").required()
+    }).required()
+}
+
 export default {
     createStore: createStoreSchema,
     updateStore: updateStoreSchema,
-    updateStoreImage: updateStoreImageSchema
+    updateStoreImage: updateStoreImageSchema,
+    analytics: analyticsSchema
 };

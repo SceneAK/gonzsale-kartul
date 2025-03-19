@@ -1,12 +1,14 @@
 import express from 'express';
 const router = express.Router();
 
-import { verify, validatePassReq, validate, ensureStore, verifyReCAPTCHA} from '../middlewares/index.js';
+import { verify, validatePassReq, validate, ensureStore, ensureAdmin, verifyReCAPTCHA} from '../middlewares/index.js';
 import { orderSchemas, page } from '../reqSchemas/index.js';
 import { order } from '../controllers/index.js'
 import orderItemRoute from './orderItemRoute.js'
 
-router.get('/incoming', verify(), ensureStore, validate(orderSchemas.fetchIncoming), order.fetchIncomingOrders);
+router.get('/my-store', verify(), ensureStore, validate(orderSchemas.fetchIncoming), order.fetchMyIncomingOrders);
+
+router.get('/store/:storeId', verify(), ensureAdmin, validate(orderSchemas.fetchIncoming), order.fetchIncomingOrders);
 
 router.get('/my', verify(), validate(page), order.fetchOrders);
 

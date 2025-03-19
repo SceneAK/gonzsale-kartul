@@ -2,6 +2,7 @@ export { default as imageServices } from './imageServices.js';
 export { default as userServices } from './userServices.js';
 export { default as userStorageServices } from './userStorageServices.js';
 export { default as storeServices } from './storeServices.js';
+export { default as storeAnalyticsServices } from './storeAnalyticsServices.js'
 export { default as orderServices } from './orderServices.js';
 export { default as orderItemServices } from './orderItemServices.js';
 export { default as productServices } from './productServices.js';

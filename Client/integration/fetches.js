@@ -50,6 +50,10 @@ function toQueryString(obj)
 //#endregion
 
 //#region User
+async function fetchUsers(params){
+    const query = toQueryString(params);
+    return await jsonResponse(`/user?${query}`, 'GET', null, 'include')
+}
 async function signIn(email, password) {
     const body = JSON.stringify({email, password});
     return await jsonRequestResponse('/user/signin', 'POST', body, 'include')
@@ -76,7 +80,11 @@ async function expireCookie()
 {
     return await request('/user/expire', 'POST', null, 'include');
 }
-const user = { signIn, signUp, editContacts, refresh, expireCookie } // both returns cookies
+async function grantRole(userId, role)
+{
+    return await request(`/user/${userId}/${role}`, 'PATCH', null, 'include');
+}
+const user = {fetchUsers, signIn, signUp, editContacts, refresh, expireCookie, grantRole} // both returns cookies
 //#endregion
 
 //#region Store
@@ -84,6 +92,11 @@ async function fetchStore(id)
 {
     const store = await jsonRequestResponse(`/store/${id}`, "GET");
     return store;
+}
+async function fetchStores()
+{
+    const stores = await jsonResponse('/store/all', "GET");
+    return stores;
 }
 async function fetchOwnedStore() {
     try {
@@ -95,6 +108,17 @@ async function fetchOwnedStore() {
         }
         throw error; // Re-throw other errors
     }
+}
+
+async function fetchMyStoreAnalytics(startDate, endDate)
+{ 
+    const query = toQueryString({startDate, endDate})
+    await jsonRequestResponse(`/store/analytics?${query}`, "GET", null, 'include');
+}
+
+async function fetchStoreAnalytics(storeId, startDate, endDate){
+    const query = toQueryString({startDate, endDate})
+    await jsonRequestResponse(`/store/${storeId}/analytics?${query}`, "GET", null, 'include');
 }
 
 async function createStore(data) // auth
@@ -111,7 +135,7 @@ async function updateStoreImage(image)
     formData.append('image', image);
     return await jsonResponse(`/store/image`, "PATCH", formData, 'include');
 }
-const store = {fetchStore, fetchOwnedStore, createStore, editStore, updateStoreImage};
+const store = {fetchStore, fetchStores, fetchOwnedStore, fetchStoreAnalytics, fetchMyStoreAnalytics, createStore, editStore, updateStoreImage};
 //#endregion
 
 //#region Product
@@ -183,10 +207,15 @@ async function fetchMyOrders(page = 1) // auth
 {
     return await jsonResponse(`/order/my?page=${page}`, "GET", null, 'include');
 }
-async function fetchIncomingOrders(page = 1, filter) // auth & store
+async function fetchMyIncomingOrders(page = 1, filter = {}) // auth & store
 {
     const params = toQueryString({ page, ...filter});
-    return await jsonResponse(`/order/incoming?${params}`, "GET", null, 'include');
+    return await jsonResponse(`/order/my-store?${params}`, "GET", null, 'include');
+}
+async function fetchIncomingOrders(storeId, page = 1)
+{
+    const params = toQueryString({page});
+    return await jsonResponse(`/order/store/${storeId}?${params}`, "GET", null, 'include');
 }
 async function createOrders(data, recaptchaResponse)// auth
 {
@@ -201,7 +230,7 @@ async function updateItemStatusWhere(where, status)
     const query = toQueryString(where);
     return await jsonRequestResponse(`/order/item/status/${status}?${query}`, "PATCH", null, 'include');
 }
-const order = {fetchOrder, fetchMyOrders, fetchIncomingOrders, createOrders, updateItemStatus, updateItemStatusWhere};
+const order = {fetchOrder, fetchMyOrders, fetchMyIncomingOrders, fetchIncomingOrders, createOrders, updateItemStatus, updateItemStatusWhere};
 //#endregion
 
 //#region Transaction

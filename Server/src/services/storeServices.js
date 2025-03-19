@@ -15,9 +15,9 @@ async function fetchStore(id)
     return storeModel.toJSON();
 }
 
-async function fetchStores(page, where = {})
+async function fetchStores(page = 1, where = {})
 {
-    const results = await Store.findAll({
+    const results = await Store.findAndCountAll({
         include: ALL_INCLUDES,
         attributes: SERVE_ATTRIBUTES,
         where,

@@ -1,4 +1,4 @@
-import { storeServices } from '../services/index.js';
+import { storeAnalyticsServices, storeServices } from '../services/index.js';
 import { logger } from '../systems/index.js';
 import { convertAllPathsToURLs } from '../common/index.js';
 import { setAuthTokenCookie } from './cookieSetter.js';
@@ -9,9 +9,13 @@ const fetchStore = async (req, res) =>{
     convertAllPathsToURLs(req, store);
     res.json(store);
 }
+const fetchStores = async (req, res) => {
+    const stores = await storeServices.fetchStores(req.query.page);
+    res.json(stores || {});
+}
 
 const fetchOwnedStore = async (req, res) =>{
-    const store = await storeServices.fetchStore(req.decodedAuthToken.storeId);
+    const store = await storeServices.fetchStores(req.decodedAuthToken.storeId);
     convertAllPathsToURLs(req, store);
     res.json(store);
 }
@@ -37,4 +41,14 @@ const updateStoreImage = async (req, res) => {
     res.json(result || {});
 }
 
-export default  { fetchStore, fetchOwnedStore, createStore, updateStore, updateStoreImage }
+const fetchMyStoreAnalytics = async (req, res) => { // maybe we can refactor this?
+    req.params.storeId = req.decodedAuthToken.storeId;
+    await fetchStoreAnalytics(req, res);
+}
+const fetchStoreAnalytics = async (req, res) => {
+    const dateRange = req.query;
+    const result = await storeAnalyticsServices.fetchStoreAnalytics(req.params.storeId, dateRange);
+    res.json(result || {})
+}
+
+export default  { fetchStore, fetchOwnedStore, fetchStores, createStore, updateStore, updateStoreImage, fetchMyStoreAnalytics, fetchStoreAnalytics }

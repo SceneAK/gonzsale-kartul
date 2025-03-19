@@ -1,169 +1,236 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controlls</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard</title>
   <style>
-    body {
-      background-color: #f2f2f2;
-      font-family: Arial, sans-serif;
+    /* Basic Reset & Typography */
+    * {
+      box-sizing: border-box;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+      font-family: Arial, sans-serif;
     }
-    #queryDiv, #resultDiv {
-      background-color: #fff;
-      border: 1px solid #ddd;
+
+    body {
+      background-color: #f4f7f9;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #fff;
       border-radius: 5px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    label {
+
+    h1, h2 {
+      margin-bottom: 1rem;
+      color: #444;
+    }
+
+    section {
+      margin-bottom: 2rem;
+    }
+
+    /* Form Styling */
+    form {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    form label {
       font-weight: bold;
-      display: block;
-      margin-top: 10px;
     }
-    input[type="text"],
-    select,
-    textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      margin-bottom: 10px;
+
+    form input[type="text"],
+    form select {
+      padding: 0.5rem;
       border: 1px solid #ccc;
       border-radius: 3px;
-      box-sizing: border-box;
     }
-    textarea[readonly] {
-      background-color: #eee;
-    }
-    button {
-      background-color: #007BFF;
-      color: #fff;
-      padding: 10px 15px;
+
+    form button {
+      padding: 0.5rem 1rem;
       border: none;
+      background-color: #007bff;
+      color: #fff;
       border-radius: 3px;
       cursor: pointer;
     }
-    button:hover {
+
+    form button:hover {
       background-color: #0056b3;
     }
-    .bool {
-      color: lightseagreen;
+
+    /* Table Styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
     }
-    .number {
-      color: green;
+
+    table th, table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
     }
-    .string {
-      color: crimson;
+
+    table tbody tr:hover {
+      background-color: #f1f1f1;
     }
-    .null {
-      color: darkslategray;
+
+    /* Button for Raw HTTP Requests */
+    #raw-http-section {
+      text-align: center;
+      margin-top: 2rem;
     }
-    .undefined {
-      color: darkblue;
+
+    #rawHttpButton {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      background-color: #28a745;
+      color: #fff;
+      border-radius: 3px;
+      cursor: pointer;
     }
-    strong, p {
-      display: inline;
-      margin: 0;
-      padding: 0;
+
+    #rawHttpButton:hover {
+      background-color: #1e7e34;
     }
   </style>
 </head>
 <body>
-  <div id="queryDiv">
-    <strong>RAW HTTP REQUESTS</strong>
-    <br>
-    <label for="endpointInput">Endpoint:</label>
-    <input type="text" id="endpointInput" value="/api/">
+  <div class="container">
+    <h1>Admin Dashboard</h1>
     
-    <label for="methodSelect">Method:</label>
-    <select id="methodSelect">
-      <option value="GET">GET</option>
-      <option value="POST">POST</option>
-      <option value="PATCH">PATCH</option>
-      <option value="PUT">PUT</option>
-      <option value="DELETE">DELETE</option>
-    </select>
+    <!-- User Role Granting Panel -->
+    <section id="user-role-panel">
+      <h2>User Role Granting Panel</h2>
+      <form id="roleForm">
+        <label for="username">Username:</label>
+        <input type="text" id="email" name="email" placeholder="Enter email" required>
+        
+        <label for="role">Select Role:</label>
+        <select id="role" name="role">
+          <option value="STORE_MANAGER">STORE_MANAGER</option>
+          <option value="ADMIN">ADMIN</option>
+        </select>
+        
+        <button type="submit">Grant Role</button>
+      </form>
+      <div id="roleMessage"></div>
+    </section>
     
-    <label for="credentialSelect">Credentials:</label>
-    <select id="credentialSelect">
-      <option value="include" selected>include</option>
-      <option value="omit">omit</option>
-    </select>
-
+    <!-- Pending Orders Panel -->
+    <section id="pending-orders-panel">
+      <h2>Pending Orders</h2>
+      <table id="pendingOrdersTable">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Store</th>
+            <th>Customer</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Pending orders will be inserted here by JavaScript -->
+        </tbody>
+      </table>
+    </section>
     
-    <label for="bodyTextArea">Body:</label>
-    <textarea id="bodyTextArea" placeholder="body..."></textarea>
+    <!-- Store Panel -->
+    <section id="store-panel">
+      <h2>Stores</h2>
+      <table id="storesTable">
+        <thead>
+          <tr>
+            <th>Store ID</th>
+            <th>Store Name</th>
+            <th>Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Store list will be inserted here by JavaScript -->
+        </tbody>
+      </table>
+    </section>
     
-    <button onclick="fetchToBase()">Fetch</button>
+    <!-- Raw HTTP Requests Button -->
+    <section id="raw-http-section">
+      <button id="rawHttpButton">Go to Raw HTTP Requests</button>
+    </section>
   </div>
-  <div id="resultDiv"></div>
   
-  <script type="module" defer>
-    import {fetching, user} from './integration/fetches.js';
-    const resultDiv = document.getElementById('resultDiv');
-    const queryDiv = document.getElementById('queryDiv');
-    const endpointInput = document.getElementById('endpointInput');
-    const methodSelect = document.getElementById('methodSelect');
-    const credentialSelect = document.getElementById('credentialSelect');
-    const bodyTextArea = document.getElementById('bodyTextArea');
-    const headersTextArea = document.getElementById('headersTextArea');
+  <script type="module">
+    import {user, store} from './integration/fetches.js';
+    // Handle User Role Granting Form Submission
+    document.getElementById('roleForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const role = document.getElementById('role').value;
+
+      const result = await user.fetchUsers({email});
+      const userWithEmail = result.items?.[0];
+      if(!userWithEmail) throw new Error("No user with such email");
+      
+      console.log(userWithEmail)
+      await user.grantRole(userWithEmail.id, role);
+      document.getElementById('roleMessage').textContent = 'Granted ' + role + ' role to ' + userWithEmail.name;
+      // Reset the form fields
+      this.reset();
+    });
     
-    window.fetchToBase = async function () {
-      resultDiv.innerHTML = "";
-      const body = methodSelect.value === "GET" ? null : bodyTextArea.value;
-      try {
-        const res = await fetch(`${window.location.origin}${endpointInput.value}`, {
-          headers:{
-            'Content-Type': 'application/json'
-          },
-          method: methodSelect.value,
-          credentials: credentialSelect.value,
-          body
-        });
-        if (!res.ok) throw new Error(`Status (${res.status}) ${await res.text()}`);
-        const contentType = res.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          resultDiv.innerHTML += "JSON: <br>";
-          const json = await res.json();
-          createTreeView(json, resultDiv);
-        } else {
-          resultDiv.innerHTML = await res.text();
-        }
-      } catch (err) {
-        resultDiv.innerHTML = "ERR: " + err.toString();
-        return;
-      }
-    }
+    // Dummy Data for Pending Orders
+    const pendingOrders = [
+      { id: 'ORD001', store: 'Store A', customer: 'John Doe', total: '$100.00' },
+      { id: 'ORD002', store: 'Store B', customer: 'Jane Smith', total: '$150.00' },
+      { id: 'ORD003', store: 'Store C', customer: 'Alice Johnson', total: '$200.00' }
+    ];
     
-    function createTreeView(json, container) {
-      function buildTree(obj, parent) {
-        Object.keys(obj).forEach(key => {
-          let value = obj[key];
-          let div = document.createElement("div");
-          div.innerHTML = `<strong>${key}:</strong> <p class="${getClassName(value)}">${value}</p>`;
-          parent.appendChild(div);
-          
-          if (typeof value === "object" && value) {
-            let subContainer = document.createElement("div");
-            subContainer.style.marginLeft = "20px";
-            div.appendChild(subContainer);
-            buildTree(value, subContainer);
-          }
-        });
-      }
-      buildTree(json, container);
-    }
+    const ordersTableBody = document.querySelector('#pendingOrdersTable tbody');
+    pendingOrders.forEach(order => {
+      const row = document.createElement('tr');
+      row.innerHTML = '<td>' + order.id + '</td>' +
+                      '<td>' + order.store + '</td>' +
+                      '<td>' + order.customer + '</td>' +
+                      '<td>' + order.total + '</td>';
+      ordersTableBody.appendChild(row);
+    });
     
-    function getClassName(value) {
-      if (typeof value === 'object') {
-        if (value === null) { return 'null'; }
-        else { return 'undefined'; }
-      } else {
-        return typeof value;
-      }
-    }
+    // Dummy Data for Stores
+    const stores = [
+      { id: '1', name: 'Store A', location: 'New York' },
+      { id: '2', name: 'Store B', location: 'Los Angeles' },
+      { id: '3', name: 'Store C', location: 'Chicago' }
+    ];
+    
+    const storesTableBody = document.querySelector('#storesTable tbody');
+    stores.forEach(store => {
+      const row = document.createElement('tr');
+      row.style.cursor = 'pointer';
+      row.innerHTML = '<td>' + store.id + '</td>' +
+                      '<td>' + store.name + '</td>' +
+                      '<td>' + store.location + '</td>';
+      row.addEventListener('click', function() {
+        // Redirect to the store analytics page with a query parameter for the store id
+        window.location.href = 'storeAnalytics.html?storeId=' + store.id;
+      });
+      storesTableBody.appendChild(row);
+    });
+    
+    // Event Listener for "Raw HTTP Requests" Button
+    document.getElementById('rawHttpButton').addEventListener('click', function() {
+      window.location.href = 'raw.html';
+    });
   </script>
 </body>
 </html>

@@ -13,7 +13,7 @@ async function loadOrders(page) {
     const loader = document.getElementById('loader')
     loader.style.display = 'block'
     try {
-        const result = await order.fetchIncomingOrders(page, orderFilters)
+        const result = await order.fetchMyIncomingOrders(page, orderFilters)
         const orders = result.items;
         paginationManager.updatePaginationValues(orders.length, result.totalItems, result.page, result.totalPages);
         

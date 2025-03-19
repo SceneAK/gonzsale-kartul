@@ -1,0 +1,169 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controlls</title>
+  <style>
+    body {
+      background-color: #f2f2f2;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    #queryDiv, #resultDiv {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+    }
+    textarea[readonly] {
+      background-color: #eee;
+    }
+    button {
+      background-color: #007BFF;
+      color: #fff;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .bool {
+      color: lightseagreen;
+    }
+    .number {
+      color: green;
+    }
+    .string {
+      color: crimson;
+    }
+    .null {
+      color: darkslategray;
+    }
+    .undefined {
+      color: darkblue;
+    }
+    strong, p {
+      display: inline;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="queryDiv">
+    <strong>RAW HTTP REQUESTS</strong>
+    <br>
+    <label for="endpointInput">Endpoint:</label>
+    <input type="text" id="endpointInput" value="/api/">
+    
+    <label for="methodSelect">Method:</label>
+    <select id="methodSelect">
+      <option value="GET">GET</option>
+      <option value="POST">POST</option>
+      <option value="PATCH">PATCH</option>
+      <option value="PUT">PUT</option>
+      <option value="DELETE">DELETE</option>
+    </select>
+    
+    <label for="credentialSelect">Credentials:</label>
+    <select id="credentialSelect">
+      <option value="include" selected>include</option>
+      <option value="omit">omit</option>
+    </select>
+
+    
+    <label for="bodyTextArea">Body:</label>
+    <textarea id="bodyTextArea" placeholder="body..."></textarea>
+    
+    <button onclick="fetchToBase()">Fetch</button>
+  </div>
+  <div id="resultDiv"></div>
+  
+  <script type="module" defer>
+    import {fetching, user} from './integration/fetches.js';
+    const resultDiv = document.getElementById('resultDiv');
+    const queryDiv = document.getElementById('queryDiv');
+    const endpointInput = document.getElementById('endpointInput');
+    const methodSelect = document.getElementById('methodSelect');
+    const credentialSelect = document.getElementById('credentialSelect');
+    const bodyTextArea = document.getElementById('bodyTextArea');
+    const headersTextArea = document.getElementById('headersTextArea');
+    
+    window.fetchToBase = async function () {
+      resultDiv.innerHTML = "";
+      const body = methodSelect.value === "GET" ? null : bodyTextArea.value;
+      try {
+        const res = await fetch(`${window.location.origin}${endpointInput.value}`, {
+          headers:{
+            'Content-Type': 'application/json'
+          },
+          method: methodSelect.value,
+          credentials: credentialSelect.value,
+          body
+        });
+        if (!res.ok) throw new Error(`Status (${res.status}) ${await res.text()}`);
+        const contentType = res.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          resultDiv.innerHTML += "JSON: <br>";
+          const json = await res.json();
+          createTreeView(json, resultDiv);
+        } else {
+          resultDiv.innerHTML = await res.text();
+        }
+      } catch (err) {
+        resultDiv.innerHTML = "ERR: " + err.toString();
+        return;
+      }
+    }
+    
+    function createTreeView(json, container) {
+      function buildTree(obj, parent) {
+        Object.keys(obj).forEach(key => {
+          let value = obj[key];
+          let div = document.createElement("div");
+          div.innerHTML = `<strong>${key}:</strong> <p class="${getClassName(value)}">${value}</p>`;
+          parent.appendChild(div);
+          
+          if (typeof value === "object" && value) {
+            let subContainer = document.createElement("div");
+            subContainer.style.marginLeft = "20px";
+            div.appendChild(subContainer);
+            buildTree(value, subContainer);
+          }
+        });
+      }
+      buildTree(json, container);
+    }
+    
+    function getClassName(value) {
+      if (typeof value === 'object') {
+        if (value === null) { return 'null'; }
+        else { return 'undefined'; }
+      } else {
+        return typeof value;
+      }
+    }
+  </script>
+</body>
+</html>

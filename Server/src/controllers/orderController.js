@@ -9,10 +9,16 @@ const fetchOrder = async (req, res) => {
     res.json(result || {});
 }
 
+const fetchMyIncomingOrders = async (req, res) => {
+    req.params.storeId = req.decodedAuthToken.storeId;
+    await fetchIncomingOrders(req, res);
+}
+
 const fetchIncomingOrders = async (req, res) => {
+    const { storeId } = req.params;
     const { page, ...whereOrderItems} = req.query ? req.query : {};
     
-    const result = await orderServices.fetchIncomingOrders(req.decodedAuthToken.storeId, page, whereOrderItems)
+    const result = await orderServices.fetchIncomingOrders(storeId, page, whereOrderItems)
     result.items.forEach( order => transformOrder(order))
     res.json(result || {});
 }
@@ -62,4 +68,4 @@ async function fetchAsCustomerInfo(userId)
     }
 }
 
-export default {fetchOrder, fetchOrders, fetchIncomingOrders, createOrders, deleteOrder}
+export default {fetchOrder, fetchOrders, fetchIncomingOrders, fetchMyIncomingOrders, createOrders, deleteOrder}
