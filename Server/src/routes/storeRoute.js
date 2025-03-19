@@ -19,4 +19,6 @@ router.patch('/:id', populateAuthJwt(), ensureIsStore('id'), ensureBelowLimit, v
 
 router.patch('/:id/image', populateAuthJwt(), ensureIsStore('id'), ensureBelowLimit, storeImgUpload, validate(storeSchemas.updateStoreImage), store.updateStoreImage);
 
+router.delete('/:id', populateAuthJwt(), ensureAdminOr(ensureIsStore('id')), store.deleteStore);
+
 export default router;

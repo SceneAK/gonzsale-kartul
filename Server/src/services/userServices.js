@@ -110,6 +110,9 @@ async function refresh(authJwt)
     return await fetchUser(authJwt.id);
 }
 
+async function deleteUser(id){
+    return await User.destroy({where: {id}});
+}
 function include(level)
 {
     switch (level) {
@@ -140,5 +143,6 @@ export default {
     editRole,
     editContacts,
     refresh,
+    deleteUser,
     include
 };

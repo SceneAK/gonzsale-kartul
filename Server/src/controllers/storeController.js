@@ -41,4 +41,9 @@ const fetchStoreAnalytics = async (req, res) => {
     res.json(result || {})
 }
 
-export default  { fetchStore, fetchStores, createStore, updateStore, updateStoreImage, fetchStoreAnalytics }
+const deleteStore = async (req, res) => {
+    const result = await storeServices.deleteStore(req.params.id);
+    res.json(result || {});
+}
+
+export default  { fetchStore, fetchStores, createStore, updateStore, updateStoreImage, deleteStore, fetchStoreAnalytics }

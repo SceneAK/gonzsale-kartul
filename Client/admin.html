@@ -124,7 +124,8 @@
 
       <!-- Pending Orders Panel -->
       <section id="pending-orders-panel">
-        <h2 id="pending-orders-title">Select a Store</h2>
+        <h2 id="orders-for-store-title">Select a Store</h2>
+        <p id="store-id" style="color: gray; font-size: small;"></p>
         <table id="pendingOrdersTable">
           <thead>
             <tr>
@@ -162,7 +163,9 @@
       li.textContent = storeData.name;
       li.dataset.storeId = storeData.id;
       li.addEventListener('click', async () => {
-        document.getElementById('pending-orders-title').innerText = `Orders for ${storeData.name}`;
+        document.getElementById('orders-for-store-title').innerText = `Orders for ${storeData.name}`;
+        document.getElementById('store-id').innerText = storeData.id;
+        
         loadAnalysis(storeData.id)
         loadOrders(storeData.id)
       });

@@ -61,6 +61,11 @@ async function updateStoreImage(image, requester)
     return result;
 }
 
+async function deleteStore(id)
+{
+    // temporary fix. Use DDD to recursively delete the rest of the properties (product, order, images, etc)
+    return await Store.destroy({where: { id }})
+}
 async function ensureCanCreate(userId)
 {
     const userRole = await userServices.fetchUserRole(userId);
@@ -100,4 +105,4 @@ function include(level)
             }
     }
 }
-export default  { fetchStore, fetchStoreIdOfUser, fetchStores, createStore, updateStore, updateStoreImage, include }
+export default  { fetchStore, fetchStoreIdOfUser, fetchStores, createStore, updateStore, updateStoreImage, deleteStore, include }

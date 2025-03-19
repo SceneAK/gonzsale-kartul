@@ -24,7 +24,6 @@ async function jsonResponse(endpoint, method, body = null, credentials = 'omit',
 async function jsonRequestResponse(endpoint, method, body = null, credentials = 'omit', headers = {})
 {
     const result = await jsonResponse(endpoint, method, body, credentials, {'Content-Type': 'application/json', ...headers});
-    console.log(result)
     return result;
 }
 async function jsonRequest(endpoint, method, body = null, credentials = 'omit', headers = {})
