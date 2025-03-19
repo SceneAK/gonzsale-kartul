@@ -620,7 +620,7 @@
                 const orderContainer = document.getElementById("order-history-container");
                 const orderCount = document.getElementById("order-count");
 
-                const result = await order.fetchOrdersOfUsers(getCachedLogin().id);
+                const result = await order.fetchOrdersOfUser(getCachedLogin().id);
                 const orders = result.items;
 
                 // Clear existing content
