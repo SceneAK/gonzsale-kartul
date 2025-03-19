@@ -12,9 +12,10 @@ const fetchProducts = async (req, res) => {
     res.json(result || {});
 }
 
-const fetchOwnedProducts =  async (req, res) => {
+const fetchProductsOfStore =  async (req, res) => {
     const {page, ...filter} = req.query;
-    const result = await productServices.fetchProductsOfStore(req.decodedAuthToken.storeId, page, filter);
+    const { storeId } = req.params;
+    const result = await productServices.fetchProductsOfStore(storeId, page, filter);
 
     result.items.forEach( product => transform(product, req));
     res.json(result || {});
@@ -28,34 +29,34 @@ const fetchProduct = async (req, res) => {
 }
 
 const fetchProductByVariant = async (req, res) => {
-    const {id} = req.params;
-    const product = await productServices.fetchProductByVariant(id);
+    const {variantId} = req.params;
+    const product = await productServices.fetchProductByVariant(variantId);
     transform(product, req);
     res.json(product);
 }
 
 const createProduct = async (req, res) => {
-    const { body, decodedAuthToken } = req;
+    const { body, authJwt } = req;
     const { defaultVariantData, ...productData } = body;
 
     const result = await productServices.createProduct({
         productData,
         defaultVariantData
-    }, decodedAuthToken.storeId);
+    }, authJwt.storeId);
     res.json(result || {});
 }
 
 const editProduct = async(req, res) => {
     const { id } = req.params;
-    const { body, decodedAuthToken } = req;
+    const { body, authJwt } = req;
 
-    const result = await productServices.editProduct(id, decodedAuthToken.storeId, body);
+    const result = await productServices.editProduct(id, authJwt.storeId, body);
     res.json(result || {});
 }
 
 const deleteProduct = async(req, res) => {
     const { id } = req.params;
-    const result = await productServices.deleteProduct(id, req.decodedAuthToken);
+    const result = await productServices.deleteProduct(id, req.authJwt);
     res.json(result || {});
 }
 
@@ -68,7 +69,7 @@ function transform(product, req)
 export default {
     fetchProduct,
     fetchProductByVariant,
-    fetchOwnedProducts,
+    fetchProductsOfStore,
     fetchProducts,
     createProduct,
     editProduct,

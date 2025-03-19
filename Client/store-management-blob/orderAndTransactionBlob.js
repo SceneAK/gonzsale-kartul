@@ -1,7 +1,8 @@
-import { product, order, transaction, variant } from '../integration/fetches.js'
+import { product, order, transaction, variant} from '../integration/fetches.js'
 import common from '../common.js';
 import PaginationManager from '../pagination.js';
 import { syncVariantOptions } from './variantBlob.js';
+import { getCachedLogin } from '../integration/user.js';
 
 const orderDiv = document.getElementById('orders')
 const paginationManager = new PaginationManager(orderDiv, loadOrders);
@@ -13,7 +14,8 @@ async function loadOrders(page) {
     const loader = document.getElementById('loader')
     loader.style.display = 'block'
     try {
-        const result = await order.fetchMyIncomingOrders(page, orderFilters)
+        const currentStoreId = getCachedLogin().storeId;
+        const result = await order.fetchOrdersForStore(currentStoreId, page, orderFilters)
         const orders = result.items;
         paginationManager.updatePaginationValues(orders.length, result.totalItems, result.page, result.totalPages);
         
@@ -128,7 +130,7 @@ async function updateOrderVariantFilter()
 {
     if (productSearch.value != lastNameSearched) {
         lastNameSearched = productSearch.value;
-        const results = await product.fetchOwnedProducts(1, { name: productSearch.value });
+        const results = await product.fetchProductsOfStore(getCachedLogin().storeId, 1, { name: productSearch.value });
         const productWithMatchingName = results.items[0];
         cacheVariantUpdateSelect(productWithMatchingName?.Variants);
     }

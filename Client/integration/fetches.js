@@ -23,22 +23,15 @@ async function jsonResponse(endpoint, method, body = null, credentials = 'omit',
 }
 async function jsonRequestResponse(endpoint, method, body = null, credentials = 'omit', headers = {})
 {
-    return await jsonResponse(endpoint, method, body, credentials, {'Content-Type': 'application/json', ...headers})
+    const result = await jsonResponse(endpoint, method, body, credentials, {'Content-Type': 'application/json', ...headers});
+    console.log(result)
+    return result;
 }
 async function jsonRequest(endpoint, method, body = null, credentials = 'omit', headers = {})
 {
     return await request(endpoint, method, body, credentials,{'Content-Type': 'application/json', ...headers});
 }
 const fetching = {request, jsonRequest, jsonResponse, jsonRequestResponse};
-
-function isObject(value)
-{
-    return value && typeof value === 'object';
-}
-function isArray(value)
-{
-    return Array.isArray(value)
-}
 //#endregion
 
 //#region Util
@@ -47,6 +40,7 @@ function toQueryString(obj)
     const queryParams = Object.keys(obj).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`).join("&");
     return queryParams;
 }
+
 //#endregion
 
 //#region User
@@ -69,8 +63,8 @@ async function signUp(name, phone, email, password, recaptchaResponse) {
     const result = await jsonRequestResponse('/user/signup', 'POST', body, 'include');
     return result;
 }
-async function editContacts(contacts) {
-    return await jsonRequest('/user', 'PATCH', JSON.stringify(contacts), 'include');
+async function editContacts(userId, contacts) {
+    return await jsonRequest(`/user/${userId}`, 'PATCH', JSON.stringify(contacts), 'include');
 }
 async function refresh()
 {
@@ -90,30 +84,13 @@ const user = {fetchUsers, signIn, signUp, editContacts, refresh, expireCookie, g
 //#region Store
 async function fetchStore(id)
 {
-    const store = await jsonRequestResponse(`/store/${id}`, "GET");
+    const store = await jsonRequestResponse(`/store/${id}`, "GET", null, 'include');
     return store;
 }
 async function fetchStores()
 {
     const stores = await jsonResponse('/store/all', "GET");
     return stores;
-}
-async function fetchOwnedStore() {
-    try {
-        const store = await jsonRequestResponse(`/store`, "GET", null, 'include');
-        return store;
-    } catch (error) {
-        if (error.status == 401) {
-            return null; // Gracefully handle "No store owned" by returning null
-        }
-        throw error; // Re-throw other errors
-    }
-}
-
-async function fetchMyStoreAnalytics(startDate, endDate)
-{ 
-    const query = toQueryString({startDate, endDate})
-    await jsonRequestResponse(`/store/analytics?${query}`, "GET", null, 'include');
 }
 
 async function fetchStoreAnalytics(storeId, startDate, endDate){
@@ -125,17 +102,17 @@ async function createStore(data) // auth
 {
     await jsonRequestResponse(`/store`, "POST", JSON.stringify(data), 'include');
 }
-async function editStore(data)
+async function editStore(storeId, data)
 {
-    return await jsonRequestResponse(`/store`, "PATCH", JSON.stringify(data), 'include');
+    return await jsonRequestResponse(`/store/${storeId}`, "PATCH", JSON.stringify(data), 'include');
 }
-async function updateStoreImage(image)
+async function updateStoreImage(storeId, image)
 {
     const formData = new FormData();
     formData.append('image', image);
-    return await jsonResponse(`/store/image`, "PATCH", formData, 'include');
+    return await jsonResponse(`/store/${storeId}/image`, "PATCH", formData, 'include');
 }
-const store = {fetchStore, fetchStores, fetchOwnedStore, fetchStoreAnalytics, fetchMyStoreAnalytics, createStore, editStore, updateStoreImage};
+const store = {fetchStore, fetchStores, fetchStoreAnalytics, createStore, editStore, updateStoreImage};
 //#endregion
 
 //#region Product
@@ -146,10 +123,10 @@ async function fetchProducts(category, page = 1, others = {})
     return products;
 }
 
-async function fetchOwnedProducts(page = 1, filter={}) // auth
+async function fetchProductsOfStore(storeId, page = 1, filter={}) // auth
 {
     const params = toQueryString({page, ...filter});
-    return await jsonResponse(`/product/owned?${params}`, "GET", null, 'include'); 
+    return await jsonResponse(`/product/store/${storeId}?${params}`, "GET", null, 'include'); 
 }
 
 async function fetchProduct(id)
@@ -179,7 +156,7 @@ async function deleteProduct(id)
 {
     return await jsonRequest(`/product/${id}`, 'DELETE', null, 'include');
 }
-const product = {fetchProduct, fetchProducts, fetchOwnedProducts, createProduct, createProductImages, editProduct, deleteProduct, deleteProductImage};
+const product = {fetchProduct, fetchProducts, fetchProductsOfStore, createProduct, createProductImages, editProduct, deleteProduct, deleteProductImage};
 //#endregion
 
 //#region Variant
@@ -201,23 +178,19 @@ const variant = {createVariants, editVariant, deleteVariant}
 //#region Order
 async function fetchOrder(id) // auth
 {
-    return await jsonResponse(`/order/${id}`, "GET", null, 'include');
+    return await jsonRequestResponse(`/order/${id}`, "GET", null, 'include');
 }
-async function fetchMyOrders(page = 1) // auth
+async function fetchOrdersOfUser(userId, page = 1) // auth
 {
-    return await jsonResponse(`/order/my?page=${page}`, "GET", null, 'include');
+    return await jsonRequestResponse(`/order/user/${userId}?page=${page}`, "GET", null, 'include');
 }
-async function fetchMyIncomingOrders(page = 1, filter = {}) // auth & store
+async function fetchOrdersForStore(storeId, page = 1, filter = {}) // auth & store
 {
     const params = toQueryString({ page, ...filter});
-    return await jsonResponse(`/order/my-store?${params}`, "GET", null, 'include');
+    const response = await jsonRequestResponse(`/order/store/${storeId}?${params}`, "GET", null, 'include');
+    return response;
 }
-async function fetchIncomingOrders(storeId, page = 1)
-{
-    const params = toQueryString({page});
-    return await jsonResponse(`/order/store/${storeId}?${params}`, "GET", null, 'include');
-}
-async function createOrders(data, recaptchaResponse)// auth
+async function createOrders(data, recaptchaResponse) // auth
 {
     return await jsonRequestResponse('/order', "POST", JSON.stringify({...data, 'g-recaptcha-response': recaptchaResponse}), 'include');   
 }
@@ -230,7 +203,7 @@ async function updateItemStatusWhere(where, status)
     const query = toQueryString(where);
     return await jsonRequestResponse(`/order/item/status/${status}?${query}`, "PATCH", null, 'include');
 }
-const order = {fetchOrder, fetchMyOrders, fetchMyIncomingOrders, fetchIncomingOrders, createOrders, updateItemStatus, updateItemStatusWhere};
+const order = {fetchOrder, fetchOrdersForStore, fetchOrdersOfUser, createOrders, updateItemStatus, updateItemStatusWhere};
 //#endregion
 
 //#region Transaction

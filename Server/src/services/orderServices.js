@@ -85,7 +85,7 @@ async function calculateOrderTotal(orderId)
 async function deleteOrder(id, requesterStoreId)
 {
     const order = await baseOrderServices.fetchOrder(id);
-    baseOrderServices.ensureStoreOwnsOrder(order, requesterStoreId);
+    baseOrderServices.ensureIsStoreOwnsOrder(order, requesterStoreId);
 
     await sequelize.transaction( async t => {
         await orderItemServices._deleteOrderItemsOfOrder(id);
@@ -97,8 +97,8 @@ async function deleteOrder(id, requesterStoreId)
 export default {
     fetchOrder,
     fetchOrderIncludeAll,
-    fetchOrders,
-    fetchIncomingOrders,
+    fetchOrdersOfUser: fetchOrders,
+    fetchOrdersForStore: fetchIncomingOrders,
     createOrders,
     deleteOrder,
     calculateOrderTotal

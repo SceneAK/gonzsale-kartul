@@ -105,9 +105,9 @@ async function fetchUserRole(userId)
     return userModel.role;
 }
 
-async function refresh(decodedAuthToken)
+async function refresh(authJwt)
 {
-    return await fetchUser(decodedAuthToken.id);
+    return await fetchUser(authJwt.id);
 }
 
 function include(level)

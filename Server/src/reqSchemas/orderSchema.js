@@ -10,7 +10,7 @@ const orderItems = Joi.array().min(1).items(orderItemSchema.orderItem).required(
 const createOrdersSchema = (req) => ({
     body: Joi.object({
         Orders: Joi.array().min(1).items(orderItems).required(),
-        customerDetails: req.decodedAuthToken ? Joi.forbidden() : Joi.object(customerDetails).required()
+        customerDetails: req.authJwt ? Joi.forbidden() : Joi.object(customerDetails).required()
     }).required() 
 })
 
@@ -41,5 +41,5 @@ const fetchIncomingSchema = {
 export default {
     createOrders: createOrdersSchema,
     update: updateSchema,
-    fetchIncoming: fetchIncomingSchema
+    fetchForStore: fetchIncomingSchema
 };

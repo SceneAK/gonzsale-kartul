@@ -1,14 +1,20 @@
 import { user } from "./fetches.js";
 
 const REFRESH_INTERVAL_MS = 1000 * 60 * 30; // 30 menit
-const loginDetailStr = localStorage.getItem('loginDetail')
-const loginDetail = loginDetailStr ? JSON.parse(loginDetailStr) : null;
+
+function updateCachedLoginDetail(value){
+    cachedLoginDetail = value;
+}
+
+const str = localStorage.getItem('loginDetail')
+let cachedLoginDetail = str ? JSON.parse(str) : null;
+export function getCachedLogin() { return cachedLoginDetail }
 
 const autoRefresher = async () => {
     try
     {
         const userInfo = await user.refresh();
-        setLoginInfo(userInfo);
+        setLoginDetail(userInfo);
         setTimeout(autoRefresher, REFRESH_INTERVAL_MS);
     }catch(err)
     {
@@ -17,24 +23,25 @@ const autoRefresher = async () => {
     }
     
 }
-if(loginDetail)
+if(cachedLoginDetail)
 {
-    const delta = (Date.now() - loginDetail.lastRefreshed);
+    const delta = (Date.now() - cachedLoginDetail.lastRefreshed);
     const timeout = Math.max(REFRESH_INTERVAL_MS - delta, 10);
 
     setTimeout(autoRefresher, timeout)
 }
 
-function setLoginInfo(userInfo)
+function setLoginDetail(loginDetail)
 {
-    userInfo.lastRefreshed = Date.now();
-    localStorage.setItem('loginDetail', JSON.stringify(userInfo));
+    loginDetail.lastRefreshed = Date.now();
+    localStorage.setItem('loginDetail', JSON.stringify(loginDetail));
+    updateCachedLoginDetail(loginDetail);
 }
 
 export async function refreshAndUpdate()
 {
     const userInfo = await user.refresh();
-    setLoginInfo(userInfo);
+    setLoginDetail(userInfo);
     window.location.reload();
 }
 
@@ -42,7 +49,7 @@ export function hookSignIn(signInButton, emailInput, passwordInput)
 {
     signInButton.addEventListener('click', async function(event){
         const userInfo = await user.signIn(emailInput.value, passwordInput.value);
-        setLoginInfo(userInfo);
+        setLoginDetail(userInfo);
         window.location.reload();
     });
 
@@ -51,7 +58,7 @@ export function hookSignIn(signInButton, emailInput, passwordInput)
 export async function signUp(nameInput, phoneInput, emailInput, passwordInput, recaptchaResponse)
 {
     const userInfo = await user.signUp(nameInput.value, phoneInput.value, emailInput.value, passwordInput.value, recaptchaResponse);
-    setLoginInfo(userInfo);
+    setLoginDetail(userInfo);
     window.location.href = '/';
 }
 

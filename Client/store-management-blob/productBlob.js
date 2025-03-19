@@ -3,6 +3,7 @@ import { resetRecordedVariants, saveAndCloneRecordedVariants, setRecordedVariant
 import common from '../common.js';
 import PaginationManager from '../pagination.js';
 import { deleteDeletedPreviewImages, getInputtedProductImages, resetProductImages, setExistingProductImages } from './productImagesBlob.js';
+import { getCachedLogin } from '../integration/user.js';
 
 const productList = document.getElementById('product-list')
 const modal = document.getElementById('product-variant-modal');
@@ -14,7 +15,7 @@ const paginationManager = new PaginationManager(productDiv, loadProducts);
 paginationManager.callLoadPageHandler();
 // Load products data
 async function loadProducts(page = 1) {
-    const result = await product.fetchOwnedProducts(page)
+    const result = await product.fetchProductsOfStore(getCachedLogin().storeId, page)
     const products = result.items
     paginationManager.updatePaginationValues(products.length, result.totalItems, result.page, result.totalPages);
 

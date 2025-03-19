@@ -524,14 +524,15 @@
     <!-- Tab Management Script -->
     <script type="module">
         import { refreshAndUpdate } from './integration/user.js';
-        import { user, order } from './integration/fetches.js';
+        import { user, order} from './integration/fetches.js';
+        import { getCachedLogin } from './integration/user.js';
         const editProfileModal = document.getElementById('edit-profile-modal');
 
         editProfileModal.addEventListener('submit', (event) => {
             event.preventDefault();
             const phone = document.getElementById('edit-phone').value;
             const name = document.getElementById('edit-name').value;
-            user.editContacts({ name, phone }).then(() => {
+            user.editContacts(getCachedLogin().id, { name, phone }).then(() => {
                 window.closeEditProfileModal();
                 refreshAndUpdate();
             }).catch(err => {
@@ -619,7 +620,7 @@
                 const orderContainer = document.getElementById("order-history-container");
                 const orderCount = document.getElementById("order-count");
 
-                const result = await order.fetchMyOrders();
+                const result = await order.fetchOrdersOfUsers(getCachedLogin().id);
                 const orders = result.items;
 
                 // Clear existing content

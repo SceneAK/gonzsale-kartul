@@ -9,31 +9,28 @@ const fetchOrder = async (req, res) => {
     res.json(result || {});
 }
 
-const fetchMyIncomingOrders = async (req, res) => {
-    req.params.storeId = req.decodedAuthToken.storeId;
-    await fetchIncomingOrders(req, res);
-}
-
-const fetchIncomingOrders = async (req, res) => {
+const fetchOrdersForStore = async (req, res) => {
     const { storeId } = req.params;
     const { page, ...whereOrderItems} = req.query ? req.query : {};
-    
-    const result = await orderServices.fetchIncomingOrders(storeId, page, whereOrderItems)
+    const result = await orderServices.fetchOrdersForStore(storeId, page, whereOrderItems)
     result.items.forEach( order => transformOrder(order))
     res.json(result || {});
 }
 
-const fetchOrders = async (req, res) => {
-    const result = await orderServices.fetchOrders(req.decodedAuthToken.id, req.query?.page);
+const fetchOrdersOfUser = async (req, res) => {
+    const { userId } = req.params;
+    const { page } = req.query ? req.query : {};
+
+    const result = await orderServices.fetchOrdersOfUser(userId, page);
     result.items.forEach( order => transformOrder(order))
     res.json(result || {});
 };
 
 const createOrders = async(req, res) => {
     let {customerDetails, Orders} = req.body;
-    if(req.decodedAuthToken)
+    if(req.authJwt)
     {
-        customerDetails = await fetchAsCustomerInfo(req.decodedAuthToken.id);
+        customerDetails = await fetchAsCustomerInfo(req.authJwt.id);
     }
     const result = await orderServices.createOrders(Orders, customerDetails)
     res.json( result );
@@ -42,7 +39,7 @@ const createOrders = async(req, res) => {
 const deleteOrder = async (req, res) => {
     const {id} = req.params;
     
-    const result = await orderServices.deleteOrder(id, req.decodedAuthToken.storeId);
+    const result = await orderServices.deleteOrder(id, req.authJwt.storeId);
     res.json(result || {});
 }
 
@@ -68,4 +65,4 @@ async function fetchAsCustomerInfo(userId)
     }
 }
 
-export default {fetchOrder, fetchOrders, fetchIncomingOrders, fetchMyIncomingOrders, createOrders, deleteOrder}
+export default {fetchOrder, fetchOrdersOfUser, fetchOrdersForStore, createOrders, deleteOrder}

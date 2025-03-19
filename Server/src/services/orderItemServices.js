@@ -90,7 +90,7 @@ async function updateStatus(id, status, requesterStoreId)
             baseOrderServices.include()
         ]}
     );
-    baseOrderServices.ensureStoreOwnsOrder(orderItemWithVariant.Order, requesterStoreId);
+    baseOrderServices.ensureIsStoreOwnsOrder(orderItemWithVariant.Order, requesterStoreId);
     validateStatusTransition(orderItemWithVariant.status, status);
 
     let result;
@@ -116,7 +116,7 @@ async function bulkUpdateStatus(filter, requestedStatus, requesterStoreId)
     orderItems = orderItems.map( item => item.toJSON())
 
     ensureSameStore(orderItems);
-    baseOrderServices.ensureStoreOwnsOrder(orderItems[0].Order, requesterStoreId);
+    baseOrderServices.ensureIsStoreOwnsOrder(orderItems[0].Order, requesterStoreId);
 
     const updated = [];
     orderItems.forEach( orderItem => {

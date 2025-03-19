@@ -10,14 +10,8 @@ async function buildPayload(user)
 {
     const payload = {
         id: user.id,
-        role: user.role
-    }
-    if(user.role == userServices.ROLES['StoreManager'])
-    {
-        try
-        {
-            payload.storeId = await storeServices.fetchStoreIdOfUser(user.id);
-        }catch(err){}
+        role: user.role,
+        storeId: user.storeId
     }
     return payload;
 }
@@ -29,7 +23,7 @@ export async function expireAuthCookie(res)
     })
 }
 
-const AUTH_TOKEN_NAME = 'authToken';
+const AUTH_TOKEN_NAME = 'authJwt';
 const cookieOptions = {
     httpOnly: true, 
     signed: true,

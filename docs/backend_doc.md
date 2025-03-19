@@ -39,11 +39,11 @@ This site was made with Node.Js and Express simply because the first tutorial I 
 - Files are stored in the database as their relative path to the public directory, controllers are expect to transform them into URLs
 
 ## verifyAuthToken.js
-- verify() authenticates signedCookies.token, then populates the *decodedAuthToken* in req, intended to be run before an operation requiring authentication, throwing an error if required = true
+- populateAuthJwt() authenticates signedCookies.token, then populates the *authJwt* in req, intended to be run before an operation requiring authentication, throwing an error if required = true
 
 ## Services
 ### Token Authentication
-- *Some route controllers expects this middleware to run right before and depends on decodedAuthToken.id.*
+- *Some route controllers expects this middleware to run right before and depends on authJwt.id.*
 - The normal checkAuthToken returns the ID or an error. Used for Logins and such
 ### User
 - Schema's regex allows passwords and names to have chinese japanese characters, cause why the heck not?

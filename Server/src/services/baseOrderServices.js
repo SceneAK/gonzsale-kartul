@@ -35,7 +35,7 @@ async function _deleteOrder(id)
     await Order.destroy({where: {id}});
 }
 
-function ensureStoreOwnsOrder(order, storeId)
+function ensureIsStoreOwnsOrder(order, storeId)
 {
     if(order.storeId != storeId) throw new ApplicationError("Order does not belong to this seller", 401);
 }
@@ -54,7 +54,7 @@ export default {
     fetchAll,
     _createOrder,
     _deleteOrder,
-    ensureStoreOwnsOrder,
+    ensureIsStoreOwnsOrder,
     include,
     sequelize: Order.sequelize
 }

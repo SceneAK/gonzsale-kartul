@@ -14,41 +14,31 @@ const fetchStores = async (req, res) => {
     res.json(stores || {});
 }
 
-const fetchOwnedStore = async (req, res) =>{
-    const store = await storeServices.fetchStores(req.decodedAuthToken.storeId);
-    convertAllPathsToURLs(req, store);
-    res.json(store);
-}
-
 const createStore = async (req, res, next) =>
 {
-    const {decodedAuthToken, body} = req;
-    const result = await storeServices.createStore(body, decodedAuthToken.id);
-    await setAuthTokenCookie(res, decodedAuthToken);
-    logger.info('Created Store by User ', decodedAuthToken.id, '. Result: ', result);
+    const {authJwt, body} = req;
+    const result = await storeServices.createStore(body, authJwt.id);
+    await setAuthTokenCookie(res, authJwt);
+    logger.info('Created Store by User ', authJwt.id, '. Result: ', result);
     res.json(result || {});
 }
 
 const updateStore = async (req, res) => 
 {
-    const {decodedAuthToken, body} = req;
-    const result = await storeServices.updateStore(body, decodedAuthToken);
+    const {authJwt, body} = req;
+    const result = await storeServices.updateStore(body, authJwt);
     res.json(result || {});
 }
 
 const updateStoreImage = async (req, res) => {
-    const result = await storeServices.updateStoreImage(req.file, req.decodedAuthToken);
+    const result = await storeServices.updateStoreImage(req.file, req.authJwt);
     res.json(result || {});
 }
 
-const fetchMyStoreAnalytics = async (req, res) => { // maybe we can refactor this?
-    req.params.storeId = req.decodedAuthToken.storeId;
-    await fetchStoreAnalytics(req, res);
-}
 const fetchStoreAnalytics = async (req, res) => {
     const dateRange = req.query;
     const result = await storeAnalyticsServices.fetchStoreAnalytics(req.params.storeId, dateRange);
     res.json(result || {})
 }
 
-export default  { fetchStore, fetchOwnedStore, fetchStores, createStore, updateStore, updateStoreImage, fetchMyStoreAnalytics, fetchStoreAnalytics }
+export default  { fetchStore, fetchStores, createStore, updateStore, updateStoreImage, fetchStoreAnalytics }

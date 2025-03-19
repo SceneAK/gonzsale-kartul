@@ -1,5 +1,6 @@
 import { store } from '../integration/fetches.js'
 import common from '../common.js';
+import { getCachedLogin } from '../integration/user.js';
 
 const storeModal = document.getElementById('store-modal');
 const storeForm = document.getElementById("store-form");
@@ -16,7 +17,10 @@ export async function loadStore() {
     const storeContainer = document.getElementById("store-container");
 
     try {
-        const userStore = await store.fetchOwnedStore();
+        let userStore = null;
+        try{
+            userStore = await store.fetchStore(getCachedLogin().storeId);
+        }catch(err) {}
 
         if (!userStore) {
             // No store exists—check the logged-in user's role.
@@ -33,8 +37,8 @@ export async function loadStore() {
                 storeForm.onsubmit = async function (event) {
                     event.preventDefault()
                     const storeData = common.getAllNameValueOfSelector('.store-inputs', storeModal);
-                    await store.createStore(storeData);
-                    await store.updateStoreImage(imageInput.files[0]);
+                    const store = await store.createStore(storeData);
+                    await store.updateStoreImage(store.id, imageInput.files[0]);
                     await loadStore();
                     window.closeStoreModal();
                 }
@@ -68,7 +72,7 @@ export async function loadStore() {
 // Placeholder function for editing store
 window.editStore = async function () {
     try {
-        const userStore = await store.fetchOwnedStore();
+        const userStore = await store.fetchStore(getCachedLogin().storeId);
         common.setValuesOfSelector('.store-inputs', storeModal, userStore);
         imageInput.value = null;
 
@@ -79,9 +83,9 @@ window.editStore = async function () {
             event.preventDefault()
             const updatedValues = common.getAllNameValueOfSelector('.store-inputs', storeModal);
             try {
-                await store.editStore(updatedValues);
+                await store.editStore(getCachedLogin().storeId, updatedValues);
                 if(imageInput.value) {
-                    await store.updateStoreImage(imageInput.files[0]);
+                    await store.updateStoreImage(getCachedLogin().storeId, imageInput.files[0]);
                 }
                 
                 await loadStore();
