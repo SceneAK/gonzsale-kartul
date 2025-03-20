@@ -11,6 +11,7 @@ export async function hasValidDomain(email) {
 }
 
 export const JoiValidateEmailDomain = async (email, helpers) => { 
+    if(!email) return email;
     if(!(await hasValidDomain(email))) throw new ApplicationError('Invalid Domain', 400)
     return email;
 };

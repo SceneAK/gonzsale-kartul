@@ -44,7 +44,6 @@ class OrderAnalyzer {
         let revenue = 0;
         orders.forEach(order => {
             order.OrderItems.forEach(item => {
-                console.log(item)
                 if(item.status == "COMPLETED"){ // Please Replace with constant
                     revenue += item.getTotal();
                 }

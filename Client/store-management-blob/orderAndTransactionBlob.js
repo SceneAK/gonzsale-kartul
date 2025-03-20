@@ -145,7 +145,6 @@ async function updateOrderNotesFilter()
     if(noteSearch.value != lastNoteSearched)
     {
         lastNoteSearched = noteSearch.value;
-        console.log("CHAGED");
         orderFilters.notes = noteSearch.value;
         formatFilterAndReloadOrders();
     }
@@ -222,7 +221,6 @@ async function populatetDetailRow(orderId, detailRow) {
     })
     fullOrder.OrderItems.forEach(orderItem => {
         const selectElement = document.querySelector(`#tbodyrow-${orderItem.id} .status-select`)
-        console.log(selectElement);
         if (selectElement) {
             selectElement.addEventListener('change', async event => {
                 const newStatus = event.target.value
