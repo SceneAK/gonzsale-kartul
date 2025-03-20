@@ -10,7 +10,7 @@ router.post('/signin', validate(userSchemas.signIn), user.signIn);
 
 router.post('/signup', verifyReCAPTCHA, validate(userSchemas.signUp), user.signUp);
 
-router.post('/refresh', populateAuthJwt(), user.refresh);
+router.post('/refresh', populateAuthJwt(), ensureIsUser(), user.refresh);
 
 router.post('/expire', user.expireCookie);
 

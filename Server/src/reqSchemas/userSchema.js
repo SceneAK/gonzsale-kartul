@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { JoiValidateEmailDomain } from "./domainValidator.js";
 
 const DIGIT_6_MIN = 1000*1000;
 const DIGIT_15_MAX = 999999999999999;
@@ -6,7 +7,7 @@ const NUMBERS_EN_JP_CN_SpecialChars = new RegExp('^[a-zA-Z0-9!@#$%^&*()_\\-+=\ \
 const contacts = {
     name: Joi.string().pattern(NUMBERS_EN_JP_CN_SpecialChars).min(2).max(35),
     phone: Joi.number().integer().min(DIGIT_6_MIN).max(DIGIT_15_MAX),
-    email: Joi.string().email().max(320)
+    email: Joi.string().email().external(JoiValidateEmailDomain).max(320)
 }
 const contactsAllRequired = {
     name: contacts.name.required(),

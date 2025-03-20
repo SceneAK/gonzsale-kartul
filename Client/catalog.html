@@ -411,7 +411,7 @@
                 itemDiv.innerHTML = `
           <img src="${firstImg}" alt="${currentProduct.name}">
           <p>${currentProduct.name}</p>
-          <p class="store-name">Store: <a href="display-store.html?id=${currentProduct.storeId}">${currentProduct.Store.name}</a></p>
+          <p class="store-name">Store: <a href="display-store.html?id=${currentProduct.storeId}">${currentProduct.Store?.name}</a></p>
           <p>Rp ${defaultVariant?.price.toLocaleString('id-ID')} / ${defaultVariant?.unit}</p>
           <button class="add-to-cart" onclick="event.stopPropagation();" ${defaultVariant?.stock <= 0 ? "disabled" : ""}>Add to Cart</button>
         `;

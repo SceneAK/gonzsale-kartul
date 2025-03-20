@@ -5,7 +5,6 @@ import { productTransform } from './transformer/index.js';
 const fetchProducts = async (req, res) => {
     const {page, ...filter} = req.query;
     if(filter.category == '' || filter.category?.toLowerCase() == 'all') delete filter.category;
-
     const result = await productServices.fetchAvailableProducts(page, filter);
     
     result.items.forEach( product => transform(product, req));
