@@ -1,14 +1,14 @@
 import fs from 'fs';
 import upath from 'upath';
-import process from 'process';
+import { env, STATIC_CLIENT_DIR } from './initialize.js';
 
 export function initClientConfig(){
-    const clientConfig = process.env.CLIENT_CONFIG || "{ 'test': 0 }";
+    const clientConfig = env.CLIENT_CONFIG || "{ 'test': 0 }";
     // Create the content to be written to the config file
     const configContent = `export default ${clientConfig};\n`;
     
     // Define the path to the config file
-    const configFilePath = upath.join(import.meta.dirname, '/Client/_config.js');
+    const configFilePath = upath.join(STATIC_CLIENT_DIR, '/_config.js');
     
     // Write the configuration content to the config file
     fs.writeFileSync(configFilePath, configContent);

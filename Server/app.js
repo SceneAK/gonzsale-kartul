@@ -5,6 +5,7 @@ import { httpLogger } from './src/systems/logger.js';
 import './signalHandlers.js';
 import cors from 'cors';
 import { ssrRoute } from './src/routes/index.js';
+import { initClientConfig } from './clientConfigInit.js';
 
 const app = express()
 app.use(cors(
@@ -22,6 +23,7 @@ app.use(`/${PUBLIC_LOCAL_STORAGE_ROUTE}`, express.static(PUBLIC_LOCAL_STORAGE_DI
 if(env.ENABLE_STATIC_CLIENT?.toLowerCase() === 'true') 
 {
   app.use(`/`, express.static(STATIC_CLIENT_DIR)); 
+  initClientConfig();
 }
 
 app.set('view engine', 'ejs');
