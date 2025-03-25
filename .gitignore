@@ -52,6 +52,8 @@ Thumbs.db
 
 # Public Server Directory
 Server/public/
+# Client Config
+Client/_config.js
 
 # PERSONAL HTML FILES (TESTING)
 plswork.html
