@@ -99,7 +99,7 @@ async function fetchStoreAnalytics(storeId, startDate, endDate){
 
 async function createStore(data) // auth
 {
-    await jsonRequestResponse(`/store`, "POST", JSON.stringify(data), 'include');
+    return await jsonRequestResponse(`/store`, "POST", JSON.stringify(data), 'include');
 }
 async function editStore(storeId, data)
 {

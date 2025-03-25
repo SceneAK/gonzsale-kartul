@@ -1,6 +1,6 @@
 import { store } from '../integration/fetches.js'
 import common from '../common.js';
-import { getCachedLogin } from '../integration/user.js';
+import { getCachedLogin, refreshAndUpdate} from '../integration/user.js';
 import { loadAnalysis } from  '../storeAnalysis.js';
 
 const storeModal = document.getElementById('store-modal');
@@ -38,10 +38,10 @@ export async function loadStore() {
                 storeForm.onsubmit = async function (event) {
                     event.preventDefault()
                     const storeData = common.getAllNameValueOfSelector('.store-inputs', storeModal);
-                    const store = await store.createStore(storeData);
-                    await store.updateStoreImage(store.id, imageInput.files[0]);
+                    const createdStore = await store.createStore(storeData);
+                    await refreshAndUpdate();
+                    await store.updateStoreImage(createdStore.id, imageInput.files[0]);
                     await loadStore();
-                    window.closeStoreModal();
                 }
             } else {
                 // Otherwise, show a message to contact the admins.

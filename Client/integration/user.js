@@ -42,7 +42,6 @@ export async function refreshAndUpdate()
 {
     const userInfo = await user.refresh();
     setLoginDetail(userInfo);
-    window.location.reload();
 }
 
 export function hookSignIn(signInButton, emailInput, passwordInput)

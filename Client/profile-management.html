@@ -535,6 +535,7 @@
             user.editContacts(getCachedLogin().id, { name, phone }).then(() => {
                 window.closeEditProfileModal();
                 refreshAndUpdate();
+                window.location.reload();
             }).catch(err => {
                 throw err;
             });
